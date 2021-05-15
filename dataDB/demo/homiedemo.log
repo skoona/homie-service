@@ -1,0 +1,816 @@
+sknSensors/GarageMonitor/$state ready
+sknSensors/GarageMonitor/$homie 3.0.1
+sknSensors/GarageMonitor/$name Garage Monitor
+sknSensors/GarageMonitor/$mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/$localip 10.100.1.177
+sknSensors/GarageMonitor/$nodes Ambient,Presence,hardware
+sknSensors/GarageMonitor/$stats uptime
+sknSensors/GarageMonitor/$stats/interval 905
+sknSensors/GarageMonitor/$stats/signal 54
+sknSensors/GarageMonitor/$stats/uptime 592996
+sknSensors/GarageMonitor/$fw/name Monitor-SHT31-RCWL-Metrics
+sknSensors/GarageMonitor/$fw/version 2.0.0
+sknSensors/GarageMonitor/$fw/checksum 615fed382ab44bd43fe83508aecac682
+sknSensors/GarageMonitor/$implementation esp8266
+sknSensors/GarageMonitor/$implementation/config {"name":"Garage Monitor","device_id":"GarageMonitor","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}
+sknSensors/GarageMonitor/$implementation/version 3.0.0
+sknSensors/GarageMonitor/$implementation/ota/enabled true
+sknSensors/GarageMonitor/Ambient/$name Temperature and Humidity Sensor
+sknSensors/GarageMonitor/Ambient/$type sensor
+sknSensors/GarageMonitor/Ambient/$properties humidity,temperature
+sknSensors/GarageMonitor/Ambient/humidity 57.18
+sknSensors/GarageMonitor/Ambient/humidity/$name Humidity
+sknSensors/GarageMonitor/Ambient/humidity/$datatype float
+sknSensors/GarageMonitor/Ambient/humidity/$unit %rH
+sknSensors/GarageMonitor/Ambient/temperature 26.18
+sknSensors/GarageMonitor/Ambient/temperature/$name Temperature
+sknSensors/GarageMonitor/Ambient/temperature/$datatype float
+sknSensors/GarageMonitor/Ambient/temperature/$unit °F
+sknSensors/GarageMonitor/Presence/$name Motion Sensor
+sknSensors/GarageMonitor/Presence/$type sensor
+sknSensors/GarageMonitor/Presence/$properties motion
+sknSensors/GarageMonitor/Presence/motion OPEN
+sknSensors/GarageMonitor/Presence/motion/$name Motion
+sknSensors/GarageMonitor/Presence/motion/$datatype enum
+sknSensors/GarageMonitor/Presence/motion/$format OPEN,CLOSED
+sknSensors/GarageMonitor/hardware/$name Device Info
+sknSensors/GarageMonitor/hardware/$type sensor
+sknSensors/GarageMonitor/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/GarageMonitor/hardware/signal -73
+sknSensors/GarageMonitor/hardware/signal/$name RSSI
+sknSensors/GarageMonitor/hardware/signal/$datatype integer
+sknSensors/GarageMonitor/hardware/signal/$unit dBm
+sknSensors/GarageMonitor/hardware/mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/hardware/mac/$name mac
+sknSensors/GarageMonitor/hardware/mac/$datatype sring
+sknSensors/GarageMonitor/hardware/resetReason External System
+sknSensors/GarageMonitor/hardware/resetReason/$name Last Reset Reason
+sknSensors/GarageMonitor/hardware/resetReason/$datatype string
+sknSensors/GarageMonitor/hardware/voltage 3.05
+sknSensors/GarageMonitor/hardware/voltage/$name 3.3V Supply
+sknSensors/GarageMonitor/hardware/voltage/$datatype float
+sknSensors/GarageMonitor/hardware/voltage/$unit V
+sknSensors/GuestRoom/$state ready
+sknSensors/GuestRoom/$homie 3.0.1
+sknSensors/GuestRoom/$name Guest Room
+sknSensors/GuestRoom/$mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/$localip 10.100.1.178
+sknSensors/GuestRoom/$nodes Ambient,Presence,hardware
+sknSensors/GuestRoom/$stats uptime
+sknSensors/GuestRoom/$stats/interval 185
+sknSensors/GuestRoom/$stats/signal 72
+sknSensors/GuestRoom/$stats/uptime 361998
+sknSensors/GuestRoom/$fw/name Monitor-DHT-RCWL-Metrics
+sknSensors/GuestRoom/$fw/version 2.0.0
+sknSensors/GuestRoom/$fw/checksum 3ef8fbb48c5b23788a22a998c14a1a6d
+sknSensors/GuestRoom/$implementation esp8266
+sknSensors/GuestRoom/$implementation/config {"name":"Guest Room","device_id":"GuestRoom","device_stats_interval":180,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}
+sknSensors/GuestRoom/$implementation/version 3.0.0
+sknSensors/GuestRoom/$implementation/ota/enabled true
+sknSensors/GuestRoom/Ambient/$name Temperature and Humidity Sensor
+sknSensors/GuestRoom/Ambient/$type sensor
+sknSensors/GuestRoom/Ambient/$properties humidity,temperature
+sknSensors/GuestRoom/Ambient/humidity 11.10
+sknSensors/GuestRoom/Ambient/humidity/$name Humidity
+sknSensors/GuestRoom/Ambient/humidity/$datatype float
+sknSensors/GuestRoom/Ambient/humidity/$unit %rH
+sknSensors/GuestRoom/Ambient/temperature 73.76
+sknSensors/GuestRoom/Ambient/temperature/$name Temperature
+sknSensors/GuestRoom/Ambient/temperature/$datatype float
+sknSensors/GuestRoom/Ambient/temperature/$unit °F
+sknSensors/GuestRoom/Presence/$name Motion Sensor
+sknSensors/GuestRoom/Presence/$type sensor
+sknSensors/GuestRoom/Presence/$properties motion
+sknSensors/GuestRoom/Presence/motion CLOSED
+sknSensors/GuestRoom/Presence/motion/$name Motion
+sknSensors/GuestRoom/Presence/motion/$datatype enum
+sknSensors/GuestRoom/Presence/motion/$format OPEN,CLOSED
+sknSensors/GuestRoom/hardware/$name Device Info
+sknSensors/GuestRoom/hardware/$type sensor
+sknSensors/GuestRoom/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/GuestRoom/hardware/signal -64
+sknSensors/GuestRoom/hardware/signal/$name RSSI
+sknSensors/GuestRoom/hardware/signal/$datatype integer
+sknSensors/GuestRoom/hardware/signal/$unit dBm
+sknSensors/GuestRoom/hardware/mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/hardware/mac/$name mac
+sknSensors/GuestRoom/hardware/mac/$datatype sring
+sknSensors/GuestRoom/hardware/resetReason External System
+sknSensors/GuestRoom/hardware/resetReason/$name Last Reset Reason
+sknSensors/GuestRoom/hardware/resetReason/$datatype string
+sknSensors/GuestRoom/hardware/voltage 2.98
+sknSensors/GuestRoom/hardware/voltage/$name 3.3V Supply
+sknSensors/GuestRoom/hardware/voltage/$datatype float
+sknSensors/GuestRoom/hardware/voltage/$unit V
+sknSensors/$broadcast/alert openHAB3 Offline
+sknSensors/$broadcast/notice openHAB3 Online
+sknSensors/$broadcast/alert Garage Door Open
+sknSensors/$broadcast/alarm Media Room Window Broken
+sknSensors/FamilyRoom/$state ready
+sknSensors/FamilyRoom/$homie 3.0.1
+sknSensors/FamilyRoom/$name FamilyRoom
+sknSensors/FamilyRoom/$mac BC:DD:C2:E5:C4:24
+sknSensors/FamilyRoom/$localip 10.100.1.166
+sknSensors/FamilyRoom/$nodes Ambient,Presence,hardware
+sknSensors/FamilyRoom/$stats uptime
+sknSensors/FamilyRoom/$stats/interval 185
+sknSensors/FamilyRoom/$stats/signal 78
+sknSensors/FamilyRoom/$stats/uptime 423459
+sknSensors/FamilyRoom/$fw/name Monitor-DHT-RCWL-Metrics
+sknSensors/FamilyRoom/$fw/version 2.0.0
+sknSensors/FamilyRoom/$fw/checksum 3ef8fbb48c5b23788a22a998c14a1a6d
+sknSensors/FamilyRoom/$implementation esp8266
+sknSensors/FamilyRoom/$implementation/config {"name":"FamilyRoom","device_id":"FamilyRoom","device_stats_interval":180,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}
+sknSensors/FamilyRoom/$implementation/version 3.0.0
+sknSensors/FamilyRoom/$implementation/ota/enabled true
+sknSensors/FamilyRoom/Ambient/$name Temperature and Humidity Sensor
+sknSensors/FamilyRoom/Ambient/$type sensor
+sknSensors/FamilyRoom/Ambient/$properties humidity,temperature
+sknSensors/FamilyRoom/Ambient/humidity 20.50
+sknSensors/FamilyRoom/Ambient/humidity/$name Humidity
+sknSensors/FamilyRoom/Ambient/humidity/$datatype float
+sknSensors/FamilyRoom/Ambient/humidity/$unit %rH
+sknSensors/FamilyRoom/Ambient/temperature 67.64
+sknSensors/FamilyRoom/Ambient/temperature/$name Temperature
+sknSensors/FamilyRoom/Ambient/temperature/$datatype float
+sknSensors/FamilyRoom/Ambient/temperature/$unit °F
+sknSensors/FamilyRoom/Presence/$name Motion Sensor
+sknSensors/FamilyRoom/Presence/$type sensor
+sknSensors/FamilyRoom/Presence/$properties motion
+sknSensors/FamilyRoom/Presence/motion OPEN
+sknSensors/FamilyRoom/Presence/motion/$name Motion
+sknSensors/FamilyRoom/Presence/motion/$datatype enum
+sknSensors/FamilyRoom/Presence/motion/$format OPEN,CLOSED
+sknSensors/FamilyRoom/hardware/$name Device Info
+sknSensors/FamilyRoom/hardware/$type sensor
+sknSensors/FamilyRoom/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/FamilyRoom/hardware/signal -61
+sknSensors/FamilyRoom/hardware/signal/$name RSSI
+sknSensors/FamilyRoom/hardware/signal/$datatype integer
+sknSensors/FamilyRoom/hardware/signal/$unit dBm
+sknSensors/FamilyRoom/hardware/mac BC:DD:C2:E5:C4:24
+sknSensors/FamilyRoom/hardware/mac/$name mac
+sknSensors/FamilyRoom/hardware/mac/$datatype sring
+sknSensors/FamilyRoom/hardware/resetReason External System
+sknSensors/FamilyRoom/hardware/resetReason/$name Last Reset Reason
+sknSensors/FamilyRoom/hardware/resetReason/$datatype string
+sknSensors/FamilyRoom/hardware/voltage 3.03
+sknSensors/FamilyRoom/hardware/voltage/$name 3.3V Supply
+sknSensors/FamilyRoom/hardware/voltage/$datatype float
+sknSensors/FamilyRoom/hardware/voltage/$unit V
+sknSensors/D1R1MiniA/$state ready
+sknSensors/D1R1MiniA/$homie 3.0.1
+sknSensors/D1R1MiniA/$name Furnace
+sknSensors/D1R1MiniA/$mac 84:F3:EB:0C:38:6F
+sknSensors/D1R1MiniA/$localip 10.100.1.181
+sknSensors/D1R1MiniA/$nodes Liquids
+sknSensors/D1R1MiniA/$stats uptime
+sknSensors/D1R1MiniA/$stats/interval 905
+sknSensors/D1R1MiniA/$stats/signal 88
+sknSensors/D1R1MiniA/$stats/uptime 114307
+sknSensors/D1R1MiniA/$fw/name SknLiquids-128x32-oled
+sknSensors/D1R1MiniA/$fw/version 1.0.0
+sknSensors/D1R1MiniA/$fw/checksum 6867842dfce4674d4c724085467362c9
+sknSensors/D1R1MiniA/$implementation esp8266
+sknSensors/D1R1MiniA/$implementation/config {"name":"Furnace","device_id":"D1R1MiniA","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true}}
+sknSensors/D1R1MiniA/$implementation/version 3.0.0
+sknSensors/D1R1MiniA/$implementation/ota/enabled true
+sknSensors/D1R1MiniA/Liquids/$name Water Sensor
+sknSensors/D1R1MiniA/Liquids/$type sensor
+sknSensors/D1R1MiniA/Liquids/$properties level,volts
+sknSensors/D1R1MiniA/Liquids/level 7
+sknSensors/D1R1MiniA/Liquids/level/$name Level
+sknSensors/D1R1MiniA/Liquids/level/$datatype integer
+sknSensors/D1R1MiniA/Liquids/level/$unit #
+sknSensors/D1R1MiniA/Liquids/level/$format 0:1000
+sknSensors/D1R1MiniA/Liquids/volts 0.0
+sknSensors/D1R1MiniA/Liquids/volts/$name Volts
+sknSensors/D1R1MiniA/Liquids/volts/$datatype float
+sknSensors/D1R1MiniA/Liquids/volts/$unit V
+sknSensors/D1R1MiniA/Liquids/volts/$format 0:4
+sknSensors/GarageProvider/$state ready
+sknSensors/GarageProvider/$homie 3.0.1
+sknSensors/GarageProvider/$name Garage Provider
+sknSensors/GarageProvider/$mac 24:6F:28:97:63:B8
+sknSensors/GarageProvider/$localip 10.100.1.218
+sknSensors/GarageProvider/$nodes garageDoor,environmentMonitor
+sknSensors/GarageProvider/$stats uptime
+sknSensors/GarageProvider/$stats/interval 905
+sknSensors/GarageProvider/$stats/signal 72
+sknSensors/GarageProvider/$stats/uptime 113713
+sknSensors/GarageProvider/$fw/name GarageProvider
+sknSensors/GarageProvider/$fw/version 1.1.0
+sknSensors/GarageProvider/$fw/checksum 39286ba639a9ef1d5395e1c0e45d13fa
+sknSensors/GarageProvider/$implementation esp32
+sknSensors/GarageProvider/$implementation/config {"name":"Garage Provider","device_id":"GarageProvider","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorsInterval":900}}
+sknSensors/GarageProvider/$implementation/version 3.0.0
+sknSensors/GarageProvider/$implementation/ota/enabled true
+sknSensors/GarageProvider/garageDoor/$name Operations
+sknSensors/GarageProvider/garageDoor/$type SknSensors
+sknSensors/GarageProvider/garageDoor/$properties operator,positon,direction
+sknSensors/GarageProvider/garageDoor/operator/$name Operator
+sknSensors/GarageProvider/garageDoor/operator/$settable true
+sknSensors/GarageProvider/garageDoor/operator/$datatype boolean
+sknSensors/GarageProvider/garageDoor/operator/$format %s
+sknSensors/GarageProvider/garageDoor/positon 19
+sknSensors/GarageProvider/garageDoor/positon/$name Position MM
+sknSensors/GarageProvider/garageDoor/positon/$datatype integer
+sknSensors/GarageProvider/garageDoor/positon/$unit mm
+sknSensors/GarageProvider/garageDoor/positon/$format %d
+sknSensors/GarageProvider/garageDoor/direction OPENING
+sknSensors/GarageProvider/garageDoor/direction/$name Travel Direction
+sknSensors/GarageProvider/garageDoor/direction/$datatype string
+sknSensors/GarageProvider/garageDoor/direction/$format %s
+sknSensors/GarageProvider/environmentMonitor/$name Garage
+sknSensors/GarageProvider/environmentMonitor/$type SknSensors
+sknSensors/GarageProvider/environmentMonitor/$properties motion,temperature,humdity
+sknSensors/GarageProvider/environmentMonitor/motion ON
+sknSensors/GarageProvider/environmentMonitor/motion/$name Motion
+sknSensors/GarageProvider/environmentMonitor/motion/$datatype string
+sknSensors/GarageProvider/environmentMonitor/motion/$format %s
+sknSensors/GarageProvider/environmentMonitor/temperature 73.8
+sknSensors/GarageProvider/environmentMonitor/temperature/$name Temperature
+sknSensors/GarageProvider/environmentMonitor/temperature/$datatype float
+sknSensors/GarageProvider/environmentMonitor/temperature/$unit ºF
+sknSensors/GarageProvider/environmentMonitor/temperature/$format %.1f
+sknSensors/GarageProvider/environmentMonitor/humdity 29.0
+sknSensors/GarageProvider/environmentMonitor/humdity/$name Humidity
+sknSensors/GarageProvider/environmentMonitor/humdity/$datatype float
+sknSensors/GarageProvider/environmentMonitor/humdity/$unit %
+sknSensors/GarageProvider/environmentMonitor/humdity/$format %.1f
+sknSensors/MCPProvider/$state ready
+sknSensors/MCPProvider/$homie 3.0.1
+sknSensors/MCPProvider/$name Hard Wired Alarm Sensors
+sknSensors/MCPProvider/$mac BC:DD:C2:24:B7:3C
+sknSensors/MCPProvider/$localip 10.100.1.222
+sknSensors/MCPProvider/$nodes wiredMonitor,hardware
+sknSensors/MCPProvider/$stats uptime
+sknSensors/MCPProvider/$stats/interval 305
+sknSensors/MCPProvider/$stats/signal 56
+sknSensors/MCPProvider/$stats/uptime 113110
+sknSensors/MCPProvider/$fw/name WiredProvider
+sknSensors/MCPProvider/$fw/version 1.4.0
+sknSensors/MCPProvider/$fw/checksum b92b40fead22529097629c0597186c05
+sknSensors/MCPProvider/$implementation esp8266
+sknSensors/MCPProvider/$implementation/config {"name":"Hard Wired Alarm Sensors","device_id":"MCPProvider","device_stats_interval":300,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"ipolA":255,"ipolB":255}}
+sknSensors/MCPProvider/$implementation/version 3.0.0
+sknSensors/MCPProvider/$implementation/ota/enabled true
+sknSensors/MCPProvider/wiredMonitor/$name Wired Sensors
+sknSensors/MCPProvider/wiredMonitor/$type sensor
+sknSensors/MCPProvider/wiredMonitor/$properties pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11,pin12,pin13,pin14,pin15
+sknSensors/MCPProvider/wiredMonitor/pin0 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin0/$name Pin 0
+sknSensors/MCPProvider/wiredMonitor/pin0/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin0/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin1 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin1/$name Pin 1
+sknSensors/MCPProvider/wiredMonitor/pin1/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin1/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin2 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin2/$name Pin 2
+sknSensors/MCPProvider/wiredMonitor/pin2/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin2/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin3 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin3/$name Pin 3
+sknSensors/MCPProvider/wiredMonitor/pin3/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin3/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin4 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin4/$name Pin 4
+sknSensors/MCPProvider/wiredMonitor/pin4/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin4/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin5 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin5/$name Pin 5
+sknSensors/MCPProvider/wiredMonitor/pin5/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin5/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin6 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin6/$name Pin 6
+sknSensors/MCPProvider/wiredMonitor/pin6/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin6/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin7 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin7/$name Pin 7
+sknSensors/MCPProvider/wiredMonitor/pin7/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin7/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin8 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin8/$name Pin 8
+sknSensors/MCPProvider/wiredMonitor/pin8/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin8/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin9 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin9/$name Pin 9
+sknSensors/MCPProvider/wiredMonitor/pin9/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin9/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin10 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin10/$name Pin 10
+sknSensors/MCPProvider/wiredMonitor/pin10/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin10/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin11 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin11/$name Pin 11
+sknSensors/MCPProvider/wiredMonitor/pin11/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin11/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin12 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin12/$name Pin 12
+sknSensors/MCPProvider/wiredMonitor/pin12/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin12/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin13 CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin13/$name Pin 13
+sknSensors/MCPProvider/wiredMonitor/pin13/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin13/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin14 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin14/$name Pin 14
+sknSensors/MCPProvider/wiredMonitor/pin14/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin14/$format OPEN,CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin15 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin15/$name Pin 15
+sknSensors/MCPProvider/wiredMonitor/pin15/$datatype enum
+sknSensors/MCPProvider/wiredMonitor/pin15/$format OPEN,CLOSED
+sknSensors/MCPProvider/hardware/$name Device Info
+sknSensors/MCPProvider/hardware/$type sensor
+sknSensors/MCPProvider/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/MCPProvider/hardware/signal -71
+sknSensors/MCPProvider/hardware/signal/$name RSSI
+sknSensors/MCPProvider/hardware/signal/$datatype integer
+sknSensors/MCPProvider/hardware/signal/$unit dBm
+sknSensors/MCPProvider/hardware/mac BC:DD:C2:24:B7:3C
+sknSensors/MCPProvider/hardware/mac/$name mac
+sknSensors/MCPProvider/hardware/mac/$datatype sring
+sknSensors/MCPProvider/hardware/resetReason External System
+sknSensors/MCPProvider/hardware/resetReason/$name Last Reset Reason
+sknSensors/MCPProvider/hardware/resetReason/$datatype string
+sknSensors/MCPProvider/hardware/voltage 2.99
+sknSensors/MCPProvider/hardware/voltage/$name 3.3V Supply
+sknSensors/MCPProvider/hardware/voltage/$datatype float
+sknSensors/MCPProvider/hardware/voltage/$unit V
+sknSensors/MediaRoom/$state ready
+sknSensors/MediaRoom/$homie 3.0.1
+sknSensors/MediaRoom/$name Media Room
+sknSensors/MediaRoom/$mac B4:E6:2D:15:50:3A
+sknSensors/MediaRoom/$localip 10.100.1.180
+sknSensors/MediaRoom/$nodes Ambient,Presence,hardware
+sknSensors/MediaRoom/$stats uptime
+sknSensors/MediaRoom/$stats/interval 185
+sknSensors/MediaRoom/$stats/signal 66
+sknSensors/MediaRoom/$stats/uptime 102246
+sknSensors/MediaRoom/$fw/name Monitor-DHT-RCWL-Metrics
+sknSensors/MediaRoom/$fw/version 2.0.0
+sknSensors/MediaRoom/$fw/checksum 3ef8fbb48c5b23788a22a998c14a1a6d
+sknSensors/MediaRoom/$implementation esp8266
+sknSensors/MediaRoom/$implementation/config {"name":"Media Room","device_id":"MediaRoom","device_stats_interval":180,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}
+sknSensors/MediaRoom/$implementation/version 3.0.0
+sknSensors/MediaRoom/$implementation/ota/enabled true
+sknSensors/MediaRoom/Ambient/$name Temperature and Humidity Sensor
+sknSensors/MediaRoom/Ambient/$type sensor
+sknSensors/MediaRoom/Ambient/$properties humidity,temperature
+sknSensors/MediaRoom/Ambient/humidity 5.90
+sknSensors/MediaRoom/Ambient/humidity/$name Humidity
+sknSensors/MediaRoom/Ambient/humidity/$datatype float
+sknSensors/MediaRoom/Ambient/humidity/$unit %rH
+sknSensors/MediaRoom/Ambient/temperature 73.22
+sknSensors/MediaRoom/Ambient/temperature/$name Temperature
+sknSensors/MediaRoom/Ambient/temperature/$datatype float
+sknSensors/MediaRoom/Ambient/temperature/$unit °F
+sknSensors/MediaRoom/Presence/$name Motion Sensor
+sknSensors/MediaRoom/Presence/$type sensor
+sknSensors/MediaRoom/Presence/$properties motion
+sknSensors/MediaRoom/Presence/motion OPEN
+sknSensors/MediaRoom/Presence/motion/$name Motion
+sknSensors/MediaRoom/Presence/motion/$datatype enum
+sknSensors/MediaRoom/Presence/motion/$format OPEN,CLOSED
+sknSensors/MediaRoom/hardware/$name Device Info
+sknSensors/MediaRoom/hardware/$type sensor
+sknSensors/MediaRoom/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/MediaRoom/hardware/signal -67
+sknSensors/MediaRoom/hardware/signal/$name RSSI
+sknSensors/MediaRoom/hardware/signal/$datatype integer
+sknSensors/MediaRoom/hardware/signal/$unit dBm
+sknSensors/MediaRoom/hardware/mac B4:E6:2D:15:50:3A
+sknSensors/MediaRoom/hardware/mac/$name mac
+sknSensors/MediaRoom/hardware/mac/$datatype sring
+sknSensors/MediaRoom/hardware/resetReason External System
+sknSensors/MediaRoom/hardware/resetReason/$name Last Reset Reason
+sknSensors/MediaRoom/hardware/resetReason/$datatype string
+sknSensors/MediaRoom/hardware/voltage 3.12
+sknSensors/MediaRoom/hardware/voltage/$name 3.3V Supply
+sknSensors/MediaRoom/hardware/voltage/$datatype float
+sknSensors/MediaRoom/hardware/voltage/$unit V
+sknSensors/OutsideMonitor/$state ready
+sknSensors/OutsideMonitor/$homie 3.0.1
+sknSensors/OutsideMonitor/$name Outside Monitor
+sknSensors/OutsideMonitor/$mac 18:FE:34:FD:8C:1B
+sknSensors/OutsideMonitor/$localip 10.100.1.182
+sknSensors/OutsideMonitor/$nodes Ambient,Presence,hardware
+sknSensors/OutsideMonitor/$stats uptime
+sknSensors/OutsideMonitor/$stats/interval 905
+sknSensors/OutsideMonitor/$stats/signal 90
+sknSensors/OutsideMonitor/$stats/uptime 395123
+sknSensors/OutsideMonitor/$fw/name Monitor-SHT31-RCWL-Metrics
+sknSensors/OutsideMonitor/$fw/version 2.0.0
+sknSensors/OutsideMonitor/$fw/checksum 615fed382ab44bd43fe83508aecac682
+sknSensors/OutsideMonitor/$implementation esp8266
+sknSensors/OutsideMonitor/$implementation/config {"name":"Outside Monitor","device_id":"OutsideMonitor","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorsInterval":900,"motionHoldInterval":60}}
+sknSensors/OutsideMonitor/$implementation/version 3.0.0
+sknSensors/OutsideMonitor/$implementation/ota/enabled true
+sknSensors/OutsideMonitor/Ambient/$name Temperature and Humidity Sensor
+sknSensors/OutsideMonitor/Ambient/$type sensor
+sknSensors/OutsideMonitor/Ambient/$properties humidity,temperature
+sknSensors/OutsideMonitor/Ambient/humidity 66.71
+sknSensors/OutsideMonitor/Ambient/humidity/$name Humidity
+sknSensors/OutsideMonitor/Ambient/humidity/$datatype float
+sknSensors/OutsideMonitor/Ambient/humidity/$unit %rH
+sknSensors/OutsideMonitor/Ambient/temperature 20.00
+sknSensors/OutsideMonitor/Ambient/temperature/$name Temperature
+sknSensors/OutsideMonitor/Ambient/temperature/$datatype float
+sknSensors/OutsideMonitor/Ambient/temperature/$unit °F
+sknSensors/OutsideMonitor/Presence/$name Motion Sensor
+sknSensors/OutsideMonitor/Presence/$type sensor
+sknSensors/OutsideMonitor/Presence/$properties motion
+sknSensors/OutsideMonitor/Presence/motion OPEN
+sknSensors/OutsideMonitor/Presence/motion/$name Motion
+sknSensors/OutsideMonitor/Presence/motion/$datatype enum
+sknSensors/OutsideMonitor/Presence/motion/$format OPEN,CLOSED
+sknSensors/OutsideMonitor/hardware/$name Device Info
+sknSensors/OutsideMonitor/hardware/$type sensor
+sknSensors/OutsideMonitor/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/OutsideMonitor/hardware/signal -55
+sknSensors/OutsideMonitor/hardware/signal/$name RSSI
+sknSensors/OutsideMonitor/hardware/signal/$datatype integer
+sknSensors/OutsideMonitor/hardware/signal/$unit dBm
+sknSensors/OutsideMonitor/hardware/mac 18:FE:34:FD:8C:1B
+sknSensors/OutsideMonitor/hardware/mac/$name mac
+sknSensors/OutsideMonitor/hardware/mac/$datatype sring
+sknSensors/OutsideMonitor/hardware/resetReason External System
+sknSensors/OutsideMonitor/hardware/resetReason/$name Last Reset Reason
+sknSensors/OutsideMonitor/hardware/resetReason/$datatype string
+sknSensors/OutsideMonitor/hardware/voltage 3.44
+sknSensors/OutsideMonitor/hardware/voltage/$name 3.3V Supply
+sknSensors/OutsideMonitor/hardware/voltage/$datatype float
+sknSensors/OutsideMonitor/hardware/voltage/$unit V
+sknSensors/HomeOffice/$state ready
+sknSensors/HomeOffice/$homie 3.0.1
+sknSensors/HomeOffice/$name Home Office
+sknSensors/HomeOffice/$mac 84:F3:EB:B7:55:D5
+sknSensors/HomeOffice/$localip 10.100.1.161
+sknSensors/HomeOffice/$nodes Ambient,Presence,hardware
+sknSensors/HomeOffice/$stats uptime
+sknSensors/HomeOffice/$stats/interval 185
+sknSensors/HomeOffice/$stats/signal 70
+sknSensors/HomeOffice/$stats/uptime 46265
+sknSensors/HomeOffice/$fw/name Monitor-DHT-RCWL-Metrics
+sknSensors/HomeOffice/$fw/version 2.0.0
+sknSensors/HomeOffice/$fw/checksum 3ef8fbb48c5b23788a22a998c14a1a6d
+sknSensors/HomeOffice/$implementation esp8266
+sknSensors/HomeOffice/$implementation/config {"name":"Home Office","device_id":"HomeOffice","device_stats_interval":180,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}
+sknSensors/HomeOffice/$implementation/version 3.0.0
+sknSensors/HomeOffice/$implementation/ota/enabled true
+sknSensors/HomeOffice/Ambient/$name Temperature and Humidity Sensor
+sknSensors/HomeOffice/Ambient/$type sensor
+sknSensors/HomeOffice/Ambient/$properties humidity,temperature
+sknSensors/HomeOffice/Ambient/humidity 10.20
+sknSensors/HomeOffice/Ambient/humidity/$name Humidity
+sknSensors/HomeOffice/Ambient/humidity/$datatype float
+sknSensors/HomeOffice/Ambient/humidity/$unit %rH
+sknSensors/HomeOffice/Ambient/temperature 75.20
+sknSensors/HomeOffice/Ambient/temperature/$name Temperature
+sknSensors/HomeOffice/Ambient/temperature/$datatype float
+sknSensors/HomeOffice/Ambient/temperature/$unit °F
+sknSensors/HomeOffice/Presence/$name Motion Sensor
+sknSensors/HomeOffice/Presence/$type sensor
+sknSensors/HomeOffice/Presence/$properties motion
+sknSensors/HomeOffice/Presence/motion OPEN
+sknSensors/HomeOffice/Presence/motion/$name Motion
+sknSensors/HomeOffice/Presence/motion/$datatype enum
+sknSensors/HomeOffice/Presence/motion/$format OPEN,CLOSED
+sknSensors/HomeOffice/hardware/$name Device Info
+sknSensors/HomeOffice/hardware/$type sensor
+sknSensors/HomeOffice/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/HomeOffice/hardware/signal -63
+sknSensors/HomeOffice/hardware/signal/$name RSSI
+sknSensors/HomeOffice/hardware/signal/$datatype integer
+sknSensors/HomeOffice/hardware/signal/$unit dBm
+sknSensors/HomeOffice/hardware/mac 84:F3:EB:B7:55:D5
+sknSensors/HomeOffice/hardware/mac/$name mac
+sknSensors/HomeOffice/hardware/mac/$datatype sring
+sknSensors/HomeOffice/hardware/resetReason External System
+sknSensors/HomeOffice/hardware/resetReason/$name Last Reset Reason
+sknSensors/HomeOffice/hardware/resetReason/$datatype string
+sknSensors/HomeOffice/hardware/voltage 2.99
+sknSensors/HomeOffice/hardware/voltage/$name 3.3V Supply
+sknSensors/HomeOffice/hardware/voltage/$datatype float
+sknSensors/HomeOffice/hardware/voltage/$unit V
+sknSensors/GarageMonitor/hardware/signal -73
+sknSensors/GarageMonitor/hardware/mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/hardware/resetReason External System
+sknSensors/GarageMonitor/hardware/voltage 3.05
+sknSensors/MediaRoom/hardware/signal -67
+sknSensors/MediaRoom/hardware/mac B4:E6:2D:15:50:3A
+sknSensors/MediaRoom/hardware/resetReason External System
+sknSensors/MediaRoom/hardware/voltage 3.12
+sknSensors/MediaRoom/$stats/interval 185
+sknSensors/MediaRoom/$stats/signal 66
+sknSensors/MediaRoom/$stats/uptime 102426
+sknSensors/HomeOffice/hardware/signal -65
+sknSensors/HomeOffice/hardware/mac 84:F3:EB:B7:55:D5
+sknSensors/HomeOffice/hardware/resetReason External System
+sknSensors/HomeOffice/hardware/voltage 2.98
+sknSensors/OutsideMonitor/hardware/signal -54
+sknSensors/OutsideMonitor/hardware/mac 18:FE:34:FD:8C:1B
+sknSensors/OutsideMonitor/hardware/resetReason External System
+sknSensors/OutsideMonitor/hardware/voltage 3.44
+sknSensors/MCPProvider/wiredMonitor/pin7 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin15 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin6 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin14 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin5 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin13 CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin4 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin12 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin3 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin11 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin2 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin10 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin1 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin9 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin0 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin8 OPEN
+sknSensors/MCPProvider/hardware/signal -71
+sknSensors/MCPProvider/hardware/mac BC:DD:C2:24:B7:3C
+sknSensors/MCPProvider/hardware/resetReason External System
+sknSensors/MCPProvider/hardware/voltage 2.98
+sknSensors/GuestRoom/hardware/signal -64
+sknSensors/GuestRoom/hardware/mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/hardware/resetReason External System
+sknSensors/GuestRoom/hardware/voltage 2.98
+sknSensors/FamilyRoom/hardware/signal -61
+sknSensors/FamilyRoom/hardware/mac BC:DD:C2:E5:C4:24
+sknSensors/FamilyRoom/hardware/resetReason External System
+sknSensors/FamilyRoom/hardware/voltage 3.02
+sknSensors/GarageMonitor/hardware/signal -73
+sknSensors/GarageMonitor/hardware/mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/hardware/resetReason External System
+sknSensors/GarageMonitor/hardware/voltage 3.05
+sknSensors/MediaRoom/hardware/signal -67
+sknSensors/MediaRoom/hardware/mac B4:E6:2D:15:50:3A
+sknSensors/MediaRoom/hardware/resetReason External System
+sknSensors/MediaRoom/hardware/voltage 3.12
+sknSensors/HomeOffice/hardware/signal -66
+sknSensors/HomeOffice/hardware/mac 84:F3:EB:B7:55:D5
+sknSensors/HomeOffice/hardware/resetReason External System
+sknSensors/HomeOffice/hardware/voltage 2.98
+sknSensors/HomeOffice/$stats/interval 185
+sknSensors/HomeOffice/$stats/signal 68
+sknSensors/HomeOffice/$stats/uptime 46445
+sknSensors/OutsideMonitor/hardware/signal -54
+sknSensors/OutsideMonitor/hardware/mac 18:FE:34:FD:8C:1B
+sknSensors/OutsideMonitor/hardware/resetReason External System
+sknSensors/OutsideMonitor/hardware/voltage 3.44
+sknSensors/OutsideMonitor/$stats/interval 905
+sknSensors/OutsideMonitor/$stats/signal 92
+sknSensors/OutsideMonitor/$stats/uptime 396023
+sknSensors/MCPProvider/wiredMonitor/pin7 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin15 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin6 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin14 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin5 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin13 CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin4 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin12 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin3 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin11 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin2 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin10 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin1 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin9 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin0 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin8 OPEN
+sknSensors/MCPProvider/hardware/signal -71
+sknSensors/MCPProvider/hardware/mac BC:DD:C2:24:B7:3C
+sknSensors/MCPProvider/hardware/resetReason External System
+sknSensors/MCPProvider/hardware/voltage 2.99
+sknSensors/GuestRoom/hardware/signal -64
+sknSensors/GuestRoom/hardware/mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/hardware/resetReason External System
+sknSensors/GuestRoom/hardware/voltage 2.98
+sknSensors/FamilyRoom/hardware/signal -61
+sknSensors/FamilyRoom/hardware/mac BC:DD:C2:E5:C4:24
+sknSensors/FamilyRoom/hardware/resetReason External System
+sknSensors/FamilyRoom/hardware/voltage 3.03
+sknSensors/GuestRoom/$stats/interval 185
+sknSensors/GuestRoom/$stats/signal 72
+sknSensors/GuestRoom/$stats/uptime 362178
+sknSensors/FamilyRoom/$stats/interval 185
+sknSensors/FamilyRoom/$stats/signal 78
+sknSensors/FamilyRoom/$stats/uptime 423639
+sknSensors/FamilyRoom/Presence/motion CLOSED
+sknSensors/GarageMonitor/hardware/signal -73
+sknSensors/GarageMonitor/hardware/mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/hardware/resetReason External System
+sknSensors/GarageMonitor/hardware/voltage 3.05
+sknSensors/GarageMonitor/$stats/interval 905
+sknSensors/GarageMonitor/$stats/signal 54
+sknSensors/GarageMonitor/$stats/uptime 593896
+sknSensors/MediaRoom/hardware/signal -67
+sknSensors/MediaRoom/hardware/mac B4:E6:2D:15:50:3A
+sknSensors/MediaRoom/hardware/resetReason External System
+sknSensors/MediaRoom/hardware/voltage 3.12
+sknSensors/HomeOffice/hardware/signal -66
+sknSensors/HomeOffice/hardware/mac 84:F3:EB:B7:55:D5
+sknSensors/HomeOffice/hardware/resetReason External System
+sknSensors/HomeOffice/hardware/voltage 2.98
+sknSensors/OutsideMonitor/hardware/signal -54
+sknSensors/OutsideMonitor/hardware/mac 18:FE:34:FD:8C:1B
+sknSensors/OutsideMonitor/hardware/resetReason External System
+sknSensors/OutsideMonitor/hardware/voltage 3.44
+sknSensors/MCPProvider/wiredMonitor/pin7 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin15 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin6 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin14 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin5 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin13 CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin4 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin12 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin3 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin11 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin2 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin10 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin1 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin9 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin0 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin8 OPEN
+sknSensors/MCPProvider/hardware/signal -71
+sknSensors/MCPProvider/hardware/mac BC:DD:C2:24:B7:3C
+sknSensors/MCPProvider/hardware/resetReason External System
+sknSensors/MCPProvider/hardware/voltage 2.98
+sknSensors/GuestRoom/hardware/signal -64
+sknSensors/GuestRoom/hardware/mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/hardware/resetReason External System
+sknSensors/GuestRoom/hardware/voltage 2.98
+sknSensors/FamilyRoom/hardware/signal -61
+sknSensors/FamilyRoom/hardware/mac BC:DD:C2:E5:C4:24
+sknSensors/FamilyRoom/hardware/resetReason External System
+sknSensors/FamilyRoom/hardware/voltage 3.02
+sknSensors/FamilyRoom/Presence/motion OPEN
+sknSensors/GarageMonitor/hardware/signal -73
+sknSensors/GarageMonitor/hardware/mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/hardware/resetReason External System
+sknSensors/GarageMonitor/hardware/voltage 3.05
+sknSensors/MediaRoom/Ambient/temperature 72.86
+sknSensors/MediaRoom/Ambient/humidity 6.60
+sknSensors/MediaRoom/hardware/signal -67
+sknSensors/MediaRoom/hardware/mac B4:E6:2D:15:50:3A
+sknSensors/MediaRoom/hardware/resetReason External System
+sknSensors/MediaRoom/hardware/voltage 3.12
+sknSensors/MediaRoom/$stats/interval 185
+sknSensors/MediaRoom/$stats/signal 66
+sknSensors/MediaRoom/$stats/uptime 102606
+sknSensors/HomeOffice/hardware/signal -64
+sknSensors/HomeOffice/hardware/mac 84:F3:EB:B7:55:D5
+sknSensors/HomeOffice/hardware/resetReason External System
+sknSensors/HomeOffice/hardware/voltage 2.98
+sknSensors/OutsideMonitor/hardware/signal -54
+sknSensors/OutsideMonitor/hardware/mac 18:FE:34:FD:8C:1B
+sknSensors/OutsideMonitor/hardware/resetReason External System
+sknSensors/OutsideMonitor/hardware/voltage 3.44
+sknSensors/MCPProvider/wiredMonitor/pin7 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin15 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin6 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin14 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin5 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin13 CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin4 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin12 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin3 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin11 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin2 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin10 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin1 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin9 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin0 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin8 OPEN
+sknSensors/MCPProvider/hardware/signal -71
+sknSensors/MCPProvider/hardware/mac BC:DD:C2:24:B7:3C
+sknSensors/MCPProvider/hardware/resetReason External System
+sknSensors/MCPProvider/hardware/voltage 2.99
+sknSensors/MCPProvider/$stats/interval 305
+sknSensors/MCPProvider/$stats/signal 58
+sknSensors/MCPProvider/$stats/uptime 113410
+sknSensors/GuestRoom/hardware/signal -64
+sknSensors/GuestRoom/hardware/mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/hardware/resetReason External System
+sknSensors/GuestRoom/hardware/voltage 2.98
+sknSensors/FamilyRoom/hardware/signal -61
+sknSensors/FamilyRoom/hardware/mac BC:DD:C2:E5:C4:24
+sknSensors/FamilyRoom/hardware/resetReason External System
+sknSensors/FamilyRoom/hardware/voltage 3.03
+sknSensors/FamilyRoom/Presence/motion CLOSED
+sknSensors/GarageMonitor/hardware/signal -73
+sknSensors/GarageMonitor/hardware/mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/hardware/resetReason External System
+sknSensors/GarageMonitor/hardware/voltage 3.05
+sknSensors/MediaRoom/hardware/signal -67
+sknSensors/MediaRoom/hardware/mac B4:E6:2D:15:50:3A
+sknSensors/MediaRoom/hardware/resetReason External System
+sknSensors/MediaRoom/hardware/voltage 3.12
+sknSensors/HomeOffice/hardware/signal -65
+sknSensors/HomeOffice/hardware/mac 84:F3:EB:B7:55:D5
+sknSensors/HomeOffice/hardware/resetReason External System
+sknSensors/HomeOffice/hardware/voltage 2.98
+sknSensors/HomeOffice/$stats/interval 185
+sknSensors/HomeOffice/$stats/signal 70
+sknSensors/HomeOffice/$stats/uptime 46625
+sknSensors/OutsideMonitor/hardware/signal -54
+sknSensors/OutsideMonitor/hardware/mac 18:FE:34:FD:8C:1B
+sknSensors/OutsideMonitor/hardware/resetReason External System
+sknSensors/OutsideMonitor/hardware/voltage 3.44
+sknSensors/MCPProvider/wiredMonitor/pin7 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin15 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin6 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin14 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin5 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin13 CLOSED
+sknSensors/MCPProvider/wiredMonitor/pin4 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin12 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin3 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin11 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin2 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin10 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin1 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin9 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin0 OPEN
+sknSensors/MCPProvider/wiredMonitor/pin8 OPEN
+sknSensors/MCPProvider/hardware/signal -70
+sknSensors/MCPProvider/hardware/mac BC:DD:C2:24:B7:3C
+sknSensors/MCPProvider/hardware/resetReason External System
+sknSensors/MCPProvider/hardware/voltage 2.99
+sknSensors/GuestRoom/hardware/signal -64
+sknSensors/GuestRoom/hardware/mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/hardware/resetReason External System
+sknSensors/GuestRoom/hardware/voltage 2.98
+sknSensors/FamilyRoom/hardware/signal -62
+sknSensors/FamilyRoom/hardware/mac BC:DD:C2:E5:C4:24
+sknSensors/FamilyRoom/hardware/resetReason External System
+sknSensors/FamilyRoom/hardware/voltage 3.03
+sknSensors/GuestRoom/$stats/interval 185
+sknSensors/GuestRoom/$stats/signal 72
+sknSensors/GuestRoom/$stats/uptime 362358
+sknSensors/FamilyRoom/$stats/interval 185
+sknSensors/FamilyRoom/$stats/signal 76
+sknSensors/FamilyRoom/$stats/uptime 423819
+sknSensors/FamilyRoom/Presence/motion OPEN
+sknSensors/GarageProvider/environmentMonitor/temperature 73.6
+sknSensors/GarageProvider/environmentMonitor/humdity 27.0
+sknSensors/DSMonitor/$state lost
+sknSensors/DSMonitor/$state init
+sknSensors/DSMonitor/$homie 3.0.1
+sknSensors/DSMonitor/$name Environment-DS18B20
+sknSensors/DSMonitor/$mac DC:4F:22:3B:33:4F
+sknSensors/DSMonitor/$localip 10.100.1.164
+sknSensors/DSMonitor/$nodes Ambient[]
+sknSensors/DSMonitor/$stats uptime
+sknSensors/DSMonitor/$stats/interval 905
+sknSensors/DSMonitor/$fw/name Environment-DS18B20
+sknSensors/DSMonitor/$fw/version 1.0.2
+sknSensors/DSMonitor/$fw/checksum 93341625d6fa5d9533e6e315fbdde634
+sknSensors/DSMonitor/$implementation esp8266
+sknSensors/DSMonitor/$implementation/config {"name":"Environment-DS18B20","device_id":"DSMonitor","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorsInterval":900}}
+sknSensors/DSMonitor/$implementation/version 3.0.0
+sknSensors/DSMonitor/$implementation/ota/enabled true
+sknSensors/DSMonitor/Ambient/$name Environment Monitor
+sknSensors/DSMonitor/Ambient/$type sensor
+sknSensors/DSMonitor/Ambient/$array 0-3
+sknSensors/DSMonitor/Ambient_0/$name Ambient_0
+sknSensors/DSMonitor/Ambient_1/$name Ambient_1
+sknSensors/DSMonitor/Ambient_2/$name Ambient_2
+sknSensors/DSMonitor/Ambient_3/$name Ambient_3
+sknSensors/DSMonitor/Ambient/$properties state,temperature
+sknSensors/DSMonitor/Ambient/state/$name State
+sknSensors/DSMonitor/Ambient/state/$datatype enum
+sknSensors/DSMonitor/Ambient/state/$format OK,Error,InvalidAddress
+sknSensors/DSMonitor/Ambient/temperature/$name Temperature
+sknSensors/DSMonitor/Ambient/temperature/$datatype float
+sknSensors/DSMonitor/Ambient/temperature/$unit °F
+sknSensors/DSMonitor/$state ready
+sknSensors/DSMonitor/Ambient_0/state OK
+sknSensors/DSMonitor/Ambient_0/temperature 73.06
+sknSensors/DSMonitor/Ambient_1/state OK
+sknSensors/DSMonitor/Ambient_1/temperature 74.07
+sknSensors/DSMonitor/Ambient_2/state OK
+sknSensors/DSMonitor/Ambient_2/temperature 73.63
+sknSensors/DSMonitor/Ambient_3/state OK
+sknSensors/DSMonitor/Ambient_3/temperature 72.39
+sknSensors/DSMonitor/$stats/interval 905
+sknSensors/DSMonitor/$stats/signal 80
+sknSensors/DSMonitor/$stats/uptime 5
+sknSensors/DSMonitor/Ambient_0/state OK
+sknSensors/DSMonitor/Ambient_0/temperature 73.06
+sknSensors/DSMonitor/Ambient_1/state OK
+sknSensors/DSMonitor/Ambient_1/temperature 74.07
+sknSensors/DSMonitor/Ambient_2/state OK
+sknSensors/DSMonitor/Ambient_2/temperature 73.74
+sknSensors/DSMonitor/Ambient_3/state OK
+sknSensors/DSMonitor/Ambient_3/temperature 72.39
+sknSensors/DSMonitor/Ambient_0/state OK
+sknSensors/DSMonitor/Ambient_0/temperature 73.06
+sknSensors/DSMonitor/Ambient_1/state OK
+sknSensors/DSMonitor/Ambient_1/temperature 73.96
+sknSensors/DSMonitor/Ambient_2/state OK
+sknSensors/DSMonitor/Ambient_2/temperature 73.63
+sknSensors/DSMonitor/Ambient_3/state OK
+sknSensors/DSMonitor/Ambient_3/temperature 72.39

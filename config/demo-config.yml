@@ -1,0 +1,14 @@
+---
+# Demo Config
+homiemonitor:
+  title: Homie Network Monitor
+  runmode: demo
+  version: 0.4.0
+
+  datasources: 
+    demoSource: ./dataDB/demo/homiedemo.log
+    dataStorage: ./dataDB/live/devices.db
+  
+
+
+

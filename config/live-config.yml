@@ -1,0 +1,21 @@
+---
+# Live Mode
+homiemonitor:
+  title: Homie Network Monitor
+  runmode: live
+  version: 0.4.0
+
+  datasources: 
+    demoSource: ./dataDB/demo/homiedemo.log
+    dataStorage: ./dataDB/live/devices.db
+
+  mqtt:
+    clientid: homie-monitor
+    broker: <mqtt-host-or-ip>
+    port: 1883
+    username: <mqtt-username>
+    password: <mqtt-password>
+    homiediscoverytopic: "+/+/$name"
+    homiesubscriptiontopic: "sknSensors/#"
+    lwttopic: sknSensors/$broadcast/LWT
+    lwtmsg: HomieMonitor Offline!
