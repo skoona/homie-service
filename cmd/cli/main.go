@@ -34,10 +34,10 @@ import (
 	"os/signal"
 	"syscall"
 
-	cc "github.com/skoona/homie-service/pkg/utils"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
+	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
 func shutdownDemo() {
@@ -58,13 +58,15 @@ func runDemo(ctx context.Context) error {
 	return nil
 }
 
+var logger log.Logger
+
 func main() {
 	// var hns *cl.HomieNetworks
-	var logger log.Logger
 	var err error
+	var dm dss.DeviceMessage
 
 	ctx := cc.BuildRuntimeConfigAndContext("Homie-Service")
-	logger = ctx.Value("appConfig").logger
+	logger = ctx.Value(cc.AppConfig).(cc.Config).Logger
 
 	level.Info(logger).Log("msg", "service started")
 	defer level.Info(logger).Log("msg", "service ended")
@@ -74,7 +76,7 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
 
 	// Run the App
-	if ctx.Value("appConfig").runMode == "demo" {
+	if ctx.Value(cc.AppConfig).(cc.Config).RunMode == "demo" {
 		// demo
 		err = runDemo(ctx)
 	} else {
@@ -87,7 +89,7 @@ func main() {
 	level.Info(logger).Log("msg", sig)
 	level.Info(logger).Log("msg", "Shutting Down")
 
-	if ctx.Value("appConfig").runMode == "demo" {
+	if ctx.Value(cc.AppConfig).(cc.Config).RunMode == "demo" {
 		// demo
 		shutdownDemo()
 	} else {

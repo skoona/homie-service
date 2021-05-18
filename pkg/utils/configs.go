@@ -20,34 +20,43 @@ import (
 
 type (
 	DBConfig struct {
-		demoSource  string
-		dataStorage string
+		DemoSource  string
+		DataStorage string
 	}
 
 	MQTTConfig struct {
-		clientID          string
-		brokerIP          string
-		brokerPort        int
-		userName          string
-		userPassword      string
-		discoveryTopic    string
-		subscriptionTopic string
-		lwtTopic          string
-		lwtMessage        string
+		ClientID          string
+		BrokerIP          string
+		BrokerPort        int
+		UserName          string
+		UserPassword      string
+		DiscoveryTopic    string
+		SubscriptionTopic string
+		LwtTopic          string
+		LwtMessage        string
 	}
 
 	Config struct {
-		title   string
-		runMode string
-		version string
-		dbc     DBConfig
-		mqc     MQTTConfig
-		logger  *log.Logger
+		Title   string
+		RunMode string
+		Version string
+		Dbc     DBConfig
+		Mqc     MQTTConfig
+		Logger  log.Logger
 	}
 )
 
-func buildConfigFromCLI(logger log.logger) *viper.Viper {
-	level.Info(logger).Log("msg", "calling configSetup()")
+type contextKey int
+
+const (
+	_ contextKey = iota
+	AppConfig
+	DbConfig
+	MqttConfig
+)
+
+func buildConfigForCLI(log log.Logger) *viper.Viper {
+	level.Info(log).Log("msg", "calling buildConfigForCLI()")
 
 	var configPath string
 
@@ -95,11 +104,9 @@ func buildConfigFromCLI(logger log.logger) *viper.Viper {
 	return config
 }
 
-var logger log.Logger
+func buildLogger(moduleName string) log.Logger {
 
-func buildLogger(moduleName string) *log.Logger {
-
-	logger = log.NewLogfmtLogger(os.Stderr)
+	logger := log.NewLogfmtLogger(os.Stderr)
 	logger = log.NewSyncLogger(logger)
 	logger = log.With(logger,
 		"module", moduleName,
@@ -107,43 +114,47 @@ func buildLogger(moduleName string) *log.Logger {
 		"caller", log.DefaultCaller,
 	)
 
-	level.Debug(logger).Log("msg", "logging service started")
+	level.Debug(logger).Log("msg", "called buildLogger()")
 
-	return &logger
+	return logger
 }
 
-func buildAppConfig(cfg *viper.Viper, log log.logger) *Config {
-	return &Config{
-		title:   cfg.GetString("homiemonitor.title"),
-		runMode: cfg.GetString("homiemonitor.runmode"),
-		version: cfg.GetString("homiemonitor.version"),
-		logger:  log,
-		dbc: DBConfig{
-			demoSource:  cfg.GetString("homiemonitor.datasources.demoSource"),
-			dataStorage: cfg.GetString("homiemonitor.datasources.dataStorage"),
+func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
+	level.Debug(log).Log("msg", "calling buildAppConfig()")
+
+	return Config{
+		Title:   cfg.GetString("homiemonitor.title"),
+		RunMode: cfg.GetString("homiemonitor.runmode"),
+		Version: cfg.GetString("homiemonitor.version"),
+		Logger:  log,
+		Dbc: DBConfig{
+			DemoSource:  cfg.GetString("homiemonitor.datasources.demoSource"),
+			DataStorage: cfg.GetString("homiemonitor.datasources.dataStorage"),
 		},
-		mqc: MQTTConfig{
-			clientID:          cfg.GetString("homiemonitor.mqtt.clientid"),
-			brokerIP:          cfg.GetString("homiemonitor.mqtt.broker"),
-			brokerPort:        cfg.GetInt("homiemonitor.mqtt.port"),
-			userName:          cfg.GetString("homiemonitor.mqtt.username"),
-			userPassword:      cfg.GetString("homiemonitor.mqtt.userpassword"),
-			discoveryTopic:    cfg.GetString("homiemonitor.mqtt.homiediscoverytopic"),
-			subscriptionTopic: cfg.GetString("homiemonitor.mqtt.homiesubscriptiontopic"),
-			lwtTopic:          cfg.GetString("homiemonitor.mqtt.lwttopic"),
-			lwtMessage:        cfg.GetString("homiemonitor.mqtt.lwtmsg"),
+		Mqc: MQTTConfig{
+			ClientID:          cfg.GetString("homiemonitor.mqtt.clientid"),
+			BrokerIP:          cfg.GetString("homiemonitor.mqtt.broker"),
+			BrokerPort:        cfg.GetInt("homiemonitor.mqtt.port"),
+			UserName:          cfg.GetString("homiemonitor.mqtt.username"),
+			UserPassword:      cfg.GetString("homiemonitor.mqtt.userpassword"),
+			DiscoveryTopic:    cfg.GetString("homiemonitor.mqtt.homiediscoverytopic"),
+			SubscriptionTopic: cfg.GetString("homiemonitor.mqtt.homiesubscriptiontopic"),
+			LwtTopic:          cfg.GetString("homiemonitor.mqtt.lwttopic"),
+			LwtMessage:        cfg.GetString("homiemonitor.mqtt.lwtmsg"),
 		},
 	}
 }
 
 func BuildRuntimeConfigAndContext(moduleName string) context.Context {
+	var appCtx context.Context
+
 	logger := buildLogger(moduleName)
-	cliConfig := buildConfigFromCLI(logger)
+	cliConfig := buildConfigForCLI(logger)
 
 	appConfig := buildAppConfig(cliConfig, logger)
-	appCtx := context.Background()
-	appCtx = appCtx.WithValue(appCtx, "DBConfig", appConfig.dbc)
-	appCtx = appCtx.WithValue(appCtx, "MQTTConfig", appConfig.mqc)
+	appCtx = context.Background()
+	appCtx = context.WithValue(appCtx, DbConfig, appConfig.Dbc)
+	appCtx = context.WithValue(appCtx, MqttConfig, appConfig.Mqc)
 
-	return appCtx.WithValue(appCtx, "appConfig", appConfig)
+	return context.WithValue(appCtx, AppConfig, appConfig)
 }
