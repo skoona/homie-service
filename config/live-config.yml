@@ -14,7 +14,7 @@ homiemonitor:
     broker: <mqtt-host-or-ip>
     port: 1883
     username: <mqtt-username>
-    password: <mqtt-password>
+    userpassword: <mqtt-password>
     homiediscoverytopic: "+/+/$name"
     homiesubscriptiontopic: "sknSensors/#"
     lwttopic: sknSensors/$broadcast/LWT

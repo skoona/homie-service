@@ -12,10 +12,9 @@ import (
 	"sort"
 	"time"
 
-	ds "github.com/skoona/homie-service/pkg/deviceSource"
-
 	bolt "github.com/boltdb/bolt"
-	log "github.com/go-kit/kit/log"
+	"github.com/go-kit/kit/log"
+	ds "github.com/skoona/homie-service/pkg/deviceSource"
 )
 
 var dbs dbRepo
