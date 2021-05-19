@@ -53,7 +53,7 @@ func Start(ctx context.Context) (dss.Repositiory, error) {
 	if err != nil {
 		level.Error(logger).Log("msg", "Main bBolt DB Open Failed", "datafile", dataFile)
 		err = fmt.Errorf("main bBolt DB Open Failed: %v", err.Error())
-		return nil, err
+		panic(err.Error())
 	}
 
 	repo := NewRepo(ctx, pDB, logger)

@@ -39,6 +39,7 @@ import (
 	dp "github.com/skoona/homie-service/pkg/services/demoProvider"
 	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
 	dds "github.com/skoona/homie-service/pkg/services/deviceStorage"
+	mq "github.com/skoona/homie-service/pkg/services/liveProvider"
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
@@ -51,6 +52,7 @@ func shutdownDemo() {
 
 func shutdownLive() {
 	level.Info(logger).Log("msg", "shutdownLive() called")
+	mq.Stop()
 	dss.Stop()
 	dds.Stop()
 }
@@ -58,8 +60,8 @@ func shutdownLive() {
 func runLive(ctx context.Context) error {
 	level.Info(logger).Log("msg", "runLive() called")
 	repo, err := dds.Start(ctx)
-	dss.Start(ctx, repo)
-
+	dssService, _ = dss.Start(ctx, repo)
+	mq.Start(ctx, dssService)
 	return err
 }
 
