@@ -41,16 +41,18 @@ func NewRepo(ctx context.Context, db *bolt.DB, log log.Logger) dss.Repositiory {
  */
 func Start(ctx context.Context) (dss.Repositiory, error) {
 	var err error
+	var dataFile string
 	logger := log.With(ctx.Value(cc.AppConfig).(cc.Config).Logger, "pkg", "deviceStorage")
 	level.Debug(logger).Log("msg", "Calling Start()")
 
 	/*
 	 * Open K/V Store
 	 */
-	pDB, err := bolt.Open(ctx.Value(cc.DbConfig).(cc.DBConfig).DataStorage, 0764, nil) // &bolt.Options{Timeout: 1 * time.Second, ReadOnly: false})
+	dataFile = ctx.Value(cc.DbConfig).(cc.DBConfig).DataStorage
+	pDB, err := bolt.Open(dataFile, 0764, nil) // &bolt.Options{Timeout: 1 * time.Second, ReadOnly: false})
 	if err != nil {
-		level.Error(logger).Log("msg", "[ERROR] Main bBolt DB Open Failed")
-		err = fmt.Errorf("Main bBolt DB Open Failed: %v", err.Error())
+		level.Error(logger).Log("msg", "Main bBolt DB Open Failed", "datafile", dataFile)
+		err = fmt.Errorf("main bBolt DB Open Failed: %v", err.Error())
 		return nil, err
 	}
 
@@ -79,7 +81,7 @@ func Stop() {
 
 	// Show bBolt DB Stats
 	if stats := DBStatsAsJSON(dbs.db); len(stats) > 0 {
-		level.Info(dbs.logger).Log("dbStats", stats)
+		fmt.Printf("dbStats=%s\n", stats)
 	}
 
 	dbs.db.Close()

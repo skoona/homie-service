@@ -106,7 +106,7 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 
 func buildLogger(moduleName string) log.Logger {
 
-	logger := log.NewLogfmtLogger(os.Stdout)
+	logger := log.NewLogfmtLogger(os.Stderr)
 	logger = log.NewSyncLogger(logger)
 	logger = log.With(logger,
 		"module", moduleName,

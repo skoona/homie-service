@@ -56,7 +56,7 @@ func shutdownLive() {
 func runLive(ctx context.Context) error {
 	level.Info(logger).Log("msg", "runLive() called")
 	repo, err := dds.Start(ctx)
-	dssService, err := dss.Start(ctx, repo)
+	dss.Start(ctx, repo)
 
 	return err
 }
@@ -64,7 +64,7 @@ func runLive(ctx context.Context) error {
 func runDemo(ctx context.Context) error {
 	level.Info(logger).Log("msg", "runDemo() called")
 	repo, err := dds.Start(ctx)
-	dssService, err := dss.Start(ctx, repo)
+	dss.Start(ctx, repo)
 
 	return err
 }
