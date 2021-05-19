@@ -36,6 +36,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	dp "github.com/skoona/homie-service/pkg/services/demoProvider"
 	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
 	dds "github.com/skoona/homie-service/pkg/services/deviceStorage"
 	cc "github.com/skoona/homie-service/pkg/utils"
@@ -45,6 +46,7 @@ func shutdownDemo() {
 	level.Info(logger).Log("msg", "shutdownDemo() called")
 	dss.Stop()
 	dds.Stop()
+	dp.Stop()
 }
 
 func shutdownLive() {
@@ -64,8 +66,8 @@ func runLive(ctx context.Context) error {
 func runDemo(ctx context.Context) error {
 	level.Info(logger).Log("msg", "runDemo() called")
 	repo, err := dds.Start(ctx)
-	dss.Start(ctx, repo)
-
+	dssService, _ = dss.Start(ctx, repo)
+	dp.Start(ctx, dssService)
 	return err
 }
 

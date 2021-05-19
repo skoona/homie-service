@@ -30,8 +30,11 @@ var dvService deviceSource
 func (s *deviceSource) ApplyCoreEvent(dm *DeviceMessage) error {
 	var err error
 	logger := log.With(s.logger, "method", "ApplyCoreEvent")
-	level.Error(logger).Log("err", err)
-	level.Debug(logger).Log("key", "value")
+	err = s.repository.Store(dm)
+	if err != nil {
+		level.Error(logger).Log("error", err)
+	}
+
 	logger.Log("DeviceID ", dm.DeviceID)
 
 	return err
@@ -40,8 +43,12 @@ func (s *deviceSource) ApplyCoreEvent(dm *DeviceMessage) error {
 func (s *deviceSource) ApplyOTAEvent(dm *DeviceMessage) error {
 	var err error
 	logger := log.With(s.logger, "method", "ApplyOTAEvent")
-	level.Error(logger).Log("err", err)
-	level.Debug(logger).Log("key", "value")
+
+	err = s.repository.Store(dm)
+	if err != nil {
+		level.Error(logger).Log("error", err)
+	}
+
 	logger.Log("DeviceID ", dm.DeviceID)
 
 	return err
@@ -50,8 +57,12 @@ func (s *deviceSource) ApplyOTAEvent(dm *DeviceMessage) error {
 func (s *deviceSource) ApplyDiscoveryEvent(dm *DeviceMessage) error {
 	var err error
 	logger := log.With(s.logger, "method", "ApplyDiscoveryEvent")
-	level.Error(logger).Log("err", err)
-	level.Debug(logger).Log("key", "value")
+
+	err = s.repository.Store(dm)
+	if err != nil {
+		level.Error(logger).Log("error", err)
+	}
+
 	logger.Log("DeviceID ", dm.DeviceID)
 
 	return err
