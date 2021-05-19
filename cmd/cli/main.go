@@ -37,39 +37,50 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
+	dds "github.com/skoona/homie-service/pkg/services/deviceStorage"
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
 func shutdownDemo() {
-	level.Info(logger).Log("msg", "shutdownDemo called")
+	level.Info(logger).Log("msg", "shutdownDemo() called")
+	dss.Stop()
+	dds.Stop()
 }
 
 func shutdownLive() {
-	level.Info(logger).Log("msg", "shutdownLive called")
+	level.Info(logger).Log("msg", "shutdownLive() called")
+	dss.Stop()
+	dds.Stop()
 }
 
 func runLive(ctx context.Context) error {
-	level.Info(logger).Log("msg", "runLive called")
-	return nil
+	level.Info(logger).Log("msg", "runLive() called")
+	repo, err := dds.Start(ctx)
+	dssService, err := dss.Start(ctx, repo)
+
+	return err
 }
 
 func runDemo(ctx context.Context) error {
-	level.Info(logger).Log("msg", "runDemo called")
-	return nil
+	level.Info(logger).Log("msg", "runDemo() called")
+	repo, err := dds.Start(ctx)
+	dssService, err := dss.Start(ctx, repo)
+
+	return err
 }
 
 var logger log.Logger
+var dssService dss.Service
 
 func main() {
 	// var hns *cl.HomieNetworks
 	var err error
-	var dm dss.DeviceMessage
 
 	ctx := cc.BuildRuntimeConfigAndContext("Homie-Service")
-	logger = ctx.Value(cc.AppConfig).(cc.Config).Logger
+	logger = log.With(ctx.Value(cc.AppConfig).(cc.Config).Logger, "pkg", "main")
 
-	level.Info(logger).Log("msg", "service started")
-	defer level.Info(logger).Log("msg", "service ended")
+	level.Debug(logger).Log("msg", "service started")
+	defer level.Debug(logger).Log("msg", "service ended")
 
 	/* Prepare for clean exit */
 	sigs := make(chan os.Signal, 1)
@@ -86,8 +97,8 @@ func main() {
 
 	// wait on ctrl-c
 	sig := <-sigs
-	level.Info(logger).Log("msg", sig)
-	level.Info(logger).Log("msg", "Shutting Down")
+	level.Debug(logger).Log("msg", sig)
+	level.Debug(logger).Log("msg", "Shutting Down")
 
 	if ctx.Value(cc.AppConfig).(cc.Config).RunMode == "demo" {
 		// demo

@@ -56,7 +56,7 @@ const (
 )
 
 func buildConfigForCLI(log log.Logger) *viper.Viper {
-	level.Info(log).Log("msg", "calling buildConfigForCLI()")
+	level.Debug(log).Log("msg", "calling buildConfigForCLI()")
 
 	var configPath string
 
@@ -106,7 +106,7 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 
 func buildLogger(moduleName string) log.Logger {
 
-	logger := log.NewLogfmtLogger(os.Stderr)
+	logger := log.NewLogfmtLogger(os.Stdout)
 	logger = log.NewSyncLogger(logger)
 	logger = log.With(logger,
 		"module", moduleName,
@@ -146,13 +146,11 @@ func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 }
 
 func BuildRuntimeConfigAndContext(moduleName string) context.Context {
-	var appCtx context.Context
-
 	logger := buildLogger(moduleName)
 	cliConfig := buildConfigForCLI(logger)
-
 	appConfig := buildAppConfig(cliConfig, logger)
-	appCtx = context.Background()
+	appCtx := context.Background()
+
 	appCtx = context.WithValue(appCtx, DbConfig, appConfig.Dbc)
 	appCtx = context.WithValue(appCtx, MqttConfig, appConfig.Mqc)
 

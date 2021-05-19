@@ -71,6 +71,19 @@ type DeviceMessage struct {
 	Value       []byte
 }
 
+/*
+ * Device Management Methods
+ */
+type DeviceEventIntf interface {
+	String() string
+	Schedulable() bool
+	Settable() bool
+	OTAactive() bool
+	Broadcast() bool
+	Parts() []string
+	PartsLen() int
+}
+
 /**
  * buildDeviceMessage()
  *
@@ -273,68 +286,4 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
 	}
 
 	return nil
-}
-
-type DeviceEventIntf interface {
-	String() string
-	Schedulable() bool
-	Settable() bool
-	OTAactive() bool
-	Broadcast() bool
-	Parts() []string
-	PartsLen() int
-}
-
-/*
-   String ToString
-   - utility funciton
-*/
-func (d *DeviceMessage) String() string {
-	level.Debug(dvService.logger).Log("DeviceMessage", "String()")
-	return fmt.Sprintf("id=%06d retained=%-5t device=%-16s node=%-16s property=%-16s pProperty=%-16s attr=%-16s value=%s",
-		d.ID, d.Retained, d.DeviceID, d.NodeID, d.PropertyID, d.PPropertyID, d.AttributeID, d.Value)
-}
-
-// Schedulable()
-func (dm *DeviceMessage) Schedulable() bool {
-	level.Debug(dvService.logger).Log("DeviceMessage", "Schedulable()")
-	res := false
-	for _, keys := range []string{"$state", "$online", "$fw", "$implementation"} {
-		if strings.Contains(dm.Topic, keys) {
-			res = true
-			break
-		}
-	}
-	return res
-}
-
-// Settable() determine is property is settable
-func (dm *DeviceMessage) Settable() bool {
-	level.Debug(dvService.logger).Log("DeviceMessage", "Settable()")
-	return strings.HasSuffix(dm.Topic, "set")
-}
-
-// OTAactive() determines if device is downloading firmware
-func (dm *DeviceMessage) OTAactive() bool {
-	level.Debug(dvService.logger).Log("DeviceMessage", "OTAactive()")
-	return strings.Contains(dm.Topic, "$implementation/ota/status") &&
-		strings.HasPrefix(string(dm.Value), "206")
-}
-
-// Broadcast() determines if this is a Homie Broadcast message
-func (dm *DeviceMessage) Broadcast() bool {
-	level.Debug(dvService.logger).Log("DeviceMessage", "Broadcast()")
-	return dm.Parts()[1] == "$broadcast"
-}
-
-// Parts() returns the individual parts of the original MQTT message
-func (dm *DeviceMessage) Parts() []string {
-	level.Debug(dvService.logger).Log("DeviceMessage", "Parts()")
-	return strings.Split(dm.Topic, "/")
-}
-
-// PartsLen() returns nuber of parts in Topic
-func (dm *DeviceMessage) PartsLen() int {
-	level.Debug(dvService.logger).Log("DeviceMessage", "PartsLen()")
-	return len(dm.Parts())
 }

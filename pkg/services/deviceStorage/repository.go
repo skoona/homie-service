@@ -7,27 +7,28 @@ package deviceStorage
 */
 
 import (
-	"encoding/json"
+	"context"
 	"fmt"
-	"sort"
-	"time"
 
 	bolt "github.com/boltdb/bolt"
 	"github.com/go-kit/kit/log"
-	ds "github.com/skoona/homie-service/pkg/deviceSource"
+	"github.com/go-kit/kit/log/level"
+	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
 )
 
 var dbs dbRepo
 
 type dbRepo struct {
 	db     *bolt.DB
+	ctx    context.Context
 	logger log.Logger
 }
 
-func NewRepo(db *bolt.DB, logger log.Logger) ds.Repositiory {
+func NewRepo(ctx context.Context, db *bolt.DB, log log.Logger) dss.Repositiory {
 	dbs = dbRepo{
 		db:     db,
-		logger: log.With(logger, "pkg", "deviceStorage"),
+		ctx:    ctx,
+		logger: log,
 	}
 
 	return &dbs
@@ -36,12 +37,14 @@ func NewRepo(db *bolt.DB, logger log.Logger) ds.Repositiory {
 /**
  * Store()
  *
+ * Repository Implementation
+ *
  * Save the DeviceMessage to the Store using Devicename/Bucket -> (Topic:value)
  * Save if value > nil,
  * Delete topic if present
  * Deletebucket if no topic exists
  */
-func (dbR *dbRepo) Store(d *ds.DeviceMessage) error {
+func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 	var err error
 	//     0         1           2        3              4
 	// sknSensors/device/node/version: 3.0.0
@@ -67,7 +70,9 @@ func (dbR *dbRepo) Store(d *ds.DeviceMessage) error {
 	//  * homie / device ID / node ID / property ID
 	//				Bucket(Bucket(Bucket(property:value)))
 
-	if nil == d.Value || len(d.Value) == 0 { // Delete Actions
+	level.Debug(dbR.logger).Log("msg", "Calling Store()", "dm", d.String())
+
+	if nil == d.Value || len(d.Value) == 0 { // Create/Update Actions
 		err = dbR.db.Update(func(tx *bolt.Tx) error {
 			var err error
 
@@ -134,7 +139,7 @@ func (dbR *dbRepo) Store(d *ds.DeviceMessage) error {
 			return err
 		})
 
-	} else {
+	} else { // Delete Actions
 		//  * homie / device ID / $device-attribute
 		//              NetworkBucket(Bucket(attribute:value))
 		//  * homie / device ID / node ID / $node-attribute
@@ -195,154 +200,8 @@ func (dbR *dbRepo) Store(d *ds.DeviceMessage) error {
 	}
 
 	if err != nil {
-		log.Printf("[ERROR] Store() --> Update Failed %v, %s\n", err.Error(), d.String())
+		level.Error(dbR.logger).Log("Alert", "Store() Update Failed", "errorMsg", err.Error(), "dm", d.String())
 	}
 
 	return err
-}
-
-/*
- * Returns string array of networks names (top level buckets) */
-func networkList(db *bolt.DB) []string {
-	networks := []string{}
-
-	err := db.View(func(tx *bolt.Tx) error {
-		return tx.ForEach(func(name []byte, _ *bolt.Bucket) error {
-			networks = append(networks, string(name))
-			return nil
-		})
-	})
-	if err != nil {
-		log.Printf("[WARN] Network rendering Failed: %v", err.Error())
-	}
-
-	return networks
-}
-
-/*
- * Returns string array of device names (buckets) */
-func deviceList(db *bolt.DB, networkName string) []string {
-	devices := []string{}
-
-	err := db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(networkName)) // Network Level
-		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", networkName)
-		}
-		return b.ForEach(func(k, v []byte) error {
-			if v == nil { // nodes have nil values
-				devices = append(devices, string(k))
-			}
-			return nil
-		})
-	})
-	if err != nil {
-		log.Printf("[WARN] Network::Device rendering Failed: %v", err.Error())
-	}
-
-	return devices
-}
-
-/*
- * Returns string array a device's properties (topic:value) */
-func deviceDetails(db *bolt.DB, networkName, deviceName string) (map[string]string, []string) {
-	details := map[string]string{}
-
-	db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(networkName)) // Network Level
-		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", networkName)
-		}
-		b = b.Bucket([]byte(deviceName)) // Device Level
-		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", deviceName)
-		}
-
-		err := b.ForEach(func(k, v []byte) error {
-			if nil == v {
-				n := b.Bucket(k) // Node Level
-				if n == nil {
-					return nil
-				}
-
-				err := n.ForEach(func(kk, vv []byte) error {
-					if nil == vv {
-						p := n.Bucket(kk) // Property
-						if p == nil {
-							return nil
-						}
-
-						err := p.ForEach(func(kkk, vvv []byte) error {
-							details["["+string(k)+"]["+string(kk)+"]"+string(kkk)] = string(vvv)
-							return nil
-						})
-
-						return err
-					}
-
-					details["["+string(k)+"]"+string(kk)] = string(vv)
-
-					return nil
-				})
-
-				return err
-
-			}
-
-			details[string(k)] = string(v)
-
-			return nil
-		})
-		if err != nil {
-			err = fmt.Errorf("[WARN] Detailed rendering failed: %v", err.Error())
-		}
-		return err
-	})
-
-	// orderedKeys :=
-	keys := make([]string, 0, len(details))
-	for k, _ := range details {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	return details, keys
-}
-
-/*
- * ListHomieDBCollection
- * List the Devices Found/Recorded
- */
-func listHomieDBCollection(db *bolt.DB) {
-	time.Sleep(1 * time.Second) // slow the pace
-	if networks := networkList(db); len(networks) > 0 {
-		for nets, network := range networks {
-			log.Printf("[%d] Network: %s\n", nets, network)
-			if devices := deviceList(db, network); len(devices) > 0 {
-				for idx, device := range devices {
-					log.Printf("\t[%d] Device: %s\n", idx, device)
-					if detail, orderedKeys := deviceDetails(db, network, device); len(detail) > 0 {
-						for _, k := range orderedKeys {
-							v := detail[k]
-							log.Printf("\t\t %s --> %s\n", k, v)
-						}
-					}
-				}
-			}
-		}
-	}
-}
-
-/*
- * DBStatsAsJSON
- * Outputs boltDB Database Stats
- */
-func DBStatsAsJSON(db *bolt.DB) string {
-	dbs := db.Stats()
-	var res string
-
-	json, _ := json.MarshalIndent(dbs, "", "    ")
-	res = string(json)
-
-	return res
 }
