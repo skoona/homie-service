@@ -58,30 +58,44 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return fmt.Errorf("[WARN] Device Not Found!: %s", d.DeviceID)
 			}
 
-			if len(d.NodeID) == 0 && len(d.AttributeID) > 0 { // device attribute
-				var keyCount, buckets int
-				err = b.ForEach(func(k, v []byte) error {
-					if v != nil && len(v) > 0 {
-						keyCount++
-					}
-					if v == nil {
-						buckets++
-					}
-					return nil
-				})
-				if keyCount > 0 {
-					return b.Delete(d.AttributeID)
-				} else if buckets == 0 { // no more attrs or child buckets
-					return tx.DeleteBucket(d.DeviceID)
-				}
-			}
+			/* Devices */
 
-			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 && len(d.AttributeID) > 0 {
-				b = b.Bucket(d.NodeID)
+			// X/D/A/P/P
+			if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 {
+				b = b.Bucket(d.AttributeID)
+				if b == nil {
+					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
+				}
+				b = b.Bucket(d.PropertyID)
 				if b == nil {
 					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
 				}
 
+				return b.DeleteBucket(d.PPropertyID)
+			}
+
+			// X/D/A/P
+			if len(d.NodeID) == 0 && len(d.PPropertyID) == 0 {
+				b = b.Bucket(d.AttributeID)
+				if b == nil {
+					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
+				}
+				return b.DeleteBucket(d.PropertyID)
+			}
+
+			// X/D/A
+			if len(d.NodeID) == 0 && len(d.PropertyID) == 0 { // X/D/A
+				return b.Delete(d.AttributeID)
+			}
+
+			/* Nodes */
+			b = b.Bucket(d.NodeID)
+			if b == nil {
+				return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
+			}
+
+			// X/D/N/P/A
+			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 && len(d.AttributeID) > 0 {
 				b = b.Bucket(d.PropertyID)
 				if b == nil {
 					return fmt.Errorf("[WARN] Property Not Found!: %s", d.PropertyID)
@@ -90,21 +104,13 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return b.Delete(d.AttributeID)
 			}
 
+			// X/D/N/A
 			if len(d.NodeID) > 0 && len(d.AttributeID) > 0 {
-				b = b.Bucket(d.NodeID)
-				if b == nil {
-					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
-				}
-
 				return b.Delete(d.AttributeID)
 			}
 
+			// X/D/N/P
 			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 {
-				b = b.Bucket(d.NodeID)
-				if b == nil {
-					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
-				}
-
 				return b.DeleteBucket(d.PropertyID)
 			}
 
