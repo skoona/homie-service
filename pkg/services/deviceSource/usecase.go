@@ -7,19 +7,19 @@ package deviceSource
 */
 
 import (
-	"context"
 	"fmt"
 	"strings"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
 type (
 	// Service Implementation
 	deviceSource struct {
 		repository Repositiory
-		ctx        context.Context
+		cfg        cc.Config
 		logger     log.Logger
 	}
 )

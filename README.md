@@ -92,7 +92,7 @@ homiemonitor:
 ```
 Usage of ./program
   -config string
-        path to config file (default "config/live-config.yml")
+        path to config file (default "live-config")
 ```
 
 ### Contributing

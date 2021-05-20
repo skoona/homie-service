@@ -8,8 +8,6 @@ package deviceSource
 */
 
 import (
-	"context"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	cc "github.com/skoona/homie-service/pkg/utils"
@@ -35,10 +33,10 @@ type (
  *
  *  Create a New NewDeviceSourceService and initializes it.
  */
-func NewDeviceSourceService(ctx context.Context, repo Repositiory, logger log.Logger) Service {
+func NewDeviceSourceService(cfg cc.Config, repo Repositiory, logger log.Logger) Service {
 	dvService = deviceSource{
 		repository: repo,
-		ctx:        ctx,
+		cfg:        cfg,
 		logger:     logger,
 	}
 	return &dvService
@@ -58,13 +56,13 @@ func NewDeviceMessage(topic string, payload []byte, idCounter uint16, retained b
  *
  * Initialize this service
  */
-func Start(ctx context.Context, repo Repositiory) (Service, error) {
+func Start(cfg cc.Config, repo Repositiory) (Service, error) {
 	var err error
-	logger := log.With(ctx.Value(cc.AppConfig).(cc.Config).Logger, "pkg", "deviceSource")
+	logger := log.With(cfg.Logger, "pkg", "deviceSource")
 
 	level.Debug(logger).Log("msg", "Calling Start()")
 
-	svc := NewDeviceSourceService(ctx, repo, logger)
+	svc := NewDeviceSourceService(cfg, repo, logger)
 
 	return svc, err
 }

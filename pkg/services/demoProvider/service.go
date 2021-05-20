@@ -9,7 +9,6 @@ package demoProvider
 
 import (
 	"bufio"
-	"context"
 	"os"
 	"strings"
 	"time"
@@ -20,7 +19,7 @@ import (
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
-var ctx context.Context
+var cfg cc.Config
 var deviceService dss.Service
 var logger log.Logger
 
@@ -81,12 +80,12 @@ func produceDeviceMessages(demoFile string, svc dss.Service, logger log.Logger) 
  *
  * Initialize this service
  */
-func Start(contx context.Context, svc dss.Service) error {
+func Start(cfg cc.Config, svc dss.Service) error {
 	var err error
-	ctx = contx
+	cfg = cfg
 	deviceService = svc
-	demoFile := ctx.Value(cc.DbConfig).(cc.DBConfig).DemoSource
-	logger = log.With(ctx.Value(cc.AppConfig).(cc.Config).Logger, "pkg", "demoProvider")
+	demoFile := cfg.Dbc.DemoSource
+	logger = log.With(cfg.Logger, "pkg", "demoProvider")
 	level.Debug(logger).Log("msg", "Calling Start()", "demoFile", demoFile)
 
 	demoCount, err := produceDeviceMessages(demoFile, svc, logger)

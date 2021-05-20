@@ -29,7 +29,6 @@ package main
  */
 
 import (
-	"context"
 	"os"
 	"os/signal"
 	"syscall"
@@ -57,19 +56,19 @@ func shutdownLive() {
 	dds.Stop()
 }
 
-func runLive(ctx context.Context) error {
+func runLive(cfg cc.Config) error {
 	level.Info(logger).Log("msg", "runLive() called")
-	repo, err := dds.Start(ctx)
-	dssService, _ = dss.Start(ctx, repo)
-	mq.Start(ctx, dssService)
+	repo, err := dds.Start(cfg)
+	dssService, _ = dss.Start(cfg, repo)
+	mq.Start(cfg, dssService)
 	return err
 }
 
-func runDemo(ctx context.Context) error {
+func runDemo(cfg cc.Config) error {
 	level.Info(logger).Log("msg", "runDemo() called")
-	repo, err := dds.Start(ctx)
-	dssService, _ = dss.Start(ctx, repo)
-	dp.Start(ctx, dssService)
+	repo, err := dds.Start(cfg)
+	dssService, _ = dss.Start(cfg, repo)
+	dp.Start(cfg, dssService)
 	return err
 }
 
@@ -80,8 +79,8 @@ func main() {
 	// var hns *cl.HomieNetworks
 	var err error
 
-	ctx := cc.BuildRuntimeConfigAndContext("Homie-Service")
-	logger = log.With(ctx.Value(cc.AppConfig).(cc.Config).Logger, "pkg", "main")
+	cfg := cc.BuildRuntimeConfig("Homie-Service")
+	logger = log.With(cfg.Logger, "pkg", "main")
 
 	level.Debug(logger).Log("msg", "service started")
 	defer level.Debug(logger).Log("msg", "service ended")
@@ -91,12 +90,12 @@ func main() {
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
 
 	// Run the App
-	if ctx.Value(cc.AppConfig).(cc.Config).RunMode == "demo" {
+	if cfg.RunMode == "demo" {
 		// demo
-		err = runDemo(ctx)
+		err = runDemo(cfg)
 	} else {
 		// live
-		err = runLive(ctx)
+		err = runLive(cfg)
 	}
 
 	// wait on ctrl-c
@@ -104,7 +103,7 @@ func main() {
 	level.Debug(logger).Log("msg", sig)
 	level.Debug(logger).Log("msg", "Shutting Down")
 
-	if ctx.Value(cc.AppConfig).(cc.Config).RunMode == "demo" {
+	if cfg.RunMode == "demo" {
 		// demo
 		shutdownDemo()
 	} else {

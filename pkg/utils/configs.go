@@ -7,7 +7,6 @@ package configs
 */
 
 import (
-	"context"
 	"flag"
 	"fmt"
 	"os"
@@ -44,15 +43,6 @@ type (
 		Mqc     MQTTConfig
 		Logger  log.Logger
 	}
-)
-
-type contextKey int
-
-const (
-	_ contextKey = iota
-	AppConfig
-	DbConfig
-	MqttConfig
 )
 
 func buildConfigForCLI(log log.Logger) *viper.Viper {
@@ -145,14 +135,10 @@ func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 	}
 }
 
-func BuildRuntimeConfigAndContext(moduleName string) context.Context {
+func BuildRuntimeConfig(moduleName string) Config {
 	logger := buildLogger(moduleName)
 	cliConfig := buildConfigForCLI(logger)
 	appConfig := buildAppConfig(cliConfig, logger)
-	appCtx := context.Background()
 
-	appCtx = context.WithValue(appCtx, DbConfig, appConfig.Dbc)
-	appCtx = context.WithValue(appCtx, MqttConfig, appConfig.Mqc)
-
-	return context.WithValue(appCtx, AppConfig, appConfig)
+	return appConfig
 }

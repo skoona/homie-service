@@ -19,7 +19,6 @@ package liveProvider
 */
 
 import (
-	"context"
 	"fmt"
 	"strings"
 	"time"
@@ -179,9 +178,9 @@ var (
 )
 
 // chan mqtt.Message, chan mqtt.Message, chan stor.DeviceMessage
-func Start(ctx context.Context, svc dss.Service) error {
-	config = ctx.Value(cc.MqttConfig).(cc.MQTTConfig)
-	logger = log.With(ctx.Value(cc.AppConfig).(cc.Config).Logger, "pkg", "liveProvider")
+func Start(cfg cc.Config, svc dss.Service) error {
+	config = cfg.Mqc
+	logger = log.With(cfg.Logger, "pkg", "liveProvider")
 	deviceService = svc
 	var err error
 	level.Debug(logger).Log("msg", "Calling Start()", "broker", config.BrokerIP)
@@ -223,13 +222,13 @@ func Start(ctx context.Context, svc dss.Service) error {
 		}
 	}
 
-	level.Debug(logger).Log("msg", "Start() Completed", "networks discovered", DiscoveredNetworks())
+	level.Debug(logger).Log("msg", "Start() Completed", "networks discovered", nNetworks.GoString())
 	// return mqttChannel, otaRspChannel, publishChannel
 	return err
 }
 
 func Stop() {
-	level.Debug(logger).Log("msg", "Calling Stop()", "known Networks", DiscoveredNetworks())
+	level.Debug(logger).Log("msg", "Calling Stop()", "known Networks", nNetworks.GoString())
 	// Unsubscribe and shutdown cleanly
 	removeSubscriptions()
 

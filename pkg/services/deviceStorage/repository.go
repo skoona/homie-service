@@ -7,7 +7,6 @@ package deviceStorage
 */
 
 import (
-	"context"
 	"fmt"
 
 	bolt "github.com/boltdb/bolt"
@@ -21,14 +20,14 @@ var dbs dbRepo
 
 type dbRepo struct {
 	db     *bolt.DB
-	ctx    context.Context
+	cfg    cc.Config
 	logger log.Logger
 }
 
-func NewRepo(ctx context.Context, db *bolt.DB, log log.Logger) dss.Repositiory {
+func NewRepo(cfg cc.Config, db *bolt.DB, log log.Logger) dss.Repositiory {
 	dbs = dbRepo{
 		db:     db,
-		ctx:    ctx,
+		cfg:    cfg,
 		logger: log,
 	}
 
@@ -39,16 +38,16 @@ func NewRepo(ctx context.Context, db *bolt.DB, log log.Logger) dss.Repositiory {
  * Start
  * Initializes this service
  */
-func Start(ctx context.Context) (dss.Repositiory, error) {
+func Start(cfg cc.Config) (dss.Repositiory, error) {
 	var err error
 	var dataFile string
-	logger := log.With(ctx.Value(cc.AppConfig).(cc.Config).Logger, "pkg", "deviceStorage")
+	logger := log.With(cfg.Logger, "pkg", "deviceStorage")
 	level.Debug(logger).Log("msg", "Calling Start()")
 
 	/*
 	 * Open K/V Store
 	 */
-	dataFile = ctx.Value(cc.DbConfig).(cc.DBConfig).DataStorage
+	dataFile = cfg.Dbc.DataStorage
 	pDB, err := bolt.Open(dataFile, 0764, nil) // &bolt.Options{Timeout: 1 * time.Second, ReadOnly: false})
 	if err != nil {
 		level.Error(logger).Log("msg", "Main bBolt DB Open Failed", "datafile", dataFile)
@@ -56,7 +55,7 @@ func Start(ctx context.Context) (dss.Repositiory, error) {
 		panic(err.Error())
 	}
 
-	repo := NewRepo(ctx, pDB, logger)
+	repo := NewRepo(cfg, pDB, logger)
 
 	// Initialize a Message Channel
 	// dvcSyncChannel = make(chan DeviceMessage, 256)   // averages 120 on startup

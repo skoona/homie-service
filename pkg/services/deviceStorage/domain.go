@@ -26,21 +26,13 @@ import (
  */
 func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 	var err error
-	//     0         1           2        3              4
-	// sknSensors/device/node/version: 3.0.0
-	//  * homie / device ID / $device-attribute
-	//              NetworkBucket(Bucket(topic:value))
-	//  * homie / device ID / node ID / $node-attribute
-	//				NetworkBucket(Bucket(Bucket(topic:value)))
-	//  * homie / device ID / node ID / property ID / $property-attribute
-	//				NetworkBucket(Bucket(Bucket(Bucket(topic:value))))
 
 	//     0         1           2        3              4                         5
 	// sknSensors/device/node/version: 3.0.0
 	//  * homie / device ID / $device-attribute / device-attribute-Property / device-attribute-Property-Property
-	//				Bucket(Bucket(Bucket(property:value)))
+	//				Bucket(Bucket(Bucket(bucket(property:value))))
 	//  * homie / device ID / $device-attribute / device-attribute-Property
-	//				Bucket(Bucket(property:value))
+	//				Bucket(Bucket(bucket(property:value)))
 	//  * homie / device ID / $device-attribute
 	//              Bucket(attribute:value)
 	//  * homie / device ID / node ID / property ID / $property-attribute
@@ -52,7 +44,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 
 	level.Debug(dbR.logger).Log("msg", "Calling Store()", "dm", d.String())
 
-	if nil == d.Value || len(d.Value) == 0 { // Create/Update Actions
+	if nil == d.Value || len(d.Value) == 0 { // Delete actions
 		err = dbR.db.Update(func(tx *bolt.Tx) error {
 			var err error
 
@@ -66,7 +58,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return fmt.Errorf("[WARN] Device Not Found!: %s", d.DeviceID)
 			}
 
-			if len(d.NodeID) == 0 && len(d.PropertyID) == 0 { // device only action
+			if len(d.NodeID) == 0 && len(d.AttributeID) > 0 { // device attribute
 				var keyCount, buckets int
 				err = b.ForEach(func(k, v []byte) error {
 					if v != nil && len(v) > 0 {
@@ -98,7 +90,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return b.Delete(d.AttributeID)
 			}
 
-			if len(d.NodeID) > 0 && len(d.PropertyID) == 0 && len(d.AttributeID) > 0 {
+			if len(d.NodeID) > 0 && len(d.AttributeID) > 0 {
 				b = b.Bucket(d.NodeID)
 				if b == nil {
 					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
@@ -107,7 +99,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return b.Delete(d.AttributeID)
 			}
 
-			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 && len(d.AttributeID) == 0 {
+			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 {
 				b = b.Bucket(d.NodeID)
 				if b == nil {
 					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
@@ -119,15 +111,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			return err
 		})
 
-	} else { // Delete Actions
-		//  * homie / device ID / $device-attribute
-		//              NetworkBucket(Bucket(attribute:value))
-		//  * homie / device ID / node ID / $node-attribute
-		//				NetworkBucket(Bucket(Bucket(attribute:value)))
-		//  * homie / device ID / node ID / property ID / $property-attribute
-		//				NetworkBucket(Bucket(Bucket(Bucket(attribute:value))))
-		//  * homie / device ID / node ID / property ID
-		//				NetworkBucket(Bucket(Bucket(Bucket(property:value))))
+	} else { // Create Actions
 
 		err = dbR.db.Update(func(tx *bolt.Tx) error {
 			b, err := tx.CreateBucketIfNotExists(d.NetworkID)
@@ -140,7 +124,42 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return fmt.Errorf("[WARN] Device cannot be created or found!: %s", d.DeviceID)
 			}
 
-			if len(d.NodeID) == 0 && len(d.PropertyID) == 0 { // device attrs
+			if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 { // device attrs-property-property
+				b, err = b.CreateBucketIfNotExists(d.AttributeID)
+				if err != nil {
+					return fmt.Errorf("[WARN] Attribute cannot be created or found!: %s", d.AttributeID)
+				}
+
+				b, err = b.CreateBucketIfNotExists(d.PropertyID)
+				if err != nil {
+					return fmt.Errorf("[WARN] Property cannot be created or found!: %s", d.PropertyID)
+				}
+
+				b, err = b.CreateBucketIfNotExists(d.PPropertyID)
+				if err != nil {
+					return fmt.Errorf("[WARN] PropertyProperty cannot be created or found!: %s", d.PPropertyID)
+				}
+
+				err = b.Put(d.PPropertyID, d.Value)
+				return err
+			}
+
+			if len(d.NodeID) == 0 && len(d.PropertyID) > 0 { // device attr-property
+				b, err = b.CreateBucketIfNotExists(d.AttributeID)
+				if err != nil {
+					return fmt.Errorf("[WARN] Attribute cannot be created or found!: %s", d.AttributeID)
+				}
+
+				b, err = b.CreateBucketIfNotExists(d.PropertyID)
+				if err != nil {
+					return fmt.Errorf("[WARN] Property cannot be created or found!: %s", d.PropertyID)
+				}
+
+				err = b.Put(d.PropertyID, d.Value)
+				return err
+			}
+
+			if len(d.NodeID) == 0 && len(d.AttributeID) > 0 { // device attrs
 				err = b.Put(d.AttributeID, d.Value)
 				return err
 			}
@@ -152,9 +171,13 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				}
 			}
 
-			if len(d.PropertyID) == 0 && len(d.AttributeID) > 0 { // Node Attr
-				err = b.Put(d.AttributeID, d.Value)
-				return err
+			if len(d.PropertyID) > 0 && len(d.AttributeID) > 0 { // node property attr
+				b, err = b.CreateBucketIfNotExists(d.PropertyID)
+				if err != nil {
+					return fmt.Errorf("[WARN] Property cannot be created or found!: %s", d.PropertyID)
+				}
+
+				return b.Put(d.AttributeID, d.Value)
 			}
 
 			if len(d.PropertyID) > 0 && len(d.AttributeID) == 0 { // Node Property
@@ -166,13 +189,9 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return b.Put(d.PropertyID, d.Value)
 			}
 
-			if len(d.PropertyID) > 0 && len(d.AttributeID) > 0 { // node property attr
-				b, err = b.CreateBucketIfNotExists(d.PropertyID)
-				if err != nil {
-					return fmt.Errorf("[WARN] property cannot be created or found!: %s", d.PropertyID)
-				}
-
-				return b.Put(d.AttributeID, d.Value)
+			if len(d.PropertyID) == 0 && len(d.AttributeID) > 0 { // Node Attr
+				err = b.Put(d.AttributeID, d.Value)
+				return err
 			}
 
 			return err
@@ -180,7 +199,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 	}
 
 	if err != nil {
-		level.Error(dbR.logger).Log("Alert", "Store() Update Failed", "errorMsg", err.Error(), "dm", d.String())
+		level.Error(dbR.logger).Log("Alert", "Store() Update Failed", "error", err.Error(), "dm", d.String())
 	}
 
 	return err
