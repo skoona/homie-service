@@ -64,11 +64,11 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 {
 				b = b.Bucket(d.AttributeID)
 				if b == nil {
-					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
+					return fmt.Errorf("[WARN] Attribute Not Found!: %s", d.AttributeID)
 				}
 				b = b.Bucket(d.PropertyID)
 				if b == nil {
-					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
+					return fmt.Errorf("[WARN] Property Not Found!: %s", d.PropertyID)
 				}
 
 				return b.DeleteBucket(d.PPropertyID)
@@ -78,7 +78,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			if len(d.NodeID) == 0 && len(d.PPropertyID) == 0 {
 				b = b.Bucket(d.AttributeID)
 				if b == nil {
-					return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
+					return fmt.Errorf("[WARN] Atribute Not Found!: %s", d.AttributeID)
 				}
 				return b.DeleteBucket(d.PropertyID)
 			}
@@ -122,7 +122,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 		err = dbR.db.Update(func(tx *bolt.Tx) error {
 			b, err := tx.CreateBucketIfNotExists(d.NetworkID)
 			if err != nil {
-				return fmt.Errorf("[WARN] Device cannot be created or found!: %s", d.DeviceID)
+				return fmt.Errorf("[WARN] Network cannot be created or found!: %s", d.NetworkID)
 			}
 
 			b, err = b.CreateBucketIfNotExists(d.DeviceID)
@@ -175,6 +175,8 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				if err != nil {
 					return fmt.Errorf("[WARN] Node cannot be created or found!: %s", d.NodeID)
 				}
+			} else {
+				return fmt.Errorf("ALERT Unknown(node) Message!: %s", d.String())
 			}
 
 			if len(d.PropertyID) > 0 && len(d.AttributeID) > 0 { // node property attr
@@ -196,8 +198,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			}
 
 			if len(d.PropertyID) == 0 && len(d.AttributeID) > 0 { // Node Attr
-				err = b.Put(d.AttributeID, d.Value)
-				return err
+				return b.Put(d.AttributeID, d.Value)
 			}
 
 			return err
