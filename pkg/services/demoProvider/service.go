@@ -19,9 +19,13 @@ import (
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
-var cfg cc.Config
-var deviceService dss.Service
-var logger log.Logger
+var (
+	cfg           cc.Config
+	deviceService dss.Service
+	logger        log.Logger
+	fromDMService chan dss.DeviceMessage // in
+	toDMService   chan dss.DeviceMessage // out
+)
 
 /**
  * ProduceDeviceMessages
@@ -29,50 +33,50 @@ var logger log.Logger
  * by converting them to DeviceMessages
  * outputs to device channels
  */
-func produceDeviceMessages(demoFile string, svc dss.Service, logger log.Logger) (int, error) {
-	level.Debug(logger).Log("called", "produceDeviceMessages()")
+func produceDeviceMessages(demoFile string, consumer chan dss.DeviceMessage, logger log.Logger) {
+	level.Debug(logger).Log("event", "calling produceDeviceMessages()")
 	/*
 	 * Create a Go Routine for the MQTT Channel to
 	 * convert msgs to DeviceMessages and output to dvcSyncChannels
 	 */
-	// go func(dsChan chan dss.DeviceMessage) {
-	var err error
-	var file *os.File
-	var idx uint16 = 0
-	var dm dss.DeviceMessage
+	go func(dsChan chan dss.DeviceMessage, filepath string, logger log.Logger) {
+		var err error
+		var file *os.File
+		var idx uint16 = 0
+		var dm dss.DeviceMessage
 
-	file, err = os.OpenFile(demoFile, os.O_RDONLY, 0666)
-	if err != nil {
-		return 0, err
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		if err = scanner.Err(); err != nil {
-			continue
-		}
-
-		parts := strings.Split(line, " ")
-		topic := parts[0]
-		payload := strings.Join(parts[1:], " ")
-
-		idx++
-		// dm, err := buildDeviceMessage(topic, []byte(payload), idx, false, 1)
-		dm, err = dss.NewDeviceMessage(topic, []byte(payload), idx, false, 1)
+		file, err = os.OpenFile(filepath, os.O_RDONLY, 0666)
 		if err != nil {
 			level.Error(logger).Log("error", err.Error())
-		} else {
-			// dsChan <- dm // send it to channel
-			svc.ApplyCoreEvent(&dm)
+			panic(err.Error())
 		}
-		time.Sleep(100 * time.Millisecond) // slow the pace
-	}
+		defer file.Close()
 
-	// }(dvcSyncChannel, config)
+		scanner := bufio.NewScanner(file)
+		for scanner.Scan() {
+			line := scanner.Text()
+			if err = scanner.Err(); err != nil {
+				continue
+			}
 
-	return int(idx), nil
+			parts := strings.Split(line, " ")
+			topic := parts[0]
+			payload := strings.Join(parts[1:], " ")
+
+			idx++
+			dm, err = dss.NewDeviceMessage(topic, []byte(payload), idx, false, 1)
+			if err != nil {
+				level.Error(logger).Log("error", err.Error())
+			} else {
+				dsChan <- dm // send it to channel
+			}
+			time.Sleep(100 * time.Millisecond) // slow the pace
+		}
+
+		level.Debug(logger).Log("event", "produceDeviceMessages(gofunc()) completed")
+	}(consumer, demoFile, logger)
+
+	level.Debug(logger).Log("event", "produceDeviceMessages() active")
 }
 
 /*
@@ -80,17 +84,25 @@ func produceDeviceMessages(demoFile string, svc dss.Service, logger log.Logger) 
  *
  * Initialize this service
  */
-func Start(cfg cc.Config, svc dss.Service) error {
+func Start(dfg cc.Config, svc dss.Service) error {
 	var err error
-	cfg = cfg
+	cfg = dfg
 	deviceService = svc
 	demoFile := cfg.Dbc.DemoSource
 	logger = log.With(cfg.Logger, "pkg", "demoProvider")
-	level.Debug(logger).Log("msg", "Calling Start()", "demoFile", demoFile)
+	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile)
 
-	demoCount, err := produceDeviceMessages(demoFile, svc, logger)
+	// Initialize a Message Channel
+	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
+	if err != nil {
+		level.Error(logger).Log("event", "Channels offline", "error", err.Error())
+		panic(err.Error())
+	}
 
-	level.Debug(logger).Log("sent", demoCount)
+	produceDeviceMessages(demoFile, toDMService, logger)
+
+	level.Debug(logger).Log("event", "Start() completed")
+
 	return err
 }
 
@@ -99,6 +111,10 @@ func Start(cfg cc.Config, svc dss.Service) error {
  * Cleans up this service
  */
 func Stop() {
-	level.Debug(logger).Log("msg", "Calling Stop()")
+	level.Debug(logger).Log("event", "Calling Stop()")
+	if nil != toDMService {
+		close(toDMService) // only the send should shutdown channels
+	}
 
+	level.Debug(logger).Log("event", "Stop() completed")
 }

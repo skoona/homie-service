@@ -42,7 +42,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 	//  * homie / device ID / node ID / property ID
 	//				Bucket(Bucket(Bucket(property:value)))
 
-	level.Debug(dbR.logger).Log("msg", "Calling Store()", "dm", d.String())
+	level.Debug(dbR.logger).Log("event", "Calling Store()", "dm", d.String())
 
 	if nil == d.Value || len(d.Value) == 0 { // Delete actions
 		err = dbR.db.Update(func(tx *bolt.Tx) error {

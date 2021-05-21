@@ -58,7 +58,12 @@ var networksHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mess
  */
 var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	// msg.Payload()[0] = byte{0}
-	otaRspChannel <- msg // send it to channel
+	dm, err := dss.NewDeviceMessage(msg.Topic(), msg.Payload(), msg.MessageID(), msg.Retained(), msg.Qos())
+	if err != nil {
+		level.Error(logger).Log("error", err.Error())
+	} else {
+		toOTAService <- dm // send it to channel
+	}
 }
 
 /*
@@ -66,7 +71,12 @@ var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message
  * Default Incoming Message Handler
  */
 var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	mqttChannel <- msg // send it to channel
+	dm, err := dss.NewDeviceMessage(msg.Topic(), msg.Payload(), msg.MessageID(), msg.Retained(), msg.Qos())
+	if err != nil {
+		level.Error(logger).Log("error", err.Error())
+	} else {
+		toDMService <- dm // send it to channel
+	}
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -111,7 +121,7 @@ func ConsumeOTAMessages(network, name string, enabled bool) error {
 	}
 
 	if nil != err {
-		level.Error(logger).Log("msg", "Subscribe Failed", "error", err.Error())
+		level.Error(logger).Log("event", "Subscribe Failed", "error", err.Error())
 	}
 	level.Debug(logger).Log("ConsumeOTAMessages Completed", enabled, "network", network, "name", name)
 
@@ -168,9 +178,10 @@ func removeSubscriptions() error {
 
 var (
 	config         cc.MQTTConfig
-	mqttChannel    chan mqtt.Message      // out
-	otaRspChannel  chan mqtt.Message      // in
-	publishChannel chan dss.DeviceMessage // in
+	fromDMService  chan dss.DeviceMessage // in
+	toDMService    chan dss.DeviceMessage // out
+	toOTAService   chan dss.DeviceMessage // out
+	fromOTAService chan dss.DeviceMessage // in
 	client         mqtt.Client
 	nNetworks      = stringset.New()
 	deviceService  dss.Service
@@ -183,12 +194,7 @@ func Start(cfg cc.Config, svc dss.Service) error {
 	logger = log.With(cfg.Logger, "pkg", "liveProvider")
 	deviceService = svc
 	var err error
-	level.Debug(logger).Log("msg", "Calling Start()", "broker", config.BrokerIP)
-
-	// Initialize a Message Channel
-	mqttChannel = make(chan mqtt.Message, 256)         // averages 120 on startup
-	otaRspChannel = make(chan mqtt.Message, 256)       // averages 120 on startup
-	publishChannel = make(chan dss.DeviceMessage, 256) // averages 120 on startup
+	level.Debug(logger).Log("event", "Calling Start()", "broker", config.BrokerIP)
 
 	/* Initialize MQTT */
 	opts := mqtt.NewClientOptions()
@@ -211,6 +217,20 @@ func Start(cfg cc.Config, svc dss.Service) error {
 		panic(token.Error())
 	}
 
+	// Initialize a Message Channel
+	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
+	if err != nil {
+		level.Error(logger).Log("event", "DM Channels offline", "error", err.Error())
+		client.Disconnect(250)
+		panic(err.Error())
+	}
+	fromOTAService, toOTAService, err = dss.ChannelsForOTAProviders()
+	if err != nil {
+		level.Error(logger).Log("event", "OTA Channels offline", "error", err.Error())
+		client.Disconnect(250)
+		panic(err.Error())
+	}
+
 	// allow for network discovery
 	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
 	for {
@@ -222,21 +242,24 @@ func Start(cfg cc.Config, svc dss.Service) error {
 		}
 	}
 
-	level.Debug(logger).Log("msg", "Start() Completed", "networks discovered", nNetworks.GoString())
-	// return mqttChannel, otaRspChannel, publishChannel
+	level.Debug(logger).Log("event", "Start() Completed", "networks discovered", nNetworks.GoString())
 	return err
 }
 
 func Stop() {
-	level.Debug(logger).Log("msg", "Calling Stop()", "known Networks", nNetworks.GoString())
+	level.Debug(logger).Log("event", "Calling Stop()")
 	// Unsubscribe and shutdown cleanly
 	removeSubscriptions()
 
+	if nil != toDMService {
+		close(toDMService) // only the send should shutdown channels
+	}
+	if nil != toOTAService {
+		close(toOTAService)
+	}
+
 	client.Disconnect(250)
 
-	close(mqttChannel) // close message channel
-	close(otaRspChannel)
-	close(publishChannel)
-
 	time.Sleep(time.Second)
+	level.Debug(logger).Log("event", "Stop() completed")
 }

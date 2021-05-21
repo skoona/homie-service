@@ -43,32 +43,36 @@ import (
 )
 
 func shutdownDemo() {
-	level.Info(logger).Log("msg", "shutdownDemo() called")
+	level.Debug(logger).Log("event", "shutdownDemo() called")
 	dss.Stop()
 	dds.Stop()
 	dp.Stop()
+	level.Debug(logger).Log("event", "shutdownDemo() completed")
 }
 
 func shutdownLive() {
-	level.Info(logger).Log("msg", "shutdownLive() called")
+	level.Debug(logger).Log("event", "shutdownLive() called")
 	mq.Stop()
 	dss.Stop()
 	dds.Stop()
+	level.Debug(logger).Log("event", "shutdownLive() completed")
 }
 
 func runLive(cfg cc.Config) error {
-	level.Info(logger).Log("msg", "runLive() called")
+	level.Debug(logger).Log("event", "runLive() called")
 	repo, err := dds.Start(cfg)
-	dssService, _ = dss.Start(cfg, repo)
+	dssService, err = dss.Start(cfg, repo)
 	mq.Start(cfg, dssService)
+	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
 
 func runDemo(cfg cc.Config) error {
-	level.Info(logger).Log("msg", "runDemo() called")
+	level.Debug(logger).Log("event", "runDemo() called")
 	repo, err := dds.Start(cfg)
-	dssService, _ = dss.Start(cfg, repo)
+	dssService, err = dss.Start(cfg, repo)
 	dp.Start(cfg, dssService)
+	level.Debug(logger).Log("event", "runDemo() completed")
 	return err
 }
 
@@ -82,8 +86,7 @@ func main() {
 	cfg := cc.BuildRuntimeConfig("Homie-Service")
 	logger = log.With(cfg.Logger, "pkg", "main")
 
-	level.Debug(logger).Log("msg", "service started")
-	defer level.Debug(logger).Log("msg", "service ended")
+	level.Debug(logger).Log("event", "service started")
 
 	/* Prepare for clean exit */
 	sigs := make(chan os.Signal, 1)
@@ -97,11 +100,15 @@ func main() {
 		// live
 		err = runLive(cfg)
 	}
+	if err != nil {
+		level.Error(logger).Log("error", err.Error())
+		panic(err.Error())
+	}
 
 	// wait on ctrl-c
 	sig := <-sigs
-	level.Debug(logger).Log("msg", sig)
-	level.Debug(logger).Log("msg", "Shutting Down")
+	level.Debug(logger).Log("event", sig)
+	level.Debug(logger).Log("event", "Shutting Down")
 
 	if cfg.RunMode == "demo" {
 		// demo
@@ -111,13 +118,11 @@ func main() {
 		shutdownLive()
 	}
 
-	// out, err := json.MarshalIndent(hns, "", "  ")
 	if err != nil {
-		level.Error(logger).Log("msg", err.Error())
-	} else {
-		level.Info(logger).Log("DEBUG", "HomieNetworks: --> {JSON}")
+		level.Error(logger).Log("error", err.Error())
 	}
 
-	os.Exit(0)
+	level.Debug(logger).Log("event", "service ended")
 
+	os.Exit(0)
 }

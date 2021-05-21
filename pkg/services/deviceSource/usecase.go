@@ -54,12 +54,8 @@ func (s *deviceSource) ApplyOTAEvent(dm *DeviceMessage) error {
 }
 
 func (s *deviceSource) ApplyDiscoveryEvent(dm *DeviceMessage) error {
+	var err error
 	logger := log.With(s.logger, "method", "ApplyDiscoveryEvent")
-
-	err := s.repository.Store(dm)
-	if err != nil {
-		level.Error(logger).Log("error", err)
-	}
 
 	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 

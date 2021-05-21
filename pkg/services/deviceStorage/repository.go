@@ -42,7 +42,7 @@ func Start(cfg cc.Config) (dss.Repositiory, error) {
 	var err error
 	var dataFile string
 	logger := log.With(cfg.Logger, "pkg", "deviceStorage")
-	level.Debug(logger).Log("msg", "Calling Start()")
+	level.Debug(logger).Log("event", "Calling Start()")
 
 	/*
 	 * Open K/V Store
@@ -50,7 +50,7 @@ func Start(cfg cc.Config) (dss.Repositiory, error) {
 	dataFile = cfg.Dbc.DataStorage
 	pDB, err := bolt.Open(dataFile, 0764, nil) // &bolt.Options{Timeout: 1 * time.Second, ReadOnly: false})
 	if err != nil {
-		level.Error(logger).Log("msg", "Main bBolt DB Open Failed", "datafile", dataFile)
+		level.Error(logger).Log("event", "Main bBolt DB Open Failed", "datafile", dataFile)
 		err = fmt.Errorf("main bBolt DB Open Failed: %v", err.Error())
 		panic(err.Error())
 	}
@@ -69,7 +69,7 @@ func Start(cfg cc.Config) (dss.Repositiory, error) {
  * Cleans up this service
  */
 func Stop() {
-	level.Debug(dbs.logger).Log("msg", "Calling Stop()")
+	level.Debug(dbs.logger).Log("event", "Calling Stop()")
 
 	// Close the Device Channel
 	// close(dvcSyncChannel)

@@ -46,7 +46,7 @@ type (
 )
 
 func buildConfigForCLI(log log.Logger) *viper.Viper {
-	level.Debug(log).Log("msg", "calling buildConfigForCLI()")
+	level.Debug(log).Log("event", "calling buildConfigForCLI()")
 
 	var configPath string
 
@@ -104,13 +104,13 @@ func buildLogger(moduleName string) log.Logger {
 		"caller", log.DefaultCaller,
 	)
 
-	level.Debug(logger).Log("msg", "called buildLogger()")
+	level.Debug(logger).Log("event", "called buildLogger()")
 
 	return logger
 }
 
 func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
-	level.Debug(log).Log("msg", "calling buildAppConfig()")
+	level.Debug(log).Log("event", "calling buildAppConfig()")
 
 	return Config{
 		Title:   cfg.GetString("homiemonitor.title"),
