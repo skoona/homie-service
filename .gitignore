@@ -1,3 +1,4 @@
 ./*.log
 dataDB/live/*
 *.code-workspace
+main
