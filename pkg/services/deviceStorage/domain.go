@@ -50,12 +50,12 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 
 			b := tx.Bucket(d.NetworkID)
 			if b == nil {
-				return fmt.Errorf("[WARN] Network Not Found!: %s", d.NetworkID)
+				return fmt.Errorf("[WARN] Network Not Found!: %s, error: %s", d.NetworkID, err.Error())
 			}
 
 			b = b.Bucket(d.DeviceID)
 			if b == nil {
-				return fmt.Errorf("[WARN] Device Not Found!: %s", d.DeviceID)
+				return fmt.Errorf("[WARN] Device Not Found!: %s, error: %s", d.DeviceID, err.Error())
 			}
 
 			/* Devices */
@@ -64,11 +64,11 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 {
 				b = b.Bucket(d.AttributeID)
 				if b == nil {
-					return fmt.Errorf("[WARN] Attribute Not Found!: %s", d.AttributeID)
+					return fmt.Errorf("[WARN] Attribute Not Found!: %s, error: %s", d.AttributeID, err.Error())
 				}
 				b = b.Bucket(d.PropertyID)
 				if b == nil {
-					return fmt.Errorf("[WARN] Property Not Found!: %s", d.PropertyID)
+					return fmt.Errorf("[WARN] Property Not Found!: %s, error: %s", d.PropertyID, err.Error())
 				}
 
 				return b.DeleteBucket(d.PPropertyID)
@@ -78,7 +78,7 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			if len(d.NodeID) == 0 && len(d.PPropertyID) == 0 {
 				b = b.Bucket(d.AttributeID)
 				if b == nil {
-					return fmt.Errorf("[WARN] Atribute Not Found!: %s", d.AttributeID)
+					return fmt.Errorf("[WARN] Atribute Not Found!: %s, error: %s", d.AttributeID, err.Error())
 				}
 				return b.DeleteBucket(d.PropertyID)
 			}
@@ -91,14 +91,14 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			/* Nodes */
 			b = b.Bucket(d.NodeID)
 			if b == nil {
-				return fmt.Errorf("[WARN] Node Not Found!: %s", d.NodeID)
+				return fmt.Errorf("[WARN] Node Not Found!: %s, error: %s", d.NodeID, err.Error())
 			}
 
 			// X/D/N/P/A
 			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 && len(d.AttributeID) > 0 {
 				b = b.Bucket(d.PropertyID)
 				if b == nil {
-					return fmt.Errorf("[WARN] Property Not Found!: %s", d.PropertyID)
+					return fmt.Errorf("[WARN] Property Not Found!: %s, error: %s", d.PropertyID, err.Error())
 				}
 
 				return b.Delete(d.AttributeID)

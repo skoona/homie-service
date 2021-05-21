@@ -112,20 +112,20 @@ func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained
 		deviceID = []byte(parts[1])
 		propertyID = []byte(parts[3])
 		propertyPropertyID = []byte(parts[4])
-		attributeID = []byte(fmt.Sprintf("a%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
+		attributeID = []byte(fmt.Sprintf("_%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
 		level.Debug(logger).Log("ID", idCounter, "DeviceAttributePropertyProperty", attributeID, "DeviceID", deviceID)
 
 	} else if deviceAttributeProperty(parts) { // look for OTATrigger(bool) on $state = Init
 		typeIntHomie = CoreTypeDeviceAttributeProperty
 		deviceID = []byte(parts[1])
 		propertyID = []byte(parts[3])
-		attributeID = []byte(fmt.Sprintf("a%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
+		attributeID = []byte(fmt.Sprintf("_%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
 		level.Debug(logger).Log("ID", idCounter, "DeviceAttributeProperty", attributeID, "DeviceID", deviceID)
 
 	} else if deviceAttribute(parts) { // look for OTATrigger(bool) on $state = Init
 		typeIntHomie = CoreTypeDeviceAttribute
 		deviceID = []byte(parts[1])
-		attributeID = []byte(fmt.Sprintf("a%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
+		attributeID = []byte(parts[2])
 		level.Debug(logger).Log("ID", idCounter, "DeviceAttribute", attributeID, "DeviceID", deviceID)
 
 	} else if nodeAttribute(parts) {
@@ -264,15 +264,15 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
 	}
 
 	if len(parts) == 5 && strings.HasPrefix(parts[4], "set") { // ignore commands to set properties
-		return fmt.Errorf("Filtering Homie Set commands from: %s", strings.Join(parts[1:], "/"))
+		return fmt.Errorf("filtering Homie Set commands from: %s", strings.Join(parts[1:], "/"))
 	}
 
-	filters := []string{"$implementation/ota/firmware"} // "$implementation/ota/status",
+	filters := []string{"_$implementation/ota/firmware"} // "$implementation/ota/status",
 	source := string(attributeID)
 
 	for _, item := range filters {
 		if item == source {
-			return fmt.Errorf("Filtering Homie Attributes: %s, from: %s", source, strings.Join(parts[1:], "/"))
+			return fmt.Errorf("filtering Homie Attributes: %s, from: %s", source, strings.Join(parts[1:], "/"))
 		}
 	}
 
@@ -280,7 +280,7 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
 		source = strings.Join(parts[2:(len(parts)-1)], "/")
 		for _, item := range filters {
 			if item == source {
-				return fmt.Errorf("Filtering Homie Attributes: %s, from: %s", source, strings.Join(parts[1:], "/"))
+				return fmt.Errorf("filtering Homie Attributes: %s, from: %s", source, strings.Join(parts[1:], "/"))
 			}
 		}
 	}
