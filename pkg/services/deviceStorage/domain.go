@@ -122,28 +122,28 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 		err = dbR.db.Update(func(tx *bolt.Tx) error {
 			b, err := tx.CreateBucketIfNotExists(d.NetworkID)
 			if err != nil {
-				return fmt.Errorf("[WARN] Network cannot be created or found!: %s", d.NetworkID)
+				return fmt.Errorf("[WARN] Network cannot be created or found!: %s, error: %s", d.NetworkID, err.Error())
 			}
 
 			b, err = b.CreateBucketIfNotExists(d.DeviceID)
 			if err != nil {
-				return fmt.Errorf("[WARN] Device cannot be created or found!: %s", d.DeviceID)
+				return fmt.Errorf("[WARN] Device cannot be created or found!: %s, error: %s", d.DeviceID, err.Error())
 			}
 
 			if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 { // device attrs-property-property
 				b, err = b.CreateBucketIfNotExists(d.AttributeID)
 				if err != nil {
-					return fmt.Errorf("[WARN] Attribute cannot be created or found!: %s", d.AttributeID)
+					return fmt.Errorf("[WARN] Attribute(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
 				}
 
 				b, err = b.CreateBucketIfNotExists(d.PropertyID)
 				if err != nil {
-					return fmt.Errorf("[WARN] Property cannot be created or found!: %s", d.PropertyID)
+					return fmt.Errorf("[WARN] Property(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
 				}
 
 				b, err = b.CreateBucketIfNotExists(d.PPropertyID)
 				if err != nil {
-					return fmt.Errorf("[WARN] PropertyProperty cannot be created or found!: %s", d.PPropertyID)
+					return fmt.Errorf("[WARN] PropertyProperty(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PPropertyID, err.Error())
 				}
 
 				err = b.Put(d.PPropertyID, d.Value)
@@ -153,12 +153,12 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 			if len(d.NodeID) == 0 && len(d.PropertyID) > 0 { // device attr-property
 				b, err = b.CreateBucketIfNotExists(d.AttributeID)
 				if err != nil {
-					return fmt.Errorf("[WARN] Attribute cannot be created or found!: %s", d.AttributeID)
+					return fmt.Errorf("[WARN] Attribute(x/d/a/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
 				}
 
 				b, err = b.CreateBucketIfNotExists(d.PropertyID)
 				if err != nil {
-					return fmt.Errorf("[WARN] Property cannot be created or found!: %s", d.PropertyID)
+					return fmt.Errorf("[WARN] Property(x/d/a/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
 				}
 
 				err = b.Put(d.PropertyID, d.Value)
@@ -170,33 +170,37 @@ func (dbR *dbRepo) Store(d *dss.DeviceMessage) error {
 				return err
 			}
 
+			// x/d/n
 			if len(d.NodeID) > 0 {
 				b, err = b.CreateBucketIfNotExists(d.NodeID)
 				if err != nil {
-					return fmt.Errorf("[WARN] Node cannot be created or found!: %s", d.NodeID)
+					return fmt.Errorf("[WARN] Node cannot be created or found!: %s, error: %s", d.NodeID, err.Error())
 				}
 			} else {
-				return fmt.Errorf("ALERT Unknown(node) Message!: %s", d.String())
+				return fmt.Errorf("ALERT Unknown(node) Message!: %s, error: %s", d.String(), err.Error())
 			}
 
+			// x/d/n/p/a
 			if len(d.PropertyID) > 0 && len(d.AttributeID) > 0 { // node property attr
 				b, err = b.CreateBucketIfNotExists(d.PropertyID)
 				if err != nil {
-					return fmt.Errorf("[WARN] Property cannot be created or found!: %s", d.PropertyID)
+					return fmt.Errorf("[WARN] Property(x/d/n/p/a) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
 				}
 
 				return b.Put(d.AttributeID, d.Value)
 			}
 
+			// x/d/n/p
 			if len(d.PropertyID) > 0 && len(d.AttributeID) == 0 { // Node Property
 				b, err = b.CreateBucketIfNotExists(d.PropertyID)
 				if err != nil {
-					return fmt.Errorf("[WARN] property cannot be created or found!: %s", d.PropertyID)
+					return fmt.Errorf("[WARN] Property(x/d/n/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
 				}
 
 				return b.Put(d.PropertyID, d.Value)
 			}
 
+			// x/d/n/a
 			if len(d.PropertyID) == 0 && len(d.AttributeID) > 0 { // Node Attr
 				return b.Put(d.AttributeID, d.Value)
 			}

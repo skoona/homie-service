@@ -28,42 +28,40 @@ type (
 var dvService deviceSource
 
 func (s *deviceSource) ApplyCoreEvent(dm *DeviceMessage) error {
-	var err error
 	logger := log.With(s.logger, "method", "ApplyCoreEvent")
-	err = s.repository.Store(dm)
+
+	err := s.repository.Store(dm)
 	if err != nil {
 		level.Error(logger).Log("error", err)
 	}
 
-	logger.Log("DeviceID ", dm.DeviceID)
+	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }
 
 func (s *deviceSource) ApplyOTAEvent(dm *DeviceMessage) error {
-	var err error
 	logger := log.With(s.logger, "method", "ApplyOTAEvent")
 
-	err = s.repository.Store(dm)
+	err := s.repository.Store(dm)
 	if err != nil {
 		level.Error(logger).Log("error", err)
 	}
 
-	logger.Log("DeviceID ", dm.DeviceID)
+	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }
 
 func (s *deviceSource) ApplyDiscoveryEvent(dm *DeviceMessage) error {
-	var err error
 	logger := log.With(s.logger, "method", "ApplyDiscoveryEvent")
 
-	err = s.repository.Store(dm)
+	err := s.repository.Store(dm)
 	if err != nil {
 		level.Error(logger).Log("error", err)
 	}
 
-	logger.Log("DeviceID ", dm.DeviceID)
+	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }
@@ -73,7 +71,6 @@ func (s *deviceSource) ApplyDiscoveryEvent(dm *DeviceMessage) error {
    - utility funciton
 */
 func (dm *DeviceMessage) String() string {
-	level.Debug(dvService.logger).Log("DeviceMessage", "String()")
 	return fmt.Sprintf("id=%06d retained=%-5t device=%-16s node=%-16s property=%-16s pProperty=%-16s attr=%-16s value=%s",
 		dm.ID, dm.Retained, dm.DeviceID, dm.NodeID, dm.PropertyID, dm.PPropertyID, dm.AttributeID, dm.Value)
 }
