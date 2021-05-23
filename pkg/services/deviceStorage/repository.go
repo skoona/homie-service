@@ -57,10 +57,7 @@ func Start(cfg cc.Config) (dss.Repositiory, error) {
 
 	repo := NewRepo(cfg, pDB, logger)
 
-	// Initialize a Message Channel
-	// dvcSyncChannel = make(chan DeviceMessage, 256)   // averages 120 on startup
-	// coreLogicChannel = make(chan DeviceMessage, 256) // averages 120 on startup
-
+	level.Debug(logger).Log("event", "Start() completed")
 	return repo, nil
 }
 
@@ -69,7 +66,7 @@ func Start(cfg cc.Config) (dss.Repositiory, error) {
  * Cleans up this service
  */
 func Stop() {
-	level.Debug(dbs.logger).Log("event", "Calling Stop()")
+	level.Debug(dbs.logger).Log("event", "calling Stop()")
 
 	// Close the Device Channel
 	// close(dvcSyncChannel)
@@ -84,4 +81,5 @@ func Stop() {
 	}
 
 	dbs.db.Close()
+	level.Debug(dbs.logger).Log("event", "Stop() completed")
 }

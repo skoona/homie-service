@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
@@ -19,14 +20,15 @@ import (
 type (
 	//Incoming Messages
 	Service interface {
-		ApplyCoreEvent(dm *DeviceMessage) error
-		ApplyOTAEvent(dm *DeviceMessage) error
-		ApplyDiscoveryEvent(dm *DeviceMessage) error
+		ApplyCoreEvent(dm *dc.DeviceMessage) error
+		ApplyDMEvent(dm *dc.DeviceMessage) error
+		ApplyOTAEvent(dm *dc.DeviceMessage) error
+		ApplySchedulerEvent(dm *dc.DeviceMessage) error
 	}
 
 	// Device Source Storage Repository
 	Repositiory interface {
-		Store(d *DeviceMessage) error
+		Store(d *dc.DeviceMessage) error
 	}
 )
 
@@ -44,36 +46,133 @@ func NewDeviceSourceService(cfg cc.Config, repo Repositiory, logger log.Logger) 
 	return &dvService
 }
 
-/**
- * NewDeviceMessage()
- *
- *  Create a New DeviceMessage and initializes it.
- */
-func NewDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	return buildDeviceMessage(topic, payload, idCounter, retained, qos)
-}
-
 var (
-	toScheduler   chan DeviceMessage // out
-	fromScheduler chan DeviceMessage // in
+	toScheduler   chan dc.DeviceMessage // out
+	fromScheduler chan dc.DeviceMessage // in
 
-	toProvider   chan DeviceMessage // out
-	fromProvider chan DeviceMessage // in
+	toProvider   chan dc.DeviceMessage // out
+	fromProvider chan dc.DeviceMessage // in
 
-	toOTAProvider   chan DeviceMessage // out
-	fromOTAProvider chan DeviceMessage // in
+	toOTAProvider   chan dc.DeviceMessage // out
+	fromOTAProvider chan dc.DeviceMessage // in
 
-	toCore   chan DeviceMessage // out
-	fromCore chan DeviceMessage // in
+	toCore   chan dc.DeviceMessage // out
+	fromCore chan dc.DeviceMessage // in
 )
 
-func ChannelsForScheduler() (chan DeviceMessage, chan DeviceMessage, error) {
+/**
+ * ConsumeFromCore
+ * Handles incoming channel DM message
+ */
+func ConsumeFromCore(consumer chan dc.DeviceMessage) error {
+	/*
+	 * Create a Go Routine for the Providers Channel to
+	 */
+	go func(dmChan chan dc.DeviceMessage) {
+		level.Debug(dvService.logger).Log("event", "ConsumeFromCore(gofunc) called")
+		for msg := range dmChan { // read until closed
+			err := dvService.ApplyCoreEvent(&msg)
+			if err != nil {
+				level.Error(dvService.logger).Log("method", "ConsumeFromCore(gofunc)", "error", err.Error())
+			}
+
+			level.Debug(dvService.logger).Log("method", "ConsumeFromCore(gofunc)", "queue depth", len(dmChan))
+		}
+		level.Debug(dvService.logger).Log("method", "ConsumeFromCore()", "event", "Completed")
+	}(consumer)
+
+	return nil
+}
+
+/**
+ * ConsumeFromProviders
+ * Handles incoming channel DM message
+ */
+func ConsumeFromDMProviders(consumer chan dc.DeviceMessage) error {
+	/*
+	 * Create a Go Routine for the Providers Channel to
+	 */
+	go func(dmChan chan dc.DeviceMessage) {
+		level.Debug(dvService.logger).Log("event", "ConsumeFromDMProviders(gofunc) called")
+		for msg := range dmChan { // read until closed
+			err := dvService.ApplyDMEvent(&msg)
+			if err != nil {
+				level.Error(dvService.logger).Log("method", "ConsumeFromDMProviders(gofunc)", "error", err.Error())
+			}
+
+			// SHOULD WE SEND TO CORE HERE
+
+			level.Debug(dvService.logger).Log("method", "ConsumeFromDMProviders(gofunc)", "queue depth", len(dmChan))
+		}
+		level.Debug(dvService.logger).Log("method", "ConsumeFromDMProviders()", "event", "Completed")
+	}(consumer)
+
+	return nil
+}
+
+/**
+ * ConsumeFromOTAProviders
+ * Handles incoming channel DM message
+ */
+func ConsumeFromOTAProviders(consumer chan dc.DeviceMessage, publisher chan dc.DeviceMessage) error {
+	/*
+	 * Create a Go Routine for the Providers Channel to
+	 */
+	go func(consumeChan chan dc.DeviceMessage, publishChan chan dc.DeviceMessage) {
+		level.Debug(dvService.logger).Log("event", "ConsumeFromOTAProviders(gofunc) called")
+		for msg := range consumeChan { // read until closed
+			err := dvService.ApplyOTAEvent(&msg)
+			if err != nil {
+				level.Error(dvService.logger).Log("method", "ConsumeFromOTAProviders(gofunc)", "error", err.Error())
+			}
+
+			if nil != publishChan {
+				publishChan <- msg
+			}
+
+			level.Debug(dvService.logger).Log("method", "ConsumeFromOTAProviders(gofunc)", "consume queue depth", len(consumeChan), "publish queue depth", len(publishChan))
+		}
+		level.Debug(dvService.logger).Log("method", "ConsumeFromOTAProviders()", "event", "Completed")
+	}(consumer, publisher)
+
+	return nil
+}
+
+/**
+ * ConsumeFromScheduler
+ * Handles incoming channel DM message
+ */
+func ConsumeFromScheduler(consumer chan dc.DeviceMessage, publisher chan dc.DeviceMessage) error {
+	/*
+	 * Create a Go Routine for the Providers Channel to
+	 */
+	go func(dmChan chan dc.DeviceMessage, otaChan chan dc.DeviceMessage) {
+		level.Debug(dvService.logger).Log("event", "ConsumeFromScheduler(gofunc) called")
+		for msg := range dmChan { // read until closed
+			err := dvService.ApplySchedulerEvent(&msg)
+			if err != nil {
+				level.Error(dvService.logger).Log("method", "ConsumeFromScheduler(gofunc)", "error", err.Error())
+			}
+			if nil != otaChan {
+				otaChan <- msg
+			}
+
+			level.Debug(dvService.logger).Log("method", "ConsumeFromScheduler(gofunc)", "dm queue depth", len(dmChan), "ota queue depth", len(otaChan))
+		}
+		level.Debug(dvService.logger).Log("method", "ConsumeFromScheduler()", "event", "Completed")
+	}(consumer, publisher)
+
+	return nil
+}
+
+func ChannelsForScheduler() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
 	var err error
 	if toScheduler == nil {
-		toScheduler = make(chan DeviceMessage, 256) // averages 120 on startup
+		toScheduler = make(chan dc.DeviceMessage, 256) // averages 120 on startup
 	}
 	if fromScheduler == nil {
-		fromScheduler = make(chan DeviceMessage, 256) // averages 120 on startup
+		fromScheduler = make(chan dc.DeviceMessage, 256) // averages 120 on startup
+		err = ConsumeFromScheduler(fromScheduler, toOTAProvider)
 	}
 
 	if nil == toScheduler || nil == fromScheduler {
@@ -84,13 +183,14 @@ func ChannelsForScheduler() (chan DeviceMessage, chan DeviceMessage, error) {
 
 	return toScheduler, fromScheduler, err
 }
-func ChannelsForOTAProviders() (chan DeviceMessage, chan DeviceMessage, error) {
+func ChannelsForOTAProviders() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
 	var err error
 	if toOTAProvider == nil {
-		toOTAProvider = make(chan DeviceMessage, 256) // averages 120 on startup
+		toOTAProvider = make(chan dc.DeviceMessage, 256) // averages 120 on startup
 	}
 	if fromOTAProvider == nil {
-		fromOTAProvider = make(chan DeviceMessage, 256) // averages 120 on startup
+		fromOTAProvider = make(chan dc.DeviceMessage, 256) // averages 120 on startup
+		err = ConsumeFromOTAProviders(fromOTAProvider, toScheduler)
 	}
 
 	if nil == toOTAProvider || nil == fromOTAProvider {
@@ -101,13 +201,14 @@ func ChannelsForOTAProviders() (chan DeviceMessage, chan DeviceMessage, error) {
 
 	return toOTAProvider, fromOTAProvider, err
 }
-func ChannelsForDMProviders() (chan DeviceMessage, chan DeviceMessage, error) {
+func ChannelsForDMProviders() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
 	var err error
 	if toProvider == nil {
-		toProvider = make(chan DeviceMessage, 256)
+		toProvider = make(chan dc.DeviceMessage, 256)
 	}
 	if fromProvider == nil {
-		fromProvider = make(chan DeviceMessage, 256)
+		fromProvider = make(chan dc.DeviceMessage, 256)
+		err = ConsumeFromDMProviders(fromProvider) // start receiver
 	}
 
 	if nil == toProvider || nil == fromProvider {
@@ -118,14 +219,15 @@ func ChannelsForDMProviders() (chan DeviceMessage, chan DeviceMessage, error) {
 
 	return toProvider, fromProvider, err
 }
-func ChannelsForCore() (chan DeviceMessage, chan DeviceMessage, error) {
+func ChannelsForCore() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
 	var err error
 	if toCore == nil {
-		toCore = make(chan DeviceMessage, 256) // averages 120 on startup
+		toCore = make(chan dc.DeviceMessage, 256) // averages 120 on startup
 	}
 
 	if fromCore == nil {
-		fromCore = make(chan DeviceMessage, 256) // averages 120 on startup
+		fromCore = make(chan dc.DeviceMessage, 256) // averages 120 on startup
+		err = ConsumeFromCore(fromCore)
 	}
 
 	if nil == toCore || nil == fromCore {

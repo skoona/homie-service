@@ -62,7 +62,7 @@ func runLive(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runLive() called")
 	repo, err := dds.Start(cfg)
 	dssService, err = dss.Start(cfg, repo)
-	mq.Start(cfg, dssService)
+	networks, _ := mq.Start(cfg, dssService)
 	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
@@ -71,7 +71,7 @@ func runDemo(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runDemo() called")
 	repo, err := dds.Start(cfg)
 	dssService, err = dss.Start(cfg, repo)
-	dp.Start(cfg, dssService)
+	networks, _ := dp.Start(cfg, dssService)
 	level.Debug(logger).Log("event", "runDemo() completed")
 	return err
 }

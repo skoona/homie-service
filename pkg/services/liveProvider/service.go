@@ -27,6 +27,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	stringset "github.com/jjeffery/stringset"
+	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
 	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
@@ -58,12 +59,12 @@ var networksHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mess
  */
 var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	// msg.Payload()[0] = byte{0}
-	dm, err := dss.NewDeviceMessage(msg.Topic(), msg.Payload(), msg.MessageID(), msg.Retained(), msg.Qos())
+	dm, err := dc.NewQueueMessage(msg)
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
-	} else {
-		toOTAService <- dm // send it to channel
+		return
 	}
+	toOTAService <- dm // send it to channel
 }
 
 /*
@@ -71,12 +72,12 @@ var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message
  * Default Incoming Message Handler
  */
 var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	dm, err := dss.NewDeviceMessage(msg.Topic(), msg.Payload(), msg.MessageID(), msg.Retained(), msg.Qos())
+	dm, err := dc.NewQueueMessage(msg)
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
-	} else {
-		toDMService <- dm // send it to channel
+		return
 	}
+	toDMService <- dm // send it to channel
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -178,10 +179,10 @@ func removeSubscriptions() error {
 
 var (
 	config         cc.MQTTConfig
-	fromDMService  chan dss.DeviceMessage // in
-	toDMService    chan dss.DeviceMessage // out
-	toOTAService   chan dss.DeviceMessage // out
-	fromOTAService chan dss.DeviceMessage // in
+	fromDMService  chan dc.DeviceMessage // in
+	toDMService    chan dc.DeviceMessage // out
+	toOTAService   chan dc.DeviceMessage // out
+	fromOTAService chan dc.DeviceMessage // in
 	client         mqtt.Client
 	nNetworks      = stringset.New()
 	deviceService  dss.Service
@@ -189,7 +190,7 @@ var (
 )
 
 // chan mqtt.Message, chan mqtt.Message, chan stor.DeviceMessage
-func Start(cfg cc.Config, svc dss.Service) error {
+func Start(cfg cc.Config, svc dss.Service) ([]string, error) {
 	config = cfg.Mqc
 	logger = log.With(cfg.Logger, "pkg", "liveProvider")
 	deviceService = svc
@@ -217,6 +218,17 @@ func Start(cfg cc.Config, svc dss.Service) error {
 		panic(token.Error())
 	}
 
+	// allow for network discovery
+	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
+	for {
+		time.Sleep(2 * time.Second) // delay long enough to collect networks
+		if len(DiscoveredNetworks()) >= 1 {
+			token := client.Unsubscribe(config.DiscoveryTopic)
+			token.Wait()
+			break
+		}
+	}
+
 	// Initialize a Message Channel
 	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
 	if err != nil {
@@ -231,19 +243,10 @@ func Start(cfg cc.Config, svc dss.Service) error {
 		panic(err.Error())
 	}
 
-	// allow for network discovery
-	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
-	for {
-		time.Sleep(2 * time.Second) // delay long enough to collect networks
-		if len(DiscoveredNetworks()) >= 1 {
-			token := client.Unsubscribe(config.DiscoveryTopic)
-			token.Wait()
-			break
-		}
-	}
+	ProduceMQTTMessages()
 
 	level.Debug(logger).Log("event", "Start() Completed", "networks discovered", nNetworks.GoString())
-	return err
+	return DiscoveredNetworks(), err
 }
 
 func Stop() {

@@ -19,8 +19,9 @@ import (
 
 type (
 	DBConfig struct {
-		DemoSource  string
-		DataStorage string
+		DemoSource   string
+		DataStorage  string
+		DemoNetworks []string
 	}
 
 	MQTTConfig struct {
@@ -61,6 +62,8 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 	config.SetConfigType("yaml")                     // REQUIRED if the config file does not have the extension in the name
 	config.AddConfigPath("./config/")                // path to look for the config file in
 	config.AddConfigPath(".")                        // path to look for the config file in
+
+	config.SetDefault("homiemonitor.datasources.demoNetworks", []string{"sknSensors"})
 
 	config.SetDefault("homiemonitor.mqtt.homiesubscriptiontopic", "sknSensors/#")
 	config.SetDefault("homiemonitor.mqtt.homiediscoverytopic", "+/+/$name")

@@ -15,6 +15,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
 	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
@@ -23,8 +24,8 @@ var (
 	cfg           cc.Config
 	deviceService dss.Service
 	logger        log.Logger
-	fromDMService chan dss.DeviceMessage // in
-	toDMService   chan dss.DeviceMessage // out
+	fromDMService chan dc.DeviceMessage // in
+	toDMService   chan dc.DeviceMessage // out
 )
 
 /**
@@ -33,17 +34,17 @@ var (
  * by converting them to DeviceMessages
  * outputs to device channels
  */
-func produceDeviceMessages(demoFile string, consumer chan dss.DeviceMessage, logger log.Logger) {
+func produceDeviceMessages(demoFile string, consumer chan dc.DeviceMessage, logger log.Logger) {
 	level.Debug(logger).Log("event", "calling produceDeviceMessages()")
 	/*
 	 * Create a Go Routine for the MQTT Channel to
 	 * convert msgs to DeviceMessages and output to dvcSyncChannels
 	 */
-	go func(dsChan chan dss.DeviceMessage, filepath string, logger log.Logger) {
+	go func(dsChan chan dc.DeviceMessage, filepath string, logger log.Logger) {
 		var err error
 		var file *os.File
 		var idx uint16 = 0
-		var dm dss.DeviceMessage
+		var dm dc.DeviceMessage
 
 		file, err = os.OpenFile(filepath, os.O_RDONLY, 0666)
 		if err != nil {
@@ -64,7 +65,7 @@ func produceDeviceMessages(demoFile string, consumer chan dss.DeviceMessage, log
 			payload := strings.Join(parts[1:], " ")
 
 			idx++
-			dm, err = dss.NewDeviceMessage(topic, []byte(payload), idx, false, 1)
+			dm, err = dc.NewDeviceMessage(topic, []byte(payload), idx, false, 1)
 			if err != nil {
 				level.Error(logger).Log("error", err.Error())
 			} else {
@@ -84,13 +85,13 @@ func produceDeviceMessages(demoFile string, consumer chan dss.DeviceMessage, log
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, svc dss.Service) error {
+func Start(dfg cc.Config, svc dss.Service) ([]string, error) {
 	var err error
 	cfg = dfg
 	deviceService = svc
 	demoFile := cfg.Dbc.DemoSource
 	logger = log.With(cfg.Logger, "pkg", "demoProvider")
-	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile)
+	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", dfg.Dbc.DemoNetworks)
 
 	// Initialize a Message Channel
 	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
@@ -103,7 +104,7 @@ func Start(dfg cc.Config, svc dss.Service) error {
 
 	level.Debug(logger).Log("event", "Start() completed")
 
-	return err
+	return dfg.Dbc.DemoNetworks, err
 }
 
 /*

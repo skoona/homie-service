@@ -8,7 +8,10 @@ homiemonitor:
   datasources: 
     demoSource: ./dataDB/demo/homiedemo.log
     dataStorage: ./dataDB/live/devices.db
-  
+    demoNetworks:
+    - sknSensors
+    - homie
+
 
 
 
