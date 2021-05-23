@@ -3,7 +3,7 @@ package deviceScheduler
 import (
 	"time"
 
-	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
+	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
 
 /**

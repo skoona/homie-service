@@ -35,11 +35,11 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	dp "github.com/skoona/homie-service/pkg/services/demoProvider"
-	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
-	dds "github.com/skoona/homie-service/pkg/services/deviceStorage"
-	mq "github.com/skoona/homie-service/pkg/services/liveProvider"
-	cc "github.com/skoona/homie-service/pkg/utils"
+	dp "github.com/skoona/homie-service/internal/demoProvider"
+	dss "github.com/skoona/homie-service/internal/deviceSource"
+	dds "github.com/skoona/homie-service/internal/deviceStorage"
+	mq "github.com/skoona/homie-service/internal/mqttProvider"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 func shutdownDemo() {
@@ -87,10 +87,7 @@ func main() {
 	logger = log.With(cfg.Logger, "pkg", "main")
 
 	level.Debug(logger).Log("event", "service started")
-
-	/* Prepare for clean exit */
-	sigs := make(chan os.Signal, 1)
-	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
+	defer level.Debug(logger).Log("event", "service ended")
 
 	// Run the App
 	if cfg.RunMode == "demo" {
@@ -105,8 +102,10 @@ func main() {
 		panic(err.Error())
 	}
 
-	// wait on ctrl-c
-	sig := <-sigs
+	/* Prepare for clean exit */
+	systemSignalChannel := make(chan os.Signal, 1)
+	signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
+	sig := <-systemSignalChannel // wait on ctrl-c
 	level.Debug(logger).Log("event", sig)
 	level.Debug(logger).Log("event", "Shutting Down")
 
@@ -121,8 +120,6 @@ func main() {
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
 	}
-
-	level.Debug(logger).Log("event", "service ended")
 
 	os.Exit(0)
 }

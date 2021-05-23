@@ -5,7 +5,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 
 	"github.com/google/uuid"
-	cc "github.com/skoona/homie-service/pkg/utils"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 /*

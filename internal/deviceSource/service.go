@@ -12,8 +12,8 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
-	cc "github.com/skoona/homie-service/pkg/utils"
+	dc "github.com/skoona/homie-service/internal/deviceCore"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 // Message Interface for MQTT and Demo

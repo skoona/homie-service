@@ -14,7 +14,7 @@ import (
 	"io/ioutil"
 	"log"
 	"strings"
-	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
+	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
 
 

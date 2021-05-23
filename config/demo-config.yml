@@ -6,8 +6,8 @@ homiemonitor:
   version: 0.4.0
 
   datasources: 
-    demoSource: ./dataDB/demo/homiedemo.log
-    dataStorage: ./dataDB/live/devices.db
+    dataStorage: ./dataDB/dataDir/devices.db
+    demoSource: ./dataDB/demoData/mosquitto.log
     demoNetworks:
     - sknSensors
     - homie

@@ -1,7 +1,7 @@
-package liveProvider
+package mqttProvider
 
 /**
-  liveProvider/service.go:
+  mqttProvider/service.go:
 
   Generate MQTT DeviceMessages
 
@@ -27,9 +27,9 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	stringset "github.com/jjeffery/stringset"
-	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
-	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
-	cc "github.com/skoona/homie-service/pkg/utils"
+	dc "github.com/skoona/homie-service/internal/deviceCore"
+	dss "github.com/skoona/homie-service/internal/deviceSource"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 /*
@@ -192,7 +192,7 @@ var (
 // chan mqtt.Message, chan mqtt.Message, chan stor.DeviceMessage
 func Start(cfg cc.Config, svc dss.Service) ([]string, error) {
 	config = cfg.Mqc
-	logger = log.With(cfg.Logger, "pkg", "liveProvider")
+	logger = log.With(cfg.Logger, "pkg", "mqttProvider")
 	deviceService = svc
 	var err error
 	level.Debug(logger).Log("event", "Calling Start()", "broker", config.BrokerIP)

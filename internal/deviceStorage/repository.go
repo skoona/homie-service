@@ -12,8 +12,8 @@ import (
 	bolt "github.com/boltdb/bolt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
-	cc "github.com/skoona/homie-service/pkg/utils"
+	dss "github.com/skoona/homie-service/internal/deviceSource"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 var dbs dbRepo

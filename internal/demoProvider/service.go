@@ -15,9 +15,9 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	dc "github.com/skoona/homie-service/pkg/services/deviceCore"
-	dss "github.com/skoona/homie-service/pkg/services/deviceSource"
-	cc "github.com/skoona/homie-service/pkg/utils"
+	dc "github.com/skoona/homie-service/internal/deviceCore"
+	dss "github.com/skoona/homie-service/internal/deviceSource"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 var (

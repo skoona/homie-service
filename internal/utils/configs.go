@@ -53,7 +53,7 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 
 	config := viper.New()
 
-	flag.StringVar(&configPath, "config", "config/live-config.yml", "path to config file")
+	flag.StringVar(&configPath, "config", "config/mqtt-config.yml", "path to config file")
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	config.BindPFlags(pflag.CommandLine)
