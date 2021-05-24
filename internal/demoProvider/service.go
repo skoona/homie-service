@@ -9,6 +9,7 @@ package demoProvider
 
 import (
 	"bufio"
+	"fmt"
 	"os"
 	"strings"
 	"time"
@@ -22,7 +23,6 @@ import (
 
 var (
 	cfg           cc.Config
-	deviceService dss.Service
 	logger        log.Logger
 	fromDMService chan dc.DeviceMessage // in
 	toDMService   chan dc.DeviceMessage // out
@@ -85,13 +85,15 @@ func produceDeviceMessages(demoFile string, consumer chan dc.DeviceMessage, logg
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, svc dss.Service) ([]string, error) {
+func Start() error {
 	var err error
-	cfg = dfg
-	deviceService = svc
+	// ensure Initialize() is called first
+	if logger == nil {
+		panic(fmt.Errorf("you must call Initialize() in this package before calling Start()"))
+	}
+
 	demoFile := cfg.Dbc.DemoSource
-	logger = log.With(cfg.Logger, "pkg", "demoProvider")
-	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", dfg.Dbc.DemoNetworks)
+	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", cfg.Dbc.DemoNetworks)
 
 	// Initialize a Message Channel
 	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
@@ -104,6 +106,21 @@ func Start(dfg cc.Config, svc dss.Service) ([]string, error) {
 
 	level.Debug(logger).Log("event", "Start() completed")
 
+	return err
+}
+
+/*
+ * Initialize()
+ *
+ * Initialize this service
+ */
+func Initialize(dfg cc.Config) ([]string, error) {
+	var err error
+	cfg = dfg
+	logger = log.With(cfg.Logger, "pkg", "demoProvider")
+	level.Debug(logger).Log("event", "calling Initialize()")
+
+	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", cfg.Dbc.DemoNetworks)
 	return dfg.Dbc.DemoNetworks, err
 }
 

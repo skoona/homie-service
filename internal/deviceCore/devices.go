@@ -8,15 +8,6 @@ The design goal for this file is:
 
 */
 
-// Network contains all known devices in application
-type Network struct {
-	ID          EID
-	Title       string
-	ElementType CoreType // network name
-	Name        string   // any
-	Devices     map[string]Device
-}
-
 // Device represent a physical device
 type Device struct {
 	ID          EID
@@ -215,17 +206,4 @@ func NewDeviceNodePropertyAttribute(parent, name, value string) (DeviceNodePrope
 		Name:        name,
 		Value:       value,
 	}, nil
-}
-
-// EntityFinder finder utility for Networks
-// based on Network Entity
-type EntityFinder interface {
-	FindOrCreateDeviceAttributePropertyProperty(deviceName, AttributeName, propertyName, pPropertyName string) *DeviceAttributePropertyProperty
-	FindOrCreateDeviceAttributeProperty(deviceName, AttributeName, propertyName string) *DeviceAttributeProperty
-	FindOrCreateDeviceAttribute(deviceName, attributeName string) *DeviceAttribute
-	FindOrCreateDevice(deviceName string) *Device
-	FindOrCreateDeviceNodePropertyAttribute(deviceName, nodeName, propertyName string) *DeviceNodeProperty
-	FindOrCreateDeviceNodeProperty(deviceName, nodeName, propertyName string) *DeviceNodeProperty
-	FindOrCreateDeviceNodeAttribute(deviceName, nodeName, propertyName string) *DeviceNodeProperty
-	FindOrCreateDeviceNode(deviceName, nodeName string) *DeviceNode
 }

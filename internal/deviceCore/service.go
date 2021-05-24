@@ -19,11 +19,23 @@ import (
 
 type (
 	Service interface {
-		EventHandler
+		ApplyEvent(dm *DeviceMessage) error
+	}
+
+	DeviceSourceInteractor interface {
+		CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error)
+		CreateQueueDeviceMessage(qmsg QueueMessage) (DeviceMessage, error)
+		GetCoreRequestChannel() (chan DeviceMessage, error)
+		GetCoreResponseChannel() (chan DeviceMessage, error)
 	}
 
 	// Service Implementation
 	coreService struct {
+		cfg    cc.Config
+		logger log.Logger
+	}
+
+	coreDeviceSourceService struct {
 		cfg    cc.Config
 		logger log.Logger
 	}
@@ -43,6 +55,19 @@ func NewCoreService(dfg cc.Config) Service {
 		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreService"),
 	}
 	return &em
+}
+
+/**
+ * NewCoreDeviceSourceService()
+ *
+ *  Create a New NewCoreService and initializes it.
+ */
+func NewCoreDeviceSourceService(dfg cc.Config) DeviceSourceInteractor {
+	cdss = coreDeviceSourceService{
+		cfg:    dfg,
+		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreDeviceSourceService"),
+	}
+	return &cdss
 }
 
 /**
@@ -74,19 +99,27 @@ func NewEID() EID {
  *
  * Initialize this service
  */
-func Start(dfg cc.Config) (*Service, error) {
+func Start(dfg cc.Config, discoveredNetworks []string) (*DeviceSourceInteractor, error) {
 	var err error
 
-	svc := NewCoreService(dfg)
+	// Initialze networks
+	NewSiteNetworks("Skoona Consulting",
+		"Homie Monitor (GOLANG)",
+		discoveredNetworks,
+		[]Firmware{},
+		map[string]Schedule{})
 
-	level.Debug(em.logger).Log("event", "Calling Start()")
+	// svc := NewCoreService(dfg)
+	svc := NewCoreDeviceSourceService(dfg)
+
+	level.Debug(cdss.logger).Log("event", "Calling Start()")
 
 	// if err != nil {
 	// 	level.Error(logger).Log("event", "Channels offline", "error", err.Error())
 	// 	panic(err.Error())
 	// }
 
-	level.Debug(em.logger).Log("event", "Start() completed")
+	level.Debug(cdss.logger).Log("event", "Start() completed")
 
 	return &svc, err
 }
@@ -97,6 +130,8 @@ func Start(dfg cc.Config) (*Service, error) {
  */
 func Stop() {
 	level.Debug(em.logger).Log("event", "Calling Stop()")
-
+	if toDeviceSource != nil {
+		close(toDeviceSource)
+	}
 	level.Debug(em.logger).Log("event", "Stop() completed")
 }

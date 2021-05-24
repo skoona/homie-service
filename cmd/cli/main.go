@@ -36,6 +36,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dp "github.com/skoona/homie-service/internal/demoProvider"
+	dc "github.com/skoona/homie-service/internal/deviceCore"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
 	dds "github.com/skoona/homie-service/internal/deviceStorage"
 	mq "github.com/skoona/homie-service/internal/mqttProvider"
@@ -44,9 +45,10 @@ import (
 
 func shutdownDemo() {
 	level.Debug(logger).Log("event", "shutdownDemo() called")
+	dp.Stop()
 	dss.Stop()
 	dds.Stop()
-	dp.Stop()
+	dc.Stop()
 	level.Debug(logger).Log("event", "shutdownDemo() completed")
 }
 
@@ -55,23 +57,28 @@ func shutdownLive() {
 	mq.Stop()
 	dss.Stop()
 	dds.Stop()
+	dc.Stop()
 	level.Debug(logger).Log("event", "shutdownLive() completed")
 }
 
 func runLive(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runLive() called")
+	networks, _ := mq.Initialize(cfg)
+	coreSvc, _ := dc.Start(cfg, networks)
 	repo, err := dds.Start(cfg)
-	dssService, err = dss.Start(cfg, repo)
-	networks, _ := mq.Start(cfg, dssService)
+	dssService, err = dss.Start(cfg, repo, coreSvc) // needs coreSvc
+	err = mq.Start()
 	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
 
 func runDemo(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runDemo() called")
+	networks, _ := dp.Initialize(cfg)
+	coreSvc, _ := dc.Start(cfg, networks)
 	repo, err := dds.Start(cfg)
-	dssService, err = dss.Start(cfg, repo)
-	networks, _ := dp.Start(cfg, dssService)
+	dssService, err = dss.Start(cfg, repo, coreSvc) // needs coreSvc
+	err = dp.Start()
 	level.Debug(logger).Log("event", "runDemo() completed")
 	return err
 }

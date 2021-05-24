@@ -37,9 +37,10 @@ type (
  *
  *  Create a New NewDeviceSourceService and initializes it.
  */
-func NewDeviceSourceService(cfg cc.Config, repo Repositiory, logger log.Logger) Service {
+func NewDeviceSourceService(cfg cc.Config, repo Repositiory, coreSvc dc.DeviceSourceInteractor, logger log.Logger) Service {
 	dvService = deviceSource{
 		repository: repo,
+		coreSvc:    coreSvc,
 		cfg:        cfg,
 		logger:     logger,
 	}
@@ -69,16 +70,16 @@ func ConsumeFromCore(consumer chan dc.DeviceMessage) error {
 	 * Create a Go Routine for the Providers Channel to
 	 */
 	go func(dmChan chan dc.DeviceMessage) {
-		level.Debug(dvService.logger).Log("event", "ConsumeFromCore(gofunc) called")
+		level.Debug(logger).Log("event", "ConsumeFromCore(gofunc) called")
 		for msg := range dmChan { // read until closed
 			err := dvService.ApplyCoreEvent(&msg)
 			if err != nil {
-				level.Error(dvService.logger).Log("method", "ConsumeFromCore(gofunc)", "error", err.Error())
+				level.Error(logger).Log("method", "ConsumeFromCore(gofunc)", "error", err.Error())
 			}
 
-			level.Debug(dvService.logger).Log("method", "ConsumeFromCore(gofunc)", "queue depth", len(dmChan))
+			level.Debug(logger).Log("method", "ConsumeFromCore(gofunc)", "queue depth", len(dmChan))
 		}
-		level.Debug(dvService.logger).Log("method", "ConsumeFromCore()", "event", "Completed")
+		level.Debug(logger).Log("method", "ConsumeFromCore()", "event", "Completed")
 	}(consumer)
 
 	return nil
@@ -93,18 +94,18 @@ func ConsumeFromDMProviders(consumer chan dc.DeviceMessage) error {
 	 * Create a Go Routine for the Providers Channel to
 	 */
 	go func(dmChan chan dc.DeviceMessage) {
-		level.Debug(dvService.logger).Log("event", "ConsumeFromDMProviders(gofunc) called")
+		level.Debug(logger).Log("event", "ConsumeFromDMProviders(gofunc) called")
 		for msg := range dmChan { // read until closed
 			err := dvService.ApplyDMEvent(&msg)
 			if err != nil {
-				level.Error(dvService.logger).Log("method", "ConsumeFromDMProviders(gofunc)", "error", err.Error())
+				level.Error(logger).Log("method", "ConsumeFromDMProviders(gofunc)", "error", err.Error())
 			}
 
 			// SHOULD WE SEND TO CORE HERE
 
-			level.Debug(dvService.logger).Log("method", "ConsumeFromDMProviders(gofunc)", "queue depth", len(dmChan))
+			level.Debug(logger).Log("method", "ConsumeFromDMProviders(gofunc)", "queue depth", len(dmChan))
 		}
-		level.Debug(dvService.logger).Log("method", "ConsumeFromDMProviders()", "event", "Completed")
+		level.Debug(logger).Log("method", "ConsumeFromDMProviders()", "event", "Completed")
 	}(consumer)
 
 	return nil
@@ -119,20 +120,20 @@ func ConsumeFromOTAProviders(consumer chan dc.DeviceMessage, publisher chan dc.D
 	 * Create a Go Routine for the Providers Channel to
 	 */
 	go func(consumeChan chan dc.DeviceMessage, publishChan chan dc.DeviceMessage) {
-		level.Debug(dvService.logger).Log("event", "ConsumeFromOTAProviders(gofunc) called")
+		level.Debug(logger).Log("event", "ConsumeFromOTAProviders(gofunc) called")
 		for msg := range consumeChan { // read until closed
 			err := dvService.ApplyOTAEvent(&msg)
 			if err != nil {
-				level.Error(dvService.logger).Log("method", "ConsumeFromOTAProviders(gofunc)", "error", err.Error())
+				level.Error(logger).Log("method", "ConsumeFromOTAProviders(gofunc)", "error", err.Error())
 			}
 
 			if nil != publishChan {
 				publishChan <- msg
 			}
 
-			level.Debug(dvService.logger).Log("method", "ConsumeFromOTAProviders(gofunc)", "consume queue depth", len(consumeChan), "publish queue depth", len(publishChan))
+			level.Debug(logger).Log("method", "ConsumeFromOTAProviders(gofunc)", "consume queue depth", len(consumeChan), "publish queue depth", len(publishChan))
 		}
-		level.Debug(dvService.logger).Log("method", "ConsumeFromOTAProviders()", "event", "Completed")
+		level.Debug(logger).Log("method", "ConsumeFromOTAProviders()", "event", "Completed")
 	}(consumer, publisher)
 
 	return nil
@@ -147,19 +148,19 @@ func ConsumeFromScheduler(consumer chan dc.DeviceMessage, publisher chan dc.Devi
 	 * Create a Go Routine for the Providers Channel to
 	 */
 	go func(dmChan chan dc.DeviceMessage, otaChan chan dc.DeviceMessage) {
-		level.Debug(dvService.logger).Log("event", "ConsumeFromScheduler(gofunc) called")
+		level.Debug(logger).Log("event", "ConsumeFromScheduler(gofunc) called")
 		for msg := range dmChan { // read until closed
 			err := dvService.ApplySchedulerEvent(&msg)
 			if err != nil {
-				level.Error(dvService.logger).Log("method", "ConsumeFromScheduler(gofunc)", "error", err.Error())
+				level.Error(logger).Log("method", "ConsumeFromScheduler(gofunc)", "error", err.Error())
 			}
 			if nil != otaChan {
 				otaChan <- msg
 			}
 
-			level.Debug(dvService.logger).Log("method", "ConsumeFromScheduler(gofunc)", "dm queue depth", len(dmChan), "ota queue depth", len(otaChan))
+			level.Debug(logger).Log("method", "ConsumeFromScheduler(gofunc)", "dm queue depth", len(dmChan), "ota queue depth", len(otaChan))
 		}
-		level.Debug(dvService.logger).Log("method", "ConsumeFromScheduler()", "event", "Completed")
+		level.Debug(logger).Log("method", "ConsumeFromScheduler()", "event", "Completed")
 	}(consumer, publisher)
 
 	return nil
@@ -177,7 +178,7 @@ func ChannelsForScheduler() (chan dc.DeviceMessage, chan dc.DeviceMessage, error
 
 	if nil == toScheduler || nil == fromScheduler {
 		err = errors.New("create scheduler channels failed")
-		level.Error(dvService.logger).Log("error", err.Error())
+		level.Error(logger).Log("error", err.Error())
 		return nil, nil, err
 	}
 
@@ -195,7 +196,7 @@ func ChannelsForOTAProviders() (chan dc.DeviceMessage, chan dc.DeviceMessage, er
 
 	if nil == toOTAProvider || nil == fromOTAProvider {
 		err = errors.New("create ota channels failed")
-		level.Error(dvService.logger).Log("error", err.Error())
+		level.Error(logger).Log("error", err.Error())
 		return nil, nil, err
 	}
 
@@ -213,7 +214,7 @@ func ChannelsForDMProviders() (chan dc.DeviceMessage, chan dc.DeviceMessage, err
 
 	if nil == toProvider || nil == fromProvider {
 		err = errors.New("create provider channels failed")
-		level.Error(dvService.logger).Log("error", err.Error())
+		level.Error(logger).Log("error", err.Error())
 		return nil, nil, err
 	}
 
@@ -222,17 +223,17 @@ func ChannelsForDMProviders() (chan dc.DeviceMessage, chan dc.DeviceMessage, err
 func ChannelsForCore() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
 	var err error
 	if toCore == nil {
-		toCore = make(chan dc.DeviceMessage, 256) // averages 120 on startup
+		toCore, err = dvService.coreSvc.GetCoreRequestChannel() // averages 120 on startup
 	}
 
 	if fromCore == nil {
-		fromCore = make(chan dc.DeviceMessage, 256) // averages 120 on startup
+		fromCore, err = dvService.coreSvc.GetCoreResponseChannel() // averages 120 on startup
 		err = ConsumeFromCore(fromCore)
 	}
 
 	if nil == toCore || nil == fromCore {
 		err = errors.New("create core channels failed")
-		level.Error(dvService.logger).Log("error", err.Error())
+		level.Error(logger).Log("error", err.Error())
 		return nil, nil, err
 	}
 
@@ -244,15 +245,15 @@ func ChannelsForCore() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
  *
  * Initialize this service
  */
-func Start(cfg cc.Config, repo Repositiory) (Service, error) {
+func Start(cfg cc.Config, repo Repositiory, coreSvc *dc.DeviceSourceInteractor) (Service, error) {
 	var err error
-	logger := log.With(cfg.Logger, "pkg", "deviceSource")
+	logger = log.With(cfg.Logger, "pkg", "deviceSource")
 
 	level.Debug(logger).Log("event", "Calling Start()")
 
-	svc := NewDeviceSourceService(cfg, repo, logger)
+	svc := NewDeviceSourceService(cfg, repo, *coreSvc, logger)
 
-	level.Debug(dvService.logger).Log("event", "Start() Completed")
+	level.Debug(logger).Log("event", "Start() Completed")
 
 	return svc, err
 }
@@ -262,7 +263,7 @@ func Start(cfg cc.Config, repo Repositiory) (Service, error) {
  * Cleans up this service
  */
 func Stop() {
-	level.Debug(dvService.logger).Log("event", "Calling Stop()")
+	level.Debug(logger).Log("event", "Calling Stop()")
 
 	if nil != toScheduler {
 		close(toScheduler) // only the send should shutdown channels
@@ -281,5 +282,5 @@ func Stop() {
 	// close(fromScheduler)
 	// close(fromProvider)
 	// close(fromOTAProvider)
-	level.Debug(dvService.logger).Log("event", "Stop() Completed")
+	level.Debug(logger).Log("event", "Stop() Completed")
 }

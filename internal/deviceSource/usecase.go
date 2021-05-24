@@ -17,13 +17,17 @@ type (
 	// Service Implementation
 	deviceSource struct {
 		repository Repositiory
+		coreSvc    dc.DeviceSourceInteractor
 		cfg        cc.Config
 		logger     log.Logger
 	}
 )
 
 // Retained DeviceSource Service, once created
-var dvService deviceSource
+var (
+	dvService deviceSource
+	logger    log.Logger
+)
 
 func (s *deviceSource) ApplyDMEvent(dm *dc.DeviceMessage) error {
 	logger := log.With(s.logger, "method", "ApplyDMEvent")
@@ -31,7 +35,18 @@ func (s *deviceSource) ApplyDMEvent(dm *dc.DeviceMessage) error {
 	err := s.repository.Store(dm)
 	if err != nil {
 		level.Error(logger).Log("error", err)
+		return err
 	}
+
+	// also sent it to core
+	if toCore == nil {
+		toCore, err = s.coreSvc.GetCoreRequestChannel()
+		if err != nil {
+			level.Error(logger).Log("error", err)
+			return err
+		}
+	}
+	toCore <- *dm // send to Core
 
 	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 
@@ -40,27 +55,34 @@ func (s *deviceSource) ApplyDMEvent(dm *dc.DeviceMessage) error {
 
 func (s *deviceSource) ApplyOTAEvent(dm *dc.DeviceMessage) error {
 	var err error
-	logger := log.With(s.logger, "method", "ApplyOTAEvent")
+	logg := log.With(s.logger, "method", "ApplyOTAEvent")
 
-	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
+	level.Debug(logg).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }
 
+// handle incoming core events
 func (s *deviceSource) ApplyCoreEvent(dm *dc.DeviceMessage) error {
 	var err error
-	logger := log.With(s.logger, "method", "ApplyCoreEvent")
+	logg := log.With(s.logger, "method", "ApplyCoreEvent")
 
-	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
+	err = s.repository.Store(dm)
+	if err != nil {
+		level.Error(logg).Log("error", err)
+		return err
+	}
+
+	level.Debug(logg).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }
 
 func (s *deviceSource) ApplySchedulerEvent(dm *dc.DeviceMessage) error {
 	var err error
-	logger := log.With(s.logger, "method", "ApplySchedulerEvent")
+	logg := log.With(s.logger, "method", "ApplySchedulerEvent")
 
-	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
+	level.Debug(logg).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }

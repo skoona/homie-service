@@ -185,17 +185,50 @@ var (
 	fromOTAService chan dc.DeviceMessage // in
 	client         mqtt.Client
 	nNetworks      = stringset.New()
-	deviceService  dss.Service
 	logger         log.Logger
 )
 
-// chan mqtt.Message, chan mqtt.Message, chan stor.DeviceMessage
-func Start(cfg cc.Config, svc dss.Service) ([]string, error) {
+/*
+ * Initialize()
+ *
+ * Initialize this service
+ */
+func Start() error {
+	var err error
+
+	// ensure Initialize() is called first
+	if logger == nil {
+		panic(fmt.Errorf("you must call Initialize() in this package before calling Start()"))
+	}
+	level.Debug(logger).Log("event", "Calling Start()")
+
+	// Initialize a Message Channel
+	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
+	if err != nil {
+		level.Error(logger).Log("event", "DM Channels offline", "error", err.Error())
+		client.Disconnect(250)
+		panic(err.Error())
+	}
+	fromOTAService, toOTAService, err = dss.ChannelsForOTAProviders()
+	if err != nil {
+		level.Error(logger).Log("event", "OTA Channels offline", "error", err.Error())
+		client.Disconnect(250)
+		panic(err.Error())
+	}
+
+	// start active processing on discovered networks
+	ProduceMQTTMessages()
+	level.Debug(logger).Log("event", "Start() completed")
+
+	return err
+}
+
+//
+func Initialize(cfg cc.Config) ([]string, error) {
 	config = cfg.Mqc
 	logger = log.With(cfg.Logger, "pkg", "mqttProvider")
-	deviceService = svc
 	var err error
-	level.Debug(logger).Log("event", "Calling Start()", "broker", config.BrokerIP)
+	level.Debug(logger).Log("event", "Calling Initialize()", "broker", config.BrokerIP)
 
 	/* Initialize MQTT */
 	opts := mqtt.NewClientOptions()
@@ -221,7 +254,7 @@ func Start(cfg cc.Config, svc dss.Service) ([]string, error) {
 	// allow for network discovery
 	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
 	for {
-		time.Sleep(2 * time.Second) // delay long enough to collect networks
+		time.Sleep(3 * time.Second) // delay long enough to collect networks
 		if len(DiscoveredNetworks()) >= 1 {
 			token := client.Unsubscribe(config.DiscoveryTopic)
 			token.Wait()
@@ -229,23 +262,7 @@ func Start(cfg cc.Config, svc dss.Service) ([]string, error) {
 		}
 	}
 
-	// Initialize a Message Channel
-	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
-	if err != nil {
-		level.Error(logger).Log("event", "DM Channels offline", "error", err.Error())
-		client.Disconnect(250)
-		panic(err.Error())
-	}
-	fromOTAService, toOTAService, err = dss.ChannelsForOTAProviders()
-	if err != nil {
-		level.Error(logger).Log("event", "OTA Channels offline", "error", err.Error())
-		client.Disconnect(250)
-		panic(err.Error())
-	}
-
-	ProduceMQTTMessages()
-
-	level.Debug(logger).Log("event", "Start() Completed", "networks discovered", nNetworks.GoString())
+	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", nNetworks.GoString())
 	return DiscoveredNetworks(), err
 }
 
