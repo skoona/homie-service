@@ -33,17 +33,5 @@ func NewBroadcast(parent, topic, level, value string) Broadcast {
 		Received:    time.Now(),
 	}
 
-	// sn.Broadcasts = append(sn.Broadcasts, bc)
-
 	return bc
-}
-
-/*
- * BroadcastsRepository - Application Domain Rules for elements
- */
-type BroadcastsRepository interface {
-	Create(parent, topic, level, value string) (*Broadcast, error)
-	Find(id EID) (*Broadcast, error)
-	List() (*[]Broadcast, error)
-	Delete(id EID) error
 }

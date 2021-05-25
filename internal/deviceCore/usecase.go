@@ -34,6 +34,10 @@ var (
 	toDeviceSource   chan DeviceMessage // out
 )
 
+func GetSiteNetworks() *SiteNetworks {
+	return &siteNetworks
+}
+
 /**
  * ConsumeFromDeviceSource
  * Handles incoming channel DM message

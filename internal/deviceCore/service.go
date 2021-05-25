@@ -105,19 +105,14 @@ func Start(dfg cc.Config, discoveredNetworks []string) (DeviceSourceInteractor, 
 	// svc := NewCoreService(dfg)
 	svc := NewCoreDeviceSourceService(dfg)
 
+	level.Debug(cdss.logger).Log("event", "Calling Start()")
+
 	// Initialze networks
 	NewSiteNetworks("Skoona Consulting",
 		"Homie Monitor (GOLANG)",
 		discoveredNetworks,
 		[]Firmware{},
 		map[string]Schedule{})
-
-	level.Debug(cdss.logger).Log("event", "Calling Start()")
-
-	// if err != nil {
-	// 	level.Error(logger).Log("event", "Channels offline", "error", err.Error())
-	// 	panic(err.Error())
-	// }
 
 	level.Debug(cdss.logger).Log("event", "Start() completed")
 

@@ -29,6 +29,8 @@ package main
  */
 
 import (
+	"encoding/json"
+	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -134,6 +136,15 @@ func main() {
 
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
+	}
+
+	// Dump the SiteNetwork and all nodes as JSON
+	out, err := json.MarshalIndent(*dc.GetSiteNetworks(), "", "  ")
+	if err != nil {
+		level.Warn(logger).Log("action", err.Error())
+	} else {
+		fmt.Println("Site Network")
+		fmt.Println(string(out))
 	}
 
 	os.Exit(0)

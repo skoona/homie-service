@@ -109,7 +109,7 @@ type DeviceNodePropertyAttribute struct {
 // NewDevice Creates Component
 // read $implementation/ota/enabled -> bool and set the
 // OTAEnabled for Schedules
-func NewDevice(parent, name string) (Device, error) {
+func NewDevice(parent, name string) Device {
 	return Device{
 		ID:          NewEID(),
 		ElementType: CoreTypeDevice,
@@ -118,11 +118,11 @@ func NewDevice(parent, name string) (Device, error) {
 		Name:        name,
 		Attrs:       make(map[string]DeviceAttribute, 4),
 		Nodes:       make(map[string]DeviceNode, 4),
-	}, nil
+	}
 }
 
 // NewDeviceAttribute Creates Component
-func NewDeviceAttribute(parent, name, value string) (DeviceAttribute, error) {
+func NewDeviceAttribute(parent, name, value string) DeviceAttribute {
 	return DeviceAttribute{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceAttribute,
@@ -130,14 +130,14 @@ func NewDeviceAttribute(parent, name, value string) (DeviceAttribute, error) {
 		Name:        name,
 		Value:       value,
 		Props:       make(map[string]DeviceAttributeProperty, 4),
-	}, nil
+	}
 }
 
 // NewDeviceAttributeProperty Creates Component
 // of a Device Attribute, representing a single value or measurement
 // $implementation/fw -- where status will be a regular attribute
 //  $DeviceAttr / Property
-func NewDeviceAttributeProperty(parent, name, value string) (DeviceAttributeProperty, error) {
+func NewDeviceAttributeProperty(parent, name, value string) DeviceAttributeProperty {
 	return DeviceAttributeProperty{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceAttributeProperty,
@@ -145,25 +145,25 @@ func NewDeviceAttributeProperty(parent, name, value string) (DeviceAttributeProp
 		Name:        name,
 		Value:       value,
 		Props:       make(map[string]DeviceAttributePropertyProperty, 4),
-	}, nil
+	}
 }
 
 // NewDeviceAttributePropertyProperty Creates Component
 // of a Device Attribute, representing a single value or measurement
 // $implementation/fw/version -- where status will be a regular attribute
 //  $DeviceAttr / Property / Property
-func NewDeviceAttributePropertyProperty(parent, name, value string) (DeviceAttributePropertyProperty, error) {
+func NewDeviceAttributePropertyProperty(parent, name, value string) DeviceAttributePropertyProperty {
 	return DeviceAttributePropertyProperty{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceAttributePropertyProperty,
 		Parent:      parent,
 		Name:        name,
 		Value:       value,
-	}, nil
+	}
 }
 
 // NewDeviceNode Creates Component
-func NewDeviceNode(parent, name string) (DeviceNode, error) {
+func NewDeviceNode(parent, name string) DeviceNode {
 	return DeviceNode{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceNode,
@@ -171,22 +171,22 @@ func NewDeviceNode(parent, name string) (DeviceNode, error) {
 		Name:        name,
 		Attrs:       make(map[string]DeviceNodeAttribute, 4),
 		Props:       make(map[string]DeviceNodeProperty, 4),
-	}, nil
+	}
 }
 
 // NewDeviceNodeAttribute Creates Component
-func NewDeviceNodeAttribute(parent, name, value string) (DeviceNodeAttribute, error) {
+func NewDeviceNodeAttribute(parent, name, value string) DeviceNodeAttribute {
 	return DeviceNodeAttribute{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceNodeAttribute,
 		Parent:      parent,
 		Name:        name,
 		Value:       value,
-	}, nil
+	}
 }
 
 // NewDeviceNodeProperty Creates Component
-func NewDeviceNodeProperty(parent, name, value string) (DeviceNodeProperty, error) {
+func NewDeviceNodeProperty(parent, name, value string) DeviceNodeProperty {
 	return DeviceNodeProperty{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceNodeProperty,
@@ -194,16 +194,16 @@ func NewDeviceNodeProperty(parent, name, value string) (DeviceNodeProperty, erro
 		Name:        name,
 		Value:       value,
 		Attrs:       make(map[string]DeviceNodePropertyAttribute, 4),
-	}, nil
+	}
 }
 
 // NewDeviceNodePropertyAttribute Creates Component
-func NewDeviceNodePropertyAttribute(parent, name, value string) (DeviceNodePropertyAttribute, error) {
+func NewDeviceNodePropertyAttribute(parent, name, value string) DeviceNodePropertyAttribute {
 	return DeviceNodePropertyAttribute{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceNodePropertyAttribute,
 		Parent:      parent,
 		Name:        name,
 		Value:       value,
-	}, nil
+	}
 }
