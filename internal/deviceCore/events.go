@@ -249,8 +249,9 @@ func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained
 	if homieBroadcast(parts) {
 		typeIntHomie = CoreTypeBroadcast
 		deviceID = []byte(parts[1])
-		attributeID = []byte(strings.Join(parts[2:], "/"))
-		level.Debug(logger).Log("ID", idCounter, "HomieBroadcast", attributeID, "DeviceID", deviceID)
+		attributeID = []byte(parts[2])
+		propertyID = []byte(strings.Join(parts[3:], "/"))
+		level.Debug(logger).Log("ID", idCounter, "HomieBroadcast", attributeID, "level", propertyID)
 
 	} else if deviceAttributePropertyProperty(parts) { // look for OTATrigger(bool) on $state = Init
 		typeIntHomie = CoreTypeDeviceAttributePropertyProperty

@@ -125,7 +125,7 @@ func buildFirmwareListing() []cl.Firmware {
 // FirmwareRepository manages lifecycle of schedules
 type FirmwareRepository interface {
 	Create(name, fileName, path string) (Firmware, error)
-	Find(id EID) (*Firmware error)
+	Find(id EID) (*Firmware, error)
 	List() (*[]Firmware, error) 
 	Delete(id EID) error
 }

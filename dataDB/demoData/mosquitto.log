@@ -103,6 +103,7 @@ sknSensors/GuestRoom/hardware/voltage/$name 3.3V Supply
 sknSensors/GuestRoom/hardware/voltage/$datatype float
 sknSensors/GuestRoom/hardware/voltage/$unit V
 sknSensors/$broadcast/alert openHAB3 Offline
+sknSensors/$broadcast/alert/door Door Open
 sknSensors/$broadcast/notice openHAB3 Online
 sknSensors/$broadcast/alert Garage Door Open
 sknSensors/$broadcast/alarm Media Room Window Broken

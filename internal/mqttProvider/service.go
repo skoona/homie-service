@@ -59,12 +59,10 @@ var networksHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mess
  */
 var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	// msg.Payload()[0] = byte{0}
-	dm, err := dc.NewQueueMessage(msg)
+	err := dmh.FromOTAProvider(msg)
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
-		return
 	}
-	toOTAService <- dm // send it to channel
 }
 
 /*
@@ -72,12 +70,10 @@ var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message
  * Default Incoming Message Handler
  */
 var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	dm, err := dc.NewQueueMessage(msg)
+	err := dmh.FromMQTTProvider(msg)
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
-		return
 	}
-	toDMService <- dm // send it to channel
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -180,10 +176,9 @@ func removeSubscriptions() error {
 var (
 	config         cc.MQTTConfig
 	fromDMService  chan dc.DeviceMessage // in
-	toDMService    chan dc.DeviceMessage // out
-	toOTAService   chan dc.DeviceMessage // out
 	fromOTAService chan dc.DeviceMessage // in
 	client         mqtt.Client
+	dmh            dss.DeviceMessageHandler
 	nNetworks      = stringset.New()
 	logger         log.Logger
 )
@@ -193,8 +188,9 @@ var (
  *
  * Initialize this service
  */
-func Start() error {
+func Start(s dss.DeviceMessageHandler) error {
 	var err error
+	dmh = s
 
 	// ensure Initialize() is called first
 	if logger == nil {
@@ -203,15 +199,18 @@ func Start() error {
 	level.Debug(logger).Log("event", "Calling Start()")
 
 	// Initialize a Message Channel
-	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
+	// one use is to delete devices based on ui input
+	fromDMService, err = s.GetProviderResponseChannel()
 	if err != nil {
-		level.Error(logger).Log("event", "DM Channels offline", "error", err.Error())
+		level.Error(logger).Log("event", "provider response channel offline", "error", err.Error())
 		client.Disconnect(250)
 		panic(err.Error())
 	}
-	fromOTAService, toOTAService, err = dss.ChannelsForOTAProviders()
+
+	// one use is to start an OTA, or cancel an OTA
+	fromOTAService, err = s.GetOTAResponseChannel()
 	if err != nil {
-		level.Error(logger).Log("event", "OTA Channels offline", "error", err.Error())
+		level.Error(logger).Log("event", "OTA respnse channel offline", "error", err.Error())
 		client.Disconnect(250)
 		panic(err.Error())
 	}
@@ -270,13 +269,6 @@ func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
 	// Unsubscribe and shutdown cleanly
 	removeSubscriptions()
-
-	if nil != toDMService {
-		close(toDMService) // only the send should shutdown channels
-	}
-	if nil != toOTAService {
-		close(toOTAService)
-	}
 
 	client.Disconnect(250)
 

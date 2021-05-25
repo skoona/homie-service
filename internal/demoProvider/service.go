@@ -16,16 +16,14 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	dc "github.com/skoona/homie-service/internal/deviceCore"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 var (
-	cfg           cc.Config
-	logger        log.Logger
-	fromDMService chan dc.DeviceMessage // in
-	toDMService   chan dc.DeviceMessage // out
+	cfg    cc.Config
+	logger log.Logger
+	dmh    dss.DeviceMessageHandler
 )
 
 /**
@@ -34,17 +32,16 @@ var (
  * by converting them to DeviceMessages
  * outputs to device channels
  */
-func produceDeviceMessages(demoFile string, publisher chan dc.DeviceMessage, logger log.Logger) {
+func produceDeviceMessages(demoFile string, logger log.Logger) {
 	level.Debug(logger).Log("event", "calling produceDeviceMessages()")
 	/*
 	 * Create a Go Routine for the MQTT Channel to
 	 * convert msgs to DeviceMessages and output to dvcSyncChannels
 	 */
-	go func(dsChan chan dc.DeviceMessage, filepath string, logger log.Logger) {
+	go func(filepath string, logger log.Logger) {
 		var err error
 		var file *os.File
 		var idx uint16 = 0
-		var dm dc.DeviceMessage
 
 		file, err = os.OpenFile(filepath, os.O_RDONLY, 0666)
 		if err != nil {
@@ -65,17 +62,15 @@ func produceDeviceMessages(demoFile string, publisher chan dc.DeviceMessage, log
 			payload := strings.Join(parts[1:], " ")
 
 			idx++
-			dm, err = dc.NewDeviceMessage(topic, []byte(payload), idx, false, 1)
+			err = dmh.FromDemoProvider(topic, []byte(payload), idx, false, 1)
 			if err != nil {
 				level.Error(logger).Log("error", err.Error())
-			} else {
-				dsChan <- dm // send it to channel
 			}
 			time.Sleep(100 * time.Millisecond) // slow the pace
 		}
 
 		level.Debug(logger).Log("event", "produceDeviceMessages(gofunc()) completed")
-	}(publisher, demoFile, logger)
+	}(demoFile, logger)
 
 	level.Debug(logger).Log("event", "produceDeviceMessages() active")
 }
@@ -85,24 +80,19 @@ func produceDeviceMessages(demoFile string, publisher chan dc.DeviceMessage, log
  *
  * Initialize this service
  */
-func Start() error {
+func Start(s dss.DeviceMessageHandler) error {
 	var err error
 	// ensure Initialize() is called first
 	if logger == nil {
 		panic(fmt.Errorf("you must call Initialize() in this package before calling Start()"))
 	}
 
+	dmh = s
+
 	demoFile := cfg.Dbc.DemoSource
 	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", strings.Join(cfg.Dbc.DemoNetworks, ","))
 
-	// Initialize a Message Channel
-	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
-	if err != nil {
-		level.Error(logger).Log("event", "Channels offline", "error", err.Error())
-		panic(err.Error())
-	}
-
-	produceDeviceMessages(demoFile, toDMService, logger)
+	produceDeviceMessages(demoFile, logger)
 
 	level.Debug(logger).Log("event", "Start() completed")
 
@@ -130,9 +120,6 @@ func Initialize(dfg cc.Config) ([]string, error) {
  */
 func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
-	if nil != toDMService {
-		close(toDMService) // only the send should shutdown channels
-	}
 
 	level.Debug(logger).Log("event", "Stop() completed")
 }

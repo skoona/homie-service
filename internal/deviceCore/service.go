@@ -18,10 +18,35 @@ import (
 */
 
 type (
+	/*
+	 * Interactions with UI */
 	Service interface {
-		ApplyEvent(dm *DeviceMessage) error
+		AllNetworks() SiteNetworks
+		NetworkByName(networkName string) Network
+		DeviceByNameFromNetwork(deviceName, networkName string) (Device, error)
+		DeviceByEIDFromNetwork(deviceEID EID, networkName string) (Device, error)
+		RemoveDeviceByEIDFromNetwork(deviceEID EID, networkName string) error
+
+		AllFirmwares() []Firmware
+		AddFirmware(firmware Firmware)
+		RemoveFirmwareByEID(firmwareEID EID)
+		FirmwareByEID(firmwareEID EID) (Firmware, error)
+		FirmwareByName(firmwareName string) (Firmware, error)
+
+		AllSchedules() []Schedule
+		AddSchedule(schedule Schedule)
+		RemoveSchedule(scheduleID EID)
+		ScheduleByEID(scheduleID EID) Schedule
+		ScheduleByDeviceName(deviceName string) Schedule
+
+		AllBroadcasts() []Broadcast
+		AddBroadcast(broadcast Broadcast)
+		RemoveBroadcastByEID(broadcastEID EID)
+		BroadcastByEID(broadcastID EID) (Broadcast, error)
 	}
 
+	/*
+	 * Interactions with DeviceSource */
 	DeviceSourceInteractor interface {
 		CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error)
 		CreateQueueDeviceMessage(qmsg QueueMessage) (DeviceMessage, error)
@@ -50,11 +75,11 @@ type (
  *  Create a New NewCoreService and initializes it.
  */
 func NewCoreService(dfg cc.Config) Service {
-	em = coreService{
+	em = &coreService{
 		cfg:    dfg,
 		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreService"),
 	}
-	return &em
+	return em
 }
 
 /**
@@ -63,11 +88,11 @@ func NewCoreService(dfg cc.Config) Service {
  *  Create a New NewCoreService and initializes it.
  */
 func NewCoreDeviceSourceService(dfg cc.Config) DeviceSourceInteractor {
-	cdss = coreDeviceSourceService{
+	cdss = &coreDeviceSourceService{
 		cfg:    dfg,
 		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreDeviceSourceService"),
 	}
-	return &cdss
+	return cdss
 }
 
 /**
