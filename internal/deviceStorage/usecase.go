@@ -28,7 +28,7 @@ import (
  * Delete topic if present
  * Deletebucket if no topic exists
  */
-func (dbR *dbRepo) Store(d *dc.DeviceMessage) error {
+func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 	var err error
 
 	//     0         1           2        3              4                         5
@@ -329,18 +329,32 @@ func deviceDetails(db *bolt.DB, networkName, deviceName string) (map[string]stri
 }
 
 /*
+ * DBStatsAsJSON
+ * Outputs boltDB Database Stats
+ */
+func dbStatsAsJSON() string {
+	sts := dbs.db.Stats()
+	var res string
+
+	json, _ := json.MarshalIndent(sts, "", "    ")
+	res = string(json)
+
+	return res
+}
+
+/*
  * ListHomieDBCollection
  * List the Devices Found/Recorded
  */
-func listHomieDBCollection(db *bolt.DB) {
+func ListHomieDB() {
 	time.Sleep(1 * time.Second) // slow the pace
-	if networks := networkList(db); len(networks) > 0 {
+	if networks := networkList(dbs.db); len(networks) > 0 {
 		for nets, network := range networks {
 			fmt.Printf("[%d] Network: %s\n", nets, network)
-			if devices := deviceList(db, network); len(devices) > 0 {
+			if devices := deviceList(dbs.db, network); len(devices) > 0 {
 				for idx, device := range devices {
 					fmt.Printf("\t[%d] Device: %s\n", idx, device)
-					if detail, orderedKeys := deviceDetails(db, network, device); len(detail) > 0 {
+					if detail, orderedKeys := deviceDetails(dbs.db, network, device); len(detail) > 0 {
 						for _, k := range orderedKeys {
 							v := detail[k]
 							fmt.Printf("\t\t %s --> %s\n", k, v)
@@ -350,18 +364,9 @@ func listHomieDBCollection(db *bolt.DB) {
 			}
 		}
 	}
-}
 
-/*
- * DBStatsAsJSON
- * Outputs boltDB Database Stats
- */
-func DBStatsAsJSON(db *bolt.DB) string {
-	dbs := db.Stats()
-	var res string
-
-	json, _ := json.MarshalIndent(dbs, "", "    ")
-	res = string(json)
-
-	return res
+	// Show bBolt DB Stats
+	if stats := dbStatsAsJSON(); len(stats) > 0 {
+		fmt.Printf("dbStats=%s\n", stats)
+	}
 }

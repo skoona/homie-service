@@ -16,7 +16,7 @@ import (
 type (
 	// Service Implementation
 	deviceSource struct {
-		repository Repositiory
+		repository Repository
 		coreSvc    dc.DeviceSourceInteractor
 		cfg        cc.Config
 		logger     log.Logger
@@ -29,7 +29,7 @@ var (
 	logger    log.Logger
 )
 
-func (s *deviceSource) ApplyDMEvent(dm *dc.DeviceMessage) error {
+func (s *deviceSource) ApplyDMEvent(dm dc.DeviceMessage) error {
 	logger := log.With(s.logger, "method", "ApplyDMEvent")
 
 	err := s.repository.Store(dm)
@@ -46,14 +46,14 @@ func (s *deviceSource) ApplyDMEvent(dm *dc.DeviceMessage) error {
 			return err
 		}
 	}
-	toCore <- *dm // send to Core
+	toCore <- dm // send to Core
 
 	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }
 
-func (s *deviceSource) ApplyOTAEvent(dm *dc.DeviceMessage) error {
+func (s *deviceSource) ApplyOTAEvent(dm dc.DeviceMessage) error {
 	var err error
 	logg := log.With(s.logger, "method", "ApplyOTAEvent")
 
@@ -63,7 +63,7 @@ func (s *deviceSource) ApplyOTAEvent(dm *dc.DeviceMessage) error {
 }
 
 // handle incoming core events
-func (s *deviceSource) ApplyCoreEvent(dm *dc.DeviceMessage) error {
+func (s *deviceSource) ApplyCoreEvent(dm dc.DeviceMessage) error {
 	var err error
 	logg := log.With(s.logger, "method", "ApplyCoreEvent")
 
@@ -78,7 +78,7 @@ func (s *deviceSource) ApplyCoreEvent(dm *dc.DeviceMessage) error {
 	return err
 }
 
-func (s *deviceSource) ApplySchedulerEvent(dm *dc.DeviceMessage) error {
+func (s *deviceSource) ApplySchedulerEvent(dm dc.DeviceMessage) error {
 	var err error
 	logg := log.With(s.logger, "method", "ApplySchedulerEvent")
 

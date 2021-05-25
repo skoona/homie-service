@@ -24,7 +24,7 @@ type dbRepo struct {
 	logger log.Logger
 }
 
-func NewRepo(cfg cc.Config, db *bolt.DB, log log.Logger) dss.Repositiory {
+func NewRepo(cfg cc.Config, db *bolt.DB, log log.Logger) dss.Repository {
 	dbs = dbRepo{
 		db:     db,
 		cfg:    cfg,
@@ -38,7 +38,7 @@ func NewRepo(cfg cc.Config, db *bolt.DB, log log.Logger) dss.Repositiory {
  * Start
  * Initializes this service
  */
-func Start(cfg cc.Config) (dss.Repositiory, error) {
+func Start(cfg cc.Config) (dss.Repository, error) {
 	var err error
 	var dataFile string
 	logger := log.With(cfg.Logger, "pkg", "deviceStorage")
@@ -68,18 +68,7 @@ func Start(cfg cc.Config) (dss.Repositiory, error) {
 func Stop() {
 	level.Debug(dbs.logger).Log("event", "calling Stop()")
 
-	// Close the Device Channel
-	// close(dvcSyncChannel)
-	// close(coreLogicChannel)
-
-	// List the Devices Found/Recorded
-	listHomieDBCollection(dbs.db)
-
-	// Show bBolt DB Stats
-	if stats := DBStatsAsJSON(dbs.db); len(stats) > 0 {
-		fmt.Printf("dbStats=%s\n", stats)
-	}
-
+	// close the database
 	dbs.db.Close()
 	level.Debug(dbs.logger).Log("event", "Stop() completed")
 }

@@ -20,15 +20,15 @@ import (
 type (
 	//Incoming Messages
 	Service interface {
-		ApplyCoreEvent(dm *dc.DeviceMessage) error
-		ApplyDMEvent(dm *dc.DeviceMessage) error
-		ApplyOTAEvent(dm *dc.DeviceMessage) error
-		ApplySchedulerEvent(dm *dc.DeviceMessage) error
+		ApplyCoreEvent(dm dc.DeviceMessage) error
+		ApplyDMEvent(dm dc.DeviceMessage) error
+		ApplyOTAEvent(dm dc.DeviceMessage) error
+		ApplySchedulerEvent(dm dc.DeviceMessage) error
 	}
 
 	// Device Source Storage Repository
-	Repositiory interface {
-		Store(d *dc.DeviceMessage) error
+	Repository interface {
+		Store(d dc.DeviceMessage) error
 	}
 )
 
@@ -37,7 +37,7 @@ type (
  *
  *  Create a New NewDeviceSourceService and initializes it.
  */
-func NewDeviceSourceService(cfg cc.Config, repo Repositiory, coreSvc dc.DeviceSourceInteractor, logger log.Logger) Service {
+func NewDeviceSourceService(cfg cc.Config, repo Repository, coreSvc dc.DeviceSourceInteractor, logger log.Logger) Service {
 	dvService = deviceSource{
 		repository: repo,
 		coreSvc:    coreSvc,
@@ -72,7 +72,7 @@ func ConsumeFromCore(consumer chan dc.DeviceMessage) error {
 	go func(dmChan chan dc.DeviceMessage) {
 		level.Debug(logger).Log("event", "ConsumeFromCore(gofunc) called")
 		for msg := range dmChan { // read until closed
-			err := dvService.ApplyCoreEvent(&msg)
+			err := dvService.ApplyCoreEvent(msg)
 			if err != nil {
 				level.Error(logger).Log("method", "ConsumeFromCore(gofunc)", "error", err.Error())
 			}
@@ -96,7 +96,7 @@ func ConsumeFromDMProviders(consumer chan dc.DeviceMessage) error {
 	go func(dmChan chan dc.DeviceMessage) {
 		level.Debug(logger).Log("event", "ConsumeFromDMProviders(gofunc) called")
 		for msg := range dmChan { // read until closed
-			err := dvService.ApplyDMEvent(&msg)
+			err := dvService.ApplyDMEvent(msg)
 			if err != nil {
 				level.Error(logger).Log("method", "ConsumeFromDMProviders(gofunc)", "error", err.Error())
 			}
@@ -122,7 +122,7 @@ func ConsumeFromOTAProviders(consumer chan dc.DeviceMessage, publisher chan dc.D
 	go func(consumeChan chan dc.DeviceMessage, publishChan chan dc.DeviceMessage) {
 		level.Debug(logger).Log("event", "ConsumeFromOTAProviders(gofunc) called")
 		for msg := range consumeChan { // read until closed
-			err := dvService.ApplyOTAEvent(&msg)
+			err := dvService.ApplyOTAEvent(msg)
 			if err != nil {
 				level.Error(logger).Log("method", "ConsumeFromOTAProviders(gofunc)", "error", err.Error())
 			}
@@ -150,7 +150,7 @@ func ConsumeFromScheduler(consumer chan dc.DeviceMessage, publisher chan dc.Devi
 	go func(dmChan chan dc.DeviceMessage, otaChan chan dc.DeviceMessage) {
 		level.Debug(logger).Log("event", "ConsumeFromScheduler(gofunc) called")
 		for msg := range dmChan { // read until closed
-			err := dvService.ApplySchedulerEvent(&msg)
+			err := dvService.ApplySchedulerEvent(msg)
 			if err != nil {
 				level.Error(logger).Log("method", "ConsumeFromScheduler(gofunc)", "error", err.Error())
 			}
@@ -245,13 +245,13 @@ func ChannelsForCore() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
  *
  * Initialize this service
  */
-func Start(cfg cc.Config, repo Repositiory, coreSvc *dc.DeviceSourceInteractor) (Service, error) {
+func Start(cfg cc.Config, repo Repository, coreSvc dc.DeviceSourceInteractor) (Service, error) {
 	var err error
 	logger = log.With(cfg.Logger, "pkg", "deviceSource")
 
 	level.Debug(logger).Log("event", "Calling Start()")
 
-	svc := NewDeviceSourceService(cfg, repo, *coreSvc, logger)
+	svc := NewDeviceSourceService(cfg, repo, coreSvc, logger)
 
 	level.Debug(logger).Log("event", "Start() Completed")
 

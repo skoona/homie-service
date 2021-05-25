@@ -47,10 +47,10 @@ func ConsumeFromDeviceSource(consumer chan DeviceMessage) error {
 		for msg := range dsChan { // read until closed
 			network, ok := siteNetworks.DeviceNetworks[string(msg.NetworkID)]
 			if !ok {
-				err := fmt.Errorf("Device{%s} not found in network={%s}", msg.DeviceID, network.Name)
+				err := fmt.Errorf("device{%s} not found in network={%s}", msg.DeviceID, network.Name)
 				level.Error(cdss.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "error", err.Error())
 			} else {
-				// network.apply(msg)
+				network.apply(msg)
 			}
 
 			level.Debug(cdss.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "queue depth", len(dsChan), "network id", msg.NetworkID, "msg id", msg.ID, "deviceID", msg.DeviceID)

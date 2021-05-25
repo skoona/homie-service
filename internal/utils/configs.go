@@ -121,8 +121,9 @@ func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 		Version: cfg.GetString("homiemonitor.version"),
 		Logger:  log,
 		Dbc: DBConfig{
-			DemoSource:  cfg.GetString("homiemonitor.datasources.demoSource"),
-			DataStorage: cfg.GetString("homiemonitor.datasources.dataStorage"),
+			DemoSource:   cfg.GetString("homiemonitor.datasources.demoSource"),
+			DataStorage:  cfg.GetString("homiemonitor.datasources.dataStorage"),
+			DemoNetworks: cfg.GetStringSlice("homiemonitor.datasources.demoNetworks"),
 		},
 		Mqc: MQTTConfig{
 			ClientID:          cfg.GetString("homiemonitor.mqtt.clientid"),

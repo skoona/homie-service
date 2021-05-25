@@ -99,8 +99,11 @@ func NewEID() EID {
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, discoveredNetworks []string) (*DeviceSourceInteractor, error) {
+func Start(dfg cc.Config, discoveredNetworks []string) (DeviceSourceInteractor, error) {
 	var err error
+
+	// svc := NewCoreService(dfg)
+	svc := NewCoreDeviceSourceService(dfg)
 
 	// Initialze networks
 	NewSiteNetworks("Skoona Consulting",
@@ -108,9 +111,6 @@ func Start(dfg cc.Config, discoveredNetworks []string) (*DeviceSourceInteractor,
 		discoveredNetworks,
 		[]Firmware{},
 		map[string]Schedule{})
-
-	// svc := NewCoreService(dfg)
-	svc := NewCoreDeviceSourceService(dfg)
 
 	level.Debug(cdss.logger).Log("event", "Calling Start()")
 
@@ -121,7 +121,7 @@ func Start(dfg cc.Config, discoveredNetworks []string) (*DeviceSourceInteractor,
 
 	level.Debug(cdss.logger).Log("event", "Start() completed")
 
-	return &svc, err
+	return svc, err
 }
 
 /*
@@ -129,9 +129,9 @@ func Start(dfg cc.Config, discoveredNetworks []string) (*DeviceSourceInteractor,
  * Cleans up this service
  */
 func Stop() {
-	level.Debug(em.logger).Log("event", "Calling Stop()")
+	level.Debug(cdss.logger).Log("event", "Calling Stop()")
 	if toDeviceSource != nil {
 		close(toDeviceSource)
 	}
-	level.Debug(em.logger).Log("event", "Stop() completed")
+	level.Debug(cdss.logger).Log("event", "Stop() completed")
 }

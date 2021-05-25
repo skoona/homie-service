@@ -262,7 +262,7 @@ func Initialize(cfg cc.Config) ([]string, error) {
 		}
 	}
 
-	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", nNetworks.GoString())
+	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","))
 	return DiscoveredNetworks(), err
 }
 

@@ -35,6 +35,7 @@ type SiteNetworks struct {
 // NewNetworks Creates Component
 func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) (*SiteNetworks, error) {
 	var err error
+	level.Debug(cdss.logger).Log("event", "NewSiteNetworks() called")
 
 	siteNetworks = SiteNetworks{
 		ID:             NewEID(),
@@ -42,32 +43,31 @@ func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []
 		SiteName:       siteName,
 		Title:          siteTitle,
 		Names:          networks,
-		DeviceNetworks: make(map[string]Network, len(networks)+1),
+		DeviceNetworks: make(map[string]Network, len(networks)+2),
 		Broadcasts:     []Broadcast{},
 		Firmwares:      firmwares,
 		Schedules:      schedules,
 	}
 
 	for _, nName := range networks {
+
 		siteNetworks.DeviceNetworks[nName] = newNetwork(nName, nName)
 	}
 
+	level.Debug(cdss.logger).Log("event", "NewSiteNetworks() completed")
 	return &siteNetworks, err
 }
 
 // newNetwork Creates Component
 func newNetwork(title, name string) Network {
-	hn := Network{
+	level.Debug(cdss.logger).Log("event", "newNetwork() called", "title", title, "name", name)
+	return Network{
 		ID:          NewEID(),
 		ElementType: CoreTypeNetwork,
 		Title:       title,
 		Name:        name,
 		Devices:     make(map[string]Device, 16),
 	}
-
-	siteNetworks.DeviceNetworks[name] = hn
-
-	return hn
 }
 
 // EntityFinder finder utility for Networks
@@ -93,7 +93,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	// ensure this device is in our network
 	_, ok := hn.Devices[string(dm.DeviceID)]
 	if !ok {
-		return fmt.Errorf("Device{%s} not found in network={%s}", dm.DeviceID, hn.Name)
+		return fmt.Errorf("device{%s} not found in network={%s}", dm.DeviceID, hn.Name)
 	}
 
 	switch dm.HomieType {
@@ -126,7 +126,11 @@ func (hn *Network) apply(dm DeviceMessage) error {
 		break
 	}
 
-	level.Debug(cdss.logger).Log("event", "apply() completed")
+	if err != nil {
+		level.Debug(cdss.logger).Log("event", "apply() completed", "error", err.Error())
+	} else {
+		level.Debug(cdss.logger).Log("event", "apply() completed")
+	}
 	return err
 }
 

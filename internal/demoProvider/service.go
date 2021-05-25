@@ -34,7 +34,7 @@ var (
  * by converting them to DeviceMessages
  * outputs to device channels
  */
-func produceDeviceMessages(demoFile string, consumer chan dc.DeviceMessage, logger log.Logger) {
+func produceDeviceMessages(demoFile string, publisher chan dc.DeviceMessage, logger log.Logger) {
 	level.Debug(logger).Log("event", "calling produceDeviceMessages()")
 	/*
 	 * Create a Go Routine for the MQTT Channel to
@@ -75,7 +75,7 @@ func produceDeviceMessages(demoFile string, consumer chan dc.DeviceMessage, logg
 		}
 
 		level.Debug(logger).Log("event", "produceDeviceMessages(gofunc()) completed")
-	}(consumer, demoFile, logger)
+	}(publisher, demoFile, logger)
 
 	level.Debug(logger).Log("event", "produceDeviceMessages() active")
 }
@@ -93,7 +93,7 @@ func Start() error {
 	}
 
 	demoFile := cfg.Dbc.DemoSource
-	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", cfg.Dbc.DemoNetworks)
+	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", strings.Join(cfg.Dbc.DemoNetworks, ","))
 
 	// Initialize a Message Channel
 	fromDMService, toDMService, err = dss.ChannelsForDMProviders()
@@ -120,7 +120,7 @@ func Initialize(dfg cc.Config) ([]string, error) {
 	logger = log.With(cfg.Logger, "pkg", "demoProvider")
 	level.Debug(logger).Log("event", "calling Initialize()")
 
-	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", cfg.Dbc.DemoNetworks)
+	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(dfg.Dbc.DemoNetworks, ","))
 	return dfg.Dbc.DemoNetworks, err
 }
 

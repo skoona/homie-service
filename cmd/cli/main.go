@@ -47,6 +47,10 @@ func shutdownDemo() {
 	level.Debug(logger).Log("event", "shutdownDemo() called")
 	dp.Stop()
 	dss.Stop()
+
+	// List the Devices Found/Recorded
+	dds.ListHomieDB()
+
 	dds.Stop()
 	dc.Stop()
 	level.Debug(logger).Log("event", "shutdownDemo() completed")
@@ -55,6 +59,10 @@ func shutdownDemo() {
 func shutdownLive() {
 	level.Debug(logger).Log("event", "shutdownLive() called")
 	mq.Stop()
+
+	// List the Devices Found/Recorded
+	dds.ListHomieDB()
+
 	dss.Stop()
 	dds.Stop()
 	dc.Stop()

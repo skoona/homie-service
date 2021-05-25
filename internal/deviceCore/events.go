@@ -69,7 +69,7 @@ func (dm *DeviceMessage) String() string {
 // Schedulable()
 // also -- $stats/uptime
 func (dm *DeviceMessage) Schedulable() bool {
-	level.Debug(em.logger).Log("DeviceMessage", "Schedulable()")
+	level.Debug(cdss.logger).Log("DeviceMessage", "Schedulable()")
 	res := false
 	for _, keys := range []string{"$state", "$online", "$fw", "$implementation", "uptime"} {
 		if strings.Contains(dm.Topic, keys) {
@@ -82,13 +82,13 @@ func (dm *DeviceMessage) Schedulable() bool {
 
 // Settable() determine is property is settable
 func (dm *DeviceMessage) Settable() bool {
-	level.Debug(em.logger).Log("DeviceMessage", "Settable()")
+	level.Debug(cdss.logger).Log("DeviceMessage", "Settable()")
 	return strings.HasSuffix(dm.Topic, "set")
 }
 
 // OTAactive() determines if device is downloading firmware
 func (dm *DeviceMessage) OTAactive() bool {
-	level.Debug(em.logger).Log("DeviceMessage", "OTAactive()")
+	level.Debug(cdss.logger).Log("DeviceMessage", "OTAactive()")
 	return strings.Contains(dm.Topic, "$implementation/ota/status") &&
 		strings.HasPrefix(string(dm.Value), "206")
 }
@@ -96,26 +96,26 @@ func (dm *DeviceMessage) OTAactive() bool {
 // OTAComplete determines if device has accepted new firmware
 // Filtered on create of event message, use Topic to bypass Filtering
 func (dm *DeviceMessage) OTAComplete() bool {
-	level.Debug(em.logger).Log("DeviceMessage", "OTAComplete()")
+	level.Debug(cdss.logger).Log("DeviceMessage", "OTAComplete()")
 	return strings.Contains(dm.Topic, "$implementation/ota/status") &&
 		strings.HasPrefix(string(dm.Value), "200")
 }
 
 // Broadcast() determines if this is a Homie Broadcast message
 func (dm *DeviceMessage) Broadcast() bool {
-	level.Debug(em.logger).Log("DeviceMessage", "Broadcast()")
+	level.Debug(cdss.logger).Log("DeviceMessage", "Broadcast()")
 	return dm.Parts()[1] == "$broadcast"
 }
 
 // Parts() returns the individual parts of the original MQTT message
 func (dm *DeviceMessage) Parts() []string {
-	level.Debug(em.logger).Log("DeviceMessage", "Parts()")
+	level.Debug(cdss.logger).Log("DeviceMessage", "Parts()")
 	return strings.Split(dm.Topic, "/")
 }
 
 // PartsLen() returns nuber of parts in Topic
 func (dm *DeviceMessage) PartsLen() int {
-	level.Debug(em.logger).Log("DeviceMessage", "PartsLen()")
+	level.Debug(cdss.logger).Log("DeviceMessage", "PartsLen()")
 	return len(dm.Parts())
 }
 
@@ -235,7 +235,7 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
  *  Create a New DeviceMessage and initializes it.
  */
 func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	logger := log.With(em.logger, "method", "buildDeviceMessage")
+	logger := log.With(cdss.logger, "method", "buildDeviceMessage")
 
 	var deviceID, nodeID, propertyID, attributeID, networkID, propertyPropertyID []byte
 	var dm DeviceMessage
