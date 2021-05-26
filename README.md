@@ -14,7 +14,7 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 * [Homie-ESP8266 Example of RCWL-0516 Microwave Presence Detector and DHT22 Temperature and Humidity sensors](https://github.com/skoona/EnvironmentMonitor_DHT)
 
 ## Status
-* Support Mutliple Homie Networks; /homie/#, /custom/#, ...
+* Support Mutliple Homie Networks (auto discovery); /homie/#, /custom/#, ...
 * [MQTT](https://github.com/eclipse/paho.mqtt.golang) Unsecured connection.
 * Produce MQTT messages decoded to Homie Device Model.
 * Produce MQTT messages from MQTT Logfile for Demo use.
@@ -27,6 +27,88 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 * Create Web UI with WedSocket Driven Components
 * Enable SSL/TLS Connection to MQTT
 * Enabled OTA Scheduling
+
+### Project Tree
+```
+├── LICENSE
+├── README.md
+├── bin
+├── cmd
+│   └── cli
+│       └── main.go
+├── config
+│   ├── demo-config.yml
+│   └── mqtt-config.yml
+├── dataDB
+│   ├── dataDir
+│   │   └── devices.db
+│   ├── demoData
+│   │   └── mosquitto.log
+│   └── firmwares
+│       ├── Environment-DS18B20.bin
+│       ├── Monitor-DHT-RCWL-Metrics-200.bin
+│       └── Monitor-SHT31-RCWL-Metrics-200.bin
+├── demo-runtime.log
+├── docs
+│   └── notes.md
+├── go.mod
+├── go.sum
+├── internal
+│   ├── demoProvider
+│   │   └── service.go
+│   ├── mqttProvider
+│   │   └── service.go
+│   ├── deviceSource
+│   │   ├── service.go
+│   │   └── usecase.go
+│   ├── deviceStorage
+│   │   ├── repository.go
+│   │   └── usecase.go
+│   ├── deviceScheduler
+│   │   ├── firmwares.go
+│   │   ├── schedules.go
+│   │   ├── service.go
+│   │   └── usecase.go
+│   ├── deviceCore
+│   │   ├── broadcasts.go
+│   │   ├── devices.go
+│   │   ├── domain.go
+│   │   ├── events.go
+│   │   ├── networks.go
+│   │   ├── service.go
+│   │   └── usecase.go
+│   └── utils
+│       └── configs.go
+├── main
+└── mqtt-runtime.log
+
+18 directories, 34 files
+```
+
+#### Package Description
+* (A) demoProvider
+  - Converts Mosquitto logfile into device messages for deviceSource
+* (A) mqttProvider
+  - Captures Mosquitto messages into device messages for deviceSource
+* (A) deviceStorage
+  - Stores device messages from deviceSource to LevelDB/boltDB 
+* (A) deviceScheduler
+  - Schedules firmware OTA updates to network devices
+* (B) deviceSource
+  - Device message manager for sourcing device info storage, scheduling, and network device collection
+* (C) deviceCore
+  - Network device collection of all known/active devices on any Homie based network.  Fully managed with adds, deletes, and queries
+* (0) utils
+  - Configuration and misc utilities
+* (TBD) uiApi
+  - JSON API for http implementing deviceCore for device network interactions
+* (TBD) uiHtml
+  - HTML ui implementing deviceCore for device network interactions
+  - Potentially with Websocks dynamic updates
+* (TBD) uiCli
+  - Command line interface allowing data extraction from core network models
+
+
 
 
 ### Environment Variables and Configuration
