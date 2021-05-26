@@ -95,9 +95,9 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 * (A) deviceScheduler
   - Schedules firmware OTA updates to network devices thru deviceSource
 * (B) deviceSource
-  - Device message manager for sourcing device info storage, scheduling, and network device collection
+  - Device message manager for sourcing device info for storage, scheduling, and network device collection
 * (C) deviceCore
-  - Network device collection of all known/active devices on any Homie based network.  Fully managed with adds, deletes, and queries
+  - Network device collection of all known/active devices on any Homie based network.  Fully managed with adds, updates, deletes, queries, firmware uploads, and ota schedule creation
 * (0) utils
   - Configuration and misc utilities
 * (TBD) uiApi
