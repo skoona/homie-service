@@ -58,17 +58,22 @@ homiemonitor:
   version: 0.4.0
 
   datasources: 
-    demoSource: ./dataDB/demo/homiedemo.log
-    dataStorage: ./dataDB/live/devices.db
+    dataStorage: ./dataDB/dataDir/devices.db
+    demoSource: ./dataDB/demoData/mosquitto.log
+    demoNetworks:
+    - sknSensors
+    - homie
 
   mqtt:
     clientid: homie-monitor
     broker: <mqtt-host-or-ip>
     port: 1883
     username: <mqtt-username>
-    password: <mqtt-password>
+    userpassword: <mqtt-password>
     homiediscoverytopic: "+/+/$name"
     homiesubscriptiontopic: "sknSensors/#"
+    lwttopic: sknSensors/$broadcast/LWT
+    lwtmsg: HomieMonitor Offline!
 
 ```
 
@@ -78,12 +83,15 @@ Demo Mode: Reads local MQTT logfile as input
 # Demo Config
 homiemonitor:
   title: Homie Network Monitor
-  runmode: demo
+  runmode: live
   version: 0.4.0
 
   datasources: 
-    demoSource: ./dataDB/demo/homiedemo.log
-    dataStorage: ./dataDB/live/devices.db
+    dataStorage: ./dataDB/dataDir/devices.db
+    demoSource: ./dataDB/demoData/mosquitto.log
+    demoNetworks:
+    - sknSensors
+    - homie
   
 ```
 
@@ -93,6 +101,13 @@ homiemonitor:
 Usage of ./program
   -config string
         path to config file (default "live-config")
+```
+
+* program 
+```
+$ go build cmd/cli/main.go 
+$ ./program --config mqtt-config
+$ ./program --config demo-config
 ```
 
 ### Contributing
