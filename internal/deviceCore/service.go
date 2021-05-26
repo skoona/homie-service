@@ -52,6 +52,7 @@ type (
 		CreateQueueDeviceMessage(qmsg QueueMessage) (DeviceMessage, error)
 		GetCoreRequestChannel() (chan DeviceMessage, error)
 		GetCoreResponseChannel() (chan DeviceMessage, error)
+		FromDeviceSource(dm DeviceMessage) error
 	}
 
 	// Service Implementation
@@ -150,8 +151,13 @@ func Start(dfg cc.Config, discoveredNetworks []string) (DeviceSourceInteractor, 
  */
 func Stop() {
 	level.Debug(cdss.logger).Log("event", "Calling Stop()")
+
 	if toDeviceSource != nil {
 		close(toDeviceSource)
 	}
+	if fromDeviceSource != nil {
+		close(fromDeviceSource)
+	}
+
 	level.Debug(cdss.logger).Log("event", "Stop() completed")
 }

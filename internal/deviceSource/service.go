@@ -114,11 +114,9 @@ func ConsumeFromCore(consumer chan dc.DeviceMessage) error {
 	return nil
 }
 
-func ChannelsForCore() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
+func ChannelsForCore() (chan dc.DeviceMessage, error) {
 	var err error
-	if toCore == nil {
-		toCore, err = dvService.coreSvc.GetCoreRequestChannel() // averages 120 on startup
-	}
+	// FromDeviceSource(dm DeviceMessage) error
 
 	if fromCore == nil {
 		fromCore, err = dvService.coreSvc.GetCoreResponseChannel() // averages 120 on startup
@@ -127,13 +125,13 @@ func ChannelsForCore() (chan dc.DeviceMessage, chan dc.DeviceMessage, error) {
 		}
 	}
 
-	if nil == toCore || nil == fromCore {
+	if nil == fromCore {
 		err = errors.New("create core channels failed")
 		level.Error(logger).Log("error", err.Error())
-		return nil, nil, err
+		return nil, err
 	}
 
-	return toCore, fromCore, err
+	return fromCore, err
 }
 
 /*

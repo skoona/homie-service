@@ -132,11 +132,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 		err = hn.handleNode(dm)
 	}
 
-	if err != nil {
-		level.Debug(cdss.logger).Log("event", "apply() completed", "error", err.Error())
-	} else {
-		level.Debug(cdss.logger).Log("event", "apply() completed")
-	}
+	level.Debug(cdss.logger).Log("event", "apply() completed")
 	return err
 }
 

@@ -31,7 +31,7 @@ var (
 	cdss *coreDeviceSourceService
 
 	fromDeviceSource chan DeviceMessage // in
-	toDeviceSource   chan DeviceMessage // out
+	toDeviceSource   chan DeviceMessage
 )
 
 func GetSiteNetworks() *SiteNetworks {
@@ -105,6 +105,15 @@ func (cdss *coreDeviceSourceService) GetCoreResponseChannel() (chan DeviceMessag
 		return nil, err
 	}
 	return toDeviceSource, err
+}
+
+func (cdss *coreDeviceSourceService) FromDeviceSource(dm DeviceMessage) error {
+	level.Debug(cdss.logger).Log("method", "FromDeviceSource() called", "msgID", dm.ID)
+	ch, err := cdss.GetCoreRequestChannel()
+	if err == nil {
+		ch <- dm // send it to channel
+	}
+	return err
 }
 
 /* Service implementation

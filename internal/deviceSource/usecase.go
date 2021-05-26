@@ -46,14 +46,11 @@ func (s *deviceSource) ApplyDMEvent(dm dc.DeviceMessage) error {
 	}
 
 	// also sent it to core
-	if toCore == nil {
-		toCore, err = s.coreSvc.GetCoreRequestChannel()
-		if err != nil {
-			level.Error(logger).Log("error", err)
-			return err
-		}
+	s.coreSvc.FromDeviceSource(dm)
+	if err != nil {
+		level.Error(logger).Log("error", err)
+		return err
 	}
-	toCore <- dm // send to Core
 
 	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 
