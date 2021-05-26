@@ -93,7 +93,7 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 * (A) deviceStorage
   - Stores device messages from deviceSource to LevelDB/boltDB 
 * (A) deviceScheduler
-  - Schedules firmware OTA updates to network devices
+  - Schedules firmware OTA updates to network devices thru deviceSource
 * (B) deviceSource
   - Device message manager for sourcing device info storage, scheduling, and network device collection
 * (C) deviceCore
