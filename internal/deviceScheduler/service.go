@@ -14,6 +14,35 @@ import (
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
+type (
+	SchedulerService interface {
+		ApplySchedule(scheduleEID, deviceEID dc.EID)
+		StartSchedule(scheduleEID dc.EID)
+		DeleteSchedule(scheduleEID dc.EID)
+		UpdateScheduler(dm dc.DeviceMessage)
+
+		ApplyFirmwareUpload(blob []byte) error
+		DeleteFirmware(firmwareEID dc.EID)
+		GetFirmware(firmwareEID dc.EID) (dc.Firmware, error)
+		GetFirmwareMeta(firmwareEID dc.EID)
+	}
+
+	schedulerService struct {
+		sites  *dc.SiteNetworks
+		cfg    cc.Config
+		logger log.Logger
+	}
+)
+
+func NewSchedulerService(dfg cc.Config, siteNetworks *dc.SiteNetworks) SchedulerService {
+	sch = &schedulerService{
+		sites:  siteNetworks,
+		cfg:    dfg,
+		logger: log.With(dfg.Logger, "pkg", "deviceScheduler", "service", "SchedulerService"),
+	}
+	return sch
+}
+
 /**
  * ConsumeFromDeviceSource
  * Handles incoming channel DM message
@@ -66,6 +95,7 @@ var (
 	logger log.Logger
 	fromDS chan dc.DeviceMessage // in
 	dmh    dss.DeviceMessageHandler
+	sch    *schedulerService
 )
 
 /*
@@ -78,19 +108,20 @@ func Start(dfg cc.Config, s dss.DeviceMessageHandler) error {
 	cfg = dfg
 	dmh = s
 
-	logger = log.With(dfg.Logger, "pkg", "deviceScheduler")
-	level.Debug(logger).Log("event", "Calling Start()")
+	NewSchedulerService(dfg, dc.GetSiteNetworks())
+	logger = sch.logger
+
+	level.Debug(sch.logger).Log("event", "Calling Start()")
 
 	// Initialize a Message Channel
 	fromDS, err = s.GetSchedulerResponseChannel()
 	if err != nil {
-		level.Error(logger).Log("event", "Channels offline", "error", err.Error())
+		level.Error(sch.logger).Log("event", "Channels offline", "error", err.Error())
 		panic(err.Error())
 	}
-
 	err = consumeFromDeviceSource(fromDS)
 
-	level.Debug(logger).Log("event", "Start() completed")
+	level.Debug(sch.logger).Log("event", "Start() completed")
 
 	return err
 }

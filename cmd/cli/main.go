@@ -40,7 +40,7 @@ import (
 	dp "github.com/skoona/homie-service/internal/demoProvider"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 
-	// sch "github.com/skoona/homie-service/internal/deviceScheduler"
+	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
 	dds "github.com/skoona/homie-service/internal/deviceStorage"
 	mq "github.com/skoona/homie-service/internal/mqttProvider"
@@ -50,7 +50,7 @@ import (
 func shutdownDemo() {
 	level.Debug(logger).Log("event", "shutdownDemo() called")
 	dp.Stop()
-	// sch.Stop()
+	sch.Stop()
 	dss.Stop()
 
 	// List the Devices Found/Recorded

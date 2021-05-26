@@ -4,19 +4,19 @@ package deviceScheduler
   	deviceScheduler/firmwares.go:
 
 	Manage Homie Firmware catalog
-	
+
 */
 
-import ( 
+import (
 	"crypto/md5"
 	"encoding/hex"
 	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
+
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
-
 
 // newFirmware Creates Component
 func NewFirmware(name, fileName, path string) (dc.Firmware, error) {
@@ -25,21 +25,20 @@ func NewFirmware(name, fileName, path string) (dc.Firmware, error) {
 	md5Sum, fwName, fwVersion, fwBrand, fsize, err := firmwareDetails(path)
 
 	fw := dc.Firmware{
-		ID:        dc.NewEID(),
+		ID:          dc.NewEID(),
 		ElementType: dc.CoreTypeFirmware,
-		Name:      fwName,
-		FileName:  path,
-		Version:   fwVersion,
-		Path:      path,
-		Size:      fsize,
-		MD5Digest: md5Sum,
-		Brand:     fwBrand,
-		Created:   modtime,
+		Name:        fwName,
+		FileName:    path,
+		Version:     fwVersion,
+		Path:        path,
+		Size:        fsize,
+		MD5Digest:   md5Sum,
+		Brand:       fwBrand,
+		Created:     modtime,
 	}
 
-	return fw, err 
+	return fw, err
 }
-
 
 /*
    HOMIE_PATTERN   = "\x25\x48\x4f\x4d\x49\x45\x5f\x45\x53\x50\x38\x32\x36\x36\x5f\x46\x57\x25".unpack('H*').first
@@ -93,7 +92,9 @@ func firmwareDetails(path string) (string, string, string, string, int64, error)
 	}
 	fwBrand, _ := extractValueFromHexStr(hexStr, "fb2af568c0", "6e2f0feb2d")
 
-	return md5Sum, fwName, fwVersion, fwBrand, int64.(len(content)), err
+	contentLen := int64(len(content))
+
+	return md5Sum, fwName, fwVersion, fwBrand, contentLen, err
 }
 
 /*
@@ -101,8 +102,8 @@ func firmwareDetails(path string) (string, string, string, string, int64, error)
  * collect available firmwares
  */
 func buildFirmwareListing() []cl.Firmware {
-	firmware := []cl.Firmware{}  
-	dir := "./dataDB/firmwares"   // use config params for this value
+	firmware := []cl.Firmware{}
+	dir := "./dataDB/firmwares" // use config params for this value
 	fileInfos, err := ioutil.ReadDir(dir)
 	if err != nil {
 		log.Fatalf("ioutil.ReadDir('%s') failed with '%s'\n", dir, err)
@@ -121,11 +122,10 @@ func buildFirmwareListing() []cl.Firmware {
 	return firmware
 }
 
-
 // FirmwareRepository manages lifecycle of schedules
 type FirmwareRepository interface {
 	Create(name, fileName, path string) (Firmware, error)
 	Find(id EID) (*Firmware, error)
-	List() (*[]Firmware, error) 
+	List() (*[]Firmware, error)
 	Delete(id EID) error
 }
