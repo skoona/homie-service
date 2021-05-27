@@ -106,42 +106,28 @@ func subWithHandler(topic string, callback mqtt.MessageHandler) mqtt.Token {
 }
 
 /**
- * ConsumeOTAMessages
- * Handles OTA Streaming responses
+ * disableNetworkTraffic Unsubscribe and shutdown cleanly
  */
-func ConsumeOTAMessages(network, name string, enabled bool) error {
-	var err error
-	if enabled {
-		err = WatchOTAProgress(network, name)
+func disableNetworkTraffic() error {
+	networks := DiscoveredNetworks()
+	if len(networks) > 0 {
+		for _, network := range networks {
+			networkTopic := fmt.Sprintf("%s/#", network)
+			token := client.Unsubscribe(networkTopic)
+			token.Wait()
+		}
 	} else {
-		err = UnWatchOTAProgress(network, name)
+		token := client.Unsubscribe(config.SubscriptionTopic)
+		token.Wait()
 	}
 
-	if nil != err {
-		level.Error(logger).Log("event", "Subscribe Failed", "error", err.Error())
-	}
-	level.Debug(logger).Log("ConsumeOTAMessages Completed", enabled, "network", network, "name", name)
-
-	return err
+	return nil
 }
 
-// WatchOTAProgress for Scheduler
-func WatchOTAProgress(network, device string) error {
-	topic := fmt.Sprintf("%s/%s/$implementation/ota/status", network, device)
-	token := subWithHandler(topic, otaResponses) // OTA Responses
-	return token.Error()
-}
-
-// UnWatchOTAProgress for Scheduler
-func UnWatchOTAProgress(network, device string) error {
-	topic := fmt.Sprintf("%s/%s/$implementation/ota/status", network, device)
-	token := client.Unsubscribe(topic)
-	token.Wait()
-	return token.Error()
-}
-
-// ProduceMQTTMessages to group topic
-func ProduceMQTTMessages() error {
+/**
+ * Activate Subscriptions starting network traffic
+ */
+func enableNetworkTraffic() error {
 	var token mqtt.Token
 	networks := DiscoveredNetworks()
 
@@ -156,21 +142,20 @@ func ProduceMQTTMessages() error {
 	return token.Error()
 }
 
-// RemoveSubscriptions Unsubscribe and shutdown cleanly
-func removeSubscriptions() error {
-	networks := DiscoveredNetworks()
-	if len(networks) > 0 {
-		for _, network := range networks {
-			networkTopic := fmt.Sprintf("%s/#", network)
-			token := client.Unsubscribe(networkTopic)
+/**
+ * Discover existing Homie Networks
+ */
+func doNetworkDiscovery() {
+	// allow for network discovery
+	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
+	for {
+		time.Sleep(3 * time.Second) // delay long enough to collect networks
+		if len(DiscoveredNetworks()) >= 1 {
+			token := client.Unsubscribe(config.DiscoveryTopic)
 			token.Wait()
+			break
 		}
-	} else {
-		token := client.Unsubscribe(config.SubscriptionTopic)
-		token.Wait()
 	}
-
-	return nil
 }
 
 var (
@@ -200,23 +185,13 @@ func Start(s dss.DeviceMessageHandler) error {
 
 	// Initialize a Message Channel
 	// one use is to delete devices based on ui input
-	fromDMService, err = s.GetProviderResponseChannel()
-	if err != nil {
-		level.Error(logger).Log("event", "provider response channel offline", "error", err.Error())
-		client.Disconnect(250)
-		panic(err.Error())
-	}
+	establishProviderChannels()
 
 	// one use is to start an OTA, or cancel an OTA
-	fromOTAService, err = s.GetOTAResponseChannel()
-	if err != nil {
-		level.Error(logger).Log("event", "OTA respnse channel offline", "error", err.Error())
-		client.Disconnect(250)
-		panic(err.Error())
-	}
+	establishOTAChannels()
 
 	// start active processing on discovered networks
-	ProduceMQTTMessages()
+	enableNetworkTraffic()
 	level.Debug(logger).Log("event", "Start() completed")
 
 	return err
@@ -251,15 +226,7 @@ func Initialize(cfg cc.Config) ([]string, error) {
 	}
 
 	// allow for network discovery
-	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
-	for {
-		time.Sleep(3 * time.Second) // delay long enough to collect networks
-		if len(DiscoveredNetworks()) >= 1 {
-			token := client.Unsubscribe(config.DiscoveryTopic)
-			token.Wait()
-			break
-		}
-	}
+	doNetworkDiscovery()
 
 	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","))
 	return DiscoveredNetworks(), err
@@ -268,7 +235,7 @@ func Initialize(cfg cc.Config) ([]string, error) {
 func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
 	// Unsubscribe and shutdown cleanly
-	removeSubscriptions()
+	disableNetworkTraffic()
 
 	client.Disconnect(250)
 

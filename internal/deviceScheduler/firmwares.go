@@ -12,17 +12,19 @@ import (
 	"encoding/hex"
 	"fmt"
 	"io/ioutil"
-	"log"
+	"os"
 	"strings"
+	"time"
 
+	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
 
 // newFirmware Creates Component
-func NewFirmware(name, fileName, path string) (dc.Firmware, error) {
+func NewFirmware(path string) (dc.Firmware, error) {
 
 	// call resolver routine
-	md5Sum, fwName, fwVersion, fwBrand, fsize, err := firmwareDetails(path)
+	md5Sum, fwName, fwVersion, fwBrand, fsize, modtime, err := firmwareDetails(path)
 
 	fw := dc.Firmware{
 		ID:          dc.NewEID(),
@@ -71,51 +73,59 @@ func extractValueFromHexStr(str string, startS string, endS string) (result stri
  * firmwareDetails
  * Firmware and Scheduling
  */
-func firmwareDetails(path string) (string, string, string, string, int64, error) {
-	log.Printf("[DEBUG] firmwareDetails() Path: %s\n", path)
+func firmwareDetails(path string) (string, string, string, string, int64, time.Time, error) {
+	level.Debug(logger).Log("event", "firmwareDetails() called", "filePath", path)
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		return "", "", "", "", 0, time.Time{}, fmt.Errorf("firmwareDetails() file[%s] is not found: %s", path, err.Error())
+	}
+	modtime := fileInfo.ModTime()
 
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
-		log.Printf("[ERROR] File open failed: %s, %w\n", path, err.Error())
+		level.Error(logger).Log("file open failed", path, "error", err.Error())
+		return "", "", "", "", 0, time.Time{}, fmt.Errorf("fileopen failed", path, "error", err.Error())
 	}
+
 	// md5Sum := hex.EncodeToString(md5.Sum(content))
 	md5Sum := fmt.Sprintf("%x", md5.Sum(content))
 	hexStr := hex.EncodeToString(content)
 
 	if !strings.Contains(hexStr, "25484f4d49455f455350383236365f465725") {
-		return "", "", "", "", fmt.Errorf("firmwareDetails() file[%s] is not Homie Firmware", path)
+		return "", "", "", "", 0, time.Time{}, fmt.Errorf("firmwareDetails() file[%s] is not Homie Firmware", path)
 	}
-	fwName, ok := extractValueFromHexStr(hexStr, "bf84e41354", "93446ba775")
+	fwName, _ := extractValueFromHexStr(hexStr, "bf84e41354", "93446ba775")
 	fwVersion, ok := extractValueFromHexStr(hexStr, "6a3f3e0ee1", "b03048d41a")
 	if !ok {
-		return "", "", "", "", fmt.Errorf("firmwareDetails() firmware name and version not found", path)
+		return "", "", "", "", 0, time.Time{}, fmt.Errorf("firmware %s and version not found", path)
 	}
 	fwBrand, _ := extractValueFromHexStr(hexStr, "fb2af568c0", "6e2f0feb2d")
 
 	contentLen := int64(len(content))
 
-	return md5Sum, fwName, fwVersion, fwBrand, contentLen, err
+	return md5Sum, fwName, fwVersion, fwBrand, contentLen, modtime, err
 }
 
 /*
- * buildFirmwareListing:
+ * buildFirmwareCatalog:
  * collect available firmwares
  */
-func buildFirmwareListing() []cl.Firmware {
-	firmware := []cl.Firmware{}
-	dir := "./dataDB/firmwares" // use config params for this value
+func buildFirmwareCatalog() []dc.Firmware {
+	level.Debug(logger).Log("event", "buildFirmwareCatalog() called")
+
+	firmware := []dc.Firmware{}
+	dir := cfg.Dbc.FirmwareStorage // use config params for this value
 	fileInfos, err := ioutil.ReadDir(dir)
 	if err != nil {
-		log.Fatalf("ioutil.ReadDir('%s') failed with '%s'\n", dir, err)
+		level.Error(logger).Log("ioutil.ReadDir()", "failed", "dir", dir, "error", err.Error())
 	}
 	for _, fi := range fileInfos {
 		if len(fi.Name()) > 0 && !fi.IsDir() && strings.HasSuffix(fi.Name(), ".bin") {
-			md5Sum, fwName, fwVersion, fwBrand, fsize, _ := firmwareDetails(dir + "/" + fi.Name())
-			fw, err := cl.NewFirmware(fi.Name(), fwName, fwVersion, md5Sum, dir+"/"+fi.Name(), fi.Size(), fi.ModTime())
+			fw, err := NewFirmware(dir + "/" + fi.Name())
 			if err == nil {
 				firmware = append(firmware, fw)
 			}
-			log.Printf("[DEBUG] (%s) Firmware: %v\n", fwBrand, fw)
+			level.Debug(logger).Log("created", "Firmware", "brand", fw.Brand, "object", fw.String())
 		}
 	}
 
@@ -124,8 +134,8 @@ func buildFirmwareListing() []cl.Firmware {
 
 // FirmwareRepository manages lifecycle of schedules
 type FirmwareRepository interface {
-	Create(name, fileName, path string) (Firmware, error)
-	Find(id EID) (*Firmware, error)
-	List() (*[]Firmware, error)
-	Delete(id EID) error
+	Create(name, fileName, path string) (dc.Firmware, error)
+	Find(id dc.EID) (*dc.Firmware, error)
+	List() (*[]dc.Firmware, error)
+	Delete(id dc.EID) error
 }

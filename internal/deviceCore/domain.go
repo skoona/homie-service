@@ -1,6 +1,7 @@
 package deviceCore
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -67,4 +68,20 @@ type Schedule struct {
 	Transport   OTATransport
 	Scheduled   time.Time
 	Completed   time.Time
+}
+
+type FirmwareTools interface {
+	String()
+}
+type ScheduleTools interface {
+	String()
+}
+
+func (f *Firmware) String() string {
+	return fmt.Sprintf("id=%s, name=%s, fileName=%s, path=%s, size=%d, brand=%s, created=%v",
+		f.ID, f.Name, f.FileName, f.Path, f.Size, f.Brand, f.Created)
+}
+func (s *Schedule) String() string {
+	return fmt.Sprintf("id=%s, device=%s, state=%s, status=%s, scheduled=%v, firmware.id=%s, firmware.name=%s",
+		s.ID, s.DeviceName, s.State, s.Status, s.Scheduled, s.Package.ID, s.Package.Name)
 }

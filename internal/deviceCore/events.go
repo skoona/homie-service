@@ -22,15 +22,15 @@ type DeviceMessage struct {
 	ID          uint16
 	HomieType   CoreType
 	OTATrigger  bool
-	Retained    bool
-	Qos         byte
+	RetainedB   bool
+	Qosb        byte
 	NetworkID   []byte
 	DeviceID    []byte
 	NodeID      []byte
 	PropertyID  []byte
 	PPropertyID []byte
 	AttributeID []byte
-	Topic       string
+	TopicS      string
 	Value       []byte
 }
 
@@ -63,7 +63,7 @@ type DeviceEventIntf interface {
 */
 func (dm *DeviceMessage) String() string {
 	return fmt.Sprintf("id=%06d retained=%-5t device=%-16s node=%-16s property=%-16s pProperty=%-16s attr=%-16s value=%s",
-		dm.ID, dm.Retained, dm.DeviceID, dm.NodeID, dm.PropertyID, dm.PPropertyID, dm.AttributeID, dm.Value)
+		dm.ID, dm.RetainedB, dm.DeviceID, dm.NodeID, dm.PropertyID, dm.PPropertyID, dm.AttributeID, dm.Value)
 }
 
 // Schedulable()
@@ -72,7 +72,7 @@ func (dm *DeviceMessage) Schedulable() bool {
 	level.Debug(cdss.logger).Log("DeviceMessage", "Schedulable()")
 	res := false
 	for _, keys := range []string{"$state", "$online", "$fw", "$implementation", "uptime"} {
-		if strings.Contains(dm.Topic, keys) {
+		if strings.Contains(dm.TopicS, keys) {
 			res = true
 			break
 		}
@@ -83,13 +83,13 @@ func (dm *DeviceMessage) Schedulable() bool {
 // Settable() determine is property is settable
 func (dm *DeviceMessage) Settable() bool {
 	level.Debug(cdss.logger).Log("DeviceMessage", "Settable()")
-	return strings.HasSuffix(dm.Topic, "set")
+	return strings.HasSuffix(dm.TopicS, "set")
 }
 
 // OTAactive() determines if device is downloading firmware
 func (dm *DeviceMessage) OTAactive() bool {
 	level.Debug(cdss.logger).Log("DeviceMessage", "OTAactive()")
-	return strings.Contains(dm.Topic, "$implementation/ota/status") &&
+	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
 		strings.HasPrefix(string(dm.Value), "206")
 }
 
@@ -97,7 +97,7 @@ func (dm *DeviceMessage) OTAactive() bool {
 // Filtered on create of event message, use Topic to bypass Filtering
 func (dm *DeviceMessage) OTAComplete() bool {
 	level.Debug(cdss.logger).Log("DeviceMessage", "OTAComplete()")
-	return strings.Contains(dm.Topic, "$implementation/ota/status") &&
+	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
 		strings.HasPrefix(string(dm.Value), "200")
 }
 
@@ -110,13 +110,32 @@ func (dm *DeviceMessage) Broadcast() bool {
 // Parts() returns the individual parts of the original MQTT message
 func (dm *DeviceMessage) Parts() []string {
 	level.Debug(cdss.logger).Log("DeviceMessage", "Parts()")
-	return strings.Split(dm.Topic, "/")
+	return strings.Split(dm.TopicS, "/")
 }
 
 // PartsLen() returns nuber of parts in Topic
 func (dm *DeviceMessage) PartsLen() int {
 	level.Debug(cdss.logger).Log("DeviceMessage", "PartsLen()")
 	return len(dm.Parts())
+}
+
+/*
+ * QueueMessage implementation for DeviceMessage
+ */
+func (dm DeviceMessage) Topic() string {
+	return dm.TopicS
+}
+func (dm DeviceMessage) Payload() []byte {
+	return dm.Value
+}
+func (dm DeviceMessage) MessageID() uint16 {
+	return dm.ID
+}
+func (dm DeviceMessage) Retained() bool {
+	return dm.RetainedB
+}
+func (dm DeviceMessage) Qos() byte {
+	return dm.Qosb
 }
 
 // X/$B
@@ -309,15 +328,15 @@ func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained
 	dm = DeviceMessage{ // effectively copy the data
 		HomieType:   typeIntHomie,
 		ID:          idCounter,
-		Retained:    retained,
-		Qos:         qos,
+		RetainedB:   retained,
+		Qosb:        qos,
 		NetworkID:   networkID,
 		DeviceID:    deviceID,
 		NodeID:      nodeID,
 		PropertyID:  propertyID,
 		PPropertyID: propertyPropertyID,
 		AttributeID: attributeID,
-		Topic:       topic,
+		TopicS:      topic,
 		Value:       payload,
 	}
 

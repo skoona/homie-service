@@ -12,6 +12,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
+	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
@@ -25,6 +26,7 @@ type (
 	}
 	deviceMessageHandler struct {
 		cfg    cc.Config
+		sched  sch.SchedulerService
 		logger log.Logger
 	}
 )
@@ -171,6 +173,12 @@ func consumeFromScheduler(consumer chan dc.DeviceMessage, publisher chan dc.Devi
 	}(consumer, publisher)
 
 	return nil
+}
+
+// Inject Scheduler Service after Start or New...
+func (dmHandler *deviceMessageHandler) BuildFirmwareCatalog(svc sch.SchedulerService) []dc.Firmware {
+	dmHandler.sched = svc
+	return svc.BuildFirmwareCatalog()
 }
 
 func (dmHandler *deviceMessageHandler) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (dc.DeviceMessage, error) {

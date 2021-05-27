@@ -39,7 +39,6 @@ import (
 	"github.com/go-kit/kit/log/level"
 	dp "github.com/skoona/homie-service/internal/demoProvider"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-
 	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
 	dds "github.com/skoona/homie-service/internal/deviceStorage"
@@ -64,7 +63,7 @@ func shutdownDemo() {
 func shutdownLive() {
 	level.Debug(logger).Log("event", "shutdownLive() called")
 	mq.Stop()
-	// sch.Stop()
+	sch.Stop()
 
 	// List the Devices Found/Recorded
 	dds.ListHomieDB()
@@ -77,30 +76,35 @@ func shutdownLive() {
 
 func runLive(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runLive() called")
-	networks, _ := mq.Initialize(cfg)
-	coreSvc, _ := dc.Start(cfg, networks)
-	repo, err := dds.Start(cfg)
-	dmh, err = dss.Start(cfg, repo, coreSvc) // needs coreSvc
-	// _ = sch.Start(cfg, dmh)
-	err = mq.Start(dmh)
+	networks, _ := mq.Initialize(cfg)      // message stream
+	coreSvc, _ = dc.Start(cfg, networks)   // network logic
+	repo, _ = dds.Start(cfg)               // message db
+	dmh, _ = dss.Start(cfg, repo, coreSvc) // message aggregation
+	sched, _ = sch.Start(cfg, dmh)         // ota scheduler
+	err := mq.Start(dmh)                   // activate message stream
 	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
 
 func runDemo(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runDemo() called")
-	networks, _ := dp.Initialize(cfg)
-	coreSvc, _ := dc.Start(cfg, networks)
-	repo, err := dds.Start(cfg)
-	dmh, err = dss.Start(cfg, repo, coreSvc) // needs coreSvc
-	// _ = sch.Start(cfg, dmh)
-	err = dp.Start(dmh)
+	networks, _ := dp.Initialize(cfg)      // message stream
+	coreSvc, _ = dc.Start(cfg, networks)   // network logic
+	repo, _ = dds.Start(cfg)               // message db
+	dmh, _ = dss.Start(cfg, repo, coreSvc) // message aggregation
+	sched, _ = sch.Start(cfg, dmh)         // ota scheduler
+	err := dp.Start(dmh)                   // activate message stream
 	level.Debug(logger).Log("event", "runDemo() completed")
 	return err
 }
 
-var logger log.Logger
-var dmh dss.DeviceMessageHandler
+var (
+	logger  log.Logger
+	dmh     dss.DeviceMessageHandler
+	sched   sch.SchedulerService
+	coreSvc dc.DeviceSourceInteractor
+	repo    dss.Repository
+)
 
 func main() {
 	// var hns *cl.HomieNetworks

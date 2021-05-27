@@ -115,7 +115,7 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 MQTT hostname, username, and password can be set in the environment.  If present they will override those in the configuration file.  The variable are:
 
 #### Environment Vars: ~/.profile or ~/.bashrc
-* MQTT_HOST
+* MQTT_BROKER
 * MQTT_USERNAME
 * MQTT_PASSWORD
 
@@ -142,6 +142,7 @@ homiemonitor:
   datasources: 
     dataStorage: ./dataDB/dataDir/devices.db
     demoSource: ./dataDB/demoData/mosquitto.log
+    firmwareStorage: ./dataDB/firmwares
     demoNetworks:
     - sknSensors
     - homie
@@ -171,6 +172,7 @@ homiemonitor:
   datasources: 
     dataStorage: ./dataDB/dataDir/devices.db
     demoSource: ./dataDB/demoData/mosquitto.log
+    firmwareStorage: ./dataDB/firmwares
     demoNetworks:
     - sknSensors
     - homie

@@ -13,6 +13,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
+	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
@@ -33,6 +34,7 @@ type (
 
 	//Incoming Messages
 	DeviceMessageHandler interface {
+		BuildFirmwareCatalog() []dc.Firmware
 		CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (dc.DeviceMessage, error)
 		CreateQueueDeviceMessage(qmsg dc.QueueMessage) (dc.DeviceMessage, error)
 		GetProviderRequestChannel() (chan dc.DeviceMessage, error)
@@ -68,9 +70,10 @@ func NewDeviceSourceService(cfg cc.Config, repo Repository, coreSvc dc.DeviceSou
  *
  *  Create a New NewDeviceSourceService and initializes it.
  */
-func NewDeviceMessageHandler(cfg cc.Config, logger log.Logger) DeviceMessageHandler {
+func NewDeviceMessageHandler(cfg cc.Config, sched *sch.SchedulerService, logger log.Logger) DeviceMessageHandler {
 	dmHandler = &deviceMessageHandler{
 		cfg:    cfg,
+		sched:  sched,
 		logger: logger,
 	}
 	return dmHandler
@@ -146,7 +149,7 @@ func Start(cfg cc.Config, repo Repository, coreSvc dc.DeviceSourceInteractor) (D
 	level.Debug(logger).Log("event", "Calling Start()")
 
 	NewDeviceSourceService(cfg, repo, coreSvc, logger)
-	dmh := NewDeviceMessageHandler(cfg, cfg.Logger)
+	dmh := NewDeviceMessageHandler(cfg, sch.SchedulerService{}, Logger)
 
 	level.Debug(logger).Log("event", "Start() Completed")
 

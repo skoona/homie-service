@@ -8,6 +8,7 @@ homiemonitor:
   datasources: 
     dataStorage: ./dataDB/dataDir/devices.db
     demoSource: ./dataDB/demoData/mosquitto.log
+    firmwareStorage: ./dataDB/firmwares
     demoNetworks:
     - sknSensors
     - homie

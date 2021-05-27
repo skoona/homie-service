@@ -19,9 +19,10 @@ import (
 
 type (
 	DBConfig struct {
-		DemoSource   string
-		DataStorage  string
-		DemoNetworks []string
+		DemoSource      string
+		DataStorage     string
+		FirmwareStorage string
+		DemoNetworks    []string
 	}
 
 	MQTTConfig struct {
@@ -64,6 +65,7 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 	config.AddConfigPath(".")                        // path to look for the config file in
 
 	config.SetDefault("homiemonitor.datasources.demoNetworks", []string{"sknSensors"})
+	config.SetDefault("homiemonitor.datasources.firmwareStorage", "./dataDB/firmwares")
 
 	config.SetDefault("homiemonitor.mqtt.homiesubscriptiontopic", "sknSensors/#")
 	config.SetDefault("homiemonitor.mqtt.homiediscoverytopic", "+/+/$name")
@@ -121,9 +123,10 @@ func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 		Version: cfg.GetString("homiemonitor.version"),
 		Logger:  log,
 		Dbc: DBConfig{
-			DemoSource:   cfg.GetString("homiemonitor.datasources.demoSource"),
-			DataStorage:  cfg.GetString("homiemonitor.datasources.dataStorage"),
-			DemoNetworks: cfg.GetStringSlice("homiemonitor.datasources.demoNetworks"),
+			DemoSource:      cfg.GetString("homiemonitor.datasources.demoSource"),
+			DataStorage:     cfg.GetString("homiemonitor.datasources.dataStorage"),
+			FirmwareStorage: cfg.GetString("homiemonitor.datasources.dataStorage"),
+			DemoNetworks:    cfg.GetStringSlice("homiemonitor.datasources.demoNetworks"),
 		},
 		Mqc: MQTTConfig{
 			ClientID:          cfg.GetString("homiemonitor.mqtt.clientid"),
