@@ -16,45 +16,37 @@ import (
 )
 
 type (
+	/*
+	 * call EnableTriggers() to see messages with ota enabled flags from devices
+	 * when triggered send the EnableNotificationFor(..., true), then OtaPublish(ota-payload
+	*/
 	OTAInteractor interface {
-		EnableNotifications()  // starts gofunc to receive on status updates
-		GetPublishingChannel() // channel which scheduler send out OTA
-		SendNotifications()    // sends message to request chan, keeping chan control here
+		EnableTriggers() chan dc.QueueMessage  // open notification and trigger channel
+		EnableNotificationsFor(networkName, deviceName string, enabledOrDisable bool) error // watch a device ota progres
+		OtaPublish(otaMessage dc.QueueMessage) // sending a ota
 	}
 
-	otaChannel struct {
-		requestChannel  chan dc.QueueMessage
-		responseChannel chan dc.QueueMessage
-		cfg             cc.Config
-		logger          log.Logger
-	}
 )
 
-func NewOTAInteractor(dfg cc.Config) OTAInteractor {
-	// make channels
-	req := make(chan dc.QueueMessage, 256) // averages 120 on startup
-	rsp := make(chan dc.QueueMessage, 256) // averages 120 on startup
-	ota = &otaChannel{
-		requestChannel:  req,
-		responseChannel: rsp,
-		cfg:             dfg,
-		logger:          log.With(dfg.Logger, "pkg", "deviceScheduler", "service", "OTAInteractor"),
-	}
-	return ota
-}
+var (
+	otaNotify chan dc.QueueMessage
+)
 
 /*
- * OTAInteractor implementation */
-func (s *otaChannel) EnableNotifications() {
-	level.Debug(s.logger).Log("event", "EnableNotifications() called")
-}
-
-func (s *otaChannel) GetPublishingChannel() {
-	level.Debug(s.logger).Log("event", "GetPublishingChannel() called")
-}
-
-func (s *otaChannel) SendNotifications(msg dc.QueueMessage) {
-	level.Debug(s.logger).Log("event", "SendNotifications() called")
+ * Receive Triggers and Notifications from OTA Provider  */
+func enableNotifications(s OTAInteractor) error {
+	level.Debug(s.logger).Log("method", "enableNotifications()")
+	otaNotify = make(chan dc.QueueMessage, 120)
+	err := consumeNotificationsFromOTAProviders(otaNotify)
+	if err == nil {
+		err = s.EnableNotifications(otaNotify)
+		if err != nil {
+			level.Error(logger).Log("error", err.Error())
+		}
+	} else {
+		level.Error(logger).Log("error", err.Error())
+	}
+	return err
 }
 
 /**

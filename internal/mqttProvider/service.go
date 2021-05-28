@@ -20,6 +20,7 @@ package mqttProvider
 
 import (
 	"fmt"
+	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	"strings"
 	"time"
 
@@ -53,27 +54,17 @@ var networksHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mess
 	level.Debug(logger).Log("Network Discovery topic", msg.Topic(), "payload", msg.Payload())
 }
 
-/*
- * otaResponses
- * Source OTA Responses to Scheduler
- */
-var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	// msg.Payload()[0] = byte{0}
-	err := dmh.FromOTAProvider(msg)
-	if err != nil {
-		level.Error(logger).Log("error", err.Error())
-	}
-}
 
 /*
  * defaultOnMessage
  * Default Incoming Message Handler
  */
 var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	err := dmh.FromMQTTProvider(msg)
-	if err != nil {
-		level.Error(logger).Log("error", err.Error())
+	// if this is a trigger route to scheduler
+	if otahandler.notifyChannel != nil {
+		otahandler.notifyChannel <- msg
 	}
+	// plus aways send to source
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -84,8 +75,8 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 	level.Debug(logger).Log("status", "lost MQTT connection", "error", err.Error())
 }
 
-func publish(topic string, payload string, retain bool, qos byte) {
-	token := client.Publish(topic, qos, retain, []byte(payload))
+func publish(topic string, payload []byte, retain bool, qos byte) {
+	token := client.Publish(topic, qos, retain, payload)
 	token.Wait()
 	level.Debug(logger).Log("Published topic", topic, "payload", payload)
 }
@@ -173,7 +164,7 @@ var (
  *
  * Initialize this service
  */
-func Start(s dss.DeviceMessageHandler) error {
+func Start() (sch.OTAInteractor, error) {
 	var err error
 	dmh = s
 
@@ -183,18 +174,17 @@ func Start(s dss.DeviceMessageHandler) error {
 	}
 	level.Debug(logger).Log("event", "Calling Start()")
 
+	NewOTAHandler(logger) // creates otahandler
+
 	// Initialize a Message Channel
 	// one use is to delete devices based on ui input
 	establishProviderChannels()
-
-	// one use is to start an OTA, or cancel an OTA
-	establishOTAChannels()
 
 	// start active processing on discovered networks
 	enableNetworkTraffic()
 	level.Debug(logger).Log("event", "Start() completed")
 
-	return err
+	return otahandler, err
 }
 
 //
@@ -236,6 +226,15 @@ func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
 	// Unsubscribe and shutdown cleanly
 	disableNetworkTraffic()
+
+	if otahandler.notifyChannel != nil {
+		close(otahandler.notifyChannel) // we own chan, cleanup when done
+		otahandler.notifyChannel = nil
+	}
+	if otahandler.publishChannel != nil {
+		close(otahandler.publishChannel) // we own chan, cleanup when done
+		otahandler.publishChannel = nil
+	}
 
 	client.Disconnect(250)
 

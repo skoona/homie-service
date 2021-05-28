@@ -77,10 +77,10 @@ The design goal for this file is:
 */
 
 // NewSchedule Creates Component
-func NewSchedule(networkName, deviceName string, transport dc.OTATransport, firmware *dc.Firmware) (dc.Schedule, error) {
-	// Get related device
-	// verify OTAEnabled is true [default]
-	// if false return error
+// Get related device
+// verify OTAEnabled is true [default]
+// if false return error
+func NewSchedule(networkName, deviceName string, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
 	return dc.Schedule{
 		ID:          dc.NewEID(),
 		ElementType: dc.CoreTypeSchedule,
@@ -90,13 +90,13 @@ func NewSchedule(networkName, deviceName string, transport dc.OTATransport, firm
 		Status:      "Waiting",
 		Transport:   transport,
 		Scheduled:   time.Now(),
-	}, nil
+	}
 }
 
 // ScheduleRepository manages lifecycle of schedules
 type ScheduleRepository interface {
-	Create(networkName, deviceName string, transport dc.OTATransport, firmware *dc.Firmware) (dc.Schedule, error)
-	Find(deviceName string) (*dc.Schedule, error)
-	List() (*[]dc.Schedule, error)
+	List() []dc.Schedule
+	Find(deviceName string) (dc.Schedule, error)
+	Create(networkName, deviceName string, transport dc.OTATransport, firmware *dc.Firmware) error
 	Delete(deviceName string) error
 }

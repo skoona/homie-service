@@ -14,35 +14,7 @@ import (
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
-/**
- * ConsumeFromDeviceSource
- * Handles incoming channel DM message
- */
-func consumeFromDeviceSource(consumer chan dc.DeviceMessage) error {
-	/*
-	 * Create a Go Routine for the Schedulers Channel to
-	 */
-	go func(consumeChan chan dc.DeviceMessage) {
-		// var err error
-		level.Debug(logger).Log("event", "consumeFromDeviceSource(gofunc) called")
 
-		for msg := range consumeChan { // read until closed
-			// err := dvService.ApplyOTAEvent(&msg)
-			// if err != nil {
-			// 	level.Error(logger).Log("method", "consumeFromDeviceSource(gofunc)", "error", err.Error())
-			// }
-
-			// if nil != publishChan {
-			// 	publishChan <- msg
-			// }
-
-			level.Debug(logger).Log("method", "consumeFromDeviceSource(gofunc)", "consume queue depth", len(consumeChan), "Device", msg.DeviceID)
-		}
-		level.Debug(logger).Log("method", "consumeFromDeviceSource()", "event", "Completed")
-	}(consumer)
-
-	return nil
-}
 
 func publishToDeviceSource(dm dc.DeviceMessage) error {
 	level.Debug(logger).Log("event", "Calling publishToDeviceSource()")

@@ -134,8 +134,16 @@ func buildFirmwareCatalog() []dc.Firmware {
 
 // FirmwareRepository manages lifecycle of schedules
 type FirmwareRepository interface {
-	Create(name, fileName, path string) (dc.Firmware, error)
-	Find(id dc.EID) (*dc.Firmware, error)
-	List() (*[]dc.Firmware, error)
+	List() []dc.Firmware
+	Find(id dc.EID) (dc.Firmware, error)
+	Create(path string) error
 	Delete(id dc.EID) error
+}
+type firmwareRepo struct {
+	snwk	dc.SiteNetworks
+}
+
+
+func NewFirmwareRepository(nwks dc.SiteNetworks) FirmwareRepository {
+	return
 }
