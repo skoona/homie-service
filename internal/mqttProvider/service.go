@@ -28,7 +28,6 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	stringset "github.com/jjeffery/stringset"
-	dc "github.com/skoona/homie-service/internal/deviceCore"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
@@ -55,17 +54,6 @@ var networksHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mess
 }
 
 
-/*
- * defaultOnMessage
- * Default Incoming Message Handler
- */
-var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
-	// if this is a trigger route to scheduler
-	if otahandler.notifyChannel != nil {
-		otahandler.notifyChannel <- msg
-	}
-	// plus aways send to source
-}
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 	level.Debug(logger).Log("status", "MQTT Connected")
@@ -151,22 +139,18 @@ func doNetworkDiscovery() {
 
 var (
 	config         cc.MQTTConfig
-	fromDMService  chan dc.DeviceMessage // in
-	fromOTAService chan dc.DeviceMessage // in
 	client         mqtt.Client
-	dmh            dss.DeviceMessageHandler
 	nNetworks      = stringset.New()
 	logger         log.Logger
 )
 
 /*
- * Initialize()
+ * Start()
  *
- * Initialize this service
+ * Start this service
  */
-func Start() (sch.OTAInteractor, error) {
+func Start()  error {
 	var err error
-	dmh = s
 
 	// ensure Initialize() is called first
 	if logger == nil {
@@ -174,21 +158,15 @@ func Start() (sch.OTAInteractor, error) {
 	}
 	level.Debug(logger).Log("event", "Calling Start()")
 
-	NewOTAHandler(logger) // creates otahandler
-
-	// Initialize a Message Channel
-	// one use is to delete devices based on ui input
-	establishProviderChannels()
-
 	// start active processing on discovered networks
 	enableNetworkTraffic()
 	level.Debug(logger).Log("event", "Start() completed")
 
-	return otahandler, err
+	return err
 }
 
 //
-func Initialize(cfg cc.Config) ([]string, error) {
+func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string, error) {
 	config = cfg.Mqc
 	logger = log.With(cfg.Logger, "pkg", "mqttProvider")
 	var err error
@@ -218,14 +196,20 @@ func Initialize(cfg cc.Config) ([]string, error) {
 	// allow for network discovery
 	doNetworkDiscovery()
 
+
+	NewOTAHandler(logger) // creates otahandler
+	NewStreamProvider(logger) // creates stream provider
+
 	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","))
-	return DiscoveredNetworks(), err
+	return otahandler, dStream, DiscoveredNetworks(), err
 }
 
 func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
+
 	// Unsubscribe and shutdown cleanly
 	disableNetworkTraffic()
+	client.Disconnect(250)
 
 	if otahandler.notifyChannel != nil {
 		close(otahandler.notifyChannel) // we own chan, cleanup when done
@@ -235,8 +219,15 @@ func Stop() {
 		close(otahandler.publishChannel) // we own chan, cleanup when done
 		otahandler.publishChannel = nil
 	}
+	if dStream.notifyChannel != nil {
+		close(dStream.notifyChannel) // we own chan, cleanup when done
+		dStream.notifyChannel = nil
+	}
+	if dStream.publishChannel != nil {
+		close(dStream.publishChannel) // we own chan, cleanup when done
+		dStream.publishChannel = nil
+	}
 
-	client.Disconnect(250)
 
 	time.Sleep(time.Second)
 	level.Debug(logger).Log("event", "Stop() completed")

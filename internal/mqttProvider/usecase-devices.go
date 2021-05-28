@@ -9,61 +9,97 @@ package mqttProvider
   - store/update network traffic to repository
 */
 import (
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-	cc "github.com/skoona/homie-service/internal/utils"
+	dss "github.com/skoona/homie-service/internal/deviceSource"
+	"strings"
 )
 
 type (
-	DeviceStream interface {
-		GetConsumerRequestChannel() chan dc.QueueMessage
-		GetConsumerNotificationChannel() chan dc.QueueMessage
-	}
-
 	deviceStream struct {
-		cfg         cc.MQTTConfig
-		consumerNotify chan dc.DeviceMessage // in
-		consumerRequest chan dc.DeviceMessage // in
+		notifyChannel chan dc.QueueMessage // in
+		publishChannel chan dc.QueueMessage // in
 		logger         log.Logger
 	}
 )
 
 var (
-	dStr *deviceStream
+	dStream *deviceStream
 )
 
 /*
  * DeviceStream Implementation */
 
-func NewDeviceStream(dfg cc.Config, plog log.Logger) DeviceStream {
-	dStr = &deviceStream{
-		cfg: dfg,
-		logger: log.With(plog, "service", "DeviceStream"),
-		consumerNotify: make(chan dc.QueueMessage, 256),
-		consumerRequest: make(chan dc.QueueMessage, 120),
+func NewStreamProvider(plog log.Logger) dss.StreamProvider {
+	dStream = &deviceStream{
+		logger: log.With(plog, "service", "StreamProvider"),
 	}
-	return dStr
+	return dStream
 }
 
-func (s *deviceStream) GetConsumerRequestChannel() chan dc.QueueMessage {
-	level.Debug(s.logger).Log("method", "GetConsumerRequestChannel()")
-	return s.consumerRequest
+func (s *deviceStream) GetPublishChannel() chan dc.QueueMessage {
+	level.Debug(s.logger).Log("method", "GetPublishChannel()")
+	if s.publishChannel == nil {
+		s.publishChannel = make(chan dc.QueueMessage, 120)
+		establishPublishing(s.publishChannel, s.logger)
+	}
+	return s.publishChannel
 }
-func (s *deviceStream) GetConsumerNotificationChannel() chan dc.QueueMessage {
-	level.Debug(s.logger).Log("method", "GetConsumerNotificationChannel()")
-	return s.consumerNotify
+func (s *deviceStream) GetNotifyChannel() chan dc.QueueMessage {
+	level.Debug(s.logger).Log("method", "GetNotifyChannel()")
+	if s.notifyChannel == nil {
+		s.notifyChannel = make(chan dc.QueueMessage, 200)
+	}
+	return s.notifyChannel
 }
 
+/**
+ * establishPublishing()
+*/
+func establishPublishing(pubChan chan dc.QueueMessage, tlog log.Logger) {
+	// Listen on incoming channel for device delete messages
+	go func(consumer chan dc.QueueMessage) {
+		level.Debug(tlog).Log("event", "establishPublishing(gofunc) called")
+		for msg := range consumer { // read until closed
 
-func establishStreamChannels() {
-	var err error
-	// Initialize a Message Channel
-	// one use is to delete devices based on ui input
-	dStr.consumerNotify, err = s.GetProviderResponseChannel()
-	if err != nil {
-		level.Error(logger).Log("event", "provider response channel offline", "error", err.Error())
-		client.Disconnect(250)
-		panic(err.Error())
+			// DO PUBLISHING WORK HERE
+			// DO Device DELETES HERE
+
+			level.Debug(tlog).Log("method", "establishPublishing(gofunc)", "queue depth", len(consumer), "topic", msg.Topic())
+		}
+		level.Debug(tlog).Log("method", "establishPublishing()", "event", "Completed")
+	}(pubChan)
+}
+
+/*
+ * defaultOnMessage
+ * Default Incoming Message Handler
+ */
+var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
+	// if this is a trigger route to scheduler
+	// triggers:
+	// sknSensors/GarageMonitor/$state ready
+	// sknSensors/GarageMonitor/$implementation/ota/enabled true
+	var trigger bool = false
+	if strings.Contains(msg.Topic(), "/$state") &&
+		string(msg.Payload()) == "ready" {
+		trigger = true
+	} else if strings.Contains(msg.Topic(), "$implementation/ota/enabled") &&
+		string(msg.Payload()) == "true" {
+		trigger = true
+	} else if strings.Contains(msg.Topic(), "$implementation/ota/status") {
+		trigger = true
+	}
+
+	if trigger {
+		if otahandler.notifyChannel != nil {
+			otahandler.notifyChannel <- msg
+		}
+	}
+	// plus always send to source
+	if dStream.notifyChannel != nil {
+		dStream.notifyChannel <- msg
 	}
 }

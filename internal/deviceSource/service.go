@@ -21,74 +21,86 @@ import (
 type (
 	//Incoming Messages
 	Service interface {
-		ApplyCoreEvent(dm dc.DeviceMessage) error
-		ApplyDMEvent(dm dc.DeviceMessage) error
-		ApplyOTAEvent(dm dc.DeviceMessage) error
-		ApplySchedulerEvent(dm dc.DeviceMessage) error
+		ApplyStreamEvent(dm dc.DeviceMessage) error
+		ApplyIncomingCoreEvent(dm dc.DeviceMessage) error
 	}
 
-	// Device Source Storage Repository
-	Repository interface {
-		Store(d dc.DeviceMessage) error
-	}
-
-	//Incoming Messages
-	DeviceMessageHandler interface {
-		BuildFirmwareCatalog() []dc.Firmware
-		CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (dc.DeviceMessage, error)
-		CreateQueueDeviceMessage(qmsg dc.QueueMessage) (dc.DeviceMessage, error)
-		GetProviderRequestChannel() (chan dc.DeviceMessage, error)
-		GetProviderResponseChannel() (chan dc.DeviceMessage, error)
-		GetOTARequestChannel() (chan dc.DeviceMessage, error)
-		GetOTAResponseChannel() (chan dc.DeviceMessage, error)
-		GetSchedulerRequestChannel() (chan dc.DeviceMessage, error)
-		GetSchedulerResponseChannel() (chan dc.DeviceMessage, error)
-		FromMQTTProvider(qmsg dc.QueueMessage) error
-		FromDemoProvider(topic string, payload []byte, idCounter uint16, retained bool, qos byte) error
-		FromOTAProvider(qmsg dc.QueueMessage) error
-		FromScheduler(qmsg dc.QueueMessage) error
+	// Core Service Implementation
+	deviceSource struct {
+		cfg        cc.Config
+		repository Repository
+		dStream StreamProvider
+		coreSvc    dc.DeviceSourceInteractor
+		logger     log.Logger
 	}
 )
+
+// Retained DeviceSource Service, once created
+var (
+	dvService *deviceSource
+	logger    log.Logger
+)
+
 
 /**
  * NewDeviceSourceService()
  *
  *  Create a New NewDeviceSourceService and initializes it.
  */
-func NewDeviceSourceService(cfg cc.Config, repo Repository, coreSvc dc.DeviceSourceInteractor, logger log.Logger) Service {
+func NewDeviceSourceService(cfg cc.Config, repo Repository, stream StreamProvider, plog log.Logger) Service {
 	dvService = &deviceSource{
 		repository: repo,
-		coreSvc:    coreSvc,
+		dStream:    stream,
 		cfg:        cfg,
-		logger:     logger,
+		logger:     log.With(plog, "service", "Service"),
 	}
 	return dvService
 }
 
-/**
- * NewDeviceMessageService()
- *
- *  Create a New NewDeviceSourceService and initializes it.
- */
-func NewDeviceMessageHandler(cfg cc.Config, sched *sch.SchedulerService, logger log.Logger) DeviceMessageHandler {
-	dmHandler = &deviceMessageHandler{
-		cfg:    cfg,
-		sched:  sched,
-		logger: logger,
+
+func (s *deviceSource) ApplyStreamEvent(dm dc.DeviceMessage) error {
+	logger := log.With(s.logger, "method", "ApplyStreamEvent")
+
+	err := s.repository.Store(dm)
+	if err != nil {
+		level.Error(logger).Log("error", err)
+		return err
 	}
-	return dmHandler
+
+	// also sent it to core
+	// s.coreSvc.FromDeviceSource(dm)
+	if err != nil {
+		level.Error(logger).Log("error", err)
+		return err
+	}
+
+	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
+
+	return err
 }
 
+
+// handle incoming core events
+func (s *deviceSource) ApplyIncomingCoreEvent(dm dc.DeviceMessage) error {
+	var err error
+	plog := log.With(s.logger, "method", "ApplyIncomingCoreEvent")
+
+	// can only be a delete request
+	err = s.repository.Store(dm)
+	if err != nil {
+		level.Error(plog).Log("error", err)
+		return err
+	}
+	// explode the dm into stream messages
+	// with no value to cause them to be deleted
+
+	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
+
+	return err
+}
+
+
 var (
-	toScheduler   chan dc.DeviceMessage // out
-	fromScheduler chan dc.DeviceMessage // in
-
-	toProvider   chan dc.DeviceMessage // out
-	fromProvider chan dc.DeviceMessage // in
-
-	toOTAProvider   chan dc.DeviceMessage // out
-	fromOTAProvider chan dc.DeviceMessage // in
-
 	toCore   chan dc.DeviceMessage // out
 	fromCore chan dc.DeviceMessage // in
 )
@@ -104,7 +116,7 @@ func ConsumeFromCore(consumer chan dc.DeviceMessage) error {
 	go func(dmChan chan dc.DeviceMessage) {
 		level.Debug(dmHandler.logger).Log("event", "ConsumeFromCore(gofunc) called")
 		for msg := range dmChan { // read until closed
-			err := dvService.ApplyCoreEvent(msg)
+			err := dvService.ApplyIncomingCoreEvent(msg)
 			if err != nil {
 				level.Error(dmHandler.logger).Log("method", "ConsumeFromCore(gofunc)", "error", err.Error())
 			}
@@ -142,18 +154,17 @@ func ChannelsForCore() (chan dc.DeviceMessage, error) {
  *
  * Initialize this service
  */
-func Start(cfg cc.Config, repo Repository, coreSvc dc.DeviceSourceInteractor) (DeviceMessageHandler, error) {
+func Start(dfg cc.Config, repo Repository, dProvider StreamProvider) (DeviceMessageHandler, error) {
 	var err error
-	logger = log.With(cfg.Logger, "pkg", "deviceSource")
-
+	logger = log.With(dfg.Logger, "pkg", "deviceSource")
 	level.Debug(logger).Log("event", "Calling Start()")
 
-	NewDeviceSourceService(cfg, repo, coreSvc, logger)
-	dmh := NewDeviceMessageHandler(cfg, sch.SchedulerService{}, Logger)
+	NewDeviceSourceService(dfg, repo, dProvider, logger)
+	NewDeviceMessageHandler(dfg, dProvider, logger)
 
 	level.Debug(logger).Log("event", "Start() Completed")
 
-	return dmh, err
+	return dmHandler, err
 }
 
 /*

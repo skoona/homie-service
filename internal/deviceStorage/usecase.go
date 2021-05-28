@@ -1,7 +1,7 @@
 package deviceStorage
 
 /*
-  deviceStorage/usecase.go:
+  deviceStorage/usecase-stream.go:
 
   DeviceSource Service Implementation
   Utilities to List current Database

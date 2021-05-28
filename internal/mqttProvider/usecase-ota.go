@@ -1,12 +1,5 @@
 package mqttProvider
 
-import (
-	"fmt"
-	mqtt "github.com/eclipse/paho.mqtt.golang"
-	"github.com/go-kit/kit/log/level"
-	sch "github.com/skoona/homie-service/internal/deviceScheduler"
-)
-
 /**
   mqttProvider/usecase-ota.go:
 
@@ -18,10 +11,12 @@ import (
 */
 
 import (
+	"fmt"
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-	cc "github.com/skoona/homie-service/internal/utils"
+	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 )
 
 type (
@@ -58,7 +53,7 @@ func (s *otaHandler) EnableNotificationsFor(networkName, deviceName string, enab
 func (s *otaHandler) OtaPublish(otaMessage dc.QueueMessage) {
 		if s.publishChannel == nil {
 			s.publishChannel = make(chan dc.QueueMessage, 120)
-			publishOTAMessages(s.publishChannel) // start receiver
+			publishOTAMessages(s.publishChannel, s.logger) // start receiver
 		}
 		s.publishChannel <- otaMessage
 }
@@ -111,37 +106,13 @@ func UnWatchOTAProgress(network, device string) error {
 	return token.Error()
 }
 
-func publishOTAMessages(publisher chan dc.QueueMessage) {
+func publishOTAMessages(publisher chan dc.QueueMessage, plog log.Logger) {
 	go func(publishChan chan dc.QueueMessage) {
-		level.Debug(logger).Log("event", "publishOTAMessages(gofunc) called")
+		level.Debug(plog).Log("event", "publishOTAMessages(gofunc) called")
 		for otaMessage := range publishChan { // read until closed
 			publish(otaMessage.Topic(), otaMessage.Payload(), otaMessage.Retained(), otaMessage.Qos())
-			level.Debug(logger).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(consumeChan), "device", otaMessage.Topic())
+			level.Debug(plog).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(publishChan), "device", otaMessage.Topic())
 		}
-		level.Debug(logger).Log("method", "publishOTAMessages()", "event", "Completed")
+		level.Debug(plog).Log("method", "publishOTAMessages()", "event", "Completed")
 	}(publisher)
-}
-
-func establishOTAListener() {
-	var err error
-
-	go func(consumeChan chan dc.QueueMessage) {
-		level.Debug(logger).Log("event", "consumeNotificationsFromOTAProviders(gofunc) called")
-		for msg := range consumeChan { // read until closed
-
-			err := otaChannel.ApplyOTAEvent(msg)
-			if err != nil {
-				level.Error(logger).Log("method", "consumeNotificationsFromOTAProviders(gofunc)", "error", err.Error())
-			}
-
-			level.Debug(logger).Log("method", "consumeNotificationsFromOTAProviders(gofunc)", "consume queue depth", len(consumeChan))
-		}
-		level.Debug(logger).Log("method", "consumeNotificationsFromOTAProviders()", "event", "Completed")
-	}(consumer)
-
-	if err != nil {
-		level.Error(logger).Log("event", "OTA respnse channel offline", "error", err.Error())
-		client.Disconnect(250)
-		panic(err.Error())
-	}
 }

@@ -76,12 +76,12 @@ func shutdownLive() {
 
 func runLive(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runLive() called")
-	networks, _ := mq.Initialize(cfg)      // message stream
+	otap, dsp, networks, _ := mq.Initialize(cfg)      // message stream
 	coreSvc, _ = dc.Start(cfg, networks)   // network logic
 	repo, _ = dds.Start(cfg)               // message db
-	dmh, _ = dss.Start(cfg, repo, coreSvc) // message aggregation
+	dmh, _ = dss.Start(cfg, repo, dsp) // message aggregation
 	sched, _ = sch.Start(cfg, dmh)         // ota scheduler
-	err := mq.Start(dmh)                   // activate message stream
+	err := mq.Start()                   // activate message stream
 	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
