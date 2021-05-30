@@ -10,7 +10,6 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 /*
@@ -35,7 +34,7 @@ func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
 		return err
 	}
 
-	s.PublishCoreEvent(dm)
+	s.ApplyDeviceEvent(dm) // to Core
 
 	level.Debug(tlog).Log("DeviceID ", dm.DeviceID)
 

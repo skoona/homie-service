@@ -24,26 +24,11 @@ type (
 		CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage
 	}
 
-	//Incoming Messages
-	Service interface {
-		ActivateStreamProvider()
-		PublishCoreEvent(dm dc.DeviceMessage)
-		ConsumeCoreEvent(dm dc.DeviceMessage) error
-		PublishToStreamProvider(dm dc.DeviceMessage)
-		ConsumeDeviceStream(dm dc.DeviceMessage) error
-	}
-
-	// Device Source Storage Repository
-	Repository interface {
-		Store(d dc.DeviceMessage) error
-	}
-
 	// Core Service Implementation
 	deviceSource struct {
 		cfg        cc.Config
-		repository Repository
+		repository dc.Repository
 		dStream    StreamProvider
-		coreSvc    dc.DeviceSourceInteractor
 		logger     log.Logger
 	}
 )
@@ -59,7 +44,7 @@ var (
  *
  *  Create a New NewDeviceSourceService and initializes it.
  */
-func NewDeviceSourceService(cfg cc.Config, repo Repository, stream StreamProvider, plog log.Logger) Service {
+func NewDeviceSourceService(cfg cc.Config, repo dc.Repository, stream StreamProvider, plog log.Logger) dc.DeviceEventProvider {
 	dvService = &deviceSource{
 		repository: repo,
 		dStream:    stream,
@@ -81,18 +66,18 @@ func (s *deviceSource) ActivateStreamProvider() {
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, repo Repository, dProvider StreamProvider) (Service, error) {
+func Start(dfg cc.Config, repo dc.Repository, dProvider StreamProvider) (dc.DeviceEventProvider, error) {
 	var err error
 	logger = log.With(dfg.Logger, "pkg", "deviceSource")
 	level.Debug(logger).Log("event", "Calling Start()")
 
-	NewDeviceSourceService(dfg, repo, dProvider, logger)
+	s := NewDeviceSourceService(dfg, repo, dProvider, logger)
 
-	dvService.ActivateStreamProvider() // start things moving
+	s.ActivateStreamProvider() // start things moving
 
 	level.Debug(logger).Log("event", "Start() Completed")
 
-	return dvService, err
+	return s, err
 }
 
 /*

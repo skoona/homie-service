@@ -1,7 +1,6 @@
 package deviceCore
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/go-kit/kit/log/level"
@@ -27,8 +26,7 @@ import (
 
 // The active Service
 var (
-	em   *coreService
-	cdss *coreDeviceSourceService
+	em *coreService
 )
 
 func GetSiteNetworks() *SiteNetworks {
@@ -39,77 +37,18 @@ func GetSiteNetworks() *SiteNetworks {
  * ConsumeFromDeviceSource
  * Handles incoming channel DM message
  */
-func ConsumeFromDeviceSource(consumer chan DeviceMessage) error {
-	/*
-	 * Create a Go Routine for the Providers Channel to
-	 */
-	go func(dsChan chan DeviceMessage) {
-		level.Debug(cdss.logger).Log("event", "ConsumeFromDeviceSource(gofunc) called")
-		for msg := range dsChan { // read until closed
-			network, ok := siteNetworks.DeviceNetworks[string(msg.NetworkID)]
-			if !ok {
-				err := fmt.Errorf("device{%s} not found in network={%s}", msg.DeviceID, network.Name)
-				level.Error(cdss.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "error", err.Error())
-			} else {
-				network.apply(msg)
-			}
-
-			level.Debug(cdss.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "queue depth", len(dsChan), "network id", msg.NetworkID, "msg id", msg.ID, "deviceID", msg.DeviceID)
-		}
-		level.Debug(cdss.logger).Log("method", "ConsumeFromDeviceSource()", "event", "Completed")
-	}(consumer)
-
-	return nil
-}
-
-// DeviceSourceInteractor
-func (cdss *coreDeviceSourceService) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	level.Debug(cdss.logger).Log("method", "CreateDemoDeviceMessage() called")
-	return NewDeviceMessage(topic, payload, idCounter, retained, qos)
-}
-func (cdss *coreDeviceSourceService) CreateQueueDeviceMessage(qmsg QueueMessage) (DeviceMessage, error) {
-	level.Debug(cdss.logger).Log("method", "CreateQueueDeviceMessage() called")
-	return NewQueueMessage(qmsg)
-}
-func (cdss *coreDeviceSourceService) GetCoreRequestChannel() (chan DeviceMessage, error) {
-	level.Debug(cdss.logger).Log("method", "GetCoreRequestChannel() called")
+func ConsumeFromDeviceSource(dm DeviceMessage) error {
 	var err error
-	if fromDeviceSource == nil {
-		fromDeviceSource = make(chan DeviceMessage, 256) // averages 120 on startup
-		if fromDeviceSource != nil {
-			err = ConsumeFromDeviceSource(fromDeviceSource)
-		}
+	network, ok := siteNetworks.DeviceNetworks[string(dm.NetworkID)]
+	if !ok {
+		err := fmt.Errorf("device{%s} not found in network={%s}", dm.DeviceID, network.Name)
+		level.Error(em.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "error", err.Error())
+	} else {
+		network.apply(dm)
 	}
 
-	if nil == fromDeviceSource {
-		err = errors.New("create core publishing channel failed")
-		level.Error(cdss.logger).Log("error", err.Error())
-		return nil, err
-	}
+	level.Debug(em.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "network id", dm.NetworkID, "msg id", dm.ID, "deviceID", dm.DeviceID)
 
-	return fromDeviceSource, err
-}
-func (cdss *coreDeviceSourceService) GetCoreResponseChannel() (chan DeviceMessage, error) {
-	level.Debug(cdss.logger).Log("method", "GetCoreResponseChannel() called")
-	var err error
-	if toDeviceSource == nil {
-		toDeviceSource = make(chan DeviceMessage, 256) // averages 120 on startup
-	}
-
-	if nil == toDeviceSource {
-		err = errors.New("create core subscribing channel failed")
-		level.Error(cdss.logger).Log("error", err.Error())
-		return nil, err
-	}
-	return toDeviceSource, err
-}
-
-func (cdss *coreDeviceSourceService) FromDeviceSource(dm DeviceMessage) error {
-	level.Debug(cdss.logger).Log("method", "FromDeviceSource() called", "msgID", dm.ID)
-	ch, err := cdss.GetCoreRequestChannel()
-	if err == nil {
-		ch <- dm // send it to channel
-	}
 	return err
 }
 
@@ -188,15 +127,15 @@ func (em *coreService) AllSchedules() []Schedule {
 }
 func (em *coreService) AddSchedule(schedule Schedule) {
 	level.Debug(em.logger).Log("method", "AddSchedule() called")
-	siteNetworks.Schedules[string(schedule.ID)] = schedule
+	siteNetworks.Schedules[schedule.ID] = schedule
 }
 func (em *coreService) RemoveSchedule(scheduleID EID) {
 	level.Debug(em.logger).Log("method", "RemoveSchedule() called")
-	delete(siteNetworks.Schedules, string(scheduleID))
+	delete(siteNetworks.Schedules, scheduleID)
 }
 func (em *coreService) ScheduleByEID(scheduleID EID) Schedule {
 	level.Debug(em.logger).Log("method", "ScheduleByEID() called")
-	schedule := siteNetworks.Schedules[string(scheduleID)]
+	schedule := siteNetworks.Schedules[scheduleID]
 	return schedule
 }
 func (em *coreService) ScheduleByDeviceName(deviceName string) Schedule {

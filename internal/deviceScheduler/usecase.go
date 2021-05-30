@@ -17,78 +17,67 @@ import (
 */
 
 type (
-	SchedulerService interface {
-		BuildFirmwareCatalog() []dc.Firmware
-		ApplySchedule(scheduleEID, deviceEID dc.EID)
-		StartSchedule(scheduleEID dc.EID)
-		DeleteSchedule(scheduleEID dc.EID)
-		UpdateScheduler(dm dc.DeviceMessage)
-
-		ApplyFirmwareUpload(blob []byte) error
-		DeleteFirmware(firmwareEID dc.EID)
-		GetFirmware(firmwareEID dc.EID) (dc.Firmware, error)
-		GetFirmwareMeta(firmwareEID dc.EID)
-	}
-
-	schedulerService struct {
+	schedulerProvider struct {
 		otaStream OTAInteractor
+		repo      dc.Repository
+		snwk      *dc.SiteNetworks
 		cfg       cc.Config
 		logger    log.Logger
 	}
 )
 
-func NewSchedulerService(dfg cc.Config, otas OTAInteractor) SchedulerService {
-	sch = &schedulerService{
+func NewSchedulerProvider(dfg cc.Config, otas OTAInteractor, r dc.Repository) dc.SchedulerProvider {
+	slog := log.With(dfg.Logger, "pkg", "deviceScheduler", "service", "SchedulerProvider")
+	sch = &schedulerProvider{
 		otaStream: otas,
+		repo:      r,
 		cfg:       dfg,
-		logger:    log.With(dfg.Logger, "pkg", "deviceScheduler", "service", "SchedulerService"),
+		logger:    slog,
 	}
 	return sch
 }
 
-/*
- * processSchedulerMessages()
- * - handle notifications, triggers, and new core requests
- */
-func processSchedulerMessages(dm dc.DeviceMessage) error {
-	level.Debug(logger).Log("event", "Calling processSchedulerMessages()")
-	var err error
-	level.Debug(logger).Log("topic", dm.TopicS, "device", dm.DeviceID)
-
-	level.Debug(logger).Log("event", "processSchedulerMessages() completed")
-	return err
+func (s *schedulerProvider) ApplySiteNetworks(sn *dc.SiteNetworks) {
+	level.Debug(s.logger).Log("event", "ApplySiteNetworks() called")
+	s.snwk = sn
 }
-
-func (s *schedulerService) BuildFirmwareCatalog() []dc.Firmware {
+func (s *schedulerProvider) BuildScheduleCatalog() map[dc.EID]dc.Schedule {
+	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
+	return buildScheduleCatalog()
+}
+func (s *schedulerProvider) Schedules() []dc.Schedule {
+	level.Debug(s.logger).Log("event", "Calling Schedules()")
+	return []dc.Schedule{}
+}
+func (s *schedulerProvider) FindSchedulesByDeviceID(deviceID dc.EID) ([]dc.Schedule, error) {
+	level.Debug(s.logger).Log("event", "Calling FindSchedulesByDeviceID()")
+	return []dc.Schedule{}, nil
+}
+func (s *schedulerProvider) CreateSchedule(networkName, deviceName string, transport dc.OTATransport, firmware *dc.Firmware) (dc.EID, error) {
+	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
+	return dc.NewEID(), nil
+}
+func (s *schedulerProvider) DeleteSchedule(scheduleID dc.EID) error {
+	level.Debug(s.logger).Log("event", "Calling DeleteSchedule()")
+	return nil
+}
+func (s *schedulerProvider) BuildFirmwareCatalog() []dc.Firmware {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
 	return buildFirmwareCatalog()
 }
-func (s *schedulerService) ApplySchedule(scheduleEID, deviceEID dc.EID) {
-	level.Debug(s.logger).Log("event", "ApplySchedule() called")
+func (s *schedulerProvider) Firmwares() []dc.Firmware {
+	level.Debug(s.logger).Log("event", "Calling Firmwares()")
+	return []dc.Firmware{}
 }
-func (s *schedulerService) StartSchedule(scheduleEID dc.EID) {
-	level.Debug(s.logger).Log("event", "StartSchedule() called")
+func (s *schedulerProvider) GetFirmware(id dc.EID) (dc.Firmware, error) {
+	level.Debug(s.logger).Log("event", "Calling GetFirmware()")
+	return dc.Firmware{}, nil
 }
-func (s *schedulerService) DeleteSchedule(scheduleEID dc.EID) {
-	level.Debug(s.logger).Log("event", "DeleteSchedule() called")
+func (s *schedulerProvider) CreateFirmware(path string) error {
+	level.Debug(s.logger).Log("event", "Calling CreateFirmware()")
+	return nil
 }
-func (s *schedulerService) UpdateScheduler(dm dc.DeviceMessage) {
-	level.Debug(s.logger).Log("event", "UpdateScheduler() called")
-}
-
-func (s *schedulerService) ApplyFirmwareUpload(blob []byte) error {
-	var err error
-	level.Debug(s.logger).Log("event", "ApplyFirmwareUpload() called")
-	return err
-}
-func (s *schedulerService) DeleteFirmware(firmwareEID dc.EID) {
-	level.Debug(s.logger).Log("event", "DeleteFirmware() called")
-}
-func (s *schedulerService) GetFirmware(firmwareEID dc.EID) (dc.Firmware, error) {
-	var err error
-	level.Debug(s.logger).Log("event", "GetFirmware() called")
-	return dc.Firmware{}, err
-}
-func (s *schedulerService) GetFirmwareMeta(firmwareEID dc.EID) {
-	level.Debug(s.logger).Log("event", "GetFirmwareMeta() called")
+func (s *schedulerProvider) DeleteFirmware(id dc.EID) error {
+	level.Debug(s.logger).Log("event", "Calling DeleteFirmware()")
+	return nil
 }

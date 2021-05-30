@@ -3,6 +3,7 @@ package deviceScheduler
 import (
 	"time"
 
+	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
 
@@ -93,10 +94,24 @@ func NewSchedule(networkName, deviceName string, transport dc.OTATransport, firm
 	}
 }
 
-// ScheduleRepository manages lifecycle of schedules
-type ScheduleRepository interface {
-	List() []dc.Schedule
-	Find(deviceName string) (dc.Schedule, error)
-	Create(networkName, deviceName string, transport dc.OTATransport, firmware *dc.Firmware) error
-	Delete(deviceName string) error
+func buildScheduleCatalog() map[dc.EID]dc.Schedule {
+	level.Debug(logger).Log("event", "buildScheduleCatalog() called")
+	// get from levelDB
+	schedMap := sch.repo.ScheduleStore(dc.Schedule{})
+	sch.snwk.Schedules = schedMap
+
+	return schedMap
+}
+
+/*
+ * processSchedulerMessages()
+ * - handle notifications, triggers, and new core requests
+ */
+func processSchedulerMessages(dm dc.DeviceMessage) error {
+	level.Debug(logger).Log("event", "Calling processSchedulerMessages()")
+	var err error
+	level.Debug(logger).Log("topic", dm.TopicS, "device", dm.DeviceID)
+
+	level.Debug(logger).Log("event", "processSchedulerMessages() completed")
+	return err
 }

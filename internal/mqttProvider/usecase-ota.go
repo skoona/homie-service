@@ -12,6 +12,7 @@ package mqttProvider
 
 import (
 	"fmt"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -21,8 +22,8 @@ import (
 
 type (
 	otaStream struct {
-		notifyChannel  chan dc.QueueMessage
-		publishChannel chan dc.QueueMessage
+		notifyChannel  chan dc.DeviceMessage
+		publishChannel chan dc.DeviceMessage
 		logger         log.Logger
 	}
 )
@@ -37,9 +38,9 @@ func NewOTAStream(plog log.Logger) sch.OTAInteractor {
 	}
 	return otastream
 }
-func (s *otaStream) EnableTriggers() chan dc.QueueMessage {
+func (s *otaStream) EnableTriggers() chan dc.DeviceMessage {
 	if s.notifyChannel == nil {
-		s.notifyChannel = make(chan dc.QueueMessage, 120)
+		s.notifyChannel = make(chan dc.DeviceMessage, 120)
 	}
 	return s.notifyChannel
 }
@@ -50,9 +51,9 @@ func (s *otaStream) EnableNotificationsFor(networkName, deviceName string, enabl
 	}
 	return err
 }
-func (s *otaStream) OtaPublish(otaMessage dc.QueueMessage) {
+func (s *otaStream) OtaPublish(otaMessage dc.DeviceMessage) {
 	if s.publishChannel == nil {
-		s.publishChannel = make(chan dc.QueueMessage, 120)
+		s.publishChannel = make(chan dc.DeviceMessage, 120)
 		publishOTAMessages(s.publishChannel, s.logger) // start receiver
 	}
 	s.publishChannel <- otaMessage
@@ -65,7 +66,7 @@ func (s *otaStream) OtaPublish(otaMessage dc.QueueMessage) {
 var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	// msg.Payload()[0] = byte{0}
 	if otastream.notifyChannel != nil {
-		otastream.notifyChannel <- msg
+		otastream.notifyChannel <- dStream.CreateQueueDeviceMessage(msg)
 	} else {
 		level.Error(logger).Log("error", "ota notification channel offline", "topic", msg.Topic())
 	}
@@ -106,8 +107,8 @@ func UnWatchOTAProgress(network, device string) error {
 	return token.Error()
 }
 
-func publishOTAMessages(publisher chan dc.QueueMessage, plog log.Logger) {
-	go func(publishChan chan dc.QueueMessage) {
+func publishOTAMessages(publisher chan dc.DeviceMessage, plog log.Logger) {
+	go func(publishChan chan dc.DeviceMessage) {
 		level.Debug(plog).Log("event", "publishOTAMessages(gofunc) called")
 		for otaMessage := range publishChan { // read until closed
 			publish(otaMessage.Topic(), otaMessage.Payload(), otaMessage.Retained(), otaMessage.Qos())

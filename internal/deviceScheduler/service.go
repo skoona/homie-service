@@ -9,6 +9,7 @@ package deviceScheduler
 import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
@@ -17,7 +18,7 @@ var (
 	cfg       cc.Config
 	logger    log.Logger
 	otaStream OTAInteractor
-	sch       *schedulerService
+	sch       *schedulerProvider
 )
 
 /*
@@ -25,12 +26,11 @@ var (
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, s OTAInteractor) (SchedulerService, error) {
-	var err error
+func Start(dfg cc.Config, s OTAInteractor, r dc.Repository) dc.SchedulerProvider {
 	cfg = dfg
 	otaStream = s
 
-	NewSchedulerService(dfg, s)
+	NewSchedulerProvider(dfg, s, r)
 	logger = sch.logger
 	level.Debug(logger).Log("event", "Calling Start()")
 
@@ -39,7 +39,7 @@ func Start(dfg cc.Config, s OTAInteractor) (SchedulerService, error) {
 
 	level.Debug(logger).Log("event", "Start() completed")
 
-	return sch, err
+	return sch
 }
 
 /*

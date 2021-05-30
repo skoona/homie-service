@@ -20,7 +20,7 @@ import (
 type (
 	/*
 	 * Interactions with UI */
-	Service interface {
+	CoreService interface {
 		AllNetworks() SiteNetworks
 		NetworkByName(networkName string) Network
 		DeviceByNameFromNetwork(deviceName, networkName string) (Device, error)
@@ -46,23 +46,42 @@ type (
 	}
 
 	/*
+	 * Interactions with device Scheduling Service */
+	SchedulerProvider interface {
+		ApplySiteNetworks(sn *SiteNetworks)
+		BuildFirmwareCatalog() []Firmware
+		Firmwares() []Firmware
+		GetFirmware(id EID) (Firmware, error)
+		CreateFirmware(path string) error
+		DeleteFirmware(id EID) error
+		BuildScheduleCatalog() map[EID]Schedule
+		Schedules() []Schedule
+		FindSchedulesByDeviceID(deviceID EID) ([]Schedule, error)
+		CreateSchedule(networkName, deviceName string, transport OTATransport, firmware *Firmware) (EID, error)
+		DeleteSchedule(scheduleID EID) error
+	}
+
+	/*
 	 * Interactions with DeviceSource */
-	DeviceSourceInteractor interface {
-		CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error)
-		CreateQueueDeviceMessage(qmsg QueueMessage) (DeviceMessage, error)
-		GetCoreRequestChannel() (chan DeviceMessage, error)
-		GetCoreResponseChannel() (chan DeviceMessage, error)
-		FromDeviceSource(dm DeviceMessage) error
+	DeviceEventProvider interface {
+		ActivateStreamProvider()
+		ApplyDeviceEvent(dm DeviceMessage)
+		HandleCoreEvent(dm DeviceMessage) error
+		PublishToStreamProvider(dm DeviceMessage)
+		ConsumeDeviceStream(dm DeviceMessage) error
+	}
+
+	// Device Source Storage Repository
+	Repository interface {
+		Store(d DeviceMessage) error
+		ScheduleStore(d Schedule) map[EID]Schedule
 	}
 
 	// Service Implementation
 	coreService struct {
 		cfg    cc.Config
-		logger log.Logger
-	}
-
-	coreDeviceSourceService struct {
-		cfg    cc.Config
+		dsp    DeviceEventProvider
+		scp    SchedulerProvider
 		logger log.Logger
 	}
 
@@ -75,25 +94,14 @@ type (
  *
  *  Create a New NewCoreService and initializes it.
  */
-func NewCoreService(dfg cc.Config) Service {
+func NewCoreService(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider) CoreService {
 	em = &coreService{
 		cfg:    dfg,
+		dsp:    sp,
+		scp:    sscp,
 		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreService"),
 	}
 	return em
-}
-
-/**
- * NewCoreDeviceSourceService()
- *
- *  Create a New NewCoreService and initializes it.
- */
-func NewCoreDeviceSourceService(dfg cc.Config) DeviceSourceInteractor {
-	cdss = &coreDeviceSourceService{
-		cfg:    dfg,
-		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreDeviceSourceService"),
-	}
-	return cdss
 }
 
 /**
@@ -125,24 +133,22 @@ func NewEID() EID {
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, discoveredNetworks []string) (DeviceSourceInteractor, error) {
-	var err error
+func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, discoveredNetworks []string) (CoreService, *SiteNetworks) {
 
-	// svc := NewCoreService(dfg)
-	svc := NewCoreDeviceSourceService(dfg)
+	svc := NewCoreService(dfg, sp, sscp)
 
-	level.Debug(cdss.logger).Log("event", "Calling Start()")
+	level.Debug(em.logger).Log("event", "Calling Start()")
 
 	// Initialze networks
-	NewSiteNetworks("Skoona Consulting",
+	sites := NewSiteNetworks("Skoona Consulting",
 		"Homie Monitor (GOLANG)",
 		discoveredNetworks,
 		[]Firmware{},
-		map[string]Schedule{})
+		map[EID]Schedule{})
 
-	level.Debug(cdss.logger).Log("event", "Start() completed")
+	level.Debug(em.logger).Log("event", "Start() completed")
 
-	return svc, err
+	return svc, sites
 }
 
 /*
@@ -150,7 +156,7 @@ func Start(dfg cc.Config, discoveredNetworks []string) (DeviceSourceInteractor, 
  * Cleans up this service
  */
 func Stop() {
-	level.Debug(cdss.logger).Log("event", "Calling Stop()")
+	level.Debug(em.logger).Log("event", "Calling Stop()")
 
-	level.Debug(cdss.logger).Log("event", "Stop() completed")
+	level.Debug(em.logger).Log("event", "Stop() completed")
 }

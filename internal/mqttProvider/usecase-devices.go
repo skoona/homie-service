@@ -40,12 +40,12 @@ func NewStreamProvider(plog log.Logger) dss.StreamProvider {
 	return dStream
 }
 func (s *deviceStream) ActivateNotifications() chan dc.DeviceMessage {
-		enableNetworkTraffic()
-		return s.GetNotifyChannel()
+	enableNetworkTraffic()
+	return s.GetNotifyChannel()
 }
 func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "CreateDemoDeviceMessage() called")
-	dm, _ := dc.NewDeviceMessage(topic, payload, idCounter, retained, qos)v
+	dm, _ := dc.NewDeviceMessage(topic, payload, idCounter, retained, qos)
 	return dm
 }
 
@@ -66,7 +66,7 @@ func (s *deviceStream) GetPublishChannel() chan dc.DeviceMessage {
 func (s *deviceStream) GetNotifyChannel() chan dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "GetNotifyChannel()")
 	if s.notifyChannel == nil {
-		s.notifyChannel = make(chan dc.DeviceMessage, 200)		
+		s.notifyChannel = make(chan dc.DeviceMessage, 200)
 	}
 	return s.notifyChannel
 }
@@ -110,17 +110,17 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	}
 
 	if trigger {
-		if otahandler != nil {
-			if otahandler.notifyChannel != nil {
-				dm, _ := dStream.CreateQueueDeviceMessage(msg)
-				otahandler.notifyChannel <- dm
+		if otastream != nil {
+			if otastream.notifyChannel != nil {
+				dm := dStream.CreateQueueDeviceMessage(msg)
+				otastream.notifyChannel <- dm
 			}
 		}
 	}
 	// plus always send to source
 	if dStream != nil {
 		if dStream.notifyChannel != nil {
-			dm, _ := dStream.CreateQueueDeviceMessage(msg)
+			dm := dStream.CreateQueueDeviceMessage(msg)
 			dStream.notifyChannel <- dm
 		}
 	}

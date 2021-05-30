@@ -76,37 +76,37 @@ func shutdownLive() {
 
 func runLive(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runLive() called")
-	otap, dsp, networks, _ := mq.Initialize(cfg)       // message stream
-	coreSvc, siteNetworks, _ = dc.Start(cfg, networks) // network logic -- may need scheduler
-	repo, _ = dds.Start(cfg)                           // message db
-	dmh, _ = dss.Start(cfg, repo, dsp)                 // message aggregation
-	sched, _ = sch.Start(cfg, otap, siteNetworks)      // ota scheduler
-	err := mq.Start()                                  // activate message stream
+	otap, dsp, networks, _ = mq.Initialize(cfg)                 // message stream
+	repo, _ = dds.Start(cfg)                                    // message db
+	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
+	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
+	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
+	err := mq.Start()                                           // activate message stream
 	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
 
 func runDemo(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runDemo() called")
-	dsp, networks, _ := dp.Initialize(cfg) // message stream
-	coreSvc, _ = dc.Start(cfg, networks)   // network logic -- may need scheduler
-	repo, _ = dds.Start(cfg)               // message db
-	dmh, _ = dss.Start(cfg, repo, dsp)     // message aggregation
-	sched, _ = sch.Start(cfg, dmh)         // ota scheduler
-	err := dp.Start(dmh)                   // activate message stream
+	dsp, networks, _ := dp.Initialize(cfg)                    // message stream
+	repo, _ = dds.Start(cfg)                                  // message db
+	dep, _ = dss.Start(cfg, repo, dsp)                        // message aggregation
+	coreSvc, siteNetworks = dc.Start(cfg, dep, nil, networks) // network logic -- may need scheduler
+	err := dp.Start()                                         // activate message stream
 	level.Debug(logger).Log("event", "runDemo() completed")
 	return err
 }
 
 var (
+	networks     []string
 	logger       log.Logger
-	siteNetworks dc.SiteNetworks
-	dmh          dss.Service
-	sched        sch.SchedulerService
-	coreSvc      dc.DeviceSourceInteractor
-	repo         dss.Repository
-	// otap    dss.StreamProvider
-	// dsp     dss.StreamProvider
+	siteNetworks *dc.SiteNetworks
+	dep          dc.DeviceEventProvider
+	sched        dc.SchedulerProvider
+	coreSvc      dc.CoreService
+	repo         dc.Repository
+	otap         sch.OTAInteractor
+	dsp          dss.StreamProvider
 )
 
 func main() {

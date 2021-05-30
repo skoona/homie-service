@@ -19,6 +19,16 @@ import (
 )
 
 /**
+ * ScheduleStore(schedule Schedule)
+ */
+func (dbR *dbRepo) ScheduleStore(d dc.Schedule) map[dc.EID]dc.Schedule {
+	// when input is present, store new
+	// when input is empty or nil, render
+	schedMap := make(map[dc.EID]dc.Schedule, 0)
+	return schedMap
+}
+
+/**
  * Store()
  *
  * Repository Implementation

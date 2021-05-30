@@ -12,11 +12,11 @@ import (
 	bolt "github.com/boltdb/bolt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	dss "github.com/skoona/homie-service/internal/deviceSource"
+	dc "github.com/skoona/homie-service/internal/deviceCore"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
-var dbs dbRepo
+var dbs *dbRepo
 
 type dbRepo struct {
 	db     *bolt.DB
@@ -24,21 +24,21 @@ type dbRepo struct {
 	logger log.Logger
 }
 
-func NewRepo(cfg cc.Config, db *bolt.DB, log log.Logger) dss.Repository {
-	dbs = dbRepo{
+func NewRepo(cfg cc.Config, db *bolt.DB, log log.Logger) dc.Repository {
+	dbs = &dbRepo{
 		db:     db,
 		cfg:    cfg,
 		logger: log,
 	}
 
-	return &dbs
+	return dbs
 }
 
 /*
  * Start
  * Initializes this service
  */
-func Start(cfg cc.Config) (dss.Repository, error) {
+func Start(cfg cc.Config) (dc.Repository, error) {
 	var err error
 	var dataFile string
 	logger := log.With(cfg.Logger, "pkg", "deviceStorage")
