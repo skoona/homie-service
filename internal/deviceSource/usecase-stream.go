@@ -7,80 +7,62 @@ package deviceSource
 */
 
 import (
-	"errors"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
-type (
-
-	StreamProvider interface {
-		GetPublishChannel() chan dc.QueueMessage
-		GetNotifyChannel() chan dc.QueueMessage
-	}
-
-	// Device Source Storage Repository
-	Repository interface {
-		Store(d dc.DeviceMessage) error
-	}
-
-	deviceMessageHandler struct {
-		cfg    cc.Config
-		repository Repository
-		dStream StreamProvider
-		logger log.Logger
-	}
-)
-
-// Retained DeviceSource Service, once created
-var (
-	dmHandler *deviceMessageHandler
-)
-
-/**
- * NewDeviceMessageService()
- *
- *  Handler for incoming device stream messages
+/*
+ * PublishToStreamProvider
  */
-func NewDeviceMessageHandler(dfg cc.Config, stream StreamProvider, plog log.Logger) DeviceMessageHandler {
-	dmHandler = &deviceMessageHandler{
-		cfg:    dfg,
-		dStream:  stream,
-		logger: log.With(plog, "service", "DeviceMessageHandler"),
-	}
-	return dmHandler
+func (s *deviceSource) PublishToStreamProvider(dm dc.DeviceMessage) {
+	logger := log.With(s.logger, "method", "PublishDeviceStream()")
+
+	s.dStream.GetPublishChannel() <- dm
+
+	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
 }
 
-/*
- * DeviceSourceInteractor
- */
+// handle incoming device stream events
+func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
+	var err error
+	tlog := log.With(s.logger, "method", "ConsumeDeviceStream")
+
+	err = s.repository.Store(dm)
+	if err != nil {
+		level.Error(tlog).Log("error", err)
+		return err
+	}
+
+	s.PublishCoreEvent(dm)
+
+	level.Debug(tlog).Log("DeviceID ", dm.DeviceID)
+
+	return err
+}
+
 /**
- * ConsumeFromProviders
- * Handles incoming channel DM message
+ * ConsumeFromDeviceStream
+ * - Stream Listener
  */
-func consumeFromProviders(consumer chan dc.DeviceMessage) error {
+func ConsumeFromStreamProvider(consumer chan dc.DeviceMessage, plog log.Logger) {
 	/*
 	 * Create a Go Routine for the Providers Channel to
 	 */
-	go func(dmChan chan dc.DeviceMessage) {
-		level.Debug(logger).Log("event", "ConsumeFromDMProviders(gofunc) called")
+	go func(dmChan chan dc.DeviceMessage, tlog log.Logger) {
+		level.Debug(tlog).Log("event", "ConsumeFromDeviceStream(gofunc) called")
 		for msg := range dmChan { // read until closed
-			err := dvService.ApplyDMEvent(msg)
+			err := dvService.ConsumeDeviceStream(msg)
 			if err != nil {
-				level.Error(logger).Log("method", "ConsumeFromDMProviders(gofunc)", "error", err.Error())
+				level.Error(tlog).Log("method", "ConsumeFromDeviceStream(gofunc)", "error", err.Error())
 			}
-			level.Debug(logger).Log("method", "ConsumeFromDMProviders(gofunc)", "queue depth", len(dmChan))
+
+			level.Debug(tlog).Log("method", "ConsumeFromDeviceStream(gofunc)", "queue depth", len(dmChan), "device", msg.DeviceID)
 		}
-		level.Debug(logger).Log("method", "ConsumeFromDMProviders(gofunc)", "event", "Completed")
-	}(consumer)
-
-	return nil
+		level.Debug(tlog).Log("method", "ConsumeFromDeviceStream()", "event", "Completed")
+	}(consumer, plog)
 }
-
 
 // Receive/send DM from Channel
 // Receive/send OTA from Channel

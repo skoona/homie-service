@@ -76,22 +76,22 @@ func shutdownLive() {
 
 func runLive(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runLive() called")
-	otap, dsp, networks, _ := mq.Initialize(cfg)      // message stream
-	coreSvc, _ = dc.Start(cfg, networks)   // network logic
-	repo, _ = dds.Start(cfg)               // message db
-	dmh, _ = dss.Start(cfg, repo, dsp) // message aggregation
-	sched, _ = sch.Start(cfg, dmh)         // ota scheduler
-	err := mq.Start()                   // activate message stream
+	otap, dsp, networks, _ := mq.Initialize(cfg)       // message stream
+	coreSvc, siteNetworks, _ = dc.Start(cfg, networks) // network logic -- may need scheduler
+	repo, _ = dds.Start(cfg)                           // message db
+	dmh, _ = dss.Start(cfg, repo, dsp)                 // message aggregation
+	sched, _ = sch.Start(cfg, otap, siteNetworks)      // ota scheduler
+	err := mq.Start()                                  // activate message stream
 	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
 
 func runDemo(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runDemo() called")
-	networks, _ := dp.Initialize(cfg)      // message stream
-	coreSvc, _ = dc.Start(cfg, networks)   // network logic
+	dsp, networks, _ := dp.Initialize(cfg) // message stream
+	coreSvc, _ = dc.Start(cfg, networks)   // network logic -- may need scheduler
 	repo, _ = dds.Start(cfg)               // message db
-	dmh, _ = dss.Start(cfg, repo, coreSvc) // message aggregation
+	dmh, _ = dss.Start(cfg, repo, dsp)     // message aggregation
 	sched, _ = sch.Start(cfg, dmh)         // ota scheduler
 	err := dp.Start(dmh)                   // activate message stream
 	level.Debug(logger).Log("event", "runDemo() completed")
@@ -99,11 +99,14 @@ func runDemo(cfg cc.Config) error {
 }
 
 var (
-	logger  log.Logger
-	dmh     dss.DeviceMessageHandler
-	sched   sch.SchedulerService
-	coreSvc dc.DeviceSourceInteractor
-	repo    dss.Repository
+	logger       log.Logger
+	siteNetworks dc.SiteNetworks
+	dmh          dss.Service
+	sched        sch.SchedulerService
+	coreSvc      dc.DeviceSourceInteractor
+	repo         dss.Repository
+	// otap    dss.StreamProvider
+	// dsp     dss.StreamProvider
 )
 
 func main() {

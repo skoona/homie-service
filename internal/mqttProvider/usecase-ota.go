@@ -20,42 +20,42 @@ import (
 )
 
 type (
-	otaHandler struct {
-		notifyChannel chan dc.QueueMessage
+	otaStream struct {
+		notifyChannel  chan dc.QueueMessage
 		publishChannel chan dc.QueueMessage
-		logger log.Logger
+		logger         log.Logger
 	}
 )
 
 var (
-	otahandler *otaHandler
+	otastream *otaStream
 )
 
-func NewOTAHandler(plog log.Logger) sch.OTAInteractor {
-	otahandler = &otaHandler{
+func NewOTAStream(plog log.Logger) sch.OTAInteractor {
+	otastream = &otaStream{
 		logger: log.With(plog, "service", "OTAInteractor"),
 	}
-	return otahandler
+	return otastream
 }
-func (s *otaHandler) EnableTriggers() chan dc.QueueMessage {
+func (s *otaStream) EnableTriggers() chan dc.QueueMessage {
 	if s.notifyChannel == nil {
 		s.notifyChannel = make(chan dc.QueueMessage, 120)
 	}
 	return s.notifyChannel
 }
-func (s *otaHandler) EnableNotificationsFor(networkName, deviceName string, enabledOrDisable bool) error {
+func (s *otaStream) EnableNotificationsFor(networkName, deviceName string, enabledOrDisable bool) error {
 	err := handleOTAMessages(networkName, deviceName, enabledOrDisable)
 	if err != nil {
 		level.Error(s.logger).Log("error", err.Error())
 	}
 	return err
 }
-func (s *otaHandler) OtaPublish(otaMessage dc.QueueMessage) {
-		if s.publishChannel == nil {
-			s.publishChannel = make(chan dc.QueueMessage, 120)
-			publishOTAMessages(s.publishChannel, s.logger) // start receiver
-		}
-		s.publishChannel <- otaMessage
+func (s *otaStream) OtaPublish(otaMessage dc.QueueMessage) {
+	if s.publishChannel == nil {
+		s.publishChannel = make(chan dc.QueueMessage, 120)
+		publishOTAMessages(s.publishChannel, s.logger) // start receiver
+	}
+	s.publishChannel <- otaMessage
 }
 
 /*
@@ -64,8 +64,8 @@ func (s *otaHandler) OtaPublish(otaMessage dc.QueueMessage) {
  */
 var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	// msg.Payload()[0] = byte{0}
-	if otahandler.notifyChannel != nil {
-		otahandler.notifyChannel <- msg
+	if otastream.notifyChannel != nil {
+		otastream.notifyChannel <- msg
 	} else {
 		level.Error(logger).Log("error", "ota notification channel offline", "topic", msg.Topic())
 	}

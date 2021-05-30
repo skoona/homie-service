@@ -20,9 +20,10 @@ package mqttProvider
 
 import (
 	"fmt"
-	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	"strings"
 	"time"
+
+	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-kit/kit/log"
@@ -52,8 +53,6 @@ var networksHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mess
 	}
 	level.Debug(logger).Log("Network Discovery topic", msg.Topic(), "payload", msg.Payload())
 }
-
-
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 	level.Debug(logger).Log("status", "MQTT Connected")
@@ -138,10 +137,10 @@ func doNetworkDiscovery() {
 }
 
 var (
-	config         cc.MQTTConfig
-	client         mqtt.Client
-	nNetworks      = stringset.New()
-	logger         log.Logger
+	config    cc.MQTTConfig
+	client    mqtt.Client
+	nNetworks = stringset.New()
+	logger    log.Logger
 )
 
 /*
@@ -149,7 +148,7 @@ var (
  *
  * Start this service
  */
-func Start()  error {
+func Start() error {
 	var err error
 
 	// ensure Initialize() is called first
@@ -159,7 +158,8 @@ func Start()  error {
 	level.Debug(logger).Log("event", "Calling Start()")
 
 	// start active processing on discovered networks
-	enableNetworkTraffic()
+	// enableNetworkTraffic()  -- wait for dss request
+
 	level.Debug(logger).Log("event", "Start() completed")
 
 	return err
@@ -196,12 +196,11 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	// allow for network discovery
 	doNetworkDiscovery()
 
-
-	NewOTAHandler(logger) // creates otahandler
+	NewOTAStream(logger)      // creates otastream
 	NewStreamProvider(logger) // creates stream provider
 
 	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","))
-	return otahandler, dStream, DiscoveredNetworks(), err
+	return otastream, dStream, DiscoveredNetworks(), err
 }
 
 func Stop() {
@@ -211,13 +210,13 @@ func Stop() {
 	disableNetworkTraffic()
 	client.Disconnect(250)
 
-	if otahandler.notifyChannel != nil {
-		close(otahandler.notifyChannel) // we own chan, cleanup when done
-		otahandler.notifyChannel = nil
+	if otastream.notifyChannel != nil {
+		close(otastream.notifyChannel) // we own chan, cleanup when done
+		otastream.notifyChannel = nil
 	}
-	if otahandler.publishChannel != nil {
-		close(otahandler.publishChannel) // we own chan, cleanup when done
-		otahandler.publishChannel = nil
+	if otastream.publishChannel != nil {
+		close(otastream.publishChannel) // we own chan, cleanup when done
+		otastream.publishChannel = nil
 	}
 	if dStream.notifyChannel != nil {
 		close(dStream.notifyChannel) // we own chan, cleanup when done
@@ -227,7 +226,6 @@ func Stop() {
 		close(dStream.publishChannel) // we own chan, cleanup when done
 		dStream.publishChannel = nil
 	}
-
 
 	time.Sleep(time.Second)
 	level.Debug(logger).Log("event", "Stop() completed")

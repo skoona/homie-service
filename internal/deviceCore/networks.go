@@ -33,7 +33,7 @@ type SiteNetworks struct {
 }
 
 // NewNetworks Creates Component
-func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) (*SiteNetworks, error) {
+func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) *SiteNetworks {
 	var err error
 	level.Debug(cdss.logger).Log("event", "NewSiteNetworks() called")
 
@@ -54,7 +54,7 @@ func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []
 	}
 
 	level.Debug(cdss.logger).Log("event", "NewSiteNetworks() completed")
-	return &siteNetworks, err
+	return &siteNetworks
 }
 
 // newNetwork Creates Component

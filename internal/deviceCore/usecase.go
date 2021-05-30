@@ -29,9 +29,6 @@ import (
 var (
 	em   *coreService
 	cdss *coreDeviceSourceService
-
-	fromDeviceSource chan DeviceMessage // in
-	toDeviceSource   chan DeviceMessage
 )
 
 func GetSiteNetworks() *SiteNetworks {

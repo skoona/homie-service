@@ -10,36 +10,14 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-	dss "github.com/skoona/homie-service/internal/deviceSource"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
-
-
-func publishToDeviceSource(dm dc.DeviceMessage) error {
-	level.Debug(logger).Log("event", "Calling publishToDeviceSource()")
-	var err error
-
-	dmh.FromScheduler(dm)
-
-	level.Debug(logger).Log("event", "publishToDeviceSource() completed")
-	return err
-}
-func processSchedulerMessages(dm dc.DeviceMessage) error {
-	level.Debug(logger).Log("event", "Calling processSchedulerMessages()")
-	var err error
-
-	level.Debug(logger).Log("event", "processSchedulerMessages() completed")
-	return err
-}
-
 var (
-	cfg    cc.Config
-	logger log.Logger
-	fromDS chan dc.DeviceMessage // in
-	dmh    dss.DeviceMessageHandler
-	sch    *schedulerService
-	ota    *otaChannel
+	cfg       cc.Config
+	logger    log.Logger
+	otaStream OTAInteractor
+	sch       *schedulerService
 )
 
 /*
@@ -47,24 +25,17 @@ var (
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, s dss.DeviceMessageHandler) (SchedulerService, error) {
+func Start(dfg cc.Config, s OTAInteractor) (SchedulerService, error) {
 	var err error
 	cfg = dfg
-	dmh = s
+	otaStream = s
 
-	NewSchedulerService(dfg, s, dc.GetSiteNetworks())
+	NewSchedulerService(dfg, s)
 	logger = sch.logger
-	s.BuilFirmwareCatalog(sch) // apply scheduler server and induce building firmware catalogs
-
 	level.Debug(logger).Log("event", "Calling Start()")
 
 	// Initialize a Message Channel
-	fromDS, err = s.GetSchedulerResponseChannel()
-	if err != nil {
-		level.Error(logger).Log("event", "Channels offline", "error", err.Error())
-		panic(err.Error())
-	}
-	err = consumeFromDeviceSource(fromDS)
+	consumeFromOTAStreamProvider(sch.otaStream.EnableTriggers(), logger)
 
 	level.Debug(logger).Log("event", "Start() completed")
 

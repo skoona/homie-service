@@ -152,12 +152,5 @@ func Start(dfg cc.Config, discoveredNetworks []string) (DeviceSourceInteractor, 
 func Stop() {
 	level.Debug(cdss.logger).Log("event", "Calling Stop()")
 
-	if toDeviceSource != nil {
-		close(toDeviceSource)
-	}
-	if fromDeviceSource != nil {
-		close(fromDeviceSource)
-	}
-
 	level.Debug(cdss.logger).Log("event", "Stop() completed")
 }

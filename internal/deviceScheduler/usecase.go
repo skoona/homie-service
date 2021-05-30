@@ -1,10 +1,10 @@
 package deviceScheduler
 
 import (
+	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	cc "github.com/skoona/homie-service/internal/utils"
-	"log"
 )
 
 /*
@@ -31,49 +31,32 @@ type (
 	}
 
 	schedulerService struct {
-		sites  *dc.SiteNetworks
-		cfg    cc.Config
-		logger log.Logger
+		otaStream OTAInteractor
+		cfg       cc.Config
+		logger    log.Logger
 	}
 )
 
-/**
- * ConsumeFromDeviceSource
- * Handles incoming channel DM message
- */
-func consumeFromDeviceSource(consumer chan dc.DeviceMessage) error {
-	/*
-	 * Create a Go Routine for the Schedulers Channel to
-	 */
-	go func(consumeChan chan dc.DeviceMessage) {
-		// var err error
-		level.Debug(logger).Log("event", "consumeFromDeviceSource(gofunc) called")
-
-		for msg := range consumeChan { // read until closed
-			// err := dvService.ApplyOTAEvent(&msg)
-			// if err != nil {
-			// 	level.Error(logger).Log("method", "consumeFromDeviceSource(gofunc)", "error", err.Error())
-			// }
-
-			// if nil != publishChan {
-			// 	publishChan <- msg
-			// }
-
-			level.Debug(logger).Log("method", "consumeFromDeviceSource(gofunc)", "consume queue depth", len(consumeChan), "Device", msg.DeviceID)
-		}
-		level.Debug(logger).Log("method", "consumeFromDeviceSource()", "event", "Completed")
-	}(consumer)
-
-	return nil
-}
-
-func NewSchedulerService(dfg cc.Config, siteNetworks *dc.SiteNetworks) SchedulerService {
+func NewSchedulerService(dfg cc.Config, otas OTAInteractor) SchedulerService {
 	sch = &schedulerService{
-		sites:  siteNetworks,
-		cfg:    dfg,
-		logger: log.With(dfg.Logger, "pkg", "deviceScheduler", "service", "SchedulerService"),
+		otaStream: otas,
+		cfg:       dfg,
+		logger:    log.With(dfg.Logger, "pkg", "deviceScheduler", "service", "SchedulerService"),
 	}
 	return sch
+}
+
+/*
+ * processSchedulerMessages()
+ * - handle notifications, triggers, and new core requests
+ */
+func processSchedulerMessages(dm dc.DeviceMessage) error {
+	level.Debug(logger).Log("event", "Calling processSchedulerMessages()")
+	var err error
+	level.Debug(logger).Log("topic", dm.TopicS, "device", dm.DeviceID)
+
+	level.Debug(logger).Log("event", "processSchedulerMessages() completed")
+	return err
 }
 
 func (s *schedulerService) BuildFirmwareCatalog() []dc.Firmware {

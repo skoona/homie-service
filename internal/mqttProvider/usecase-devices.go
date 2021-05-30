@@ -9,18 +9,19 @@ package mqttProvider
   - store/update network traffic to repository
 */
 import (
+	"strings"
+
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
-	"strings"
 )
 
 type (
 	deviceStream struct {
-		notifyChannel chan dc.QueueMessage // in
-		publishChannel chan dc.QueueMessage // in
+		notifyChannel  chan dc.DeviceMessage // in
+		publishChannel chan dc.DeviceMessage // in
 		logger         log.Logger
 	}
 )
@@ -38,29 +39,44 @@ func NewStreamProvider(plog log.Logger) dss.StreamProvider {
 	}
 	return dStream
 }
+func (s *deviceStream) ActivateNotifications() chan dc.DeviceMessage {
+		enableNetworkTraffic()
+		return s.GetNotifyChannel()
+}
+func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage {
+	level.Debug(s.logger).Log("method", "CreateDemoDeviceMessage() called")
+	dm, _ := dc.NewDeviceMessage(topic, payload, idCounter, retained, qos)v
+	return dm
+}
 
-func (s *deviceStream) GetPublishChannel() chan dc.QueueMessage {
+func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceMessage {
+	level.Debug(s.logger).Log("method", "CreateQueueDeviceMessage() called")
+	dm, _ := dc.NewQueueMessage(qmsg)
+	return dm
+}
+
+func (s *deviceStream) GetPublishChannel() chan dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "GetPublishChannel()")
 	if s.publishChannel == nil {
-		s.publishChannel = make(chan dc.QueueMessage, 120)
+		s.publishChannel = make(chan dc.DeviceMessage, 120)
 		establishPublishing(s.publishChannel, s.logger)
 	}
 	return s.publishChannel
 }
-func (s *deviceStream) GetNotifyChannel() chan dc.QueueMessage {
+func (s *deviceStream) GetNotifyChannel() chan dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "GetNotifyChannel()")
 	if s.notifyChannel == nil {
-		s.notifyChannel = make(chan dc.QueueMessage, 200)
+		s.notifyChannel = make(chan dc.DeviceMessage, 200)		
 	}
 	return s.notifyChannel
 }
 
 /**
  * establishPublishing()
-*/
-func establishPublishing(pubChan chan dc.QueueMessage, tlog log.Logger) {
+ */
+func establishPublishing(pubChan chan dc.DeviceMessage, tlog log.Logger) {
 	// Listen on incoming channel for device delete messages
-	go func(consumer chan dc.QueueMessage) {
+	go func(consumer chan dc.DeviceMessage) {
 		level.Debug(tlog).Log("event", "establishPublishing(gofunc) called")
 		for msg := range consumer { // read until closed
 
@@ -94,12 +110,18 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	}
 
 	if trigger {
-		if otahandler.notifyChannel != nil {
-			otahandler.notifyChannel <- msg
+		if otahandler != nil {
+			if otahandler.notifyChannel != nil {
+				dm, _ := dStream.CreateQueueDeviceMessage(msg)
+				otahandler.notifyChannel <- dm
+			}
 		}
 	}
 	// plus always send to source
-	if dStream.notifyChannel != nil {
-		dStream.notifyChannel <- msg
+	if dStream != nil {
+		if dStream.notifyChannel != nil {
+			dm, _ := dStream.CreateQueueDeviceMessage(msg)
+			dStream.notifyChannel <- dm
+		}
 	}
 }

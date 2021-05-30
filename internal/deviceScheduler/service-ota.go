@@ -7,69 +7,69 @@ package deviceScheduler
 */
 
 import (
-	"errors"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 type (
 	/*
 	 * call EnableTriggers() to see messages with ota enabled flags from devices
 	 * when triggered send the EnableNotificationFor(..., true), then OtaPublish(ota-payload
-	*/
+	 */
 	OTAInteractor interface {
-		EnableTriggers() chan dc.QueueMessage  // open notification and trigger channel
+		EnableTriggers() chan dc.DeviceMessage                                              // open notification and trigger channel
 		EnableNotificationsFor(networkName, deviceName string, enabledOrDisable bool) error // watch a device ota progres
-		OtaPublish(otaMessage dc.QueueMessage) // sending a ota
+		OtaPublish(otaMessage dc.DeviceMessage)                                             // sending a ota
 	}
-
 )
 
-var (
-	otaNotify chan dc.QueueMessage
-)
+func publishOTAStream(dm dc.DeviceMessage, plog log.Logger) {
+	level.Debug(plog).Log("event", "Calling publishToDeviceSource()")
 
-/*
- * Receive Triggers and Notifications from OTA Provider  */
-func enableNotifications(s OTAInteractor) error {
-	level.Debug(s.logger).Log("method", "enableNotifications()")
-	otaNotify = make(chan dc.QueueMessage, 120)
-	err := consumeNotificationsFromOTAProviders(otaNotify)
-	if err == nil {
-		err = s.EnableNotifications(otaNotify)
-		if err != nil {
-			level.Error(logger).Log("error", err.Error())
-		}
-	} else {
-		level.Error(logger).Log("error", err.Error())
+	otaStream.OtaPublish(dm)
+
+	level.Debug(plog).Log("event", "publishToDeviceSource() completed")
+	return
+}
+
+func consumeOTAStream(dm dc.DeviceMessage, plog log.Logger) error {
+	level.Debug(plog).Log("event", "Calling consumeOTAStream()")
+
+	err := processSchedulerMessages(dm)
+	if err != nil {
+		level.Error(plog).Log("method", "consumeOTAStream()", "error", err.Error(), "device", dm.DeviceID)
 	}
+
+	level.Debug(plog).Log("method", "consumeOTAStream()", "device", dm.DeviceID)
+
+	level.Debug(plog).Log("event", "consumeOTAStream() completed")
 	return err
 }
 
 /**
- * ConsumeFromOTAProviders
- * routes from OTA to Scheduler
+ * consumeFromStreamProvider
+ * Handles incoming channel DM message
  */
-func consumeNotificationsFromOTAProviders(consumer chan dc.QueueMessage) error {
+func consumeFromOTAStreamProvider(consumer chan dc.DeviceMessage, plog log.Logger) {
 	/*
-	 * Create a Go Routine for the Providers Channel to
+	 * Create a Go Routine for the Schedulers Channel to
 	 */
-	go func(consumeChan chan dc.QueueMessage) {
-		level.Debug(logger).Log("event", "consumeNotificationsFromOTAProviders(gofunc) called")
+	go func(consumeChan chan dc.DeviceMessage, tlog log.Logger) {
+		level.Debug(tlog).Log("event", "consumeFromOTAStreamProvider(gofunc) called")
+
 		for msg := range consumeChan { // read until closed
 
-			err := otaChannel.ApplyOTAEvent(msg)
+			err := consumeOTAStream(msg, tlog)
 			if err != nil {
-				level.Error(logger).Log("method", "consumeNotificationsFromOTAProviders(gofunc)", "error", err.Error())
+				level.Error(tlog).Log("method", "consumeFromOTAStreamProvider(gofunc)", "error", err.Error())
 			}
 
-			level.Debug(logger).Log("method", "consumeNotificationsFromOTAProviders(gofunc)", "consume queue depth", len(consumeChan))
+			// if nil != publishChan {
+			// 	publishChan <- msg
+			// }
+			level.Debug(tlog).Log("method", "consumeFromOTAStreamProvider(gofunc)", "consume queue depth", len(consumeChan), "device", msg.DeviceID)
 		}
-		level.Debug(logger).Log("method", "consumeNotificationsFromOTAProviders()", "event", "Completed")
-	}(consumer)
-
-	return nil
+		level.Debug(tlog).Log("method", "consumeFromOTAStreamProvider()", "event", "Completed")
+	}(consumer, plog)
 }
