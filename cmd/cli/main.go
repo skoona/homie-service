@@ -49,7 +49,6 @@ import (
 func shutdownDemo() {
 	level.Debug(logger).Log("event", "shutdownDemo() called")
 	dp.Stop()
-	sch.Stop()
 	dss.Stop()
 
 	// List the Devices Found/Recorded
@@ -134,7 +133,7 @@ func main() {
 
 	/* Prepare for clean exit */
 	systemSignalChannel := make(chan os.Signal, 1)
-	signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM, syscall.SIGKILL)
+	signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM)
 	sig := <-systemSignalChannel // wait on ctrl-c
 	level.Debug(logger).Log("event", sig)
 	level.Debug(logger).Log("event", "Shutting Down")
@@ -152,7 +151,7 @@ func main() {
 	}
 
 	// Dump the SiteNetwork and all nodes as JSON
-	out, err := json.MarshalIndent(*dc.GetSiteNetworks(), "", "  ")
+	out, err := json.MarshalIndent(siteNetworks, "", "  ")
 	if err != nil {
 		level.Warn(logger).Log("action", err.Error())
 	} else {
