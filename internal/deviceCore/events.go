@@ -255,8 +255,7 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
  *  Create a New DeviceMessage and initializes it.
  */
 func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	logg := log.With(cc.DefaultLogger, "pkg", "deviceCore", "service", "coreService") // default logger
-	logger := log.With(logg, "method", "buildDeviceMessage")
+	logger := log.With(cc.DefaultLogger, "pkg", "deviceCore", "service", "coreService", "method", "buildDeviceMessage") // default logger
 
 	var deviceID, nodeID, propertyID, attributeID, networkID, propertyPropertyID []byte
 	var dm DeviceMessage

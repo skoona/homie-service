@@ -22,7 +22,7 @@ import (
 
 // newFirmware Creates Component
 func NewFirmware(path string) (dc.Firmware, error) {
-
+	level.Debug(logger).Log("event", "NewFirmware() called", "path", path)
 	// call resolver routine
 	md5Sum, fwName, fwVersion, fwBrand, fsize, modtime, err := firmwareDetails(path)
 
@@ -129,5 +129,6 @@ func buildFirmwareCatalog() []dc.Firmware {
 		}
 	}
 
+	level.Debug(logger).Log("event", "buildFirmwareCatalog() completed")
 	return firmware
 }

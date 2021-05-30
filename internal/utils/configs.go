@@ -127,7 +127,7 @@ func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 		Dbc: DBConfig{
 			DemoSource:      cfg.GetString("homiemonitor.datasources.demoSource"),
 			DataStorage:     cfg.GetString("homiemonitor.datasources.dataStorage"),
-			FirmwareStorage: cfg.GetString("homiemonitor.datasources.dataStorage"),
+			FirmwareStorage: cfg.GetString("homiemonitor.datasources.firmwareStorage"),
 			DemoNetworks:    cfg.GetStringSlice("homiemonitor.datasources.demoNetworks"),
 		},
 		Mqc: MQTTConfig{

@@ -108,6 +108,7 @@ func NewCoreService(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvide
  * NewDeviceMessage()
  *
  *  Create a New DeviceMessage and initializes it.
+ *  Called outside of the service
  */
 func NewDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
 	return buildDeviceMessage(topic, payload, idCounter, retained, qos)
@@ -117,6 +118,7 @@ func NewDeviceMessage(topic string, payload []byte, idCounter uint16, retained b
  * NewEventMessage()
  *
  *  Create a New DeviceMessage and initializes it.
+ *  Called outside of the service
  */
 func NewQueueMessage(msg QueueMessage) (DeviceMessage, error) {
 	return NewDeviceMessage(msg.Topic(), msg.Payload(), msg.MessageID(), msg.Retained(), msg.Qos())
