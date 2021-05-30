@@ -148,6 +148,12 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, discov
 
 	level.Debug(em.logger).Log("event", "Start() completed")
 
+	if sscp != nil {
+		sscp.ApplySiteNetworks(sites)
+		sscp.BuildFirmwareCatalog()
+		sscp.BuildScheduleCatalog()
+	}
+
 	return svc, sites
 }
 

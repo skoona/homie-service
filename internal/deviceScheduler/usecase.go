@@ -43,7 +43,8 @@ func (s *schedulerProvider) ApplySiteNetworks(sn *dc.SiteNetworks) {
 }
 func (s *schedulerProvider) BuildScheduleCatalog() map[dc.EID]dc.Schedule {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
-	return buildScheduleCatalog()
+	sch.snwk.Schedules = buildScheduleCatalog()
+	return sch.snwk.Schedules
 }
 func (s *schedulerProvider) Schedules() []dc.Schedule {
 	level.Debug(s.logger).Log("event", "Calling Schedules()")
@@ -63,7 +64,8 @@ func (s *schedulerProvider) DeleteSchedule(scheduleID dc.EID) error {
 }
 func (s *schedulerProvider) BuildFirmwareCatalog() []dc.Firmware {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
-	return buildFirmwareCatalog()
+	sch.snwk.Firmwares = buildFirmwareCatalog()
+	return sch.snwk.Firmwares
 }
 func (s *schedulerProvider) Firmwares() []dc.Firmware {
 	level.Debug(s.logger).Log("event", "Calling Firmwares()")

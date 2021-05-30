@@ -98,8 +98,6 @@ func buildScheduleCatalog() map[dc.EID]dc.Schedule {
 	level.Debug(logger).Log("event", "buildScheduleCatalog() called")
 	// get from levelDB
 	schedMap := sch.repo.ScheduleStore(dc.Schedule{})
-	sch.snwk.Schedules = schedMap
-
 	return schedMap
 }
 
