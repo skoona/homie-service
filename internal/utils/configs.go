@@ -99,6 +99,8 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 	return config
 }
 
+var DefaultLogger log.Logger
+
 func buildLogger(moduleName string) log.Logger {
 
 	logger := log.NewLogfmtLogger(os.Stderr)
@@ -108,7 +110,7 @@ func buildLogger(moduleName string) log.Logger {
 		"time:", log.DefaultTimestampUTC,
 		"caller", log.DefaultCaller,
 	)
-
+	DefaultLogger = logger
 	level.Debug(logger).Log("event", "called buildLogger()")
 
 	return logger

@@ -12,6 +12,7 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 /*
@@ -254,7 +255,8 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
  *  Create a New DeviceMessage and initializes it.
  */
 func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	logger := log.With(em.logger, "method", "buildDeviceMessage")
+	logg := log.With(cc.DefaultLogger, "pkg", "deviceCore", "service", "coreService") // default logger
+	logger := log.With(logg, "method", "buildDeviceMessage")
 
 	var deviceID, nodeID, propertyID, attributeID, networkID, propertyPropertyID []byte
 	var dm DeviceMessage

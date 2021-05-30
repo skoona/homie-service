@@ -3,7 +3,9 @@ package deviceCore
 import (
 	"fmt"
 
+	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 /*
@@ -26,7 +28,8 @@ import (
 
 // The active Service
 var (
-	em *coreService
+	em   *coreService
+	dlog = log.With(cc.DefaultLogger, "pkg", "deviceCore", "service", "coreService") // default logger
 )
 
 func GetSiteNetworks() *SiteNetworks {
