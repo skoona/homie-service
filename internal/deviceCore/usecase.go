@@ -30,10 +30,6 @@ var (
 	em *coreService
 )
 
-func GetSiteNetworks() *SiteNetworks {
-	return &siteNetworks
-}
-
 /**
  * ConsumeFromDeviceSource
  * Handles incoming channel DM message
@@ -95,8 +91,9 @@ func (em *coreService) DeviceByEIDFromNetwork(deviceEID EID, networkName string)
 	if ptrToDevice == nil {
 		err = fmt.Errorf("device with id {%s} was  not found on {%s} network", deviceEID, networkName)
 		level.Error(em.logger).Log("error", err.Error())
+	} else {
+		copyOfDevice = *ptrToDevice // TODO: hoping this copies vs references
 	}
-	copyOfDevice = *ptrToDevice // TODO: hoping this copies vs references
 	return copyOfDevice, err
 }
 func (em *coreService) RemoveDeviceByEIDFromNetwork(deviceEID EID, networkName string) error {
