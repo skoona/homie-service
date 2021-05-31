@@ -1,5 +1,5 @@
 .idea
 **/.DS_Store
-dataDB/dataDir/*
+./dataDB/dataDir/*
 *.code-workspace
 main
