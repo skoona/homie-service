@@ -26,7 +26,11 @@ func (s *deviceSource) HandleCoreEvent(dm dc.DeviceMessage) error {
 	plog := log.With(s.logger, "method", "HandleCoreEvent()")
 
 	// can only be a delete request
-	err = s.repository.Store(dm)
+	if dm.Value == nil {
+		err = s.repository.Remove(dm)
+	} else {
+		err = s.repository.Store(dm)
+	}
 	if err != nil {
 		level.Error(plog).Log("error", err)
 		return err

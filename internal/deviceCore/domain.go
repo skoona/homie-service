@@ -61,7 +61,7 @@ type Firmware struct {
 type Schedule struct {
 	ID          EID
 	ElementType CoreType
-	DeviceName  string
+	DeviceEID   EID
 	Package     Firmware
 	State       string
 	Status      string
@@ -83,5 +83,5 @@ func (f *Firmware) String() string {
 }
 func (s *Schedule) String() string {
 	return fmt.Sprintf("id=%s, device=%s, state=%s, status=%s, scheduled=%v, firmware.id=%s, firmware.name=%s",
-		s.ID, s.DeviceName, s.State, s.Status, s.Scheduled, s.Package.ID, s.Package.Name)
+		s.ID, s.DeviceEID, s.State, s.Status, s.Scheduled, s.Package.ID, s.Package.Name)
 }

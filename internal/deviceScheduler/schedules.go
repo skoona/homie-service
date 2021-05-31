@@ -81,11 +81,11 @@ The design goal for this file is:
 // Get related device
 // verify OTAEnabled is true [default]
 // if false return error
-func NewSchedule(networkName, deviceName string, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
+func NewSchedule(networkName string, deviceID dc.EID, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
 	return dc.Schedule{
 		ID:          dc.NewEID(),
 		ElementType: dc.CoreTypeSchedule,
-		DeviceName:  deviceName,
+		DeviceEID:   deviceID,
 		Package:     *firmware,
 		State:       "Pending",
 		Status:      "Waiting",
@@ -96,9 +96,7 @@ func NewSchedule(networkName, deviceName string, transport dc.OTATransport, firm
 
 func buildScheduleCatalog() map[dc.EID]dc.Schedule {
 	level.Debug(logger).Log("event", "buildScheduleCatalog() called")
-	// get from levelDB
-	schedMap := sch.repo.ScheduleStore(dc.Schedule{})
-	return schedMap
+	return sch.repo.LoadSchedules()
 }
 
 /*

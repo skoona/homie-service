@@ -19,29 +19,137 @@ import (
 )
 
 /**
- * ScheduleStore(schedule Schedule)
+ * StoreSchedule(schedule Schedule)
  */
-func (dbR *dbRepo) ScheduleStore(d dc.Schedule) map[dc.EID]dc.Schedule {
-	level.Debug(dbR.logger).Log("event", "Calling ScheduleStore()", "dm", d.String())
-	// when input is present, store new
-	// when input is empty or nil, render
-	schedMap := make(map[dc.EID]dc.Schedule, 0)
+func (dbR *dbRepo) StoreSchedule(d dc.Schedule) error {
+	level.Debug(dbR.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
+	var err error
+
+	/*
+	* Create Schedules */
+	err = dbR.db.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists([]byte("Schedules"))
+		if err != nil {
+			return fmt.Errorf("[WARN] Schedules cannot be created or found!: %s, error: %s", "Schedules", err.Error())
+		}
+
+		b, err = b.CreateBucketIfNotExists([]byte(d.ID))
+		if err != nil {
+			return fmt.Errorf("[WARN] Schedule ID cannot be created or found!: %s, error: %s", d.ID, err.Error())
+		}
+
+		// save as a json blob
+		value, _ := json.Marshal(d)
+		err = b.Put([]byte(d.ID), value)
+		return err
+	})
+
+	if err != nil {
+		level.Error(dbR.logger).Log("Alert", "StoreSchedule() Failed", "error", err.Error(), "schedule", d.String())
+	} else {
+		level.Debug(dbR.logger).Log("event", "StoreSchedule() complete")
+	}
+
+	return err
+}
+
+/**
+ * RemoveSchedule(schedule Schedule)
+ */
+func (dbR *dbRepo) RemoveSchedule(d dc.Schedule) error {
+	level.Debug(dbR.logger).Log("event", "Calling RemoveSchedule()", "schedule", d.String())
+
+	/*
+	* Delete Schedules */
+	err := dbR.db.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists([]byte("Schedules"))
+		if err != nil {
+			return fmt.Errorf("[WARN] Schedules cannot be created or found!: %s, error: %s", "Schedules", err.Error())
+		}
+
+		err = b.DeleteBucket([]byte(d.ID))
+		return err
+	})
+
+	if err != nil {
+		level.Error(dbR.logger).Log("Alert", "RemoveSchedule() Failed", "error", err.Error(), "schedule", d.String())
+	} else {
+		level.Debug(dbR.logger).Log("event", "RemoveSchedule() complete")
+	}
+
+	return err
+}
+
+/**
+ * LoadSchedules()
+ */
+func (dbR *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
+	level.Debug(dbR.logger).Log("event", "Calling LoadSchedules()")
+	schedMap := map[dc.EID]dc.Schedule{}
+
+	/*
+	 * Load Schedules */
+	err := dbR.db.View(func(tx *bolt.Tx) error {
+		var err error
+		b := tx.Bucket([]byte("Schedules"))
+		if b == nil {
+			return fmt.Errorf("No schedules %s", "available")
+		}
+		c := b.Cursor()
+
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			var schedule dc.Schedule
+			err = json.Unmarshal(v, &schedule)
+			schedMap[dc.EID(string(k))] = schedule
+			fmt.Printf("schedule key=%s, value=%s\n", k, v)
+		}
+		return err
+	})
+
+	if err != nil {
+		level.Error(dbR.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
+	} else {
+		level.Debug(dbR.logger).Log("event", "LoadSchedules() complete", "retrieved", len(schedMap))
+	}
+
 	return schedMap
+}
+
+/**
+ * Remove()
+ *
+ * Repository Implementation
+ */
+func (dbR *dbRepo) Remove(d dc.DeviceMessage) error {
+
+	level.Debug(dbR.logger).Log("event", "Calling Remove()", "dm", d.String())
+
+	err := dbR.db.Update(func(tx *bolt.Tx) error {
+		var err error
+
+		b := tx.Bucket(d.NetworkID)
+		if b == nil {
+			return fmt.Errorf("[WARN] Network Not Found!: %s, error: %s", d.NetworkID, err.Error())
+		}
+
+		return b.DeleteBucket(d.DeviceID)
+	})
+
+	if err != nil {
+		level.Error(dbR.logger).Log("Alert", "Remove() Update Failed", "error", err.Error(), "dm", d.String())
+	} else {
+		level.Debug(dbR.logger).Log("event", "Remove() complete", "device", d.DeviceID)
+	}
+
+	return err
 }
 
 /**
  * Store()
  *
  * Repository Implementation
- *
- * Save the DeviceMessage to the Store using Devicename/Bucket -> (Topic:value)
- * Save if value > nil,
- * Delete topic if present
- * Deletebucket if no topic exists
  */
 func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
-	var err error
-
 	//     0         1           2        3              4                         5
 	// sknSensors/device/node/version: 3.0.0
 	//  * homie / device ID / $device-attribute / device-attribute-Property / device-attribute-Property-Property
@@ -59,173 +167,99 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 
 	level.Debug(dbR.logger).Log("event", "Calling Store()", "dm", d.String())
 
-	if nil == d.Value || len(d.Value) == 0 { // Delete actions
-		err = dbR.db.Update(func(tx *bolt.Tx) error {
-			var err error
+	err := dbR.db.Update(func(tx *bolt.Tx) error {
+		b, err := tx.CreateBucketIfNotExists(d.NetworkID)
+		if err != nil {
+			return fmt.Errorf("[WARN] Network cannot be created or found!: %s, error: %s", d.NetworkID, err.Error())
+		}
 
-			b := tx.Bucket(d.NetworkID)
-			if b == nil {
-				return fmt.Errorf("[WARN] Network Not Found!: %s, error: %s", d.NetworkID, err.Error())
-			}
+		b, err = b.CreateBucketIfNotExists(d.DeviceID)
+		if err != nil {
+			return fmt.Errorf("[WARN] Device cannot be created or found!: %s, error: %s", d.DeviceID, err.Error())
+		}
 
-			b = b.Bucket(d.DeviceID)
-			if b == nil {
-				return fmt.Errorf("[WARN] Device Not Found!: %s, error: %s", d.DeviceID, err.Error())
-			}
-
-			/* Devices */
-
-			// X/D/A/P/P
-			if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 {
-				b = b.Bucket(d.AttributeID)
-				if b == nil {
-					return fmt.Errorf("[WARN] Attribute Not Found!: %s, error: %s", d.AttributeID, err.Error())
-				}
-				b = b.Bucket(d.PropertyID)
-				if b == nil {
-					return fmt.Errorf("[WARN] Property Not Found!: %s, error: %s", d.PropertyID, err.Error())
-				}
-
-				return b.DeleteBucket(d.PPropertyID)
-			}
-
-			// X/D/A/P
-			if len(d.NodeID) == 0 && len(d.PPropertyID) == 0 {
-				b = b.Bucket(d.AttributeID)
-				if b == nil {
-					return fmt.Errorf("[WARN] Atribute Not Found!: %s, error: %s", d.AttributeID, err.Error())
-				}
-				return b.DeleteBucket(d.PropertyID)
-			}
-
-			// X/D/A
-			if len(d.NodeID) == 0 && len(d.PropertyID) == 0 { // X/D/A
-				return b.Delete(d.AttributeID)
-			}
-
-			/* Nodes */
-			b = b.Bucket(d.NodeID)
-			if b == nil {
-				return fmt.Errorf("[WARN] Node Not Found!: %s, error: %s", d.NodeID, err.Error())
-			}
-
-			// X/D/N/P/A
-			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 && len(d.AttributeID) > 0 {
-				b = b.Bucket(d.PropertyID)
-				if b == nil {
-					return fmt.Errorf("[WARN] Property Not Found!: %s, error: %s", d.PropertyID, err.Error())
-				}
-
-				return b.Delete(d.AttributeID)
-			}
-
-			// X/D/N/A
-			if len(d.NodeID) > 0 && len(d.AttributeID) > 0 {
-				return b.Delete(d.AttributeID)
-			}
-
-			// X/D/N/P
-			if len(d.NodeID) > 0 && len(d.PropertyID) > 0 {
-				return b.DeleteBucket(d.PropertyID)
-			}
-
-			return err
-		})
-
-	} else { // Create Actions
-
-		err = dbR.db.Update(func(tx *bolt.Tx) error {
-			b, err := tx.CreateBucketIfNotExists(d.NetworkID)
+		if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 { // device attrs-property-property
+			b, err = b.CreateBucketIfNotExists(d.AttributeID)
 			if err != nil {
-				return fmt.Errorf("[WARN] Network cannot be created or found!: %s, error: %s", d.NetworkID, err.Error())
+				return fmt.Errorf("[WARN] Attribute(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
 			}
 
-			b, err = b.CreateBucketIfNotExists(d.DeviceID)
+			b, err = b.CreateBucketIfNotExists(d.PropertyID)
 			if err != nil {
-				return fmt.Errorf("[WARN] Device cannot be created or found!: %s, error: %s", d.DeviceID, err.Error())
+				return fmt.Errorf("[WARN] Property(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
 			}
 
-			if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 { // device attrs-property-property
-				b, err = b.CreateBucketIfNotExists(d.AttributeID)
-				if err != nil {
-					return fmt.Errorf("[WARN] Attribute(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
-				}
-
-				b, err = b.CreateBucketIfNotExists(d.PropertyID)
-				if err != nil {
-					return fmt.Errorf("[WARN] Property(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
-				}
-
-				b, err = b.CreateBucketIfNotExists(d.PPropertyID)
-				if err != nil {
-					return fmt.Errorf("[WARN] PropertyProperty(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PPropertyID, err.Error())
-				}
-
-				err = b.Put(d.PPropertyID, d.Value)
-				return err
+			b, err = b.CreateBucketIfNotExists(d.PPropertyID)
+			if err != nil {
+				return fmt.Errorf("[WARN] PropertyProperty(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PPropertyID, err.Error())
 			}
 
-			if len(d.NodeID) == 0 && len(d.PropertyID) > 0 { // device attr-property
-				b, err = b.CreateBucketIfNotExists(d.AttributeID)
-				if err != nil {
-					return fmt.Errorf("[WARN] Attribute(x/d/a/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
-				}
-
-				b, err = b.CreateBucketIfNotExists(d.PropertyID)
-				if err != nil {
-					return fmt.Errorf("[WARN] Property(x/d/a/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
-				}
-
-				err = b.Put(d.PropertyID, d.Value)
-				return err
-			}
-
-			if len(d.NodeID) == 0 && len(d.AttributeID) > 0 { // device attrs
-				err = b.Put(d.AttributeID, d.Value)
-				return err
-			}
-
-			// x/d/n
-			if len(d.NodeID) > 0 {
-				b, err = b.CreateBucketIfNotExists(d.NodeID)
-				if err != nil {
-					return fmt.Errorf("[WARN] Node cannot be created or found!: %s, error: %s", d.NodeID, err.Error())
-				}
-			} else {
-				return fmt.Errorf("ALERT Unknown(node) Message!: %s, error: %s", d.String(), err.Error())
-			}
-
-			// x/d/n/p/a
-			if len(d.PropertyID) > 0 && len(d.AttributeID) > 0 { // node property attr
-				b, err = b.CreateBucketIfNotExists(d.PropertyID)
-				if err != nil {
-					return fmt.Errorf("[WARN] Property(x/d/n/p/a) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
-				}
-
-				return b.Put(d.AttributeID, d.Value)
-			}
-
-			// x/d/n/p
-			if len(d.PropertyID) > 0 && len(d.AttributeID) == 0 { // Node Property
-				b, err = b.CreateBucketIfNotExists(d.PropertyID)
-				if err != nil {
-					return fmt.Errorf("[WARN] Property(x/d/n/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
-				}
-
-				return b.Put(d.PropertyID, d.Value)
-			}
-
-			// x/d/n/a
-			if len(d.PropertyID) == 0 && len(d.AttributeID) > 0 { // Node Attr
-				return b.Put(d.AttributeID, d.Value)
-			}
-
+			err = b.Put(d.PPropertyID, d.Value)
 			return err
-		})
-	}
+		}
+
+		if len(d.NodeID) == 0 && len(d.PropertyID) > 0 { // device attr-property
+			b, err = b.CreateBucketIfNotExists(d.AttributeID)
+			if err != nil {
+				return fmt.Errorf("[WARN] Attribute(x/d/a/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
+			}
+
+			b, err = b.CreateBucketIfNotExists(d.PropertyID)
+			if err != nil {
+				return fmt.Errorf("[WARN] Property(x/d/a/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
+			}
+
+			err = b.Put(d.PropertyID, d.Value)
+			return err
+		}
+
+		if len(d.NodeID) == 0 && len(d.AttributeID) > 0 { // device attrs
+			err = b.Put(d.AttributeID, d.Value)
+			return err
+		}
+
+		// x/d/n
+		if len(d.NodeID) > 0 {
+			b, err = b.CreateBucketIfNotExists(d.NodeID)
+			if err != nil {
+				return fmt.Errorf("[WARN] Node cannot be created or found!: %s, error: %s", d.NodeID, err.Error())
+			}
+		} else {
+			return fmt.Errorf("ALERT Unknown(node) Message!: %s, error: %s", d.String(), err.Error())
+		}
+
+		// x/d/n/p/a
+		if len(d.PropertyID) > 0 && len(d.AttributeID) > 0 { // node property attr
+			b, err = b.CreateBucketIfNotExists(d.PropertyID)
+			if err != nil {
+				return fmt.Errorf("[WARN] Property(x/d/n/p/a) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
+			}
+
+			return b.Put(d.AttributeID, d.Value)
+		}
+
+		// x/d/n/p
+		if len(d.PropertyID) > 0 && len(d.AttributeID) == 0 { // Node Property
+			b, err = b.CreateBucketIfNotExists(d.PropertyID)
+			if err != nil {
+				return fmt.Errorf("[WARN] Property(x/d/n/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
+			}
+
+			return b.Put(d.PropertyID, d.Value)
+		}
+
+		// x/d/n/a
+		if len(d.PropertyID) == 0 && len(d.AttributeID) > 0 { // Node Attr
+			return b.Put(d.AttributeID, d.Value)
+		}
+
+		return err
+	})
 
 	if err != nil {
-		level.Error(dbR.logger).Log("Alert", "Store() Update Failed", "error", err.Error(), "dm", d.String())
+		level.Error(dbR.logger).Log("Alert", "Store() Failed", "error", err.Error(), "dm", d.String())
+	} else {
+		level.Debug(dbR.logger).Log("event", "Store() complete", "device", d.DeviceID)
 	}
 
 	return err

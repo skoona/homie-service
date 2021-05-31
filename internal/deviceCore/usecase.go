@@ -138,11 +138,11 @@ func (em *coreService) ScheduleByEID(scheduleID EID) Schedule {
 	schedule := siteNetworks.Schedules[scheduleID]
 	return schedule
 }
-func (em *coreService) ScheduleByDeviceName(deviceName string) Schedule {
-	level.Debug(em.logger).Log("method", "ScheduleByDeviceName() called")
+func (em *coreService) ScheduleByDeviceEID(deviceID EID) Schedule {
+	level.Debug(em.logger).Log("method", "ScheduleByDeviceEID() called")
 	var schedule Schedule
 	for _, obj := range siteNetworks.Schedules {
-		if obj.DeviceName == deviceName {
+		if obj.DeviceEID == deviceID {
 			schedule = obj
 			break
 		}

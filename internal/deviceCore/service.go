@@ -37,7 +37,7 @@ type (
 		AddSchedule(schedule Schedule)
 		RemoveSchedule(scheduleID EID)
 		ScheduleByEID(scheduleID EID) Schedule
-		ScheduleByDeviceName(deviceName string) Schedule
+		ScheduleByDeviceEID(deviceID EID) Schedule
 
 		AllBroadcasts() []Broadcast
 		AddBroadcast(broadcast Broadcast)
@@ -56,8 +56,8 @@ type (
 		DeleteFirmware(id EID) error
 		BuildScheduleCatalog() map[EID]Schedule
 		Schedules() []Schedule
-		FindSchedulesByDeviceID(deviceID EID) ([]Schedule, error)
-		CreateSchedule(networkName, deviceName string, transport OTATransport, firmware *Firmware) (EID, error)
+		FindSchedulesByDeviceEID(deviceID EID) []Schedule
+		CreateSchedule(networkName string, deviceID EID, transport OTATransport, firmware *Firmware) (EID, error)
 		DeleteSchedule(scheduleID EID) error
 	}
 
@@ -74,7 +74,10 @@ type (
 	// Device Source Storage Repository
 	Repository interface {
 		Store(d DeviceMessage) error
-		ScheduleStore(d Schedule) map[EID]Schedule
+		Remove(d DeviceMessage) error
+		LoadSchedules() map[EID]Schedule
+		StoreSchedule(d Schedule) error
+		RemoveSchedule(d Schedule) error
 	}
 
 	// Service Implementation
