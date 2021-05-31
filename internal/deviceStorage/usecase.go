@@ -189,11 +189,6 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 				return fmt.Errorf("[WARN] Property(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
 			}
 
-			b, err = b.CreateBucketIfNotExists(d.PPropertyID)
-			if err != nil {
-				return fmt.Errorf("[WARN] PropertyProperty(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.PPropertyID, err.Error())
-			}
-
 			err = b.Put(d.PPropertyID, d.Value)
 			return err
 		}
@@ -202,11 +197,6 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 			b, err = b.CreateBucketIfNotExists(d.AttributeID)
 			if err != nil {
 				return fmt.Errorf("[WARN] Attribute(x/d/a/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
-			}
-
-			b, err = b.CreateBucketIfNotExists(d.PropertyID)
-			if err != nil {
-				return fmt.Errorf("[WARN] Property(x/d/a/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
 			}
 
 			err = b.Put(d.PropertyID, d.Value)
@@ -240,10 +230,6 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 
 		// x/d/n/p
 		if len(d.PropertyID) > 0 && len(d.AttributeID) == 0 { // Node Property
-			b, err = b.CreateBucketIfNotExists(d.PropertyID)
-			if err != nil {
-				return fmt.Errorf("[WARN] Property(x/d/n/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
-			}
 
 			return b.Put(d.PropertyID, d.Value)
 		}

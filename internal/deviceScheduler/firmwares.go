@@ -27,7 +27,7 @@ func NewFirmware(path string) (dc.Firmware, error) {
 	md5Sum, fwName, fwVersion, fwBrand, fsize, modtime, err := firmwareDetails(path)
 
 	fw := dc.Firmware{
-		ID:          dc.NewEID(),
+		ID:          dc.EID(md5Sum),
 		ElementType: dc.CoreTypeFirmware,
 		Name:        fwName,
 		FileName:    path,

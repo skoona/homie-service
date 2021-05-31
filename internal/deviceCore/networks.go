@@ -2,6 +2,7 @@ package deviceCore
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/go-kit/kit/log/level"
 )
@@ -102,6 +103,8 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	 */
 	if ok && string(dm.Value) == "" {
 		delete(hn.Devices, string(dm.DeviceID))
+		em.dsp.PublishToStreamProvider(dm)
+
 		err = fmt.Errorf("device{%s} on network{%s} was deleted since value was nil", dm.DeviceID, hn.Name)
 		level.Warn(em.logger).Log("action", err.Error())
 		return err
@@ -139,6 +142,12 @@ func (hn *Network) apply(dm DeviceMessage) error {
 func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleDeviceAttributePropertyProperty() called")
+	var nValue string
+	if strings.HasPrefix(string(dm.AttributeID), "_$") {
+		nValue = string(dm.AttributeID)[1:]
+	} else {
+		nValue = string(dm.AttributeID)
+	}
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -148,19 +157,19 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
 
-	devattr, found := dev.Attrs[string(dm.AttributeID)[1:]]
+	devattr, found := dev.Attrs[nValue]
 	if !found {
-		err = fmt.Errorf("attribute [%s] not found, will create it", string(dm.AttributeID)[1:])
+		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
 		level.Warn(em.logger).Log("warning", err.Error())
-		devattr = NewDeviceAttribute(string(dm.DeviceID), string(dm.AttributeID)[1:], "")
-		dev.Attrs[string(dm.AttributeID)[1:]] = devattr
+		devattr = NewDeviceAttribute(string(dm.DeviceID), nValue, "")
+		dev.Attrs[nValue] = devattr
 	}
 
 	devattrprop, found := devattr.Props[string(dm.PropertyID)]
 	if !found {
 		err = fmt.Errorf("property [%s] not found, will create it", string(dm.PropertyID))
 		level.Warn(em.logger).Log("warning", err.Error())
-		devattrprop = NewDeviceAttributeProperty(string(dm.AttributeID)[1:], string(dm.PropertyID), "")
+		devattrprop = NewDeviceAttributeProperty(nValue, string(dm.PropertyID), "")
 		devattr.Props[string(dm.PropertyID)] = devattrprop
 	}
 
@@ -180,6 +189,12 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleDeviceAttributeProperty() called")
+	var nValue string
+	if strings.HasPrefix(string(dm.AttributeID), "_$") {
+		nValue = string(dm.AttributeID)[1:]
+	} else {
+		nValue = string(dm.AttributeID)
+	}
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -189,19 +204,19 @@ func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
 
-	devattr, found := dev.Attrs[string(dm.AttributeID)[1:]]
+	devattr, found := dev.Attrs[nValue]
 	if !found {
-		err = fmt.Errorf("attribute [%s] not found, will create it", string(dm.AttributeID)[1:])
+		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
 		level.Warn(em.logger).Log("warning", err.Error())
-		devattr = NewDeviceAttribute(string(dm.DeviceID), string(dm.AttributeID)[1:], "")
-		dev.Attrs[string(dm.AttributeID)] = devattr
+		devattr = NewDeviceAttribute(string(dm.DeviceID), nValue, "")
+		dev.Attrs[nValue] = devattr
 	}
 
 	devattrprop, found := devattr.Props[string(dm.PropertyID)]
 	if !found {
 		err = fmt.Errorf("attribute property [%s] not found, will create it", string(dm.PropertyID))
 		level.Warn(em.logger).Log("warning", err.Error())
-		devattrprop = NewDeviceAttributeProperty(string(dm.AttributeID)[1:], string(dm.PropertyID), string(dm.Value))
+		devattrprop = NewDeviceAttributeProperty(nValue, string(dm.PropertyID), string(dm.Value))
 		devattr.Props[string(dm.PropertyID)] = devattrprop
 	}
 
@@ -213,6 +228,12 @@ func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 func (hn *Network) handleDeviceAttribute(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleDeviceAttribute() called")
+	var nValue string
+	if strings.HasPrefix(string(dm.AttributeID), "_$") {
+		nValue = string(dm.AttributeID)[1:]
+	} else {
+		nValue = string(dm.AttributeID)
+	}
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -222,11 +243,11 @@ func (hn *Network) handleDeviceAttribute(dm DeviceMessage) error {
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
 
-	devattr, found := dev.Attrs[string(dm.AttributeID)]
+	devattr, found := dev.Attrs[nValue]
 	if !found {
-		err = fmt.Errorf("attribute [%s] not found, will create it", string(dm.AttributeID))
+		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
 		level.Warn(em.logger).Log("warning", err.Error())
-		devattr = NewDeviceAttribute(string(dm.DeviceID), string(dm.AttributeID), string(dm.Value))
+		devattr = NewDeviceAttribute(string(dm.DeviceID), nValue, string(dm.Value))
 		dev.Attrs[string(dm.AttributeID)] = devattr
 	}
 

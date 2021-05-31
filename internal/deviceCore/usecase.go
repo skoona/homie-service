@@ -2,6 +2,7 @@ package deviceCore
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/go-kit/kit/log/level"
 )
@@ -101,6 +102,7 @@ func (em *coreService) DeviceByEIDFromNetwork(deviceEID EID, networkName string)
 func (em *coreService) RemoveDeviceByEIDFromNetwork(deviceEID EID, networkName string) error {
 	var err error
 	level.Debug(em.logger).Log("method", "RemoveDeviceByEIDFromNetwork() called")
+
 	var ptrToDevice *Device
 	for _, device := range siteNetworks.DeviceNetworks[networkName].Devices {
 		if device.ID == deviceEID {
@@ -171,6 +173,17 @@ func (em *coreService) RemoveFirmwareByEID(firmwareEID EID) {
 	}
 	if (firmware != Firmware{}) {
 		siteNetworks.Firmwares = append(siteNetworks.Firmwares[:index], siteNetworks.Firmwares[index+1:]...) // remove from slice
+		if _, err := os.Stat(firmware.Path); err == nil {
+			err = os.Remove(firmware.Path)
+			if err != nil {
+				err = fmt.Errorf("firmware with name {%s} was  not found to remove(): error=%s", firmware.Name, err.Error())
+				level.Error(em.logger).Log("error", err.Error())
+			}
+
+		} else if os.IsNotExist(err) {
+			err = fmt.Errorf("firmware with name {%s} was  not found to remove(): error=%s", firmware.Name, err.Error())
+			level.Error(em.logger).Log("error", err.Error())
+		}
 	}
 }
 

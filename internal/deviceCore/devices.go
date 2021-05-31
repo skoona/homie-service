@@ -123,6 +123,7 @@ func NewDevice(parent, name string) Device {
 
 // NewDeviceAttribute Creates Component
 func NewDeviceAttribute(parent, name, value string) DeviceAttribute {
+
 	return DeviceAttribute{
 		ID:          NewEID(),
 		ElementType: CoreTypeDeviceAttribute,
