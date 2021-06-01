@@ -326,6 +326,9 @@ func deviceList(db *bolt.DB, networkName string) []string {
 func deviceDetails(db *bolt.DB, networkName, deviceName string) (map[string]string, []string) {
 	details := map[string]string{}
 
+	// X/D/N/P/A
+	// X/D/A/P/P
+
 	db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName)) // Network Level
 		if b == nil {
@@ -338,28 +341,49 @@ func deviceDetails(db *bolt.DB, networkName, deviceName string) (map[string]stri
 
 		err := b.ForEach(func(k, v []byte) error {
 			if nil == v {
-				n := b.Bucket(k) // Node Level
-				if n == nil {
+				c := b.Bucket(k) // Node/Attr Level
+				if c == nil {
 					return nil
 				}
 
-				err := n.ForEach(func(kk, vv []byte) error {
+				err := c.ForEach(func(kk, vv []byte) error {
 					if nil == vv {
-						p := n.Bucket(kk) // Property
-						if p == nil {
+						d := c.Bucket(kk) // Property
+						if d == nil {
 							return nil
 						}
 
-						err := p.ForEach(func(kkk, vvv []byte) error {
+						err := d.ForEach(func(kkk, vvv []byte) error {
+							if nil == vvv {
+								e := d.Bucket(kkk) // PProperty/Attr
+								if e == nil {
+									return nil
+								}
+
+								err := e.ForEach(func(kkkk, vvvv []byte) error {
+									if nil == vvvv {
+										f := e.Bucket(kkkk) // PProperty
+										if f == nil {
+											return nil
+										}
+
+										err := f.ForEach(func(kkkkk, vvvvv []byte) error {
+											details["["+string(k)+"]["+string(kk)+"]["+string(kkk)+"]["+string(kkkk)+"]"+string(kkkkk)] = string(vvvvv)
+											return nil
+										})
+										return err
+									}
+									details["["+string(k)+"]["+string(kk)+"]["+string(kkk)+"]"+string(kkkk)] = string(vvvv)
+									return nil
+								})
+								return err
+							}
 							details["["+string(k)+"]["+string(kk)+"]"+string(kkk)] = string(vvv)
 							return nil
 						})
-
 						return err
 					}
-
 					details["["+string(k)+"]"+string(kk)] = string(vv)
-
 					return nil
 				})
 
