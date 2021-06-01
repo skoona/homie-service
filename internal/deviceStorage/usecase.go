@@ -230,7 +230,6 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 
 		// x/d/n/p
 		if len(d.PropertyID) > 0 && len(d.AttributeID) == 0 { // Node Property
-
 			return b.Put(d.PropertyID, d.Value)
 		}
 

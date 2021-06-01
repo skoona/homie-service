@@ -113,6 +113,21 @@ func (em *coreService) RemoveDeviceByEIDFromNetwork(deviceEID EID, networkName s
 	} else {
 		delete(siteNetworks.DeviceNetworks[networkName].Devices, ptrToDevice.Name)
 		// TODO: send delete command to deviceSource and Scheduler
+		// TODO: Device to DeviceMessage is required
+		dm := DeviceMessage{
+			ID:        99,
+			Value:     nil,
+			DeviceID: []byte(ptrToDevice.Name),
+			NetworkID: []byte(networkName),
+			HomieType: ptrToDevice.ElementType,
+			TopicS: fmt.Sprintf("%s/%s/$state", networkName, ptrToDevice.Name),
+		}
+		em.dsp.HandleCoreEvent(dm)
+		if em.scp != nil {
+			for _, schedule := range em.scp.FindSchedulesByDeviceEID(ptrToDevice.ID) {
+				err = em.scp.DeleteSchedule(schedule.ID)
+			}
+		}
 	}
 	return err
 }

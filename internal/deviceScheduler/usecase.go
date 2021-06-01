@@ -36,7 +36,10 @@ func NewSchedulerProvider(dfg cc.Config, otas OTAInteractor, r dc.Repository) dc
 	}
 	return sch
 }
-
+func (s *schedulerProvider) ActivateStreamProvider() {
+	// Initialize a Message Channel
+	consumeFromOTAStreamProvider(s.otaStream.EnableTriggers(), s.logger)
+}
 func (s *schedulerProvider) ApplySiteNetworks(sn *dc.SiteNetworks) {
 	level.Debug(s.logger).Log("event", "ApplySiteNetworks() called")
 	s.snwk = sn

@@ -276,6 +276,13 @@ func (hn *Network) handleDevice(dm DeviceMessage) error {
 func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleNodePropertyAttribute() called")
+	var nValue string
+	if strings.HasPrefix(string(dm.AttributeID), "_$") {
+		nValue = string(dm.AttributeID)[1:]
+	} else {
+		nValue = string(dm.AttributeID)
+	}
+
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -301,12 +308,12 @@ func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 		node.Props[string(dm.PropertyID)] = nodeprop
 	}
 
-	nodepropattr, found := nodeprop.Attrs[string(dm.AttributeID)]
+	nodepropattr, found := nodeprop.Attrs[nValue]
 	if !found {
-		err = fmt.Errorf("property attribute [%s] not found, will create it", string(dm.AttributeID))
+		err = fmt.Errorf("property attribute [%s] not found, will create it", nValue)
 		level.Warn(em.logger).Log("warning", err.Error())
-		nodepropattr = NewDeviceNodePropertyAttribute(string(dm.PropertyID), string(dm.AttributeID), string(dm.Value))
-		nodeprop.Attrs[string(dm.AttributeID)] = nodepropattr
+		nodepropattr = NewDeviceNodePropertyAttribute(string(dm.PropertyID), nValue, string(dm.Value))
+		nodeprop.Attrs[nValue] = nodepropattr
 	}
 
 	level.Debug(em.logger).Log("event", "handleNodePropertyAttribute() completed", "id", nodepropattr.ID, "name", nodepropattr.Name)

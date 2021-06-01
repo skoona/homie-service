@@ -127,7 +127,7 @@ func doNetworkDiscovery() {
 	// allow for network discovery
 	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
 	for {
-		time.Sleep(3 * time.Second) // delay long enough to collect networks
+		time.Sleep(5 * time.Second) // delay long enough to collect networks
 		if len(DiscoveredNetworks()) >= 1 {
 			token := client.Unsubscribe(config.DiscoveryTopic)
 			token.Wait()

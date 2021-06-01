@@ -122,7 +122,9 @@ MQTT hostname, username, and password can be set in the environment.  If present
 Optional:
 * MQTT_SUBSCRIPTION_TOPIC
 * MQTT_DISCOVERY_TOPIC
-
+* HS_FIRMWARE_STORAGE
+* HS_DATA_STORAGE
+* HS_DEMO_SOURCE
 
 #### Configuration Files: ./config/demo-config.yml or live-config.yml
 * ./config/<anyname>.yml     -- any named YAML file can be used via command-line options

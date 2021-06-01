@@ -34,9 +34,6 @@ func Start(dfg cc.Config, s OTAInteractor, r dc.Repository) dc.SchedulerProvider
 	logger = sch.logger
 	level.Debug(logger).Log("event", "Calling Start()")
 
-	// Initialize a Message Channel
-	consumeFromOTAStreamProvider(sch.otaStream.EnableTriggers(), logger)
-
 	level.Debug(logger).Log("event", "Start() completed")
 
 	return sch

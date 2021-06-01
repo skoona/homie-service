@@ -10,9 +10,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	cc "github.com/skoona/homie-service/internal/utils"
 )
 
 /*
@@ -51,12 +49,13 @@ type DeviceEventIntf interface {
 	String() string
 	Schedulable() bool
 	Settable() bool
-	OTAactive() bool
+	OTAActive() bool
 	OTAComplete() bool
 	Broadcast() bool
 	Parts() []string
 	PartsLen() int
 }
+
 
 /*
    String ToString
@@ -88,8 +87,8 @@ func (dm *DeviceMessage) Settable() bool {
 }
 
 // OTAactive() determines if device is downloading firmware
-func (dm *DeviceMessage) OTAactive() bool {
-	level.Debug(em.logger).Log("DeviceMessage", "OTAactive()")
+func (dm *DeviceMessage) OTAActive() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTAActive()")
 	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
 		strings.HasPrefix(string(dm.Value), "206")
 }
@@ -255,8 +254,7 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
  *  Create a New DeviceMessage and initializes it.
  */
 func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	logger := log.With(cc.DefaultLogger, "pkg", "deviceCore", "service", "coreService", "method", "buildDeviceMessage") // default logger
-
+	//logger = log.With(cc.DefaultLogger, "pkg", "deviceCore", "service", "coreService", "method", "buildDeviceMessage") // default logger
 	var deviceID, nodeID, propertyID, attributeID, networkID, propertyPropertyID []byte
 	var dm DeviceMessage
 	var typeIntHomie CoreType
@@ -294,20 +292,20 @@ func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained
 		attributeID = []byte(parts[2])
 		level.Debug(logger).Log("ID", idCounter, "DeviceAttribute", attributeID, "DeviceID", deviceID)
 
+	} else if nodePropertyAttribute(parts) {
+		typeIntHomie = CoreTypeDeviceNodePropertyAttribute
+		deviceID = []byte(parts[1])
+		nodeID = []byte(parts[2])
+		propertyID = []byte(parts[3])
+		attributeID = []byte(fmt.Sprintf("_%s", parts[4])) // []byte(parts[4])
+		level.Debug(logger).Log("ID", idCounter, "NodePropertyAttribute", attributeID, "PropertyID", propertyID, "NodeID", nodeID)
+
 	} else if nodeAttribute(parts) {
 		typeIntHomie = CoreTypeDeviceNodeAttribute
 		deviceID = []byte(parts[1])
 		nodeID = []byte(parts[2])
 		attributeID = []byte(parts[3])
 		level.Debug(logger).Log("ID", idCounter, "NodeAttribute", attributeID, "NodeID", nodeID)
-
-	} else if nodePropertyAttribute(parts) {
-		typeIntHomie = CoreTypeDeviceNodePropertyAttribute
-		deviceID = []byte(parts[1])
-		nodeID = []byte(parts[2])
-		propertyID = []byte(parts[3])
-		attributeID = []byte(parts[4])
-		level.Debug(logger).Log("ID", idCounter, "NodePropertyAttribute", attributeID, "PropertyID", propertyID, "NodeID", nodeID)
 
 	} else if nodeProperty(parts) {
 		typeIntHomie = CoreTypeDeviceNodeProperty

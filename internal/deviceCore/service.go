@@ -48,6 +48,7 @@ type (
 	/*
 	 * Interactions with device Scheduling Service */
 	SchedulerProvider interface {
+		ActivateStreamProvider()
 		ApplySiteNetworks(sn *SiteNetworks)
 		BuildFirmwareCatalog() []Firmware
 		Firmwares() []Firmware
@@ -90,6 +91,10 @@ type (
 
 	//EID entity EID
 	EID string
+)
+
+var (
+	logger log.Logger
 )
 
 /**
@@ -142,6 +147,8 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, discov
 
 	svc := NewCoreService(dfg, sp, sscp)
 
+	logger = em.logger
+
 	level.Debug(em.logger).Log("event", "Calling Start()")
 
 	// Initialze networks
@@ -153,10 +160,14 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, discov
 
 	level.Debug(em.logger).Log("event", "Start() completed")
 
+	/* start the message flow from stream providers */
+	sp.ActivateStreamProvider()
+
 	if sscp != nil {
 		sscp.ApplySiteNetworks(sites)
 		sscp.BuildFirmwareCatalog()
 		sscp.BuildScheduleCatalog()
+		sscp.ActivateStreamProvider()
 	}
 
 	return svc, sites

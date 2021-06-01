@@ -66,6 +66,8 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 
 	config.SetDefault("homiemonitor.datasources.demoNetworks", []string{"sknSensors"})
 	config.SetDefault("homiemonitor.datasources.firmwareStorage", "./dataDB/firmwares")
+	config.SetDefault("homiemonitor.datasources.dataStorage", "./dataDB/dataDir/devices.db")
+	config.SetDefault("homiemonitor.datasources.demoSource", "./dataDB/demoData/mosquitto.log")
 
 	config.SetDefault("homiemonitor.mqtt.homiesubscriptiontopic", "sknSensors/#")
 	config.SetDefault("homiemonitor.mqtt.homiediscoverytopic", "+/+/$name")
@@ -79,6 +81,17 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 	}
 
 	// Overwrite config from ENV is present
+	config.SetEnvPrefix("HS")
+	if err = config.BindEnv("firmware_storage"); err == nil {
+		config.Set("homiemonitor.datasources.firmwareStorage", config.Get("firmware_storage")) // ./dataDB/firmwares
+	}
+	if err = config.BindEnv("data_storage"); err == nil {
+		config.Set("homiemonitor.datasources.dataStorage", config.Get("data_storage")) // ./dataDB/dataDir/devices.db
+	}
+	if err = config.BindEnv("demo_source"); err == nil {
+		config.Set("homiemonitor.datasources.demoSource", config.Get("demo_source")) // ./dataDB/demoData/mosquitto.log
+	}
+
 	config.SetEnvPrefix("mqtt")
 	if err = config.BindEnv("broker"); err == nil {
 		config.Set("homiemonitor.mqtt.broker", config.Get("broker"))
@@ -104,6 +117,7 @@ var DefaultLogger log.Logger
 func buildLogger(moduleName string) log.Logger {
 
 	logger := log.NewLogfmtLogger(os.Stderr)
+	logger = level.NewFilter(logger, level.AllowDebug())  // set log level
 	logger = log.NewSyncLogger(logger)
 	logger = log.With(logger,
 		"module", moduleName,
