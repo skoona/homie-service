@@ -276,14 +276,16 @@ func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained
 		deviceID = []byte(parts[1])
 		propertyID = []byte(parts[3])
 		propertyPropertyID = []byte(parts[4])
-		attributeID = []byte(fmt.Sprintf("_%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
+		//attributeID = []byte(fmt.Sprintf("_%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
+		attributeID = []byte(parts[2]) // LevelDB bug writing Bucket with $ prefix
 		level.Debug(logger).Log("ID", idCounter, "DeviceAttributePropertyProperty", attributeID, "DeviceID", deviceID)
 
 	} else if deviceAttributeProperty(parts) { // look for OTATrigger(bool) on $state = Init
 		typeIntHomie = CoreTypeDeviceAttributeProperty
 		deviceID = []byte(parts[1])
 		propertyID = []byte(parts[3])
-		attributeID = []byte(fmt.Sprintf("_%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
+		//attributeID = []byte(fmt.Sprintf("_%s", parts[2])) // LevelDB bug writing Bucket with $ prefix
+		attributeID = []byte(parts[2]) // LevelDB bug writing Bucket with $ prefix
 		level.Debug(logger).Log("ID", idCounter, "DeviceAttributeProperty", attributeID, "DeviceID", deviceID)
 
 	} else if deviceAttribute(parts) { // look for OTATrigger(bool) on $state = Init
@@ -297,7 +299,8 @@ func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained
 		deviceID = []byte(parts[1])
 		nodeID = []byte(parts[2])
 		propertyID = []byte(parts[3])
-		attributeID = []byte(fmt.Sprintf("_%s", parts[4])) // []byte(parts[4])
+		//attributeID = []byte(fmt.Sprintf("_%s", parts[4])) // []byte(parts[4])
+		attributeID = []byte(parts[4]) // LevelDB bug writing Bucket with $ prefix
 		level.Debug(logger).Log("ID", idCounter, "NodePropertyAttribute", attributeID, "PropertyID", propertyID, "NodeID", nodeID)
 
 	} else if nodeAttribute(parts) {
