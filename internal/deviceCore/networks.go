@@ -86,6 +86,17 @@ type EntityBuilder interface {
 	handleNode(dm DeviceMessage) error
 }
 
+// prefix default = "_$"
+func removeAttributePrefix(attribute []byte, prefix string) string{
+	var nValue string
+	if strings.HasPrefix(string(attribute), prefix){
+		nValue = string(attribute)[1:]
+	} else{
+		nValue = string(attribute)
+	}
+	return nValue
+}
+
 // Apply device updates to Network
 func (hn *Network) apply(dm DeviceMessage) error {
 	var err error
@@ -142,12 +153,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleDeviceAttributePropertyProperty() called")
-	var nValue string
-	if strings.HasPrefix(string(dm.AttributeID), "_$") {
-		nValue = string(dm.AttributeID)[1:]
-	} else {
-		nValue = string(dm.AttributeID)
-	}
+	nValue := removeAttributePrefix(dm.AttributeID, "_$")
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -189,12 +195,7 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleDeviceAttributeProperty() called")
-	var nValue string
-	if strings.HasPrefix(string(dm.AttributeID), "_$") {
-		nValue = string(dm.AttributeID)[1:]
-	} else {
-		nValue = string(dm.AttributeID)
-	}
+	nValue := removeAttributePrefix(dm.AttributeID, "_$")
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -228,12 +229,7 @@ func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 func (hn *Network) handleDeviceAttribute(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleDeviceAttribute() called")
-	var nValue string
-	if strings.HasPrefix(string(dm.AttributeID), "_$") {
-		nValue = string(dm.AttributeID)[1:]
-	} else {
-		nValue = string(dm.AttributeID)
-	}
+	nValue := removeAttributePrefix(dm.AttributeID, "_$")
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -276,13 +272,7 @@ func (hn *Network) handleDevice(dm DeviceMessage) error {
 func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleNodePropertyAttribute() called")
-	var nValue string
-	if strings.HasPrefix(string(dm.AttributeID), "_$") {
-		nValue = string(dm.AttributeID)[1:]
-	} else {
-		nValue = string(dm.AttributeID)
-	}
-
+	nValue := removeAttributePrefix(dm.AttributeID, "_$")
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -357,6 +347,7 @@ func (hn *Network) handleNodeProperty(dm DeviceMessage) error {
 func (hn *Network) handleNodeAttribute(dm DeviceMessage) error {
 	var err error
 	level.Debug(em.logger).Log("event", "handleNodeAttribute() called")
+	nValue := removeAttributePrefix(dm.AttributeID, "_$")
 
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
@@ -374,12 +365,12 @@ func (hn *Network) handleNodeAttribute(dm DeviceMessage) error {
 		dev.Nodes[string(dm.NodeID)] = node
 	}
 
-	nodeattr, found := node.Attrs[string(dm.AttributeID)]
+	nodeattr, found := node.Attrs[nValue]
 	if !found {
-		err = fmt.Errorf("attribute [%s] not found, will create it", string(dm.AttributeID))
+		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
 		level.Warn(em.logger).Log("warning", err.Error())
-		nodeattr = NewDeviceNodeAttribute(string(dm.NodeID), string(dm.AttributeID), string(dm.Value))
-		node.Attrs[string(dm.AttributeID)] = nodeattr
+		nodeattr = NewDeviceNodeAttribute(string(dm.NodeID), nValue, string(dm.Value))
+		node.Attrs[nValue] = nodeattr
 	}
 
 	level.Debug(em.logger).Log("event", "handleNodeAttribute() completed", "id", nodeattr.ID, "name", nodeattr.Name)
