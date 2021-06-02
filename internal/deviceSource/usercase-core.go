@@ -16,12 +16,49 @@ import (
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
 
+
+/*
+ * ActivateStreamProvider
+ */
+func (s *deviceSource) ActivateStreamProvider() {
+	ConsumeFromStreamProvider(s.dStream.ActivateNotifications(), s.logger)
+}
+
 func (s *deviceSource) ApplyDeviceEvent(dm dc.DeviceMessage) {
 	logger := log.With(s.logger, "method", "ApplyDeviceEvent()")
 
 	dc.ConsumeFromDeviceSource(dm)
 
 	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
+}
+
+/*
+ * PublishToStreamProvider
+ */
+func (s *deviceSource) PublishToStreamProvider(dv dc.Device) {
+	logger := log.With(s.logger, "method", "PublishDeviceStream()")
+
+	s.dStream.GetPublishChannel() <- dv
+
+	level.Debug(logger).Log("DeviceID ", dv.ID)
+}
+
+// handle incoming device stream events
+func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
+	var err error
+	tlog := log.With(s.logger, "method", "ConsumeDeviceStream")
+
+	err = s.repository.Store(dm)
+	if err != nil {
+		level.Error(tlog).Log("error", err)
+		return err
+	}
+
+	s.ApplyDeviceEvent(dm) // to Core
+
+	level.Debug(tlog).Log("DeviceID ", dm.DeviceID)
+
+	return err
 }
 
 // handle incoming core events
@@ -39,11 +76,7 @@ func (s *deviceSource) HandleCoreEvent(dv dc.Device) error {
 	}
 
 	// can only be a delete request
-	if dm.Value == nil {
-		err = s.repository.Remove(dm)
-	} else {
-		err = s.repository.Store(dm)
-	}
+	err = s.repository.Remove(dm)
 	if err != nil {
 		level.Error(plog).Log("error", err)
 		return err

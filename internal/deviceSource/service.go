@@ -68,8 +68,6 @@ func Start(dfg cc.Config, repo dc.Repository, dProvider StreamProvider) (dc.Devi
 
 	s := NewDeviceSourceService(dfg, repo, dProvider, logger)
 
-	//s.ActivateStreamProvider() // start things moving
-
 	level.Debug(logger).Log("event", "Start() Completed")
 
 	return s, err
