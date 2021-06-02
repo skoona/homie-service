@@ -65,6 +65,8 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 
 	config.SetConfigName(config.GetString("config")) // name of config file (without extension)
 	config.SetConfigType("yaml")                     // REQUIRED if the config file does not have the extension in the name
+	config.AddConfigPath("../../config/")            // path to look for the config file in
+	config.AddConfigPath("../config/")            // path to look for the config file in
 	config.AddConfigPath("./config/")                // path to look for the config file in
 	config.AddConfigPath(".")                        // path to look for the config file in
 
