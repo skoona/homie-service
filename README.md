@@ -125,11 +125,14 @@ Optional:
 * HS_FIRMWARE_STORAGE
 * HS_DATA_STORAGE
 * HS_DEMO_SOURCE
+* HOMIE_SERVICE_CONFIG_FILE   
+  - choices: mqtt-config, demo-config, test-config
 
 #### Configuration Files: ./config/demo-config.yml or live-config.yml
 * ./config/<anyname>.yml     -- any named YAML file can be used via command-line options
 * ./config/demo-config.yml   -- demo version, uses an internal mqtt.log file versus MQTT
-* ./config/live-config.yml   -- default configuration file
+* ./config/mqtt-config.yml   -- default configuration file
+* ./config/test-config.yml   -- test configuration
 
 #### Configuration file Contents
 Live Mode: Reads data from MQTT

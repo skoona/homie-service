@@ -51,10 +51,14 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 	level.Debug(log).Log("event", "calling buildConfigForCLI()")
 
 	var configPath string
+	envConfigPath := os.Getenv("HOMIE_SERVICE_CONFIG_FILE")  // "mqtt-config"
+	if "" == envConfigPath {
+		envConfigPath = "mqtt-config"
+	}
 
 	config := viper.New()
 
-	flag.StringVar(&configPath, "config", "config/mqtt-config.yml", "path to config file")
+	flag.StringVar(&configPath, "config", envConfigPath, "path to config file")
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
 	config.BindPFlags(pflag.CommandLine)

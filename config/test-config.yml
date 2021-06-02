@@ -1,12 +1,12 @@
 ---
-# Live Mode
+# Test Mode
 homiemonitor:
   title: Homie Network Monitor
-  runmode: live
+  runmode: test # live, demo, test
   version: 0.5.1
 
   datasources: 
-    dataStorage: ./dataDB/dataDir/devices.db
+    dataStorage: ./dataDB/dataDir/devices_test.db
     demoSource: ./dataDB/demoData/mosquitto.log
     firmwareStorage: ./dataDB/firmwares
     demoNetworks:
