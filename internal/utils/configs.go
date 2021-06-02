@@ -49,73 +49,72 @@ type (
 
 func buildConfigForCLI(log log.Logger) *viper.Viper {
 	level.Debug(log).Log("event", "calling buildConfigForCLI()")
-
 	var configPath string
-	envConfigPath := os.Getenv("HOMIE_SERVICE_CONFIG_FILE")  // "mqtt-config"
+	cfg := viper.New()
+
+	envConfigPath := os.Getenv("HOMIE_SERVICE_CONFIG_FILE")  // "mqtt-cfg"
 	if "" == envConfigPath {
 		envConfigPath = "mqtt-config"
 	}
 
-	config := viper.New()
-
 	flag.StringVar(&configPath, "config", envConfigPath, "path to config file")
 	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
-	config.BindPFlags(pflag.CommandLine)
+	cfg.BindPFlags(pflag.CommandLine)
 
-	config.SetConfigName(config.GetString("config")) // name of config file (without extension)
-	config.SetConfigType("yaml")                     // REQUIRED if the config file does not have the extension in the name
-	config.AddConfigPath("../../config/")            // path to look for the config file in
-	config.AddConfigPath("../config/")            // path to look for the config file in
-	config.AddConfigPath("./config/")                // path to look for the config file in
-	config.AddConfigPath(".")                        // path to look for the config file in
+	cfg.SetConfigName(cfg.GetString("config")) // name of config file (without extension)
+	cfg.SetConfigType("yaml")                     // REQUIRED if the config file does not have the extension in the name
+	cfg.AddConfigPath("../../config/")            // path to look for the config file in
+	cfg.AddConfigPath("../config/")            // path to look for the config file in
+	cfg.AddConfigPath("./config/")                // path to look for the config file in
+	cfg.AddConfigPath(".")                        // path to look for the config file in
 
-	config.SetDefault("homiemonitor.datasources.demoNetworks", []string{"sknSensors"})
-	config.SetDefault("homiemonitor.datasources.firmwareStorage", "./dataDB/firmwares")
-	config.SetDefault("homiemonitor.datasources.dataStorage", "./dataDB/dataDir/devices.db")
-	config.SetDefault("homiemonitor.datasources.demoSource", "./dataDB/demoData/mosquitto.log")
+	cfg.SetDefault("homiemonitor.datasources.demoNetworks", []string{"sknSensors"})
+	cfg.SetDefault("homiemonitor.datasources.firmwareStorage", "./dataDB/firmwares")
+	cfg.SetDefault("homiemonitor.datasources.dataStorage", "./dataDB/dataDir/devices.db")
+	cfg.SetDefault("homiemonitor.datasources.demoSource", "./dataDB/demoData/mosquitto.log")
 
-	config.SetDefault("homiemonitor.mqtt.homiesubscriptiontopic", "sknSensors/#")
-	config.SetDefault("homiemonitor.mqtt.homiediscoverytopic", "+/+/$name")
-	config.SetDefault("homiemonitor.mqtt.lwttopic", "sknSensors/$broadcast/LWT")
-	config.SetDefault("homiemonitor.mqtt.lwtmsg", "HomieMonitor Offline!")
-	config.SetDefault("homiemonitor.mqtt.port", 1883)
+	cfg.SetDefault("homiemonitor.mqtt.homiesubscriptiontopic", "sknSensors/#")
+	cfg.SetDefault("homiemonitor.mqtt.homiediscoverytopic", "+/+/$name")
+	cfg.SetDefault("homiemonitor.mqtt.lwttopic", "sknSensors/$broadcast/LWT")
+	cfg.SetDefault("homiemonitor.mqtt.lwtmsg", "HomieMonitor Offline!")
+	cfg.SetDefault("homiemonitor.mqtt.port", 1883)
 
-	err := config.ReadInConfig() // Find and read the config file
+	err := cfg.ReadInConfig() // Find and read the config file
 	if err != nil {              // Handle errors reading the config file
 		panic(fmt.Errorf("fatal error config file: %s \n", err))
 	}
 
 	// Overwrite config from ENV is present
-	config.SetEnvPrefix("HS")
-	if err = config.BindEnv("firmware_storage"); err == nil {
-		config.Set("homiemonitor.datasources.firmwareStorage", config.Get("firmware_storage")) // ./dataDB/firmwares
+	cfg.SetEnvPrefix("HS")
+	if err = cfg.BindEnv("firmware_storage"); err == nil {
+		cfg.Set("homiemonitor.datasources.firmwareStorage", cfg.Get("firmware_storage")) // ./dataDB/firmwares
 	}
-	if err = config.BindEnv("data_storage"); err == nil {
-		config.Set("homiemonitor.datasources.dataStorage", config.Get("data_storage")) // ./dataDB/dataDir/devices.db
+	if err = cfg.BindEnv("data_storage"); err == nil {
+		cfg.Set("homiemonitor.datasources.dataStorage", cfg.Get("data_storage")) // ./dataDB/dataDir/devices.db
 	}
-	if err = config.BindEnv("demo_source"); err == nil {
-		config.Set("homiemonitor.datasources.demoSource", config.Get("demo_source")) // ./dataDB/demoData/mosquitto.log
-	}
-
-	config.SetEnvPrefix("mqtt")
-	if err = config.BindEnv("broker"); err == nil {
-		config.Set("homiemonitor.mqtt.broker", config.Get("broker"))
-	}
-	if err = config.BindEnv("username"); err == nil {
-		config.Set("homiemonitor.mqtt.username", config.Get("username"))
-	}
-	if err = config.BindEnv("password"); err == nil {
-		config.Set("homiemonitor.mqtt.userpassword", config.Get("password"))
-	}
-	if err = config.BindEnv("discovery_topic"); err == nil {
-		config.Set("homiemonitor.mqtt.homiediscoverytopic", config.Get("discovery_topic"))
-	}
-	if err = config.BindEnv("subscription_topic"); err == nil {
-		config.Set("homiemonitor.mqtt.homiesubscriptiontopic", config.Get("subscription_topic"))
+	if err = cfg.BindEnv("demo_source"); err == nil {
+		cfg.Set("homiemonitor.datasources.demoSource", cfg.Get("demo_source")) // ./dataDB/demoData/mosquitto.log
 	}
 
-	return config
+	cfg.SetEnvPrefix("mqtt")
+	if err = cfg.BindEnv("broker"); err == nil {
+		cfg.Set("homiemonitor.mqtt.broker", cfg.Get("broker"))
+	}
+	if err = cfg.BindEnv("username"); err == nil {
+		cfg.Set("homiemonitor.mqtt.username", cfg.Get("username"))
+	}
+	if err = cfg.BindEnv("password"); err == nil {
+		cfg.Set("homiemonitor.mqtt.userpassword", cfg.Get("password"))
+	}
+	if err = cfg.BindEnv("discovery_topic"); err == nil {
+		cfg.Set("homiemonitor.mqtt.homiediscoverytopic", cfg.Get("discovery_topic"))
+	}
+	if err = cfg.BindEnv("subscription_topic"); err == nil {
+		cfg.Set("homiemonitor.mqtt.homiesubscriptiontopic", cfg.Get("subscription_topic"))
+	}
+
+	return cfg
 }
 
 var DefaultLogger log.Logger
