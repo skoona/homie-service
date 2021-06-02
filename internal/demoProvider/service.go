@@ -3,8 +3,12 @@ package demoProvider
 /**
   demoProvider/service.go:
 
-  Generate Demo DeviceMessages
 
+  The design goal for this file is:
+	* Generate Demo DeviceMessages from a specified Mosquitto Logfile
+	* implements dss.StreamProvider to SEND to deviceSource
+		- DOES NOT SUPPORT RECEIVING FROM deviceSource
+		- DOES NOT SUPPORT OTA requests from Scheduler
 */
 
 import (

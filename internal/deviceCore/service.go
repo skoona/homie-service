@@ -1,5 +1,14 @@
 package deviceCore
 
+/*
+  	deviceCore/service.go:
+
+	Build Device Network Inventory
+	Provide Interaction to CLI
+	Provide Interaction to HTTP
+	Drive Scheduler Feature
+*/
+
 import (
 	"fmt"
 	"github.com/go-kit/kit/log"
@@ -8,15 +17,6 @@ import (
 	"github.com/google/uuid"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
-
-/*
-  	deviceCore/service.go:
-
-	Build Device Network Inventory
-	Provide Interaction to CLI
-	Provide Interaction to HTTP
-	Consider Scheduler Feature
-*/
 
 type (
 	/*

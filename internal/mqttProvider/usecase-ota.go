@@ -8,6 +8,7 @@ package mqttProvider
   - Execute OTA to device
   - Watch OTA Progress
   - Send Status
+  - Implements the sch.OTAInteractor to Scheduler
 */
 
 import (

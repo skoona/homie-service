@@ -15,7 +15,8 @@ package mqttProvider
 	* Listen to `mqttPublish` channel and publish outgoing as needed
 	* Auto reconnect when connection is lost.
 	* Allow for the replacement or deletion of both.
-
+	* Implements sch.OTAInteractor
+	* implements dss.StreamProvider
 */
 
 import (

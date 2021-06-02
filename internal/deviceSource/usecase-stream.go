@@ -3,14 +3,27 @@ package deviceSource
 /*
   deviceSource/usecase-stream.go:
 
-  DeviceSource Service Implementation
+  Local StreamProvider Service helpers
+  dc.DeviceEventProvider Service Implementation
+
+  The design goal for this package:
+	* Implement Stream Control Helpers in support of deviceCore operations
 */
+
 
 import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
+
+/*
+ * ActivateStreamProvider
+ */
+func (s *deviceSource) ActivateStreamProvider() {
+	ConsumeFromStreamProvider(s.dStream.ActivateNotifications(), s.logger)
+}
+
 
 /*
  * PublishToStreamProvider
@@ -62,11 +75,3 @@ func ConsumeFromStreamProvider(consumer chan dc.DeviceMessage, plog log.Logger) 
 		level.Debug(tlog).Log("method", "ConsumeFromDeviceStream()", "event", "Completed")
 	}(consumer, plog)
 }
-
-// Receive/send DM from Channel
-// Receive/send OTA from Channel
-// Receive/Send to Scheduler
-// Receive/Send to Core
-
-// Route OTA to/from Scheduler
-// Route DM to Repository and Core Service

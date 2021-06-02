@@ -3,7 +3,10 @@ package deviceSource
 /*
   deviceSource/usecase-core.go:
 
-  DeviceSource Service Implementation
+  dc.DeviceEventProvider Service Implementation
+
+  The design goal for this package:
+	* Implement dc.DeviceEventProvider for network event interactions with deviceCore
 */
 
 import (

@@ -3,8 +3,10 @@ package deviceSource
 /**
   deviceSource/service.go:
 
-  Handle input streams from MQTT or Demo Logs
-
+  The design goal for this package:
+	* Define the StreamProvider interface for network device events
+	* Implement dc.DeviceEventProvider for network event interactions with deviceCore
+	* Define Repository interface for storage of network device events & schedules
 */
 
 import (
@@ -52,13 +54,6 @@ func NewDeviceSourceService(cfg cc.Config, repo dc.Repository, stream StreamProv
 		logger:     log.With(plog, "service", "Service"),
 	}
 	return dvService
-}
-
-/*
- * ActivateStreamProvider
- */
-func (s *deviceSource) ActivateStreamProvider() {
-	ConsumeFromStreamProvider(s.dStream.ActivateNotifications(), s.logger)
 }
 
 /*

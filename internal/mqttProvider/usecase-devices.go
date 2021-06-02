@@ -7,6 +7,8 @@ package mqttProvider
   - Send network state messages
   - Listen for network delete messages
   - store/update network traffic to repository
+  - Implements the dss.StreamProvider to deviceSource
+  - Implements the
 */
 import (
 	"strings"
