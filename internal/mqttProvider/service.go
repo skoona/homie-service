@@ -227,6 +227,6 @@ func Stop() {
 		dStream.publishChannel = nil
 	}
 
-	time.Sleep(time.Second)
+	time.Sleep(3 * time.Second)
 	level.Debug(logger).Log("event", "Stop() completed")
 }

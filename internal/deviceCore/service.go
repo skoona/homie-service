@@ -1,6 +1,7 @@
 package deviceCore
 
 import (
+	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 
@@ -137,6 +138,61 @@ func NewEID() EID {
 	uuid := uuid.New()
 	return EID(uuid.String())
 }
+
+/*
+decode device into topics
+- -/D/A/P/P
+- -/D/A/P
+- -/D/A
+- -/D/N/P/A
+- -/D/N/P
+- -/D/N/A
+*/
+func TopicsFromDevice(dv Device) []string {
+	bundle := []string{}
+	var ele string
+
+	// unpacn device attrs
+	for n, v := range dv.Attrs {  // x/d/a
+		if len(v.Props) > 0 {
+			for nn, vv := range v.Props { // x/d/a/p
+				if len(vv.Props) > 0 {
+					for nnn, _ := range vv.Props { // x/d/a/p/p
+						ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
+						bundle = append(bundle, ele)
+					}
+				} else {
+					ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
+					bundle = append(bundle, ele)
+				}
+			}
+		} else {
+			ele = fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)
+			bundle = append(bundle, ele)
+		}
+	}
+	// unpacn device nodes
+	for n, v := range dv.Nodes {  // x/d/n
+		for nn, vv := range v.Props { // x/d/n/p
+			if len(vv.Attrs) > 0 {
+				for nnn, _ := range vv.Attrs { // x/d/n/p/a
+					ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
+					bundle = append(bundle, ele)
+				}
+			} else {
+				ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
+				bundle = append(bundle, ele)
+			}
+		}
+		for nn, _ := range v.Attrs { // x/d/n/a
+			ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
+			bundle = append(bundle, ele)
+		}
+	}
+
+	return bundle
+}
+
 
 /*
  * Start()

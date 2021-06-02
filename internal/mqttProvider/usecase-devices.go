@@ -10,6 +10,7 @@ package mqttProvider
 */
 import (
 	"strings"
+	"time"
 
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-kit/kit/log"
@@ -80,8 +81,11 @@ func establishPublishing(pubChan chan dc.Device, tlog log.Logger) {
 		level.Debug(tlog).Log("event", "establishPublishing(gofunc) called")
 		for msg := range consumer { // read until closed
 
-			// DO PUBLISHING WORK HERE
-			// DO Device DELETES HERE
+			for _, topic := range dc.TopicsFromDevice(msg) {
+				publish(topic, []byte{}, false, 0)
+				time.Sleep(50 * time.Millisecond)
+				level.Debug(tlog).Log("publishing to", msg.Name, "Topic", topic)
+			}
 
 			level.Debug(tlog).Log("method", "establishPublishing(gofunc)", "queue depth", len(consumer), "deviceID", msg.ID)
 		}
