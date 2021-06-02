@@ -15,12 +15,12 @@ import (
 /*
  * PublishToStreamProvider
  */
-func (s *deviceSource) PublishToStreamProvider(dm dc.DeviceMessage) {
+func (s *deviceSource) PublishToStreamProvider(dv dc.Device) {
 	logger := log.With(s.logger, "method", "PublishDeviceStream()")
 
-	s.dStream.GetPublishChannel() <- dm
+	s.dStream.GetPublishChannel() <- dv
 
-	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
+	level.Debug(logger).Log("DeviceID ", dv.ID)
 }
 
 // handle incoming device stream events

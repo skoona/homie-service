@@ -21,7 +21,7 @@ import (
 type (
 	deviceStream struct {
 		notifyChannel  chan dc.DeviceMessage // in
-		publishChannel chan dc.DeviceMessage // in
+		publishChannel chan dc.Device // in
 		logger         log.Logger
 	}
 )
@@ -55,10 +55,10 @@ func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceM
 	return dm
 }
 
-func (s *deviceStream) GetPublishChannel() chan dc.DeviceMessage {
+func (s *deviceStream) GetPublishChannel() chan dc.Device {
 	level.Debug(s.logger).Log("method", "GetPublishChannel()")
 	if s.publishChannel == nil {
-		s.publishChannel = make(chan dc.DeviceMessage, 120)
+		s.publishChannel = make(chan dc.Device, 120)
 		establishPublishing(s.publishChannel, s.logger)
 	}
 	return s.publishChannel
@@ -74,16 +74,16 @@ func (s *deviceStream) GetNotifyChannel() chan dc.DeviceMessage {
 /**
  * establishPublishing()
  */
-func establishPublishing(pubChan chan dc.DeviceMessage, tlog log.Logger) {
+func establishPublishing(pubChan chan dc.Device, tlog log.Logger) {
 	// Listen on incoming channel for device delete messages
-	go func(consumer chan dc.DeviceMessage) {
+	go func(consumer chan dc.Device) {
 		level.Debug(tlog).Log("event", "establishPublishing(gofunc) called")
 		for msg := range consumer { // read until closed
 
 			// DO PUBLISHING WORK HERE
 			// DO Device DELETES HERE
 
-			level.Debug(tlog).Log("method", "establishPublishing(gofunc)", "queue depth", len(consumer), "topic", msg.Topic())
+			level.Debug(tlog).Log("method", "establishPublishing(gofunc)", "queue depth", len(consumer), "deviceID", msg.ID)
 		}
 		level.Debug(tlog).Log("method", "establishPublishing()", "event", "Completed")
 	}(pubChan)

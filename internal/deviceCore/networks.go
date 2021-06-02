@@ -92,7 +92,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	level.Debug(em.logger).Log("event", "apply() called")
 
 	// ensure this device is in our network
-	_, ok := hn.Devices[string(dm.DeviceID)]
+	dv, ok := hn.Devices[string(dm.DeviceID)]
 	if !ok {
 		err = fmt.Errorf("device{%s} not found in network={%s}, should be created", dm.DeviceID, hn.Name)
 		level.Warn(em.logger).Log("action", err.Error())
@@ -103,7 +103,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	 */
 	if ok && string(dm.Value) == "" {
 		delete(hn.Devices, string(dm.DeviceID))
-		em.dsp.PublishToStreamProvider(dm)
+		em.dsp.PublishToStreamProvider(dv)
 
 		err = fmt.Errorf("device{%s} on network{%s} was deleted since value was nil", dm.DeviceID, hn.Name)
 		level.Warn(em.logger).Log("action", err.Error())

@@ -7,6 +7,7 @@ package deviceSource
 */
 
 import (
+	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
@@ -21,9 +22,18 @@ func (s *deviceSource) ApplyDeviceEvent(dm dc.DeviceMessage) {
 }
 
 // handle incoming core events
-func (s *deviceSource) HandleCoreEvent(dm dc.DeviceMessage) error {
+func (s *deviceSource) HandleCoreEvent(dv dc.Device) error {
 	var err error
 	plog := log.With(s.logger, "method", "HandleCoreEvent()")
+
+	dm := dc.DeviceMessage{
+		ID:        99,
+		Value:     nil,
+		DeviceID: []byte(dv.Name),
+		NetworkID: []byte(dv.Parent),
+		HomieType: dv.ElementType,
+		TopicS: fmt.Sprintf("%s/%s/$state", dv.Parent, dv.Name),
+	}
 
 	// can only be a delete request
 	if dm.Value == nil {
@@ -37,8 +47,8 @@ func (s *deviceSource) HandleCoreEvent(dm dc.DeviceMessage) error {
 	}
 
 	// TODO: we should unwrap and send deletes
-	s.PublishToStreamProvider(dm)
+	s.PublishToStreamProvider(dv)
 
-	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
+	level.Debug(plog).Log("DeviceID ", dv.ID)
 	return err
 }

@@ -60,7 +60,7 @@ func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceM
 	return dm
 }
 
-func (s *deviceStream) GetPublishChannel() chan dc.DeviceMessage {
+func (s *deviceStream) GetPublishChannel() chan dc.Device {
 	level.Warn(s.logger).Log("method", "GetPublishChannel()", "error", "Publishing not supported")
 	return nil
 }

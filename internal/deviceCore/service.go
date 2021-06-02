@@ -67,8 +67,8 @@ type (
 	DeviceEventProvider interface {
 		ActivateStreamProvider()
 		ApplyDeviceEvent(dm DeviceMessage)
-		HandleCoreEvent(dm DeviceMessage) error
-		PublishToStreamProvider(dm DeviceMessage)
+		HandleCoreEvent(dv Device) error
+		PublishToStreamProvider(dv Device)
 		ConsumeDeviceStream(dm DeviceMessage) error
 	}
 
