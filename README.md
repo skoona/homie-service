@@ -88,16 +88,27 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 #### Package Description
 * (A) demoProvider
   - Converts Mosquitto logfile into device messages for deviceSource
+  - Intf: SteamProvider
 * (A) mqttProvider
   - Captures Mosquitto messages into device messages for deviceSource
+  - Intf: SteamProvider
+  - Intf: OTAInteractor
 * (A) deviceStorage
   - Stores device messages from deviceSource to LevelDB/boltDB 
-* (A) deviceScheduler
-  - Schedules firmware OTA updates to network devices thru deviceSource
+  - Intf: Repository
 * (B) deviceSource
   - Device message manager for sourcing device info for storage, scheduling, and network device collection
+  - Intf: SteamProvider
+  - Intf: DeviceEventProvider
+* (B) deviceScheduler
+  - Schedules firmware OTA updates to network devices thru deviceSource
+  - Intf: OTAInteractor
+  - Intf: SchedulerProvider
 * (C) deviceCore
   - Network device collection of all known/active devices on any Homie based network.  Fully managed with adds, updates, deletes, queries, firmware uploads, and ota schedule creation
+  - Intf: SchedulerProvider
+  - Intf: DeviceEventProvider
+  - Intf: CoreService
 * (0) utils
   - Configuration and misc utilities
 * (TBD) uiApi
@@ -107,10 +118,7 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
   - Potentially with Websocks dynamic updates
 * (TBD) uiCli
   - Command line interface allowing data extraction from core network models
-
-
-
-
+  
 ### Environment Variables and Configuration
 MQTT hostname, username, and password can be set in the environment.  If present they will override those in the configuration file.  The variable are:
 
@@ -133,6 +141,14 @@ Optional:
 * ./config/demo-config.yml   -- demo version, uses an internal mqtt.log file versus MQTT
 * ./config/mqtt-config.yml   -- default configuration file
 * ./config/test-config.yml   -- test configuration
+
+#### Config file priority
+1. Commandline (--config demo-config)
+2. Environment (HOMIE_SERVICE_CONFIG_FILE)
+3. Default ('mqtt-config')
+#### Config params priority
+1. Environment (HS_*, MQTT_*)
+2. Config file contents (...)
 
 #### Configuration file Contents
 Live Mode: Reads data from MQTT
