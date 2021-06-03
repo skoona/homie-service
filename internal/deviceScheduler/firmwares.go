@@ -84,7 +84,7 @@ func firmwareDetails(path string) (string, string, string, string, int64, time.T
 	content, err := ioutil.ReadFile(path)
 	if err != nil {
 		level.Error(logger).Log("file open failed", path, "error", err.Error())
-		return "", "", "", "", 0, time.Time{}, fmt.Errorf("fileopen failed", path, "error", err.Error())
+		return "", "", "", "", 0, time.Time{}, fmt.Errorf("fileopen(%s) failed: %s", path, err.Error())
 	}
 
 	// md5Sum := hex.EncodeToString(md5.Sum(content))

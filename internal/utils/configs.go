@@ -7,13 +7,13 @@ package configs
 */
 
 import (
-	"flag"
+	goflag "flag"
 	"fmt"
+	"github.com/spf13/pflag"
 	"os"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/spf13/pflag"
 	"github.com/spf13/viper"
 )
 
@@ -47,22 +47,44 @@ type (
 	}
 )
 
-func buildConfigForCLI(log log.Logger) *viper.Viper {
-	level.Debug(log).Log("event", "calling buildConfigForCLI()")
-	var configPath string
-	cfg := viper.New()
+/*
+ * init()
+ * using it to avoid test failures caused by Viper / "flag redefined" panic
+ *	i.e. flag.StringVar(&configPath, "config", envConfigPath, "path to config file")
+ *  cannot define 'config' twice, so we do it once in init()
+ */
+var (
+	configPath string
+	//configPath *string
+	envConfigPath string
+)
 
-	envConfigPath := os.Getenv("HOMIE_SERVICE_CONFIG_FILE")  // "mqtt-cfg"
+func init() {
+	fmt.Println("Configs.go init() called")
+	pflag.StringVar(&configPath, "config", "", "path to config file")
+	pflag.CommandLine.AddGoFlagSet(goflag.CommandLine)
+	fmt.Printf("Configs.go init() called: %s --- %s \n", envConfigPath, configPath)
+}
+
+func BuildConfigForCLI(log log.Logger) *viper.Viper {
+	envConfigPath = os.Getenv("HOMIE_SERVICE_CONFIG_FILE")
 	if "" == envConfigPath {
 		envConfigPath = "mqtt-config"
 	}
-
-	flag.StringVar(&configPath, "config", envConfigPath, "path to config file")
-	pflag.CommandLine.AddGoFlagSet(flag.CommandLine)
 	pflag.Parse()
-	cfg.BindPFlags(pflag.CommandLine)
 
-	cfg.SetConfigName(cfg.GetString("config")) // name of config file (without extension)
+	if pflag.Lookup("config") != nil {
+		configPath = pflag.Lookup("config").Value.String()
+		if configPath == "" {
+			configPath = envConfigPath
+		}
+	} else {
+		configPath = envConfigPath
+	}
+	level.Debug(log).Log("event", "calling buildConfigForCLI()", "configPath", configPath, "env", envConfigPath)
+
+	cfg := viper.New()
+	cfg.SetConfigName(configPath) // name of config file (without extension)
 	cfg.SetConfigType("yaml")                     // REQUIRED if the config file does not have the extension in the name
 	cfg.AddConfigPath("../../config/")            // path to look for the config file in
 	cfg.AddConfigPath("../config/")            // path to look for the config file in
@@ -119,7 +141,7 @@ func buildConfigForCLI(log log.Logger) *viper.Viper {
 
 var DefaultLogger log.Logger
 
-func buildLogger(moduleName string) log.Logger {
+func BuildLogger(moduleName string) log.Logger {
 
 	logger := log.NewLogfmtLogger(os.Stderr)
 	logger = level.NewFilter(logger, level.AllowDebug())  // set log level
@@ -135,7 +157,7 @@ func buildLogger(moduleName string) log.Logger {
 	return logger
 }
 
-func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
+func BuildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 	level.Debug(log).Log("event", "calling buildAppConfig()")
 
 	return Config{
@@ -164,9 +186,9 @@ func buildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 }
 
 func BuildRuntimeConfig(moduleName string) Config {
-	logger := buildLogger(moduleName)
-	cliConfig := buildConfigForCLI(logger)
-	appConfig := buildAppConfig(cliConfig, logger)
+	logger := BuildLogger(moduleName)
+	cliConfig := BuildConfigForCLI(logger)
+	appConfig := BuildAppConfig(cliConfig, logger)
 
 	return appConfig
 }
