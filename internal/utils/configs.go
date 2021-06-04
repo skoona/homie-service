@@ -55,7 +55,6 @@ type (
  */
 var (
 	configPath string
-	//configPath *string
 	envConfigPath string
 )
 

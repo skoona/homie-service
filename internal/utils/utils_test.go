@@ -19,6 +19,7 @@ var _ = Describe("Utils", func() {
 
 	Context("Defaults to 'mqtt-config / live' when no commandline or env is given ", func() {
 		It("should be a valid config", func() {
+			os.Args = []string{oldArgs[0], "--config", ""}
 			acfg := cc.BuildRuntimeConfig("Homie-Service-Test")
 			Expect(acfg).ToNot(BeNil())
 			Expect(acfg.RunMode).To(Equal("live"))
