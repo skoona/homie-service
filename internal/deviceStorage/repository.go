@@ -4,16 +4,17 @@ package deviceStorage
 	deviceStorage/repository.go
 
 	Implement dataDB/LevelDB Connection to DeviceSource
+	ref: https://github.com/etcd-io/bbolt
 */
 
 import (
 	"fmt"
 
-	bolt "github.com/boltdb/bolt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	cc "github.com/skoona/homie-service/internal/utils"
+	bolt "go.etcd.io/bbolt" // bolt "github.com/boltdb/bolt"
 )
 
 var dbs *dbRepo

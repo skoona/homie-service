@@ -18,7 +18,7 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 * [MQTT](https://github.com/eclipse/paho.mqtt.golang) Unsecured connection.
 * Produce MQTT messages decoded to Homie Device Model.
 * Produce MQTT messages from MQTT Logfile for Demo use.
-* [bBoltDB](https://github.com/boltdb/bolt) data storage for decoded device messages
+* [bBolt DB](https://github.com/etcd-io/bbolt) data storage for decoded device messages
 * CoreLogic 
 * * decode and transform data into Homie's Broadcast, Device, Node, Property, and Attribute collections.
 * * encode firmware information into the Firmware Scheduling Service

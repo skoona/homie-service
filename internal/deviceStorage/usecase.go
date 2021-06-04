@@ -13,7 +13,7 @@ import (
 	"sort"
 	"time"
 
-	bolt "github.com/boltdb/bolt"
+	bolt "go.etcd.io/bbolt" // bolt "github.com/boltdb/bolt"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
