@@ -86,7 +86,7 @@ func handleCommandLineParams() (string, bool) {
 	return configPath, debugFlag
 }
 
-func BuildConfigForCLI(configFilename string, log log.Logger) *viper.Viper {
+func BuildConfigForCLI(configFilename string, log log.Logger) (*viper.Viper, error) {
 
 	cfg := viper.New()
 	cfg.SetConfigName(configFilename) // name of config file (without extension)
@@ -109,7 +109,8 @@ func BuildConfigForCLI(configFilename string, log log.Logger) *viper.Viper {
 
 	err := cfg.ReadInConfig() // Find and read the config file
 	if err != nil {              // Handle errors reading the config file
-		panic(fmt.Errorf("fatal error config file: %s \n", err))
+		err = fmt.Errorf("fatal error config file: %s \n", err.Error())
+		return nil, err
 	}
 
 	// Overwrite config from ENV is present
@@ -141,7 +142,7 @@ func BuildConfigForCLI(configFilename string, log log.Logger) *viper.Viper {
 		cfg.Set("homiemonitor.mqtt.homiesubscriptiontopic", cfg.Get("subscription_topic"))
 	}
 
-	return cfg
+	return cfg, err
 }
 
 func BuildLogger(moduleName string, debugOn bool) log.Logger {
@@ -192,11 +193,11 @@ func BuildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 	}
 }
 
-func BuildRuntimeConfig(moduleName string) Config {
+func BuildRuntimeConfig(moduleName string) (Config, error) {
 	cfile, debug := handleCommandLineParams()
 	logger := BuildLogger(moduleName, debug)
-	cliConfig := BuildConfigForCLI(cfile, logger)
+	cliConfig, err := BuildConfigForCLI(cfile, logger)
 	appConfig := BuildAppConfig(cliConfig, logger)
 
-	return appConfig
+	return appConfig, err
 }

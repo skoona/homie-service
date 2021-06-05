@@ -20,7 +20,9 @@ var _ = Describe("Utils Configs", func() {
 	Context("Defaults to 'mqtt-config / live' when no commandline or env is given ", func() {
 		It("should be a valid config", func() {
 			os.Args = []string{oldArgs[0], "--config", ""}
-			acfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			acfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
+
 			Expect(acfg).ToNot(BeNil())
 			Expect(acfg.RunMode).To(Equal("live"))
 		})
@@ -31,21 +33,24 @@ var _ = Describe("Utils Configs", func() {
 			os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "test-config")
 			os.Args = []string{oldArgs[0], "--config", ""}
 
-			acfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			acfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(acfg).ToNot(BeNil())
 			Expect(acfg.RunMode).To(Equal("test"))
 		})
 		It("Runmode equals live", func() {
 			os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "mqtt-config")
 
-			bcfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			bcfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(bcfg.RunMode).To(Equal("live"))
 		})
 		It("Runmode equals demo", func() {
 			os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "demo-config")
 			os.Args = []string{oldArgs[0], "--config", ""}
 
-			ccfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			ccfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(ccfg.RunMode).To(Equal("demo"))
 		})
 	})
@@ -54,20 +59,23 @@ var _ = Describe("Utils Configs", func() {
 		It("should be a valid config", func() {
 			os.Args = []string{oldArgs[0], "--config", "test-config"}
 
-			acfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			acfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(acfg).ToNot(BeNil())
 			Expect(acfg.RunMode).To(Equal("test"))
 		})
 		It("Runmode equals live", func() {
 			os.Args = []string{oldArgs[0], "--config", "mqtt-config"}
 
-			bcfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			bcfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(bcfg.RunMode).To(Equal("live"))
 		})
 		It("Runmode equals demo", func() {
 			os.Args = []string{oldArgs[0], "--config", "demo-config"}
 
-			ccfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			ccfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(ccfg.RunMode).To(Equal("demo"))
 		})
 	})
@@ -77,7 +85,8 @@ var _ = Describe("Utils Configs", func() {
 			os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "demo-config")
 			os.Args = []string{oldArgs[0], "--config", "test-config"}
 
-			acfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			acfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(acfg).ToNot(BeNil())
 			Expect(acfg.RunMode).To(Equal("test"))
 		})
@@ -85,14 +94,16 @@ var _ = Describe("Utils Configs", func() {
 			os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "test-config")
 			os.Args = []string{oldArgs[0], "--config", "mqtt-config"}
 
-			bcfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			bcfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(bcfg.RunMode).To(Equal("live"))
 		})
 		It("Runmode equals demo", func() {
 			os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "test-config")
 			os.Args = []string{oldArgs[0], "--config", "demo-config"}
 
-			ccfg := cc.BuildRuntimeConfig("Homie-Service-Test")
+			ccfg, err := cc.BuildRuntimeConfig("Homie-Service-Test")
+			Expect(err).To(BeNil(), "Configuration must be provided")
 			Expect(ccfg.RunMode).To(Equal("demo"))
 		})
 	})

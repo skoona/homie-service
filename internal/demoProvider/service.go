@@ -81,21 +81,22 @@ func (s *deviceStream) GetNotifyChannel() chan dc.DeviceMessage {
  * by converting them to DeviceMessages
  * outputs to device channels
  */
-func enableNetworkTraffic(demoFile string, plog log.Logger, notify chan dc.DeviceMessage) {
+func enableNetworkTraffic(demoFile string, plog log.Logger, notify chan dc.DeviceMessage) error {
 	level.Debug(plog).Log("event", "calling enableNetworkTraffic()", "source file", demoFile)
+	var err error
 	/*
 	 * Create a Go Routine for the MQTT Channel to
 	 * convert msgs to DeviceMessages and output to dvcSyncChannels
 	 */
 	go func(filepath string, tlog log.Logger, publish chan dc.DeviceMessage) {
-		var err error
+		//var err error
 		var file *os.File
 		var idx uint16 = 0
 
 		file, err = os.OpenFile(filepath, os.O_RDONLY, 0666)
 		if err != nil {
 			level.Error(tlog).Log("error", err.Error())
-			panic(err.Error())
+			return // vs panic()
 		}
 		defer file.Close()
 
@@ -120,6 +121,7 @@ func enableNetworkTraffic(demoFile string, plog log.Logger, notify chan dc.Devic
 	}(demoFile, plog, notify)
 
 	level.Debug(plog).Log("event", "enableNetworkTraffic() active")
+	return err
 }
 
 /*
@@ -131,7 +133,7 @@ func Start() error {
 	var err error
 	// ensure Initialize() is called first
 	if nil == dStream {
-		panic(fmt.Errorf("you must call Initialize() in this package before calling Start()"))
+		return fmt.Errorf("you must call Initialize() in this package before calling Start()")
 	}
 
 	demoFile := cfg.Dbc.DemoSource
@@ -154,6 +156,13 @@ func Initialize(dfg cc.Config) (dss.StreamProvider, []string, error) {
 	cfg = dfg
 	logger := log.With(cfg.Logger, "pkg", "demoProvider")
 	level.Debug(logger).Log("event", "calling Initialize()")
+
+	file, err := os.OpenFile(cfg.Dbc.DemoSource, os.O_RDONLY, 0666)
+	if err != nil {
+		level.Error(logger).Log("error", err.Error())
+		return nil, nil, err // vs panic()
+	}
+	defer file.Close()
 
 	NewStreamProvider(logger) // creates stream provider
 

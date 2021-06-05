@@ -53,13 +53,13 @@ func Start(cfg cc.Config) (dc.Repository, error) {
 	if err != nil {
 		level.Error(logger).Log("event", "Main bBolt DB Open Failed", "datafile", dataFile)
 		err = fmt.Errorf("main bBolt DB Open Failed: %v", err.Error())
-		panic(err.Error())
+		return nil, err
 	}
 
 	repo := NewRepo(cfg, pDB, logger)
 
 	level.Debug(logger).Log("event", "Start() completed")
-	return repo, nil
+	return repo, err
 }
 
 /*

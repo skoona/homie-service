@@ -75,23 +75,41 @@ func shutdownLive() {
 
 func runLive(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runLive() called")
-	otap, dsp, networks, _ = mq.Initialize(cfg)                 // message stream
-	repo, _ = dds.Start(cfg)                                    // message db
+	otap, dsp, networks, err = mq.Initialize(cfg)                 // message stream
+	if err != nil {
+		return err
+	}
+	repo, err = dds.Start(cfg)                                    // message db
+	if err != nil {
+		return err
+	}
 	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
 	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
 	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
-	err := mq.Start()                                           // activate message stream
+	err = mq.Start()                                           // activate message stream
+	if err != nil {
+		return err
+	}
 	level.Debug(logger).Log("event", "runLive() completed")
 	return err
 }
 
 func runDemo(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runDemo() called")
-	dsp, networks, _ := dp.Initialize(cfg)                    // message stream
-	repo, _ = dds.Start(cfg)                                  // message db
+	dsp, networks, err := dp.Initialize(cfg)                    // message stream
+	if err != nil {
+		return err
+	}
+	repo, err = dds.Start(cfg)                                  // message db
+	if err != nil {
+		return err
+	}
 	dep, _ = dss.Start(cfg, repo, dsp)                        // message aggregation
 	coreSvc, siteNetworks = dc.Start(cfg, dep, nil, networks) // network logic -- may need scheduler
-	err := dp.Start()                                         // activate message stream
+	err = dp.Start()                                         // activate message stream
+	if err != nil {
+		return err
+	}
 	level.Debug(logger).Log("event", "runDemo() completed")
 	return err
 }
@@ -106,13 +124,16 @@ var (
 	repo         dc.Repository
 	otap         sch.OTAInteractor
 	dsp          dss.StreamProvider
+	err error
 )
 
 func main() {
 	// var hns *cl.HomieNetworks
-	var err error
 
-	cfg := cc.BuildRuntimeConfig("Homie-Service")
+	cfg, err := cc.BuildRuntimeConfig("Homie-Service")
+	if err != nil {
+		panic(err.Error())
+	}
 	logger = log.With(cfg.Logger, "pkg", "main")
 
 	level.Debug(logger).Log("event", "service started")
@@ -120,10 +141,8 @@ func main() {
 
 	// Run the App
 	if cfg.RunMode == "demo" {
-		// demo
 		err = runDemo(cfg)
 	} else {
-		// live
 		err = runLive(cfg)
 	}
 	if err != nil {

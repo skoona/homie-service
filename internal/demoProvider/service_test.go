@@ -12,6 +12,7 @@ import (
 )
 var cfg cc.Config
 var oldArgs []string
+var err error
 
 var _ = Describe("DemoProvider inactive service", func() {
 
@@ -21,21 +22,15 @@ var _ = Describe("DemoProvider inactive service", func() {
 		defer func() { os.Args = oldArgs }()
 		os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "test-config")
 		os.Args = []string{oldArgs[0], "--config", ""}
-		cfg = cc.BuildRuntimeConfig("Homie-Service-Test")
+		cfg, err = cc.BuildRuntimeConfig("Homie-Service-Test")
+		//Expect(err).To(BeNil(), "Configuration must be provided")
+
 	})
 
 	Context("Initializes properly ", func() {
 		It("Start() complains and panics if called before initialize()", func() {
-			var err interface{}
-			defer func() {
-				// recover from panic if one occured. Set err to nil otherwise.
-				err = recover()
-			}()
-			//err = dp.Start()
-			//Expect( err.(error).Error() ).To(Equal("you must call Initialize() in this package before calling Start()"))
-			//Expect(err.(error).Error()).To(Equal("why any string"))
-			Expect(dp.Start()).To(Panic())
-			fmt.Printf("\n ************** ERROR STRING ************* = %s \n", err.(error).Error())
+			err := dp.Start()
+			Expect(err).ToNot(BeNil(), err.Error())
 		})
 
 
@@ -61,7 +56,7 @@ var _ = Describe("DemoProvider active service", func() {
 		oldArgs = os.Args
 		os.Args = []string{oldArgs[0], "--config", "test-config"} // force clearing of prior value
 		defer func() { os.Args = oldArgs }()
-		cfg = cc.BuildRuntimeConfig("Homie-Service-Test")
+		cfg, err = cc.BuildRuntimeConfig("Homie-Service-Test")
 	})
 
 	Context("Produces demo messages ", func() {

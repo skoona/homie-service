@@ -43,10 +43,10 @@ func DiscoveredNetworks() []string {
 }
 
 /*
- * networksHandler
+ * networkDiscovery
  * Handles '+/+/$name' a discovery technique which list HomieDevices on any network prefix
  */
-var networksHandler mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
+var networkDiscovery mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	parts := strings.Split(msg.Topic(), "/")
 	if !nNetworks.Contains(parts[0]) {
 		nNetworks.Add(parts[0])
@@ -76,6 +76,8 @@ func sub(topic string) mqtt.Token {
 
 	return token
 }
+// consider
+// AddRoute(topic string, callback MessageHandler)
 func subWithHandler(topic string, callback mqtt.MessageHandler) mqtt.Token {
 	token := client.Subscribe(topic, 1, callback)
 	token.Wait()
@@ -126,7 +128,7 @@ func enableNetworkTraffic() error {
  */
 func doNetworkDiscovery() {
 	// allow for network discovery
-	subWithHandler(config.DiscoveryTopic, networksHandler) // Homie Discovery Topic
+	subWithHandler(config.DiscoveryTopic, networkDiscovery) // Homie Discovery Topic
 	for {
 		time.Sleep(5 * time.Second) // delay long enough to collect networks
 		if len(DiscoveredNetworks()) >= 1 {
@@ -154,7 +156,7 @@ func Start() error {
 
 	// ensure Initialize() is called first
 	if logger == nil {
-		panic(fmt.Errorf("you must call Initialize() in this package before calling Start()"))
+		return fmt.Errorf("you must call Initialize() in this package before calling Start()")
 	}
 	level.Debug(logger).Log("event", "Calling Start()")
 
@@ -166,7 +168,6 @@ func Start() error {
 	return err
 }
 
-//
 func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string, error) {
 	config = cfg.Mqc
 	logger = log.With(cfg.Logger, "pkg", "mqttProvider")
@@ -181,6 +182,8 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	opts.SetPassword(config.UserPassword)
 	opts.SetAutoReconnect(true)
 	opts.SetOrderMatters(true)
+	opts.SetKeepAlive(120)
+	opts.SetPingTimeout(10)
 	if len(config.LwtTopic) > 0 && len(config.LwtMessage) > 0 {
 		opts.SetWill(config.LwtTopic, config.LwtMessage, 0, true)
 	}
@@ -191,8 +194,9 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	client = mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
 		level.Error(logger).Log("cause", "connect() failed", "error", token.Error())
-		panic(token.Error())
+		return nil, nil, nil, token.Error()
 	}
+
 
 	// allow for network discovery
 	doNetworkDiscovery()
