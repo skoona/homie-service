@@ -9,5 +9,5 @@ import (
 
 func TestDemoProvider(t *testing.T) {
 	RegisterFailHandler(Fail)
-	RunSpecs(t, "Demo Provider Suite")
+	RunSpecs(t, "DemoProvider Suite")
 }

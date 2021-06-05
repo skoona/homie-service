@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-var _ = Describe("Utils", func() {
+var _ = Describe("Utils Configs", func() {
 	var oldArgs []string
 
 	BeforeEach(func () {
