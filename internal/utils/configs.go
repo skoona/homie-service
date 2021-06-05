@@ -64,7 +64,7 @@ func init() {
 	pflag.StringVar(&configPath, "config", "", "path to config file")
 	pflag.BoolVar(&debugFlag, "debug", false, "enable debug logging : default is true")
 	pflag.CommandLine.AddGoFlagSet(goflag.CommandLine)
-	fmt.Printf("Configs.go init() called: %s --- %s \n", envConfigPath, configPath)
+	fmt.Printf("Configs.go init() completed:  %s \n", configPath)
 }
 
 func handleCommandLineParams() (string, bool) {
