@@ -132,7 +132,7 @@ func main() {
 
 	cfg, err := cc.BuildRuntimeConfig("Homie-Service")
 	if err != nil {
-		panic(err.Error())
+		os.Exit(1)
 	}
 	logger = log.With(cfg.Logger, "pkg", "main")
 
@@ -147,7 +147,7 @@ func main() {
 	}
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
-		panic(err.Error())
+		os.Exit(2)
 	}
 
 	/* Prepare for clean exit */

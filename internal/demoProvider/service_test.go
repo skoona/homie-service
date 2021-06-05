@@ -28,7 +28,7 @@ var _ = Describe("DemoProvider inactive service", func() {
 	})
 
 	Context("Initializes properly ", func() {
-		It("Start() complains and panics if called before initialize()", func() {
+		It("Start() errors out if called before initialize()", func() {
 			err := dp.Start()
 			Expect(err).ToNot(BeNil(), err.Error())
 		})
