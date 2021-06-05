@@ -48,13 +48,13 @@ func (s *deviceStream) ActivateNotifications() chan dc.DeviceMessage {
 }
 func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "CreateDemoDeviceMessage() called")
-	dm, _ := dc.NewDeviceMessage(topic, payload, idCounter, retained, qos)
+	dm, _ := dc.NewDeviceMessage(topic, payload, idCounter, retained, qos, s.logger)
 	return dm
 }
 
 func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "CreateQueueDeviceMessage() called")
-	dm, _ := dc.NewQueueMessage(qmsg)
+	dm, _ := dc.NewQueueMessage(qmsg, s.logger)
 	return dm
 }
 

@@ -1,0 +1,106 @@
+sknSensors/GarageMonitor/$state ready
+sknSensors/GarageMonitor/$homie 3.0.1
+sknSensors/GarageMonitor/$name Garage Monitor
+sknSensors/GarageMonitor/$mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/$localip 10.100.1.177
+sknSensors/GarageMonitor/$nodes Ambient,Presence,hardware
+sknSensors/GarageMonitor/$stats uptime
+sknSensors/GarageMonitor/$stats/interval 905
+sknSensors/GarageMonitor/$stats/signal 54
+sknSensors/GarageMonitor/$stats/uptime 592996
+sknSensors/GarageMonitor/$fw/name Monitor-SHT31-RCWL-Metrics
+sknSensors/GarageMonitor/$fw/version 2.0.0
+sknSensors/GarageMonitor/$fw/checksum 615fed382ab44bd43fe83508aecac682
+sknSensors/GarageMonitor/$implementation esp8266
+sknSensors/GarageMonitor/$implementation/config {"name":"Garage Monitor","device_id":"GarageMonitor","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}
+sknSensors/GarageMonitor/$implementation/version 3.0.0
+sknSensors/GarageMonitor/$implementation/ota/enabled true
+sknSensors/GarageMonitor/Ambient/$name Temperature and Humidity Sensor
+sknSensors/GarageMonitor/Ambient/$type sensor
+sknSensors/GarageMonitor/Ambient/$properties humidity,temperature
+sknSensors/GarageMonitor/Ambient/humidity 57.18
+sknSensors/GarageMonitor/Ambient/humidity/$name Humidity
+sknSensors/GarageMonitor/Ambient/humidity/$datatype float
+sknSensors/GarageMonitor/Ambient/humidity/$unit %rH
+sknSensors/GarageMonitor/Ambient/temperature 26.18
+sknSensors/GarageMonitor/Ambient/temperature/$name Temperature
+sknSensors/GarageMonitor/Ambient/temperature/$datatype float
+sknSensors/GarageMonitor/Ambient/temperature/$unit °F
+sknSensors/GarageMonitor/Presence/$name Motion Sensor
+sknSensors/GarageMonitor/Presence/$type sensor
+sknSensors/GarageMonitor/Presence/$properties motion
+sknSensors/GarageMonitor/Presence/motion OPEN
+sknSensors/GarageMonitor/Presence/motion/$name Motion
+sknSensors/GarageMonitor/Presence/motion/$datatype enum
+sknSensors/GarageMonitor/Presence/motion/$format OPEN,CLOSED
+sknSensors/GarageMonitor/hardware/$name Device Info
+sknSensors/GarageMonitor/hardware/$type sensor
+sknSensors/GarageMonitor/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/GarageMonitor/hardware/signal -73
+sknSensors/GarageMonitor/hardware/signal/$name RSSI
+sknSensors/GarageMonitor/hardware/signal/$datatype integer
+sknSensors/GarageMonitor/hardware/signal/$unit dBm
+sknSensors/GarageMonitor/hardware/mac B4:E6:2D:1B:5C:4D
+sknSensors/GarageMonitor/hardware/mac/$name mac
+sknSensors/GarageMonitor/hardware/mac/$datatype sring
+sknSensors/GarageMonitor/hardware/resetReason External System
+sknSensors/GarageMonitor/hardware/resetReason/$name Last Reset Reason
+sknSensors/GarageMonitor/hardware/resetReason/$datatype string
+sknSensors/GarageMonitor/hardware/voltage 3.05
+sknSensors/GarageMonitor/hardware/voltage/$name 3.3V Supply
+sknSensors/GarageMonitor/hardware/voltage/$datatype float
+sknSensors/GarageMonitor/hardware/voltage/$unit V
+sknSensors/GuestRoom/$state ready
+sknSensors/GuestRoom/$homie 3.0.1
+sknSensors/GuestRoom/$name Guest Room
+sknSensors/GuestRoom/$mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/$localip 10.100.1.178
+sknSensors/GuestRoom/$nodes Ambient,Presence,hardware
+sknSensors/GuestRoom/$stats uptime
+sknSensors/GuestRoom/$stats/interval 185
+sknSensors/GuestRoom/$stats/signal 72
+sknSensors/GuestRoom/$stats/uptime 361998
+sknSensors/GuestRoom/$fw/name Monitor-DHT-RCWL-Metrics
+sknSensors/GuestRoom/$fw/version 2.0.0
+sknSensors/GuestRoom/$fw/checksum 3ef8fbb48c5b23788a22a998c14a1a6d
+sknSensors/GuestRoom/$implementation esp8266
+sknSensors/GuestRoom/$implementation/config {"name":"Guest Room","device_id":"GuestRoom","device_stats_interval":180,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}
+sknSensors/GuestRoom/$implementation/version 3.0.0
+sknSensors/GuestRoom/$implementation/ota/enabled true
+sknSensors/GuestRoom/Ambient/$name Temperature and Humidity Sensor
+sknSensors/GuestRoom/Ambient/$type sensor
+sknSensors/GuestRoom/Ambient/$properties humidity,temperature
+sknSensors/GuestRoom/Ambient/humidity 11.10
+sknSensors/GuestRoom/Ambient/humidity/$name Humidity
+sknSensors/GuestRoom/Ambient/humidity/$datatype float
+sknSensors/GuestRoom/Ambient/humidity/$unit %rH
+sknSensors/GuestRoom/Ambient/temperature 73.76
+sknSensors/GuestRoom/Ambient/temperature/$name Temperature
+sknSensors/GuestRoom/Ambient/temperature/$datatype float
+sknSensors/GuestRoom/Ambient/temperature/$unit °F
+sknSensors/GuestRoom/Presence/$name Motion Sensor
+sknSensors/GuestRoom/Presence/$type sensor
+sknSensors/GuestRoom/Presence/$properties motion
+sknSensors/GuestRoom/Presence/motion CLOSED
+sknSensors/GuestRoom/Presence/motion/$name Motion
+sknSensors/GuestRoom/Presence/motion/$datatype enum
+sknSensors/GuestRoom/Presence/motion/$format OPEN,CLOSED
+sknSensors/GuestRoom/hardware/$name Device Info
+sknSensors/GuestRoom/hardware/$type sensor
+sknSensors/GuestRoom/hardware/$properties signal,mac,resetReason,voltage
+sknSensors/GuestRoom/hardware/signal -64
+sknSensors/GuestRoom/hardware/signal/$name RSSI
+sknSensors/GuestRoom/hardware/signal/$datatype integer
+sknSensors/GuestRoom/hardware/signal/$unit dBm
+sknSensors/GuestRoom/hardware/mac BC:DD:C2:81:04:72
+sknSensors/GuestRoom/hardware/mac/$name mac
+sknSensors/GuestRoom/hardware/mac/$datatype sring
+sknSensors/GuestRoom/hardware/resetReason External System
+sknSensors/GuestRoom/hardware/resetReason/$name Last Reset Reason
+sknSensors/GuestRoom/hardware/resetReason/$datatype string
+sknSensors/GuestRoom/hardware/voltage 2.98
+sknSensors/GuestRoom/hardware/voltage/$name 3.3V Supply
+sknSensors/GuestRoom/hardware/voltage/$datatype float
+sknSensors/GuestRoom/hardware/voltage/$unit V
+sknSensors/$broadcast/alert openHAB3 Offline
+sknSensors/$broadcast/alert/door Door Open

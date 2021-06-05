@@ -8,6 +8,7 @@ package deviceCore
 
 import (
 	"fmt"
+	"github.com/go-kit/kit/log"
 	"strings"
 
 	"github.com/go-kit/kit/log/level"
@@ -253,8 +254,7 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
  *
  *  Create a New DeviceMessage and initializes it.
  */
-func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	//logger = log.With(cc.DefaultLogger, "pkg", "deviceCore", "service", "coreService", "method", "buildDeviceMessage") // default logger
+func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte, logger log.Logger) (DeviceMessage, error) {
 	var deviceID, nodeID, propertyID, attributeID, networkID, propertyPropertyID []byte
 	var dm DeviceMessage
 	var typeIntHomie CoreType

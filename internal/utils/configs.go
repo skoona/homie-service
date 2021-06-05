@@ -1,4 +1,4 @@
-package configs
+package utils
 
 /*
   utils/configContext.go:
@@ -55,17 +55,19 @@ type (
  */
 var (
 	configPath string
+	debugFlag bool
 	envConfigPath string
 )
 
 func init() {
 	fmt.Println("Configs.go init() called")
 	pflag.StringVar(&configPath, "config", "", "path to config file")
+	pflag.BoolVar(&debugFlag, "debug", false, "enable debug logging : default is true")
 	pflag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	fmt.Printf("Configs.go init() called: %s --- %s \n", envConfigPath, configPath)
 }
 
-func BuildConfigForCLI(log log.Logger) *viper.Viper {
+func handleCommandLineParams() (string, bool) {
 	envConfigPath = os.Getenv("HOMIE_SERVICE_CONFIG_FILE")
 	if "" == envConfigPath {
 		envConfigPath = "mqtt-config"
@@ -80,10 +82,14 @@ func BuildConfigForCLI(log log.Logger) *viper.Viper {
 	} else {
 		configPath = envConfigPath
 	}
-	level.Debug(log).Log("event", "calling buildConfigForCLI()", "configPath", configPath, "env", envConfigPath)
+	fmt.Printf("event=calling handleCommandLineParams(), Config=%s, Environment=%s, debug=%v \n", configPath, envConfigPath, debugFlag)
+	return configPath, debugFlag
+}
+
+func BuildConfigForCLI(configFilename string, log log.Logger) *viper.Viper {
 
 	cfg := viper.New()
-	cfg.SetConfigName(configPath) // name of config file (without extension)
+	cfg.SetConfigName(configFilename) // name of config file (without extension)
 	cfg.SetConfigType("yaml")                     // REQUIRED if the config file does not have the extension in the name
 	cfg.AddConfigPath("../../config/")            // path to look for the config file in
 	cfg.AddConfigPath("../config/")            // path to look for the config file in
@@ -138,19 +144,21 @@ func BuildConfigForCLI(log log.Logger) *viper.Viper {
 	return cfg
 }
 
-var DefaultLogger log.Logger
-
-func BuildLogger(moduleName string) log.Logger {
-
+func BuildLogger(moduleName string, debugOn bool) log.Logger {
+	var opt level.Option
+	if debugOn {
+		opt = level.AllowDebug()
+	} else {
+		opt = level.AllowError()
+	}
 	logger := log.NewLogfmtLogger(os.Stderr)
-	logger = level.NewFilter(logger, level.AllowDebug())  // set log level
+	logger = level.NewFilter(logger, opt)  // set log level
 	logger = log.NewSyncLogger(logger)
 	logger = log.With(logger,
 		"module", moduleName,
 		"time:", log.DefaultTimestampUTC,
 		"caller", log.DefaultCaller,
 	)
-	DefaultLogger = logger
 	level.Debug(logger).Log("event", "called buildLogger()")
 
 	return logger
@@ -185,8 +193,9 @@ func BuildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 }
 
 func BuildRuntimeConfig(moduleName string) Config {
-	logger := BuildLogger(moduleName)
-	cliConfig := BuildConfigForCLI(logger)
+	cfile, debug := handleCommandLineParams()
+	logger := BuildLogger(moduleName, debug)
+	cliConfig := BuildConfigForCLI(cfile, logger)
 	appConfig := BuildAppConfig(cliConfig, logger)
 
 	return appConfig

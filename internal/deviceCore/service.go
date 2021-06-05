@@ -119,8 +119,8 @@ func NewCoreService(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvide
  *  Create a New DeviceMessage and initializes it.
  *  Called outside of the service
  */
-func NewDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) (DeviceMessage, error) {
-	return buildDeviceMessage(topic, payload, idCounter, retained, qos)
+func NewDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte, plog log.Logger) (DeviceMessage, error) {
+	return buildDeviceMessage(topic, payload, idCounter, retained, qos, plog)
 }
 
 /**
@@ -129,8 +129,8 @@ func NewDeviceMessage(topic string, payload []byte, idCounter uint16, retained b
  *  Create a New DeviceMessage and initializes it.
  *  Called outside of the service
  */
-func NewQueueMessage(msg QueueMessage) (DeviceMessage, error) {
-	return NewDeviceMessage(msg.Topic(), msg.Payload(), msg.MessageID(), msg.Retained(), msg.Qos())
+func NewQueueMessage(msg QueueMessage, plog log.Logger) (DeviceMessage, error) {
+	return NewDeviceMessage(msg.Topic(), msg.Payload(), msg.MessageID(), msg.Retained(), msg.Qos(), plog)
 }
 
 //NewID create a new entity ID

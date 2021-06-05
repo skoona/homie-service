@@ -37,7 +37,7 @@ import (
 /*
  * NeworkDiscovery()
  * Discovers available Homie networks
- */
+*/
 func DiscoveredNetworks() []string {
 	return nNetworks.Values()
 }

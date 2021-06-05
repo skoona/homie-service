@@ -35,7 +35,6 @@ type (
 var (
 	cfg     cc.Config
 	dStream *deviceStream
-	logger  log.Logger
 )
 
 /*
@@ -54,13 +53,13 @@ func (s *deviceStream) ActivateNotifications() chan dc.DeviceMessage {
 }
 func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "CreateDemoDeviceMessage() called")
-	dm, _ := dc.NewDeviceMessage(topic, payload, idCounter, retained, qos)
+	dm, _ := dc.NewDeviceMessage(topic, payload, idCounter, retained, qos, s.logger)
 	return dm
 }
 
 func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "CreateQueueDeviceMessage() called")
-	dm, _ := dc.NewQueueMessage(qmsg)
+	dm, _ := dc.NewQueueMessage(qmsg, s.logger)
 	return dm
 }
 
@@ -83,7 +82,7 @@ func (s *deviceStream) GetNotifyChannel() chan dc.DeviceMessage {
  * outputs to device channels
  */
 func enableNetworkTraffic(demoFile string, plog log.Logger, notify chan dc.DeviceMessage) {
-	level.Debug(plog).Log("event", "calling enableNetworkTraffic()")
+	level.Debug(plog).Log("event", "calling enableNetworkTraffic()", "source file", demoFile)
 	/*
 	 * Create a Go Routine for the MQTT Channel to
 	 * convert msgs to DeviceMessages and output to dvcSyncChannels
@@ -114,7 +113,7 @@ func enableNetworkTraffic(demoFile string, plog log.Logger, notify chan dc.Devic
 			idx++
 			publish <- dStream.CreateDemoDeviceMessage(topic, []byte(payload), idx, false, 1)
 
-			time.Sleep(100 * time.Millisecond) // slow the pace
+			time.Sleep(10 * time.Millisecond) // slow the pace
 		}
 
 		level.Debug(tlog).Log("event", "enableNetworkTraffic(gofunc()) completed")
@@ -131,16 +130,16 @@ func enableNetworkTraffic(demoFile string, plog log.Logger, notify chan dc.Devic
 func Start() error {
 	var err error
 	// ensure Initialize() is called first
-	if logger == nil {
+	if nil == dStream {
 		panic(fmt.Errorf("you must call Initialize() in this package before calling Start()"))
 	}
 
 	demoFile := cfg.Dbc.DemoSource
-	level.Debug(logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", strings.Join(cfg.Dbc.DemoNetworks, ","))
+	level.Debug(dStream.logger).Log("event", "Calling Start()", "demoFile", demoFile, "demoNetworks", strings.Join(cfg.Dbc.DemoNetworks, ","))
 
 	// first call to Activate will start things off
 
-	level.Debug(logger).Log("event", "Start() completed")
+	level.Debug(dStream.logger).Log("event", "Start() completed")
 
 	return err
 }
@@ -153,7 +152,7 @@ func Start() error {
 func Initialize(dfg cc.Config) (dss.StreamProvider, []string, error) {
 	var err error
 	cfg = dfg
-	logger = log.With(cfg.Logger, "pkg", "demoProvider")
+	logger := log.With(cfg.Logger, "pkg", "demoProvider")
 	level.Debug(logger).Log("event", "calling Initialize()")
 
 	NewStreamProvider(logger) // creates stream provider
@@ -167,7 +166,7 @@ func Initialize(dfg cc.Config) (dss.StreamProvider, []string, error) {
  * Cleans up this service
  */
 func Stop() {
-	level.Debug(logger).Log("event", "Calling Stop()")
+	level.Debug(dStream.logger).Log("event", "Calling Stop()")
 
 	if dStream.notifyChannel != nil {
 		close(dStream.notifyChannel) // we own chan, cleanup when done
@@ -175,5 +174,5 @@ func Stop() {
 	}
 
 	time.Sleep(time.Second)
-	level.Debug(logger).Log("event", "Stop() completed")
+	level.Debug(dStream.logger).Log("event", "Stop() completed")
 }
