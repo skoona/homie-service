@@ -108,7 +108,7 @@ func disableNetworkTraffic() error {
 /**
  * Activate Subscriptions starting network traffic
  */
-func enableNetworkTraffic() error {
+func enableNetworkTraffic( plog log.Logger) error {
 	var token mqtt.Token
 	networks := DiscoveredNetworks()
 

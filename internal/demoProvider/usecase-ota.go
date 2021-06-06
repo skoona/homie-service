@@ -46,7 +46,7 @@ func (s *otaStream) EnableTriggers() chan dc.DeviceMessage {
 	return s.notifyChannel
 }
 func (s *otaStream) EnableNotificationsFor(networkName, deviceName string, enabledOrDisable bool) error {
-	err := handleOTAMessages(networkName, deviceName, enabledOrDisable)
+	err := handleOTAMessages(networkName, deviceName, enabledOrDisable, s.logger)
 	if err != nil {
 		level.Error(s.logger).Log("error", err.Error())
 	}
@@ -77,7 +77,7 @@ var otaResponses mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message
  * ConsumeOTAMessages
  * Handles OTA Streaming responses
  */
-func handleOTAMessages(network, name string, enabled bool) error {
+func handleOTAMessages(network, name string, enabled bool, plog log.Logger) error {
 	var err error
 	if enabled {
 		err = WatchOTAProgress(network, name)
@@ -86,9 +86,9 @@ func handleOTAMessages(network, name string, enabled bool) error {
 	}
 
 	if nil != err {
-		level.Error(logger).Log("event", "Subscribe Failed", "error", err.Error())
+		level.Error(plog).Log("event", "Subscribe Failed", "error", err.Error())
 	}
-	level.Debug(logger).Log("ConsumeOTAMessages Completed", enabled, "network", network, "name", name)
+	level.Debug(plog).Log("ConsumeOTAMessages Completed", enabled, "network", network, "name", name)
 
 	return err
 }
@@ -110,12 +110,12 @@ func UnWatchOTAProgress(network, device string) error {
 
 // Out to MQTT
 func publishOTAMessages(publisher chan dc.DeviceMessage, plog log.Logger) {
-	go func(publishChan chan dc.DeviceMessage) {
-		level.Debug(plog).Log("event", "publishOTAMessages(gofunc) called")
+	go func(publishChan chan dc.DeviceMessage, tlog log.Logger) {
+		level.Debug(tlog).Log("event", "publishOTAMessages(gofunc) called")
 		for otaMessage := range publishChan { // read until closed
 			publish(otaMessage.Topic(), otaMessage.Payload(), otaMessage.Retained(), otaMessage.Qos())
-			level.Debug(plog).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(publishChan), "device", otaMessage.Topic())
+			level.Debug(tlog).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(publishChan), "device", otaMessage.Topic())
 		}
-		level.Debug(plog).Log("method", "publishOTAMessages()", "event", "Completed")
-	}(publisher)
+		level.Debug(tlog).Log("method", "publishOTAMessages()", "event", "Completed")
+	}(publisher, plog)
 }

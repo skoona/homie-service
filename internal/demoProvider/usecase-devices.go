@@ -43,7 +43,7 @@ func NewStreamProvider(plog log.Logger) dss.StreamProvider {
 	return dStream
 }
 func (s *deviceStream) ActivateNotifications() chan dc.DeviceMessage {
-	enableNetworkTraffic()
+	enableNetworkTraffic(s.logger)
 	return s.GetNotifyChannel()
 }
 func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage {
@@ -85,7 +85,7 @@ func establishPublishing(pubChan chan dc.Device, tlog log.Logger) {
 
 			for _, topic := range dc.TopicsFromDevice(msg) {
 				publish(topic, []byte{}, false, 0)
-				time.Sleep(50 * time.Millisecond)
+				time.Sleep(5 * time.Millisecond)
 				level.Debug(tlog).Log("publishing to", msg.Name, "Topic", topic)
 			}
 
@@ -105,20 +105,21 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	// sknSensors/GarageMonitor/$state ready
 	// sknSensors/GarageMonitor/$implementation/ota/enabled true
 	var trigger bool = false
-	if strings.Contains(msg.Topic(), "/$state") &&
+	if strings.HasSuffix(msg.Topic(), "/$state") &&
 		string(msg.Payload()) == "ready" {
 		trigger = true
-	} else if strings.Contains(msg.Topic(), "$implementation/ota/enabled") &&
+	} else if strings.HasSuffix(msg.Topic(), "$implementation/ota/enabled") &&
 		string(msg.Payload()) == "true" {
 		trigger = true
-	} else if strings.Contains(msg.Topic(), "$implementation/ota/status") {
+	} else if strings.HasSuffix(msg.Topic(), "$implementation/ota/status") {
 		trigger = true
 	}
+
+	dm := dStream.CreateQueueDeviceMessage(msg)
 
 	if trigger {
 		if otastream != nil {
 			if otastream.notifyChannel != nil {
-				dm := dStream.CreateQueueDeviceMessage(msg)
 				otastream.notifyChannel <- dm
 			}
 		}
@@ -126,7 +127,6 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	// plus always send to source
 	if dStream != nil {
 		if dStream.notifyChannel != nil {
-			dm := dStream.CreateQueueDeviceMessage(msg)
 			dStream.notifyChannel <- dm
 		}
 	}

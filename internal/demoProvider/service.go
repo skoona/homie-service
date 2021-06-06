@@ -73,7 +73,7 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 
 func publish(topic string, payload []byte, retain bool, qos byte) {
 	mClient.Publish(topic, qos, retain, payload)
-	level.Debug(logger).Log("Published topic", topic, "payload", payload)
+	level.Debug(logger).Log("Published topic", topic)
 }
 
 func sub(topic string) mqtt.Token {
@@ -110,7 +110,7 @@ func disableNetworkTraffic() error {
 /**
  * Activate Subscriptions starting network traffic
  */
-func enableNetworkTraffic() error {
+func enableNetworkTraffic( plog log.Logger) error {
 	networks := DiscoveredNetworks()
 
 	if len(networks) > 0 {
@@ -122,7 +122,7 @@ func enableNetworkTraffic() error {
 		subWithHandler(cfg.Mqc.SubscriptionTopic, defaultOnMessage) // Default Topic
 	}
 	dStream.GetNotifyChannel()
-	trafficGenerator(cfg.Dbc.DemoSource, logger)
+	trafficGenerator(cfg.Dbc.DemoSource, plog)
 	return nil
 }
 
