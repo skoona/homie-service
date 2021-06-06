@@ -41,7 +41,10 @@ type QueueMessage interface {
 	MessageID() uint16
 	Retained() bool
 	Qos() byte
+	Duplicate() bool
+	Ack()
 }
+
 
 /*
  * Device Management Methods
@@ -137,6 +140,12 @@ func (dm DeviceMessage) Retained() bool {
 }
 func (dm DeviceMessage) Qos() byte {
 	return dm.Qosb
+}
+func (dm DeviceMessage) Duplicate() bool {
+	return false
+}
+func (dm DeviceMessage) Ack() {
+	panic("implement me")
 }
 
 // X/$B

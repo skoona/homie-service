@@ -197,12 +197,11 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 		return nil, nil, nil, token.Error()
 	}
 
+	NewOTAStream(logger)      // creates otastream
+	NewStreamProvider(logger) // creates stream provider
 
 	// allow for network discovery
 	doNetworkDiscovery()
-
-	NewOTAStream(logger)      // creates otastream
-	NewStreamProvider(logger) // creates stream provider
 
 	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","))
 	return otastream, dStream, DiscoveredNetworks(), err

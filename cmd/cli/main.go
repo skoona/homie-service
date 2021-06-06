@@ -96,17 +96,18 @@ func runLive(cfg cc.Config) error {
 
 func runDemo(cfg cc.Config) error {
 	level.Debug(logger).Log("event", "runDemo() called")
-	dsp, networks, err := dp.Initialize(cfg)                    // message stream
+	otap, dsp, networks, err = dp.Initialize(cfg)                 // message stream
 	if err != nil {
 		return err
 	}
-	repo, err = dds.Start(cfg)                                  // message db
+	repo, err = dds.Start(cfg)                                    // message db
 	if err != nil {
 		return err
 	}
-	dep, _ = dss.Start(cfg, repo, dsp)                        // message aggregation
-	coreSvc, siteNetworks = dc.Start(cfg, dep, nil, networks) // network logic -- may need scheduler
-	err = dp.Start()                                         // activate message stream
+	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
+	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
+	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
+	err = dp.Start()                                           // activate message stream
 	if err != nil {
 		return err
 	}
@@ -140,10 +141,10 @@ func main() {
 	defer level.Debug(logger).Log("event", "service ended")
 
 	// Run the App
-	if cfg.RunMode == "demo" {
-		err = runDemo(cfg)
-	} else {
+	if cfg.RunMode == "live" {
 		err = runLive(cfg)
+	} else {
+		err = runDemo(cfg)
 	}
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())

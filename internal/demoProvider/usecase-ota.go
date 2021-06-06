@@ -1,7 +1,7 @@
-package mqttProvider
+package demoProvider
 
 /**
-  mqttProvider/usecase-ota.go:
+  demoProvider/usecase-ota.go:
 
   Handle Interaction with Scheduler
   - Send OTA Triggers
@@ -103,7 +103,7 @@ func WatchOTAProgress(network, device string) error {
 // UnWatchOTAProgress for Scheduler
 func UnWatchOTAProgress(network, device string) error {
 	topic := fmt.Sprintf("%s/%s/$implementation/ota/status", network, device)
-	token := client.Unsubscribe(topic)
+	token := mClient.Unsubscribe(topic)
 	token.Wait()
 	return token.Error()
 }

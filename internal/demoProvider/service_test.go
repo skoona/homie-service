@@ -23,8 +23,6 @@ var _ = Describe("DemoProvider inactive service", func() {
 		os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "test-config")
 		os.Args = []string{oldArgs[0], "--config", ""}
 		cfg, err = cc.BuildRuntimeConfig("Homie-Service-Test")
-		//Expect(err).To(BeNil(), "Configuration must be provided")
-
 	})
 
 	Context("Initializes properly ", func() {
@@ -35,18 +33,21 @@ var _ = Describe("DemoProvider inactive service", func() {
 
 
 		It("#Initialize() returns a valid StreamProvider service", func() {
-			sp, aStr, err := dp.Initialize(cfg)
+			sch, sp, aStr, err := dp.Initialize(cfg)
 			Expect(err).To(BeNil())
 			Expect(aStr).To(Equal(cfg.Dbc.DemoNetworks))
 			Expect(sp).ToNot(BeNil())
+			Expect(sch).ToNot(BeNil())
+			dp.Stop()
 		})
 
 		It("StreamProvider does not support a Publish() Channel", func() {
-			sp, _, err := dp.Initialize(cfg)
+			_, sp, _, err := dp.Initialize(cfg)
 			Expect(err).To(BeNil())
 			err = dp.Start()
 			Expect(err).To(BeNil())
 			Expect(sp.GetPublishChannel()).To(BeNil())
+			dp.Stop()
 		})
 	})
 
@@ -54,7 +55,7 @@ var _ = Describe("DemoProvider inactive service", func() {
 var _ = Describe("DemoProvider active service", func() {
 	BeforeEach(func() {
 		oldArgs = os.Args
-		os.Args = []string{oldArgs[0], "--config", "test-config"} // force clearing of prior value
+		os.Args = []string{oldArgs[0], "--config", "test-config", "--debug", "true"} // force clearing of prior value
 		defer func() { os.Args = oldArgs }()
 		cfg, err = cc.BuildRuntimeConfig("Homie-Service-Test")
 	})
@@ -62,7 +63,7 @@ var _ = Describe("DemoProvider active service", func() {
 	Context("Produces demo messages ", func() {
 		It("StreamProvider produces messages on notify channel", func() {
 			var wg sync.WaitGroup
-			sp, _, err := dp.Initialize(cfg)
+			_, sp, _, _ := dp.Initialize(cfg)
 			err = dp.Start()
 			Expect(err).To(BeNil())
 			var counter int = 0
