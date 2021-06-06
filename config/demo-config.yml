@@ -13,6 +13,15 @@ homiemonitor:
     - sknSensors
     - homie
 
-
+  mqtt:
+    clientid: homie-monitor
+    broker: <mqtt-host-or-ip>
+    port: 1883
+    username: <mqtt-username>
+    userpassword: <mqtt-password>
+    homiediscoverytopic: "+/+/$name"
+    homiesubscriptiontopic: "sknSensors/#"
+    lwttopic: sknSensors/$broadcast/LWT
+    lwtmsg: HomieMonitor Offline!
 
 

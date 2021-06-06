@@ -27,12 +27,20 @@ import (
 )
 
 var (
-	config    cc.MQTTConfig
 	cfg			cc.Config
 	nNetworks = stringset.New()
 	logger    log.Logger
 )
 
+// fileExists checks if a file exists and is not a directory before we
+// try using it to prevent further errors.
+func fileExists(filename string) bool {
+	info, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return false
+	}
+	return !info.IsDir()
+}
 
 /*
  * NeworkDiscovery()
@@ -64,14 +72,12 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 }
 
 func publish(topic string, payload []byte, retain bool, qos byte) {
-	token := mClient.Publish(topic, qos, retain, payload)
-	token.Wait()
+	mClient.Publish(topic, qos, retain, payload)
 	level.Debug(logger).Log("Published topic", topic, "payload", payload)
 }
 
 func sub(topic string) mqtt.Token {
 	token := mClient.Subscribe(topic, 1, nil)
-	token.Wait()
 	level.Debug(logger).Log("Subscribed to topic", topic)
 
 	return token
@@ -80,7 +86,6 @@ func sub(topic string) mqtt.Token {
 // AddRoute(topic string, callback MessageHandler)
 func subWithHandler(topic string, callback mqtt.MessageHandler) mqtt.Token {
 	token := mClient.Subscribe(topic, 1, callback)
-	token.Wait()
 	level.Debug(logger).Log("Subscribed to topic", topic)
 
 	return token
@@ -94,12 +99,10 @@ func disableNetworkTraffic() error {
 	if len(networks) > 0 {
 		for _, network := range networks {
 			networkTopic := fmt.Sprintf("%s/#", network)
-			token := mClient.Unsubscribe(networkTopic)
-			token.Wait()
+			mClient.Unsubscribe(networkTopic)
 		}
 	} else {
-		token := mClient.Unsubscribe(config.SubscriptionTopic)
-		token.Wait()
+		mClient.Unsubscribe(cfg.Mqc.SubscriptionTopic)
 	}
 
 	return nil
@@ -108,20 +111,19 @@ func disableNetworkTraffic() error {
  * Activate Subscriptions starting network traffic
  */
 func enableNetworkTraffic() error {
-	var token mqtt.Token
 	networks := DiscoveredNetworks()
 
 	if len(networks) > 0 {
 		for _, network := range networks {
 			networkTopic := fmt.Sprintf("%s/#", network)
-			token = subWithHandler(networkTopic, defaultOnMessage) // Available Topic
+			subWithHandler(networkTopic, defaultOnMessage) // Available Topic
 		}
 	} else {
-		token = subWithHandler(config.SubscriptionTopic, defaultOnMessage) // Default Topic
+		subWithHandler(cfg.Mqc.SubscriptionTopic, defaultOnMessage) // Default Topic
 	}
 	dStream.GetNotifyChannel()
 	trafficGenerator(cfg.Dbc.DemoSource, logger)
-	return token.Error()
+	return nil
 }
 
 func trafficGenerator(demoFile string, plog log.Logger) error {
@@ -144,8 +146,21 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 	var err error
 	var file *os.File
 	var idx uint16 = 0
+	var foundFile string
 
-	file, err = os.OpenFile(filepath, os.O_RDONLY, 0666)
+	if fileExists(filepath) {
+		foundFile = filepath
+	} else {
+		if strings.HasPrefix(filepath, "../") {
+			foundFile = strings.ReplaceAll(filepath, "../.", "")
+			if !fileExists(foundFile) {
+				level.Error(tlog).Log("error", "FILE NOT FOUND", "file", foundFile)
+				return
+			}
+		}
+	}
+
+	file, err = os.OpenFile(foundFile, os.O_RDONLY, 0666)
 	if err != nil {
 		level.Error(tlog).Log("error", err.Error())
 		return // vs panic()
@@ -161,19 +176,21 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 
 		parts := strings.Split(line, " ")
 		topic := parts[0]
+		tparts := strings.Split(topic, "/")
 		payload := strings.Join(parts[1:], " ")
 
 		idx++
-		for k, v := range mClient.subscriptions {
-			dm := dStream.CreateDemoDeviceMessage(topic, []byte(payload), idx, false, 1)
+		for k, v := range mClient.subs {
+			msg := newMockMessage(topic, idx, 1, false, []byte(payload))
 			if strings.Contains(k,topic) {
-				v.callback(mClient, dm)
-			} else if len(parts) >= 3 {
-				if strings.Contains(k, parts[2]) {
-					v.callback(mClient, dm)
+				v.callback(mClient, msg)
+			} else if len(tparts) >= 3 {
+				if strings.Contains(k, tparts[2]) {
+					v.callback(mClient, msg)
 				}
-			} else if !limit {  // runmode if false, discovery mode if true
-					mClient.cbDefault(mClient, dm)
+			}
+			if !limit {  // runmode if false, discovery mode if true
+					mClient.cbDefault(mClient, msg)
 			}
 		}
 
@@ -181,9 +198,6 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 			if idx >= 106 {
 				break  // todo break then return
 			}
-			time.Sleep(2 * time.Millisecond) // slow the pace
-		} else {
-			time.Sleep(5 * time.Millisecond) // slow the pace
 		}
 	}
 
@@ -197,13 +211,12 @@ func doNetworkDiscovery() {
 	// allow for network discovery
 	logger = log.With(cfg.Logger, "method", "doNetworkDiscovery")
 	level.Debug(logger).Log("event", "Calling doNetworkDiscovery()")
-	subWithHandler(config.DiscoveryTopic, networkDiscovery) // Homie Discovery Topic
+	subWithHandler(cfg.Mqc.DiscoveryTopic, networkDiscovery) // Homie Discovery Topic
 	demoRender(cfg.Dbc.DemoSource, logger, true)
 	for {
-		time.Sleep(5 * time.Second) // delay long enough to collect networks
+		time.Sleep(4 * time.Second) // delay long enough to collect networks
 		if len(DiscoveredNetworks()) >= 1 {
-			token := mClient.Unsubscribe(config.DiscoveryTopic)
-			token.Wait()
+			mClient.Unsubscribe(cfg.Mqc.DiscoveryTopic)
 			break
 		}
 	}
@@ -212,26 +225,28 @@ func doNetworkDiscovery() {
 
 func Initialize(dfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string, error) {
 	var err error
-	config = cfg.Mqc
 	cfg = dfg
-	logger = log.With(cfg.Logger, "pkg", "demoProvider")
+	logger = log.With(dfg.Logger, "pkg", "demoProvider")
 	level.Debug(logger).Log("event", "Calling Initialize()", "sourceFile", cfg.Dbc.DemoSource)
 
-	file, err := os.OpenFile(cfg.Dbc.DemoSource, os.O_RDONLY, 0666)
-	if err != nil {
-		level.Error(logger).Log("error", err.Error())
-		return nil, nil, nil,  err // vs panic()
+	var foundFile string
+
+	if !fileExists(cfg.Dbc.DemoSource) {
+		if strings.HasPrefix(cfg.Dbc.DemoSource, "../") {
+			foundFile = strings.ReplaceAll(cfg.Dbc.DemoSource, "../.", "")
+			if !fileExists(foundFile) {
+				level.Error(logger).Log("error", "FILE NOT FOUND", "file", foundFile)
+				return nil, nil, nil, fmt.Errorf("FILE NOT FOUND: %s", foundFile) // vs panic()
+			}
+		}
 	}
-	defer file.Close()
 
 	NewMockClient()
 	mClient.SetDefaultHandler(defaultOnMessage)
 	mClient.SetConnLostHandler(connectLostHandler)
 	mClient.SetConnHandler(connectHandler)
-	if token := mClient.Connect(); token.Wait() && token.Error() != nil {
-		level.Error(logger).Log("cause", "connect() failed", "error", token.Error())
-		return nil, nil, nil, token.Error()
-	}
+
+	mClient.Connect()
 
 	NewOTAStream(logger)      // creates otastream
 	NewStreamProvider(logger) // creates stream provider

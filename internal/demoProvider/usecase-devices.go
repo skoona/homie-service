@@ -43,9 +43,8 @@ func NewStreamProvider(plog log.Logger) dss.StreamProvider {
 	return dStream
 }
 func (s *deviceStream) ActivateNotifications() chan dc.DeviceMessage {
-	ch := s.GetNotifyChannel()
 	enableNetworkTraffic()
-	return ch
+	return s.GetNotifyChannel()
 }
 func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "CreateDemoDeviceMessage() called")

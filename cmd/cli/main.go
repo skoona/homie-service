@@ -158,12 +158,10 @@ func main() {
 	level.Debug(logger).Log("event", sig)
 	level.Debug(logger).Log("event", "Shutting Down")
 
-	if cfg.RunMode == "demo" {
-		// demo
-		shutdownDemo()
-	} else {
-		// live
+	if cfg.RunMode == "live" {
 		shutdownLive()
+	} else {
+		shutdownDemo()
 	}
 
 	if err != nil {

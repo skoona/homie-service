@@ -2,6 +2,7 @@ package demoProvider
 
 /*
  Mock Implementation of MQTT / PAHO
+	-- use of tokens is not required and breaks
 
 type Client interface {
 	IsConnected() bool
@@ -40,53 +41,81 @@ ConnectionLostHandler = func(client mqtt.Client, err error) {}
 */
 
 import (
+	"errors"
 	"fmt"
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"strings"
-	"time"
+	"sync"
 )
 
-
-type mockToken struct {
-	ready bool
-	err   error
-	complete chan struct{}
-}
-
-func NewToken(tf bool) *mockToken {
-	return &mockToken{
-		ready: tf,
-		err: nil,
-		complete: make(chan struct{}),
-	}
-}
-
-func (mt *mockToken) Done() <-chan struct{} {
-	close(mt.complete)
-	return mt.complete
-}
-func (mt *mockToken) Wait() bool {
-	return mt.ready
-}
-func (mt *mockToken) WaitTimeout(time.Duration) bool {
-	return mt.ready
-}
-func (mt *mockToken) flowComplete() {
-	mt.ready = true
-	return
-}
-func (mt *mockToken) Error() error {
-	return mt.err
-}
-func (mt *mockToken) SetError(err error) {
-	close(mt.complete)
-	mt.err = err
+type mockMessage struct {
+	id       uint16
+	topic    string
+	qos      byte
+	retained bool
+	payload  []byte
 }
 
 type subscription struct {
 	topics	[]string
 	qos		byte
 	callback mqtt.MessageHandler
+}
+
+type mockClient struct {
+	sync.Mutex
+	connected bool
+	exit      chan bool
+
+	subs map[string]subscription
+	cbDefault   mqtt.MessageHandler // func(client mqtt.Client, msg mqtt.Message) {}
+	cbOnConnectHandler  mqtt.OnConnectHandler // func(client mqtt.Client){}
+	cbConnectionLostHandler  mqtt.ConnectionLostHandler //  func(client mqtt.Client, err error) {}
+}
+
+func NewMockClient() mqtt.Client {
+	mClient = &mockClient{
+		subs: map[string]subscription{},
+	}
+	return mClient
+}
+
+func newMockMessage(topic string, seqNum uint16, qos byte, retained bool, payload []byte) mqtt.Message {
+	return &mockMessage{
+		id:       seqNum,
+		topic:    topic,
+		qos:      qos,
+		retained: retained,
+		payload:  payload,
+	}
+}
+
+func (m *mockMessage) Ack() {
+	return
+}
+
+func (m *mockMessage) Duplicate() bool {
+	return false
+}
+
+func (m *mockMessage) Qos() byte {
+	return m.qos
+}
+
+func (m *mockMessage) Retained() bool {
+	return m.retained
+}
+
+func (m *mockMessage) Topic() string {
+	return m.topic
+}
+
+func (m *mockMessage) MessageID() uint16 {
+	return m.id
+}
+
+func (m *mockMessage) Payload() []byte {
+	return m.payload
 }
 
 func (mc *mockClient) addSubscription(t string, q byte, cb mqtt.MessageHandler) (string, subscription) {
@@ -127,26 +156,6 @@ func (mc *mockClient) addSubscriptions(filters map[string]byte, cb mqtt.MessageH
 	}
 }
 
-type mockClient struct {
-	isConnected bool
-	subscriptions map[string]subscription
-	token       *mockToken
-	cbDefault   mqtt.MessageHandler // func(client mqtt.Client, msg mqtt.Message) {}
-	cbOnConnectHandler  mqtt.OnConnectHandler // func(client mqtt.Client){}
-	cbConnectionLostHandler  mqtt.ConnectionLostHandler //  func(client mqtt.Client, err error) {}
-}
-
-
-func NewMockClient() mqtt.Client {
-
-	mClient = &mockClient{
-		isConnected:   true,
-		token:         NewToken(false),
-		subscriptions: map[string]subscription{},
-	}
-	return mClient
-}
-
 func (mc *mockClient) SetDefaultHandler( callback mqtt.MessageHandler) {
 	mc.cbDefault = callback
 }
@@ -160,51 +169,101 @@ func (mc *mockClient) IsConnectionOpen() bool {
 	return mc.IsConnected()
 }
 func (mc *mockClient) IsConnected() bool {
-	return mc.isConnected
+	mc.Lock()
+	defer mc.Unlock()
+	return mc.connected
 }
 func (mc *mockClient) Connect() mqtt.Token {
-	mc.token.Done()
-	mc.token = NewToken(true)
-	mc.isConnected = true
+	mc.Lock()
+	defer mc.Unlock()
+
+	if mc.connected {
+		return nil
+	}
+
+	mc.connected = true
+	mc.exit = make(chan bool)
+
 	mc.cbOnConnectHandler(mc)
-	mc.token.Done()
-	return mc.token
+	return &mqtt.ConnectToken{}
 }
 func (mc *mockClient) Disconnect(quiesce uint) {
-	mc.isConnected = false
-	mc.token.Done()
-	mc.token = NewToken(false)
+	mc.Lock()
+	defer mc.Unlock()
 
-	mc.cbConnectionLostHandler(mc, mc.token.Error())
+	if !mc.connected {
+		return
+	}
+
+	mc.connected = false
+
+	select {
+	case <-mc.exit:
+		return
+	default:
+		close(mc.exit)
+	}
+
+	mc.cbConnectionLostHandler(mc, errors.New("Unknown Value"))
 }
 func (mc *mockClient) Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token {
-	mc.token.Done()
-	return mc.token
+	mc.Lock()
+	defer mc.Unlock()
+
+	if !mc.connected {
+		return nil
+	}
+
+	return &mqtt.PublishToken{}
 }
 func (mc *mockClient) Subscribe(topic string, qos byte, callback mqtt.MessageHandler) mqtt.Token {
+	mc.Lock()
+	defer mc.Unlock()
+
+	if !mc.connected {
+		return nil
+	}
+
 	k, s := mc.addSubscription(topic, qos, callback)
-	mc.subscriptions["key|" + k] = s
-	return mc.token
+	mc.subs["key|" + k] = s
+
+	return &mqtt.SubscribeToken{}
 }
 func (mc *mockClient) SubscribeMultiple(filters map[string]byte, callback mqtt.MessageHandler) mqtt.Token {
+	mc.Lock()
+	defer mc.Unlock()
+
+	if !mc.connected {
+		return nil
+	}
+
 	key, sub := mc.addSubscriptions(filters,  callback)
-	mc.subscriptions[key] = sub
-	return mc.token
+	mc.subs[key] = sub
+
+	return &mqtt.SubscribeToken{}
 }
 func (mc *mockClient) Unsubscribe(topics ...string) mqtt.Token {
 	var key string = "key"
+	mc.Lock()
+	defer mc.Unlock()
+	if !mc.connected {
+		return nil
+	}
+
 	for _, k := range topics {
 		key = fmt.Sprintf("%s|%s", key, k)
 	}
-	delete(mc.subscriptions, key)
-	mc.token.Done()
-	return mc.token
+	delete(mc.subs, key)
+
+	return &mqtt.UnsubscribeToken{}
 }
 func (mc *mockClient) AddRoute(topic string, callback mqtt.MessageHandler) {
+	mc.Lock()
+	defer mc.Unlock()
 	mc.addSubscription(topic, 1, callback)
 }
 func (mc *mockClient) OptionsReader() mqtt.ClientOptionsReader {
-	panic("implement me")
+	return mqtt.ClientOptionsReader{}
 }
 
 var (

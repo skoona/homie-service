@@ -87,8 +87,10 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 
 #### Package Description
 * (A) demoProvider
+  - mock implementation of MQTT Broker using mqtt interfaces
   - Converts Mosquitto logfile into device messages for deviceSource
   - Intf: SteamProvider
+  - Intf: OTAInteractor
 * (A) mqttProvider
   - Captures Mosquitto messages into device messages for deviceSource
   - Intf: SteamProvider

@@ -35,18 +35,18 @@ var _ = Describe("DemoProvider inactive service", func() {
 		It("#Initialize() returns a valid StreamProvider service", func() {
 			sch, sp, aStr, err := dp.Initialize(cfg)
 			Expect(err).To(BeNil())
-			Expect(aStr).To(Equal(cfg.Dbc.DemoNetworks))
+			Expect(aStr[0]).To(Equal(cfg.Dbc.DemoNetworks[0]))
 			Expect(sp).ToNot(BeNil())
 			Expect(sch).ToNot(BeNil())
 			dp.Stop()
 		})
 
-		It("StreamProvider does not support a Publish() Channel", func() {
+		It("StreamProvider supports a Publish() Channel", func() {
 			_, sp, _, err := dp.Initialize(cfg)
 			Expect(err).To(BeNil())
 			err = dp.Start()
 			Expect(err).To(BeNil())
-			Expect(sp.GetPublishChannel()).To(BeNil())
+			Expect(sp.GetPublishChannel()).ToNot(BeNil())
 			dp.Stop()
 		})
 	})
@@ -55,7 +55,7 @@ var _ = Describe("DemoProvider inactive service", func() {
 var _ = Describe("DemoProvider active service", func() {
 	BeforeEach(func() {
 		oldArgs = os.Args
-		os.Args = []string{oldArgs[0], "--config", "test-config", "--debug", "true"} // force clearing of prior value
+		os.Args = []string{oldArgs[0], "--config", "test-config"} // force clearing of prior value
 		defer func() { os.Args = oldArgs }()
 		cfg, err = cc.BuildRuntimeConfig("Homie-Service-Test")
 	})
