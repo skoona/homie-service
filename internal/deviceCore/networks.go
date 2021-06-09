@@ -50,16 +50,16 @@ func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []
 	}
 
 	for _, nName := range networks {
-		siteNetworks.DeviceNetworks[nName] = newNetwork(nName, nName)
+		siteNetworks.DeviceNetworks[nName] = NewNetwork(nName, nName)
 	}
 
 	level.Debug(em.logger).Log("event", "NewSiteNetworks() completed")
 	return &siteNetworks
 }
 
-// newNetwork Creates Component
-func newNetwork(title, name string) Network {
-	level.Debug(em.logger).Log("event", "newNetwork() called", "title", title, "name", name)
+// NewNetwork Creates Component
+func NewNetwork(title, name string) Network {
+	level.Debug(em.logger).Log("event", "NewNetwork() called", "title", title, "name", name)
 	return Network{
 		ID:          NewEID(),
 		ElementType: CoreTypeNetwork,

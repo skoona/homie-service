@@ -13,10 +13,23 @@ import (
 	"sort"
 	"time"
 
-	bolt "go.etcd.io/bbolt" // bolt "github.com/boltdb/bolt"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
+	bolt "go.etcd.io/bbolt" // bolt "github.com/boltdb/bolt"
 )
+
+/**
+ * LoadSiteNetwork()
+ * Reconstitute the SiteNetwork Object
+ */
+func (dbR *dbRepo) LoadNetwork(networkName string) (dc.Network, error) {
+	var err error
+	var nw  dc.Network // dc.NewNetwork("title", networkName)
+
+	err = fmt.Errorf("%s network, not implemented yet", networkName)
+
+	return nw, err
+}
 
 /**
  * StoreSchedule(schedule Schedule)
@@ -107,7 +120,7 @@ func (dbR *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
 	})
 
 	if err != nil {
-		level.Error(dbR.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
+		level.Warn(dbR.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
 	} else {
 		level.Debug(dbR.logger).Log("event", "LoadSchedules() complete", "retrieved", len(schedMap))
 	}

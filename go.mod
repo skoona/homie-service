@@ -14,5 +14,4 @@ require (
 	go.etcd.io/bbolt v1.3.6
 	golang.org/x/net v0.0.0-20210525063256-abc453219eb5 // indirect
 	golang.org/x/sys v0.0.0-20210603125802-9665404d3644 // indirect
-	golang.org/x/tools v0.1.2 // indirect
 )
