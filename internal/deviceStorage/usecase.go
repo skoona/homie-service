@@ -11,6 +11,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"sort"
+	"strings"
 	"time"
 
 	"github.com/go-kit/kit/log/level"
@@ -24,8 +25,14 @@ import (
  */
 func (dbR *dbRepo) LoadNetwork(networkName string) (dc.Network, error) {
 	var err error
-	var nw  dc.Network // dc.NewNetwork("title", networkName)
+	var device dc.Device
 
+	nw  := dc.NewNetwork("Restored", networkName)
+	devices := deviceList(dbR.db, networkName)
+	for _, deviceName := range devices {
+		device, err = buildNetworkDevice(dbR.db, networkName, deviceName)
+		nw.Devices[deviceName] = device
+	}
 	err = fmt.Errorf("%s network, not implemented yet", networkName)
 
 	return nw, err
@@ -332,6 +339,114 @@ func deviceList(db *bolt.DB, networkName string) []string {
 	}
 
 	return devices
+}
+
+/*
+ * Returns string array a device's properties (topic:value) */
+func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device, error) {
+	var device dc.Device
+	var obj interface{}
+
+	// X/D/N/P/A
+	// X/D/A/P/P
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(networkName)) // Network Level
+		if b == nil {
+			return fmt.Errorf("Network Not Found!: %s", networkName)
+		}
+		b = b.Bucket([]byte(deviceName)) // Device Level
+		if b == nil {
+			return fmt.Errorf("Network Not Found!: %s", deviceName)
+		}
+		device = dc.NewDevice(networkName, deviceName)
+		obj = device
+
+		err := b.ForEach(func(k, v []byte) error {
+			if nil == v {
+				c := b.Bucket(k) // Node/Attr Level
+				if c == nil {
+					return nil
+				}
+				// determine d-attr or d-node
+				err := c.ForEach(func(kk, vv []byte) error {
+					if nil == vv {
+						d := c.Bucket(kk) // Property
+						if d == nil {
+							return nil
+						}
+						// determine d-attr or d-node
+						err := d.ForEach(func(kkk, vvv []byte) error {
+							if nil == vvv {
+								e := d.Bucket(kkk) // PProperty/Attr
+								if e == nil {
+									return nil
+								}
+								// determine n-prop or n-attr or d-a-prop
+								err := e.ForEach(func(kkkk, vvvv []byte) error {
+									if nil == vvvv {
+										f := e.Bucket(kkkk) // PProperty
+										if f == nil {
+											return nil
+										}
+										// determine d-n-p-attr or d-a-p-prop
+										err := f.ForEach(func(kkkkk, vvvvv []byte) error {
+											// X/D/N/P/A
+											// X/D/A/P/P
+											if strings.HasPrefix(string(kkkkk), "$") {
+												obj = dc.NewDeviceNodePropertyAttribute(string(kkk), string(kkkk), string(vvvvv))
+											} else {
+												obj = dc.NewDeviceAttributePropertyProperty(string(kkk), string(kkkk), string(vvvvv))
+											}
+											return nil
+										})
+										return err
+									}
+									// X/D/N/P
+									// X/D/A/P
+									if strings.HasPrefix(string(kk), "$") {
+										obj = dc.NewDeviceAttributeProperty(string(kk), string(kkk), string(vvvv))
+									} else {
+										obj = dc.NewDeviceNodeProperty(string(kk), string(kkk), string(vvvv))
+									}
+									return nil
+								})
+								return err
+							}
+							// X/D/N
+							// X/D/A
+							if strings.HasPrefix(string(kk), "$") {
+								obj = dc.NewDeviceAttribute(string(k), string(kk), string(vvv))
+							} else {
+								obj = dc.NewDeviceNode(string(k), string(kk))
+							}
+							return nil
+						})
+						return err
+					}
+					//details["["+string(k)+"]"+string(kk)] = string(vv)
+					//obj := dc.NewDevice(string(k),string(kk),string(vv))
+					// X/D
+					// X/D
+					return nil
+				})
+
+				return err
+
+			}
+			// NODE OR ATTRIBUTE
+			//details[string(k)] = string(v)
+			obj = dc.NewDeviceAttribute(deviceName,string(k),string(v))
+
+			return nil
+		})
+		if err != nil {
+			err = fmt.Errorf("[WARN] Detailed rendering failed: %v", err.Error())
+		}
+		return err
+	})
+
+	return device, err
 }
 
 /*
