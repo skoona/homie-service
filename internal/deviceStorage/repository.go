@@ -55,6 +55,7 @@ func Start(cfg cc.Config) (dc.Repository, error) {
 		err = fmt.Errorf("main bBolt DB Open Failed: %v", err.Error())
 		return nil, err
 	}
+	level.Debug(logger).Log("event", "DBOpen completed")
 
 	repo := NewRepo(cfg, pDB, logger)
 

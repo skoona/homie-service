@@ -23,19 +23,23 @@ import (
  * LoadSiteNetwork()
  * Reconstitute the SiteNetwork Object
  */
-func (dbR *dbRepo) LoadNetwork(networkName string) (dc.Network, error) {
-	var err error
-	var device dc.Device
-
+//goland:noinspection VacuumLines
+func (dbR *dbRepo) LoadNetwork(networkName string) dc.Network {
 	nw  := dc.NewNetwork("Restored", networkName)
+
 	devices := deviceList(dbR.db, networkName)
 	for _, deviceName := range devices {
-		device, err = buildNetworkDevice(dbR.db, networkName, deviceName)
-		nw.Devices[deviceName] = device
+		device, err := buildNetworkDevice(dbR.db, networkName, deviceName)
+		if err == nil {
+			nw.Devices[deviceName] = device
+		} else {
+			level.Error(dbR.logger).Log("method", "LoadNetwork()", "error", err.Error())
+		}
 	}
-	err = fmt.Errorf("%s network, not implemented yet", networkName)
 
-	return nw, err
+	//err = fmt.Errorf("%s network, not implemented yet", networkName)
+
+	return nw
 }
 
 /**
@@ -345,104 +349,122 @@ func deviceList(db *bolt.DB, networkName string) []string {
  * Returns string array a device's properties (topic:value) */
 func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device, error) {
 	var device dc.Device
-	var obj interface{}
+	var node dc.DeviceNode
+	var deviceAttribute dc.DeviceAttribute
+	var deviceAttributeProperty dc.DeviceAttributeProperty
+	var deviceAttributePropertyProperty dc.DeviceAttributePropertyProperty
+	var nodeProperty dc.DeviceNodeProperty
+	var nodeAttribute dc.DeviceNodeAttribute
+	var nodePropertyAttribute dc.DeviceNodePropertyAttribute
 
-	// X/D/N/P/A
-	// X/D/A/P/P
+	// X/D/								bucket(bucket())
+	// X/D/N/							bucket(bucket(bucket()))
+	//									  1/     2/     3/
+
+	// X/D/A/(k,v) 						bucket(bucket(bucket(bucket(k,v))))
+	//									  1/     2/     3/     4/
+
+	// X/D/A/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+	// X/D/N/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+	// X/D/N/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+	//									  1/     2/     3/     4/     5/
+
+	// X/D/A/P/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(bucket(k,v))))))
+	// X/D/N/P/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(bucket(k,v))))))
+	//									  1/     2/     3/     4/     5/     6/
 
 	err := db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(networkName)) // Network Level
+		b := tx.Bucket([]byte(networkName)) // (1) Network Level
 		if b == nil {
 			return fmt.Errorf("Network Not Found!: %s", networkName)
 		}
-		b = b.Bucket([]byte(deviceName)) // Device Level
+		b = b.Bucket([]byte(deviceName)) // (2) Device Level
 		if b == nil {
 			return fmt.Errorf("Network Not Found!: %s", deviceName)
 		}
 		device = dc.NewDevice(networkName, deviceName)
-		obj = device
 
+		/*
+		 * examine device bucket for nodes or attributes */
 		err := b.ForEach(func(k, v []byte) error {
 			if nil == v {
-				c := b.Bucket(k) // Node/Attr Level
+				c := b.Bucket(k) // (3) Node/Attr Level
 				if c == nil {
 					return nil
 				}
 				// determine d-attr or d-node
+				// X/D/N/							bucket(bucket(bucket()))
+				//									  1/     2/     3/
+				if !strings.HasPrefix(string(k), "$") {
+					node = dc.NewDeviceNode(deviceName, string(k))
+					device.Nodes[string(k)] = node
+				}
+
+				/*
+				 * bucket is either a Node or a DeviceAttribute container  */
 				err := c.ForEach(func(kk, vv []byte) error {
-					if nil == vv {
-						d := c.Bucket(kk) // Property
+					if nil != vv {
+						// X/D/A/(k,v) 						bucket(bucket(bucket(bucket(k,v))))
+						//									  1/     2/     3/     4/
+						if strings.HasPrefix(string(kk), "$") {
+							deviceAttribute = dc.NewDeviceAttribute(string(k), string(kk), string(vv))
+							device.Attrs[string(kk)] = deviceAttribute
+						}
+					} else {
+						d := c.Bucket(kk) // (4) Property
 						if d == nil {
 							return nil
 						}
-						// determine d-attr or d-node
+
+						/*
+						 * bucket is either a NodeProperty | NodeAttribute or a DeviceAttributeProperty container  */
 						err := d.ForEach(func(kkk, vvv []byte) error {
-							if nil == vvv {
-								e := d.Bucket(kkk) // PProperty/Attr
+							if nil != vvv {
+								// X/D/A/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+								// X/D/N/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+								// X/D/N/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+								//									  1/     2/     3/     4/     5/
+								if strings.HasPrefix(string(kkk), "$") {
+									nodeAttribute = dc.NewDeviceNodeAttribute(string(k), string(kkk), string(vvv))
+									node.Attrs[string(kkk)] = nodeAttribute
+								} else if strings.HasPrefix(string(kk), "$") {
+									deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(kk), string(kkk), string(vvv))
+									deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
+								}else {
+									nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kkk), string(vvv))
+									node.Props[string(kkk)] = nodeProperty
+								}
+							} else {
+								e := d.Bucket(kkk) // (5) PProperty/Attr
 								if e == nil {
 									return nil
 								}
-								// determine n-prop or n-attr or d-a-prop
 								err := e.ForEach(func(kkkk, vvvv []byte) error {
-									if nil == vvvv {
-										f := e.Bucket(kkkk) // PProperty
-										if f == nil {
-											return nil
+									if nil != vvvv {
+										// X/D/A/P/P/(k,v)
+										// X/D/N/P/A/(k,v)
+										if strings.HasPrefix(string(kkkk), "$") {
+											nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(string(kk), string(kkkk), string(vvvv))
+											nodeProperty.Attrs[string(kkkk)] = nodePropertyAttribute
+										} else {
+											deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kk), string(kkkk), string(vvvv))
+											deviceAttributeProperty.Props[string(kkkk)] = deviceAttributePropertyProperty
 										}
-										// determine d-n-p-attr or d-a-p-prop
-										err := f.ForEach(func(kkkkk, vvvvv []byte) error {
-											// X/D/N/P/A
-											// X/D/A/P/P
-											if strings.HasPrefix(string(kkkkk), "$") {
-												obj = dc.NewDeviceNodePropertyAttribute(string(kkk), string(kkkk), string(vvvvv))
-											} else {
-												obj = dc.NewDeviceAttributePropertyProperty(string(kkk), string(kkkk), string(vvvvv))
-											}
-											return nil
-										})
-										return err
-									}
-									// X/D/N/P
-									// X/D/A/P
-									if strings.HasPrefix(string(kk), "$") {
-										obj = dc.NewDeviceAttributeProperty(string(kk), string(kkk), string(vvvv))
-									} else {
-										obj = dc.NewDeviceNodeProperty(string(kk), string(kkk), string(vvvv))
 									}
 									return nil
 								})
 								return err
 							}
-							// X/D/N
-							// X/D/A
-							if strings.HasPrefix(string(kk), "$") {
-								obj = dc.NewDeviceAttribute(string(k), string(kk), string(vvv))
-							} else {
-								obj = dc.NewDeviceNode(string(k), string(kk))
-							}
 							return nil
 						})
 						return err
 					}
-					//details["["+string(k)+"]"+string(kk)] = string(vv)
-					//obj := dc.NewDevice(string(k),string(kk),string(vv))
-					// X/D
-					// X/D
 					return nil
 				})
-
 				return err
-
-			}
-			// NODE OR ATTRIBUTE
-			//details[string(k)] = string(v)
-			obj = dc.NewDeviceAttribute(deviceName,string(k),string(v))
-
+			} // only buckets in the device bucket
 			return nil
 		})
-		if err != nil {
-			err = fmt.Errorf("[WARN] Detailed rendering failed: %v", err.Error())
-		}
 		return err
 	})
 

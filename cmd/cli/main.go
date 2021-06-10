@@ -85,7 +85,7 @@ func runLive(cfg cc.Config) error {
 	}
 	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
 	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
+	_, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
 	err = mq.Start()                                           // activate message stream
 	if err != nil {
 		return err
@@ -106,7 +106,7 @@ func runDemo(cfg cc.Config) error {
 	}
 	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
 	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
+	_, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
 	err = dp.Start()                                           // activate message stream
 	if err != nil {
 		return err
@@ -121,7 +121,7 @@ var (
 	siteNetworks *dc.SiteNetworks
 	dep          dc.DeviceEventProvider
 	sched        dc.SchedulerProvider
-	coreSvc      dc.CoreService
+	//coreSvc      dc.CoreService
 	repo         dc.Repository
 	otap         sch.OTAInteractor
 	dsp          dss.StreamProvider
@@ -150,6 +150,16 @@ func main() {
 		level.Error(logger).Log("error", err.Error())
 		os.Exit(2)
 	}
+
+	// Test Repo
+	//net := repo.LoadNetwork("sknSensors")
+	//out, err := json.MarshalIndent(net, "", "  ")
+	//if err != nil {
+	//	level.Warn(logger).Log("action", err.Error())
+	//} else {
+	//	fmt.Println("Repository LoadNetwork(snkSensors)")
+	//	fmt.Println(string(out))
+	//}
 
 	/* Prepare for clean exit */
 	systemSignalChannel := make(chan os.Signal, 1)
