@@ -25,38 +25,38 @@ func (s *deviceSource) ActivateStreamProvider() {
 }
 
 func (s *deviceSource) ApplyDeviceEvent(dm dc.DeviceMessage) {
-	logger := log.With(s.logger, "method", "ApplyDeviceEvent()")
+	plog := log.With(s.logger, "method", "ApplyDeviceEvent()")
 
 	dc.ConsumeFromDeviceSource(dm)
 
-	level.Debug(logger).Log("DeviceID ", dm.DeviceID)
+	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
 }
 
 /*
  * PublishToStreamProvider
  */
 func (s *deviceSource) PublishToStreamProvider(dv dc.Device) {
-	logger := log.With(s.logger, "method", "PublishDeviceStream()")
+	plog := log.With(s.logger, "method", "PublishDeviceStream()")
 
 	s.dStream.GetPublishChannel() <- dv
 
-	level.Debug(logger).Log("DeviceID ", dv.ID)
+	level.Debug(plog).Log("DeviceID ", dv.ID)
 }
 
 // handle incoming device stream events
 func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
 	var err error
-	tlog := log.With(s.logger, "method", "ConsumeDeviceStream")
+	plog := log.With(s.logger, "method", "ConsumeDeviceStream")
 
 	err = s.repository.Store(dm)
 	if err != nil {
-		level.Error(tlog).Log("error", err)
+		level.Error(plog).Log("error", err)
 		return err
 	}
 
 	s.ApplyDeviceEvent(dm) // to Core
 
-	level.Debug(tlog).Log("DeviceID ", dm.DeviceID)
+	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
 
 	return err
 }
@@ -82,7 +82,6 @@ func (s *deviceSource) HandleCoreEvent(dv dc.Device) error {
 		return err
 	}
 
-	// TODO: we should unwrap and send deletes
 	s.PublishToStreamProvider(dv)
 
 	level.Debug(plog).Log("DeviceID ", dv.ID)

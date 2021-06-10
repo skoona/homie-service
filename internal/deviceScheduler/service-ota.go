@@ -36,7 +36,7 @@ func publishOTAStream(dm dc.DeviceMessage, plog log.Logger) {
 func consumeOTAStream(dm dc.DeviceMessage, plog log.Logger) error {
 	level.Debug(plog).Log("event", "Calling consumeOTAStream()")
 
-	err := processSchedulerMessages(dm)
+	err := processSchedulerMessages(dm, plog)
 	if err != nil {
 		level.Error(plog).Log("method", "consumeOTAStream()", "error", err.Error(), "device", dm.DeviceID)
 	}

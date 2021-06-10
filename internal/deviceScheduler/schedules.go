@@ -1,6 +1,7 @@
 package deviceScheduler
 
 import (
+	"github.com/go-kit/kit/log"
 	"time"
 
 	"github.com/go-kit/kit/log/level"
@@ -94,8 +95,8 @@ func NewSchedule(networkName string, deviceID dc.EID, transport dc.OTATransport,
 	}
 }
 
-func buildScheduleCatalog() map[dc.EID]dc.Schedule {
-	level.Debug(logger).Log("event", "buildScheduleCatalog() called")
+func buildScheduleCatalog(plog log.Logger) map[dc.EID]dc.Schedule {
+	level.Debug(plog).Log("event", "buildScheduleCatalog() called")
 	return sch.repo.LoadSchedules()
 }
 
@@ -103,11 +104,11 @@ func buildScheduleCatalog() map[dc.EID]dc.Schedule {
  * processSchedulerMessages()
  * - handle notifications, triggers, and new core requests
  */
-func processSchedulerMessages(dm dc.DeviceMessage) error {
-	level.Debug(logger).Log("event", "Calling processSchedulerMessages()")
+func processSchedulerMessages(dm dc.DeviceMessage, plog log.Logger) error {
+	level.Debug(plog).Log("event", "Calling processSchedulerMessages()")
 	var err error
-	level.Debug(logger).Log("topic", dm.TopicS, "device", dm.DeviceID)
+	level.Debug(plog).Log("topic", dm.TopicS, "device", dm.DeviceID)
 
-	level.Debug(logger).Log("event", "processSchedulerMessages() completed")
+	level.Debug(plog).Log("event", "processSchedulerMessages() completed")
 	return err
 }

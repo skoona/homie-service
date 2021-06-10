@@ -46,7 +46,7 @@ func (s *schedulerProvider) ApplySiteNetworks(sn *dc.SiteNetworks) {
 }
 func (s *schedulerProvider) BuildScheduleCatalog() map[dc.EID]dc.Schedule {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
-	sch.snwk.Schedules = buildScheduleCatalog()
+	sch.snwk.Schedules = buildScheduleCatalog(s.logger)
 	return sch.snwk.Schedules
 }
 func (s *schedulerProvider) Schedules() []dc.Schedule {
