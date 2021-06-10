@@ -10,6 +10,7 @@ package deviceStorage
 import (
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"sort"
 	"strings"
 	"time"
@@ -432,6 +433,10 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 									deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
 								}else {
 									nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kkk), string(vvv))
+									if !strings.Contains(string(reflect.ValueOf(node).Kind()), "struct")   {
+										node = dc.NewDeviceNode(deviceName, string(k))
+										device.Nodes[string(k)] = node
+									}
 									node.Props[string(kkk)] = nodeProperty
 								}
 							} else {
@@ -448,6 +453,10 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 											nodeProperty.Attrs[string(kkkk)] = nodePropertyAttribute
 										} else {
 											deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kk), string(kkkk), string(vvvv))
+											if !strings.Contains(string(reflect.ValueOf(deviceAttributeProperty).Kind()), "struct")   {
+												deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(kk), string(kkk), string(vvv))
+												deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
+											}
 											deviceAttributeProperty.Props[string(kkkk)] = deviceAttributePropertyProperty
 										}
 									}

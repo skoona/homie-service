@@ -9,12 +9,12 @@ package deviceStorage
 
 import (
 	"fmt"
-
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	cc "github.com/skoona/homie-service/internal/utils"
 	bolt "go.etcd.io/bbolt" // bolt "github.com/boltdb/bolt"
+	"time"
 )
 
 var dbs *dbRepo
@@ -48,14 +48,18 @@ func Start(cfg cc.Config) (dc.Repository, error) {
 	/*
 	 * Open K/V Store
 	 */
-	dataFile = cfg.Dbc.DataStorage
-	pDB, err := bolt.Open(dataFile, 0764, nil) // &bolt.Options{Timeout: 1 * time.Second, ReadOnly: false})
+	dataFile = cc.LocateFile( cfg.Dbc.DataStorage )
+	level.Debug(logger).Log("event", "get datafile", "dataFile", dataFile)
+	if dataFile == "" {
+		dataFile = cfg.Dbc.DataStorage // it will be created
+	}
+
+	pDB, err := bolt.Open(dataFile, 0764, &bolt.Options{Timeout: 5 * time.Second, ReadOnly: false})
 	if err != nil {
 		level.Error(logger).Log("event", "Main bBolt DB Open Failed", "datafile", dataFile)
 		err = fmt.Errorf("main bBolt DB Open Failed: %v", err.Error())
 		return nil, err
 	}
-	level.Debug(logger).Log("event", "DBOpen completed")
 
 	repo := NewRepo(cfg, pDB, logger)
 

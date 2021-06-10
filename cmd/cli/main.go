@@ -151,22 +151,23 @@ func main() {
 		os.Exit(2)
 	}
 
-	// Test Repo
-	//net := repo.LoadNetwork("sknSensors")
-	//out, err := json.MarshalIndent(net, "", "  ")
-	//if err != nil {
-	//	level.Warn(logger).Log("action", err.Error())
-	//} else {
-	//	fmt.Println("Repository LoadNetwork(snkSensors)")
-	//	fmt.Println(string(out))
-	//}
-
 	/* Prepare for clean exit */
 	systemSignalChannel := make(chan os.Signal, 1)
 	signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM)
 	sig := <-systemSignalChannel // wait on ctrl-c
 	level.Debug(logger).Log("event", sig)
 	level.Debug(logger).Log("event", "Shutting Down")
+
+
+	// Test Repo
+	net := repo.LoadNetwork("sknSensors")
+	out, err := json.MarshalIndent(net, "", "  ")
+	if err != nil {
+		level.Warn(logger).Log("action", err.Error())
+	} else {
+		fmt.Println("Repository LoadNetwork(snkSensors)")
+		fmt.Println(string(out))
+	}
 
 	if cfg.RunMode == "live" {
 		shutdownLive()
@@ -179,7 +180,7 @@ func main() {
 	}
 
 	// Dump the SiteNetwork and all nodes as JSON
-	out, err := json.MarshalIndent(siteNetworks, "", "  ")
+	out, err = json.MarshalIndent(siteNetworks, "", "  ")
 	if err != nil {
 		level.Warn(logger).Log("action", err.Error())
 	} else {
