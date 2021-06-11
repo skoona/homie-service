@@ -32,16 +32,6 @@ var (
 	logger    log.Logger
 )
 
-// fileExists checks if a file exists and is not a directory before we
-// try using it to prevent further errors.
-func fileExists(filename string) bool {
-	info, err := os.Stat(filename)
-	if os.IsNotExist(err) {
-		return false
-	}
-	return !info.IsDir()
-}
-
 /*
  * NeworkDiscovery()
  * Discovers available Homie networks
@@ -127,7 +117,7 @@ func enableNetworkTraffic( plog log.Logger) error {
 }
 
 func trafficGenerator(demoFile string, plog log.Logger) error {
-	level.Debug(plog).Log("event", "calling trafficGenerator()", "source file", demoFile)
+	level.Info(plog).Log("event", "calling trafficGenerator()", "source file", demoFile)
 	var err error
 
 	/*
@@ -138,7 +128,7 @@ func trafficGenerator(demoFile string, plog log.Logger) error {
 		demoRender(fp, plog, false)
 	}(demoFile, plog)
 
-	level.Debug(plog).Log("event", "trafficGenerator() active")
+	level.Info(plog).Log("event", "trafficGenerator() active")
 	return err
 }
 
@@ -146,19 +136,8 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 	var err error
 	var file *os.File
 	var idx uint16 = 0
-	var foundFile string
 
-	if fileExists(filepath) {
-		foundFile = filepath
-	} else {
-		if strings.HasPrefix(filepath, "../") {
-			foundFile = strings.ReplaceAll(filepath, "../.", "")
-			if !fileExists(foundFile) {
-				level.Error(tlog).Log("error", "FILE NOT FOUND", "file", foundFile)
-				return
-			}
-		}
-	}
+	foundFile := cc.LocateFile(filepath)
 
 	file, err = os.OpenFile(foundFile, os.O_RDONLY, 0666)
 	if err != nil {
@@ -201,7 +180,7 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 		}
 	}
 
-	level.Debug(tlog).Log("event", "demoRender() completed")
+	level.Info(tlog).Log("event", "demoRender() completed")
 }
 
 /**
@@ -229,16 +208,10 @@ func Initialize(dfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	logger = log.With(dfg.Logger, "pkg", "demoProvider")
 	level.Debug(logger).Log("event", "Calling Initialize()", "sourceFile", cfg.Dbc.DemoSource)
 
-	var foundFile string
 
-	if !fileExists(cfg.Dbc.DemoSource) {
-		if strings.HasPrefix(cfg.Dbc.DemoSource, "../") {
-			foundFile = strings.ReplaceAll(cfg.Dbc.DemoSource, "../.", "")
-			if !fileExists(foundFile) {
-				level.Error(logger).Log("error", "FILE NOT FOUND", "file", foundFile)
-				return nil, nil, nil, fmt.Errorf("FILE NOT FOUND: %s", foundFile) // vs panic()
-			}
-		}
+	if cc.LocateFile(cfg.Dbc.DemoSource) == "" {
+		level.Error(logger).Log("error", "FILE NOT FOUND", "file", cfg.Dbc.DemoSource)
+		return nil, nil, nil, fmt.Errorf("FILE NOT FOUND: %s", cfg.Dbc.DemoSource) // vs panic()
 	}
 
 	NewMockClient()

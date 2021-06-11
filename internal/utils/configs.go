@@ -150,7 +150,7 @@ func BuildLogger(moduleName string, debugOn bool) log.Logger {
 	if debugOn {
 		opt = level.AllowDebug()
 	} else {
-		opt = level.AllowError()
+		opt = level.AllowInfo()
 	}
 	logger := log.NewLogfmtLogger(os.Stderr)
 	logger = level.NewFilter(logger, opt)  // set log level

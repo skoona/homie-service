@@ -1,28 +1,24 @@
 package deviceStorage
 
 /*
-  deviceStorage/usecase-stream.go:
+  deviceStorage/usecase.go:
 
-  DeviceSource Service Implementation
+  DeviceCore Repository implementation primarily for DeviceSource
   Utilities to List current Database
 */
 
 import (
 	"encoding/json"
 	"fmt"
-	"reflect"
-	"sort"
-	"strings"
-	"time"
-
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
-	bolt "go.etcd.io/bbolt" // bolt "github.com/boltdb/bolt"
+	bolt "go.etcd.io/bbolt"
+	"strings"
 )
 
 /**
  * LoadSiteNetwork()
- * Reconstitute the SiteNetwork Object
+ * Reconstitute the Site Network Object
  */
 //goland:noinspection VacuumLines
 func (dbR *dbRepo) LoadNetwork(networkName string) dc.Network {
@@ -30,15 +26,18 @@ func (dbR *dbRepo) LoadNetwork(networkName string) dc.Network {
 
 	devices := deviceList(dbR.db, networkName)
 	for _, deviceName := range devices {
-		device, err := buildNetworkDevice(dbR.db, networkName, deviceName)
-		if err == nil {
-			nw.Devices[deviceName] = device
-		} else {
-			level.Error(dbR.logger).Log("method", "LoadNetwork()", "error", err.Error())
+		if strings.HasPrefix(deviceName, "$broad") {
+			continue
 		}
-	}
 
-	//err = fmt.Errorf("%s network, not implemented yet", networkName)
+		device, err := buildNetworkDevice(dbR.db, networkName, deviceName)
+		if nil != err {
+			level.Error(dbR.logger).Log("method", "LoadNetwork()", "error", err.Error())
+			continue
+		}
+
+		nw.Devices[deviceName] = device
+	}
 
 	return nw
 }
@@ -305,74 +304,32 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 }
 
 /*
- * Returns string array of networks names (top level buckets) */
-func networkList(db *bolt.DB) []string {
-	networks := []string{}
-
-	err := db.View(func(tx *bolt.Tx) error {
-		return tx.ForEach(func(name []byte, _ *bolt.Bucket) error {
-			networks = append(networks, string(name))
-			return nil
-		})
-	})
-	if err != nil {
-		fmt.Printf("[WARN] Network rendering Failed: %v", err.Error())
-	}
-
-	return networks
-}
-
-/*
- * Returns string array of device names (buckets) */
-func deviceList(db *bolt.DB, networkName string) []string {
-	devices := []string{}
-
-	err := db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(networkName)) // Network Level
-		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", networkName)
-		}
-		return b.ForEach(func(k, v []byte) error {
-			if v == nil { // nodes have nil values
-				devices = append(devices, string(k))
-			}
-			return nil
-		})
-	})
-	if err != nil {
-		fmt.Printf("[WARN] Network::Device rendering Failed: %v", err.Error())
-	}
-
-	return devices
-}
-
-/*
  * Returns string array a device's properties (topic:value) */
 func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device, error) {
 	var device dc.Device
-	var node dc.DeviceNode
 	var deviceAttribute dc.DeviceAttribute
 	var deviceAttributeProperty dc.DeviceAttributeProperty
 	var deviceAttributePropertyProperty dc.DeviceAttributePropertyProperty
-	var nodeProperty dc.DeviceNodeProperty
-	var nodeAttribute dc.DeviceNodeAttribute
-	var nodePropertyAttribute dc.DeviceNodePropertyAttribute
+	var node dc.DeviceNode
+	//var nodeProperty dc.DeviceNodeProperty
+	//var nodeAttribute dc.DeviceNodeAttribute
+	//var nodePropertyAttribute dc.DeviceNodePropertyAttribute
 
 	// X/D/								bucket(bucket())
 	// X/D/N/							bucket(bucket(bucket()))
 	//									  1/     2/     3/
 
-	// X/D/A/(k,v) 						bucket(bucket(bucket(bucket(k,v))))
+	// X/D/A/(k,v) 						bucket(bucket(bucket(k,v)))
+	//									  1/     2/     3/
+
+	// X/D/A/P/(k,v) 					bucket(bucket(bucket(bucket(k,v))))
+	// X/D/N/P/(k,v) 					bucket(bucket(bucket(bucket(k,v))))
+	// X/D/N/A/(k,v) 					bucket(bucket(bucket(bucket(k,v))))
 	//									  1/     2/     3/     4/
 
-	// X/D/A/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
-	// X/D/N/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
-	// X/D/N/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+	// X/D/A/P/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
+	// X/D/N/P/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
 	//									  1/     2/     3/     4/     5/
-
-	// X/D/A/P/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(bucket(k,v))))))
-	// X/D/N/P/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(bucket(k,v))))))
-	//									  1/     2/     3/     4/     5/     6/
 
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName)) // (1) Network Level
@@ -388,227 +345,107 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 		/*
 		 * examine device bucket for nodes or attributes */
 		err := b.ForEach(func(k, v []byte) error {
-			if nil == v {
-				c := b.Bucket(k) // (3) Node/Attr Level
-				if c == nil {
-					return nil
-				}
-				// determine d-attr or d-node
-				// X/D/N/							bucket(bucket(bucket()))
-				//									  1/     2/     3/
-				if !strings.HasPrefix(string(k), "$") {
-					node = dc.NewDeviceNode(deviceName, string(k))
-					device.Nodes[string(k)] = node
-				}
+			fmt.Printf("(2) X/D...... Each Bucket=%s Key=%s Value=[%s]%T \n", deviceName, string(k), string(v), string(v))
+			if !strings.HasPrefix(string(k), "$") && (len(device.Nodes) == 0) {
+				node = dc.NewDeviceNode(deviceName, string(k))
+				device.Nodes[string(k)] = node
+			}
 
-				/*
-				 * bucket is either a Node or a DeviceAttribute container  */
+			if string(v) != "" {
+				return nil
+			}
+			c := b.Bucket(k) // (3) Node/Attr Level
+			if c == nil {
+				return nil
+			}
+			/*
+			 * bucket is either a Node or a DeviceAttribute container
+			 * if attr follow device attr path
+			 * else follow nodepath
+			*/
+			if strings.HasPrefix(string(k), "$") {  // then device attr path
+				// 3 attribute
+				// 4 property
+				// 5 propertyProperty
 				err := c.ForEach(func(kk, vv []byte) error {
-					if nil != vv {
-						// X/D/A/(k,v) 						bucket(bucket(bucket(bucket(k,v))))
-						//									  1/     2/     3/     4/
-						if strings.HasPrefix(string(kk), "$") {
-							deviceAttribute = dc.NewDeviceAttribute(string(k), string(kk), string(vv))
-							device.Attrs[string(kk)] = deviceAttribute
-						}
-					} else {
-						d := c.Bucket(kk) // (4) Property
-						if d == nil {
+					fmt.Printf("(3) X/D/A.... Each Bucket=%s Key=%s Value=[%s] \n", deviceName, kk, vv)
+					deviceAttribute = dc.NewDeviceAttribute(deviceName, string(kk), string(vv))
+					device.Attrs[string(kk)] = deviceAttribute
+
+					if string(vv) != "" {
+						return nil
+					}
+					d := c.Bucket(kk) // (4) Property
+					if d == nil {
+						return nil
+					}
+					err := d.ForEach(func(kkk, vvv []byte) error {
+						fmt.Printf("(4) X/D/A/P.. Each Bucket=%s Key=%s Value=[%s] \n", k, kkk, vvv)
+						deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kkk), string(vvv))
+						device.Attrs[string(kk)].Props[string(kkk)] = deviceAttributeProperty
+
+						if string(vvv) != "" {
 							return nil
 						}
-
-						/*
-						 * bucket is either a NodeProperty | NodeAttribute or a DeviceAttributeProperty container  */
-						err := d.ForEach(func(kkk, vvv []byte) error {
-							if nil != vvv {
-								// X/D/A/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
-								// X/D/N/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
-								// X/D/N/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
-								//									  1/     2/     3/     4/     5/
-								if strings.HasPrefix(string(kkk), "$") {
-									nodeAttribute = dc.NewDeviceNodeAttribute(string(k), string(kkk), string(vvv))
-									node.Attrs[string(kkk)] = nodeAttribute
-								} else if strings.HasPrefix(string(kk), "$") {
-									deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(kk), string(kkk), string(vvv))
-									deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
-								}else {
-									nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kkk), string(vvv))
-									if !strings.Contains(string(reflect.ValueOf(node).Kind()), "struct")   {
-										node = dc.NewDeviceNode(deviceName, string(k))
-										device.Nodes[string(k)] = node
-									}
-									node.Props[string(kkk)] = nodeProperty
-								}
-							} else {
-								e := d.Bucket(kkk) // (5) PProperty/Attr
-								if e == nil {
-									return nil
-								}
-								err := e.ForEach(func(kkkk, vvvv []byte) error {
-									if nil != vvvv {
-										// X/D/A/P/P/(k,v)
-										// X/D/N/P/A/(k,v)
-										if strings.HasPrefix(string(kkkk), "$") {
-											nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(string(kk), string(kkkk), string(vvvv))
-											nodeProperty.Attrs[string(kkkk)] = nodePropertyAttribute
-										} else {
-											deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kk), string(kkkk), string(vvvv))
-											if !strings.Contains(string(reflect.ValueOf(deviceAttributeProperty).Kind()), "struct")   {
-												deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(kk), string(kkk), string(vvv))
-												deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
-											}
-											deviceAttributeProperty.Props[string(kkkk)] = deviceAttributePropertyProperty
-										}
-									}
-									return nil
-								})
-								return err
-							}
+						e := d.Bucket(kkk) // (5) PProperty/Attr
+						if e == nil {
+							return nil
+						}
+						err := e.ForEach(func(kkkk, vvvv []byte) error {
+							fmt.Printf("(5) X/D/A/P/P Each Bucket=%s Key=%s Value=[%s] \n", kk, kkkk, vvvv)
+							deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kkk), string(kkkk), string(vvvv))
+							device.Attrs[string(kk)].Props[string(kkk)].Props[string(kkkk)] = deviceAttributePropertyProperty
 							return nil
 						})
 						return err
-					}
-					return nil
+					})
+					return err
 				})
 				return err
-			} // only buckets in the device bucket
+
+			} else { // node path
+				// 3 node
+				// 4 property, attribute
+				// 5 propertyAttribute
+
+				err := c.ForEach(func(kk, vv []byte) error {
+					fmt.Printf("(3) X/D/N.... Each Bucket=%s Key=%s Value=[%s] \n", deviceName, kk, vv)
+
+					if string(vv) != "" {
+						return nil
+					}
+					d := c.Bucket(kk) // (4) Attribute | Property
+					if d == nil {
+						return nil
+					}
+					err := d.ForEach(func(kkk, vvv []byte) error {
+						if strings.HasPrefix(string(kkk), "$") {
+							fmt.Printf("(4) X/D/N/A.. Each Bucket=%s Key=%s Value=[%s] \n", k, kkk, vvv)
+						} else {
+							fmt.Printf("(4) X/D/N/P.. Each Bucket=%s Key=%s Value=[%s] \n", k, kkk, vvv)
+						}
+
+						if string(vvv) != "" {
+							return nil
+						}
+						e := d.Bucket(kkk) // (5) PPropertyAttribute
+						if e == nil {
+							return nil
+						}
+						err := e.ForEach(func(kkkk, vvvv []byte) error {
+							fmt.Printf("(5) X/D/N/P/A Each Bucket=%s Key=%s Value=[%s] \n", kk, kkkk, vvvv)
+							return nil
+						})
+						return err
+					})
+					return err
+				})
+				return err
+			} // end if path
 			return nil
 		})
 		return err
 	})
 
 	return device, err
-}
-
-/*
- * Returns string array a device's properties (topic:value) */
-func deviceDetails(db *bolt.DB, networkName, deviceName string) (map[string]string, []string) {
-	details := map[string]string{}
-
-	// X/D/N/P/A
-	// X/D/A/P/P
-
-	db.View(func(tx *bolt.Tx) error {
-		b := tx.Bucket([]byte(networkName)) // Network Level
-		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", networkName)
-		}
-		b = b.Bucket([]byte(deviceName)) // Device Level
-		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", deviceName)
-		}
-
-		err := b.ForEach(func(k, v []byte) error {
-			if nil == v {
-				c := b.Bucket(k) // Node/Attr Level
-				if c == nil {
-					return nil
-				}
-
-				err := c.ForEach(func(kk, vv []byte) error {
-					if nil == vv {
-						d := c.Bucket(kk) // Property
-						if d == nil {
-							return nil
-						}
-
-						err := d.ForEach(func(kkk, vvv []byte) error {
-							if nil == vvv {
-								e := d.Bucket(kkk) // PProperty/Attr
-								if e == nil {
-									return nil
-								}
-
-								err := e.ForEach(func(kkkk, vvvv []byte) error {
-									if nil == vvvv {
-										f := e.Bucket(kkkk) // PProperty
-										if f == nil {
-											return nil
-										}
-
-										err := f.ForEach(func(kkkkk, vvvvv []byte) error {
-											details["["+string(k)+"]["+string(kk)+"]["+string(kkk)+"]["+string(kkkk)+"]"+string(kkkkk)] = string(vvvvv)
-											return nil
-										})
-										return err
-									}
-									details["["+string(k)+"]["+string(kk)+"]["+string(kkk)+"]"+string(kkkk)] = string(vvvv)
-									return nil
-								})
-								return err
-							}
-							details["["+string(k)+"]["+string(kk)+"]"+string(kkk)] = string(vvv)
-							return nil
-						})
-						return err
-					}
-					details["["+string(k)+"]"+string(kk)] = string(vv)
-					return nil
-				})
-
-				return err
-
-			}
-
-			details[string(k)] = string(v)
-
-			return nil
-		})
-		if err != nil {
-			err = fmt.Errorf("[WARN] Detailed rendering failed: %v", err.Error())
-		}
-		return err
-	})
-
-	// orderedKeys :=
-	keys := make([]string, 0, len(details))
-	for k, _ := range details {
-		keys = append(keys, k)
-	}
-	sort.Strings(keys)
-
-	return details, keys
-}
-
-/*
- * DBStatsAsJSON
- * Outputs boltDB Database Stats
- */
-func dbStatsAsJSON() string {
-	sts := dbs.db.Stats()
-	var res string
-
-	json, _ := json.MarshalIndent(sts, "", "    ")
-	res = string(json)
-
-	return res
-}
-
-/*
- * ListHomieDBCollection
- * List the Devices Found/Recorded
- */
-func ListHomieDB() {
-	time.Sleep(1 * time.Second) // slow the pace
-	if networks := networkList(dbs.db); len(networks) > 0 {
-		for nets, network := range networks {
-			fmt.Printf("[%d] Network: %s\n", nets, network)
-			if devices := deviceList(dbs.db, network); len(devices) > 0 {
-				for idx, device := range devices {
-					fmt.Printf("\t[%d] Device: %s\n", idx, device)
-					if detail, orderedKeys := deviceDetails(dbs.db, network, device); len(detail) > 0 {
-						for _, k := range orderedKeys {
-							v := detail[k]
-							fmt.Printf("\t\t %s --> %s\n", k, v)
-						}
-					}
-				}
-			}
-		}
-	}
-
-	// Show bBolt DB Stats
-	if stats := dbStatsAsJSON(); len(stats) > 0 {
-		fmt.Printf("dbStats=%s\n", stats)
-	}
 }

@@ -106,7 +106,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	dv, ok := hn.Devices[string(dm.DeviceID)]
 	if !ok {
 		err = fmt.Errorf("device{%s} not found in network={%s}, should be created", dm.DeviceID, hn.Name)
-		level.Warn(em.logger).Log("action", err.Error())
+		level.Debug(em.logger).Log("action", err.Error())
 	}
 
 	/*
@@ -158,7 +158,7 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -166,7 +166,7 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 	devattr, found := dev.Attrs[nValue]
 	if !found {
 		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		devattr = NewDeviceAttribute(string(dm.DeviceID), nValue, "")
 		dev.Attrs[nValue] = devattr
 	}
@@ -174,7 +174,7 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 	devattrprop, found := devattr.Props[string(dm.PropertyID)]
 	if !found {
 		err = fmt.Errorf("property [%s] not found, will create it", string(dm.PropertyID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		devattrprop = NewDeviceAttributeProperty(nValue, string(dm.PropertyID), "")
 		devattr.Props[string(dm.PropertyID)] = devattrprop
 	}
@@ -182,7 +182,7 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 	devattrpropprop, found := devattrprop.Props[string(dm.PPropertyID)]
 	if !found {
 		err = fmt.Errorf("property pproperty [%s] not found, will create it", string(dm.PPropertyID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		devattrpropprop = NewDeviceAttributePropertyProperty(string(dm.PropertyID), string(dm.PPropertyID), string(dm.Value))
 		devattrprop.Props[string(dm.PropertyID)] = devattrpropprop
 	}
@@ -200,7 +200,7 @@ func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -208,7 +208,7 @@ func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 	devattr, found := dev.Attrs[nValue]
 	if !found {
 		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		devattr = NewDeviceAttribute(string(dm.DeviceID), nValue, "")
 		dev.Attrs[nValue] = devattr
 	}
@@ -216,7 +216,7 @@ func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 	devattrprop, found := devattr.Props[string(dm.PropertyID)]
 	if !found {
 		err = fmt.Errorf("attribute property [%s] not found, will create it", string(dm.PropertyID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		devattrprop = NewDeviceAttributeProperty(nValue, string(dm.PropertyID), string(dm.Value))
 		devattr.Props[string(dm.PropertyID)] = devattrprop
 	}
@@ -234,7 +234,7 @@ func (hn *Network) handleDeviceAttribute(dm DeviceMessage) error {
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -242,7 +242,7 @@ func (hn *Network) handleDeviceAttribute(dm DeviceMessage) error {
 	devattr, found := dev.Attrs[nValue]
 	if !found {
 		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		devattr = NewDeviceAttribute(string(dm.DeviceID), nValue, string(dm.Value))
 		dev.Attrs[string(dm.AttributeID)] = devattr
 	}
@@ -259,7 +259,7 @@ func (hn *Network) handleDevice(dm DeviceMessage) error {
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -277,7 +277,7 @@ func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -285,7 +285,7 @@ func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 	node, found := dev.Nodes[string(dm.NodeID)]
 	if !found {
 		err = fmt.Errorf("node [%s] not found, will create it", string(dm.NodeID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		node = NewDeviceNode(string(dm.DeviceID), string(dm.NodeID))
 		dev.Nodes[string(dm.NodeID)] = node
 	}
@@ -293,7 +293,7 @@ func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 	nodeprop, found := node.Props[string(dm.PropertyID)]
 	if !found {
 		err = fmt.Errorf("property [%s] not found, will create it", string(dm.PropertyID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		nodeprop = NewDeviceNodeProperty(string(dm.NodeID), string(dm.PropertyID), "")
 		node.Props[string(dm.PropertyID)] = nodeprop
 	}
@@ -301,7 +301,7 @@ func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 	nodepropattr, found := nodeprop.Attrs[nValue]
 	if !found {
 		err = fmt.Errorf("property attribute [%s] not found, will create it", nValue)
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		nodepropattr = NewDeviceNodePropertyAttribute(string(dm.PropertyID), nValue, string(dm.Value))
 		nodeprop.Attrs[nValue] = nodepropattr
 	}
@@ -318,7 +318,7 @@ func (hn *Network) handleNodeProperty(dm DeviceMessage) error {
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -326,7 +326,7 @@ func (hn *Network) handleNodeProperty(dm DeviceMessage) error {
 	node, found := dev.Nodes[string(dm.NodeID)]
 	if !found {
 		err = fmt.Errorf("node [%s] not found, will create it", string(dm.NodeID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		node = NewDeviceNode(string(dm.DeviceID), string(dm.NodeID))
 		dev.Nodes[string(dm.NodeID)] = node
 	}
@@ -334,7 +334,7 @@ func (hn *Network) handleNodeProperty(dm DeviceMessage) error {
 	nodeprop, found := node.Props[string(dm.PropertyID)]
 	if !found {
 		err = fmt.Errorf("property [%s] not found, will create it", string(dm.PropertyID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		nodeprop = NewDeviceNodeProperty(string(dm.NodeID), string(dm.PropertyID), string(dm.Value))
 		node.Props[string(dm.PropertyID)] = nodeprop
 	}
@@ -352,7 +352,7 @@ func (hn *Network) handleNodeAttribute(dm DeviceMessage) error {
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -360,7 +360,7 @@ func (hn *Network) handleNodeAttribute(dm DeviceMessage) error {
 	node, found := dev.Nodes[string(dm.NodeID)]
 	if !found {
 		err = fmt.Errorf("node [%s] not found, will create it", string(dm.NodeID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		node = NewDeviceNode(string(dm.DeviceID), string(dm.NodeID))
 		dev.Nodes[string(dm.NodeID)] = node
 	}
@@ -368,7 +368,7 @@ func (hn *Network) handleNodeAttribute(dm DeviceMessage) error {
 	nodeattr, found := node.Attrs[nValue]
 	if !found {
 		err = fmt.Errorf("attribute [%s] not found, will create it", nValue)
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		nodeattr = NewDeviceNodeAttribute(string(dm.NodeID), nValue, string(dm.Value))
 		node.Attrs[nValue] = nodeattr
 	}
@@ -385,7 +385,7 @@ func (hn *Network) handleNode(dm DeviceMessage) error {
 	dev, found := hn.Devices[string(dm.DeviceID)]
 	if !found {
 		err = fmt.Errorf("device [%s] not found, will create it", string(dm.DeviceID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		dev = NewDevice(string(dm.NetworkID), string(dm.DeviceID))
 		hn.Devices[string(dm.DeviceID)] = dev
 	}
@@ -393,7 +393,7 @@ func (hn *Network) handleNode(dm DeviceMessage) error {
 	node, found := dev.Nodes[string(dm.NodeID)]
 	if !found {
 		err = fmt.Errorf("node [%s] not found, will create it", string(dm.NodeID))
-		level.Warn(em.logger).Log("warning", err.Error())
+		level.Debug(em.logger).Log("warning", err.Error())
 		node = NewDeviceNode(string(dm.DeviceID), string(dm.NodeID))
 		dev.Nodes[string(dm.NodeID)] = node
 	}
@@ -426,10 +426,10 @@ func (hn *Network) handleBroadcast(dm DeviceMessage) error {
 	if found && string(dm.Value) == "" { // delete if value is empty
 		siteNetworks.Broadcasts = append(siteNetworks.Broadcasts[:index], siteNetworks.Broadcasts[index+1:]...)
 		err = fmt.Errorf("broadcast [%s] was deleted", string(dm.AttributeID))
-		level.Warn(em.logger).Log("action", err.Error())
+		level.Debug(em.logger).Log("action", err.Error())
 	} else { // add it blindly
 		err = fmt.Errorf("broadcast [%s] not found, will create it", string(dm.AttributeID))
-		level.Warn(em.logger).Log("action", err.Error())
+		level.Debug(em.logger).Log("action", err.Error())
 		bcn = NewBroadcast(string(dm.NetworkID), string(dm.AttributeID), string(dm.PropertyID), string(dm.Value))
 		siteNetworks.Broadcasts = append(siteNetworks.Broadcasts, bcn)
 	}
