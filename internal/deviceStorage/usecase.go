@@ -28,13 +28,11 @@ func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 		if strings.HasPrefix(deviceName, "$broad") {
 			continue
 		}
-
 		device, err := buildNetworkDevice(r.db, networkName, deviceName)
 		if nil != err {
 			level.Error(r.logger).Log("method", "()", "error", err.Error())
 			continue
 		}
-
 		nw.Devices[deviceName] = device
 	}
 
@@ -92,7 +90,6 @@ func (r *dbRepo) RemoveSchedule(d dc.Schedule) error {
 		err := b.DeleteBucket([]byte(d.ID))
 		return err
 	})
-
 	if err != nil {
 		level.Error(r.logger).Log("Alert", "RemoveSchedule() Failed", "error", err.Error(), "schedule", d.String())
 	} else {
@@ -127,7 +124,6 @@ func (r *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
 		}
 		return err
 	})
-
 	if err != nil {
 		level.Warn(r.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
 	} else {
@@ -149,12 +145,10 @@ func (r *dbRepo) LoadBroadcasts(networkName string) []dc.Broadcast {
 		if b == nil {
 			return fmt.Errorf("Network Not Found!: %s", networkName)
 		}
-
 		b = b.Bucket([]byte("$broadcast")) // (2) Broadcast
 		if b == nil {
 			return fmt.Errorf("$broadcast Not Found!: %s", "top level")
 		}
-
 		// x/b/t/i v
 		b.ForEach(func(topic, v []byte) error {
 			c := b.Bucket(topic) // (3) Topic
@@ -175,10 +169,8 @@ func (r *dbRepo) LoadBroadcasts(networkName string) []dc.Broadcast {
 			})
 			return nil
 		})
-
 		return nil
 	})
-
 	return broads
 }
 
@@ -191,10 +183,8 @@ func (r *dbRepo) RemoveAllBroadcasts(networkName string) error {
 		if b == nil {
 			return fmt.Errorf("[WARN] Network Not Found!: %s", networkName)
 		}
-
 		return b.DeleteBucket([]byte("$broadcast"))
 	})
-
 	return err
 }
 
@@ -204,26 +194,20 @@ func (r *dbRepo) RemoveAllBroadcasts(networkName string) error {
  * Repository Implementation
  */
 func (r *dbRepo) Remove(d dc.DeviceMessage) error {
-
 	level.Debug(r.logger).Log("event", "Calling Remove()", "dm", d.String())
-
 	err := r.db.Update(func(tx *bolt.Tx) error {
 		var err error
-
 		b := tx.Bucket(d.NetworkID)
 		if b == nil {
 			return fmt.Errorf("[WARN] Network Not Found!: %s, error: %s", d.NetworkID, err.Error())
 		}
-
 		return b.DeleteBucket(d.DeviceID)
 	})
-
 	if err != nil {
 		level.Error(r.logger).Log("Alert", "Remove() Update Failed", "error", err.Error(), "dm", d.String())
 	} else {
 		level.Debug(r.logger).Log("event", "Remove() complete", "device", d.DeviceID)
 	}
-
 	return err
 }
 
@@ -256,7 +240,9 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 			return fmt.Errorf("[WARN] Network cannot be created or found!: %s, error: %s", d.NetworkID, err.Error())
 		}
 
-		// handle special case of $broadcast
+		/*
+		 * handle special case of $broadcast
+		*/
 		if strings.HasPrefix(string(d.DeviceID), "$broad") {
 			b, err = b.CreateBucketIfNotExists(d.DeviceID)
 			if err != nil {

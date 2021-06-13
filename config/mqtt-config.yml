@@ -14,7 +14,7 @@ homiemonitor:
     - homie
 
   mqtt:
-    clientid: homie-monitor
+    clientid: homie-service-monitor
     broker: <mqtt-host-or-ip>
     port: 1883
     username: <mqtt-username>

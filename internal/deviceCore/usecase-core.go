@@ -87,7 +87,7 @@ func (em *coreService) RemoveDeviceByEIDFromNetwork(deviceEID EID, networkName s
 
 		em.dsp.HandleCoreEvent(*ptrToDevice)
 		if em.scp != nil {
-			for _, schedule := range em.scp.FindSchedulesByDeviceEID(ptrToDevice.ID) {
+			for _, schedule := range em.scp.FindSchedulesByDeviceID(ptrToDevice.Name) {
 				err = em.scp.DeleteSchedule(schedule.ID)
 			}
 		}
@@ -115,11 +115,11 @@ func (em *coreService) ScheduleByEID(scheduleID EID) Schedule {
 	schedule := siteNetworks.Schedules[scheduleID]
 	return schedule
 }
-func (em *coreService) ScheduleByDeviceEID(deviceID EID) Schedule {
-	level.Debug(em.logger).Log("method", "ScheduleByDeviceEID() called")
+func (em *coreService) ScheduleByDeviceID(deviceID string) Schedule {
+	level.Debug(em.logger).Log("method", "ScheduleByDeviceID() called")
 	var schedule Schedule
 	for _, obj := range siteNetworks.Schedules {
-		if obj.DeviceEID == deviceID {
+		if obj.DeviceID == deviceID {
 			schedule = obj
 			break
 		}

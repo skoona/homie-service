@@ -173,7 +173,7 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	config = cfg.Mqc
 	logger = log.With(cfg.Logger, "pkg", "mqttProvider")
 	var err error
-	level.Debug(logger).Log("event", "Calling Initialize()", "broker", config.BrokerIP)
+	level.Debug(logger).Log("event", "Calling Initialize()", "broker", config.BrokerIP )
 
 	/* Initialize MQTT */
 	opts := mqtt.NewClientOptions()
@@ -182,6 +182,9 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	opts.SetUsername(config.UserName)
 	opts.SetPassword(config.UserPassword)
 	opts.SetAutoReconnect(true)
+	opts.SetConnectRetry(true)
+	opts.SetConnectRetryInterval(10 * time.Second)
+	opts.SetMaxReconnectInterval(30 * time.Minute)
 	opts.SetOrderMatters(true)
 	opts.SetKeepAlive(120)
 	opts.SetPingTimeout(10)
@@ -191,9 +194,6 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	opts.SetDefaultPublishHandler(defaultOnMessage)
 	opts.SetOnConnectHandler(connectHandler)
 	opts.SetConnectionLostHandler(connectLostHandler)
-	opts.SetConnectRetry(true)
-	opts.SetConnectRetryInterval(10 * time.Second)
-	opts.SetMaxReconnectInterval(30 * time.Minute)
 
 	client = mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
@@ -207,7 +207,7 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	// allow for network discovery
 	doNetworkDiscovery()
 
-	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","))
+	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","), "clientID", opts.ClientID)
 	return otastream, dStream, DiscoveredNetworks(), err
 }
 

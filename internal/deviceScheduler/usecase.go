@@ -57,11 +57,11 @@ func (s *schedulerProvider) Schedules() []dc.Schedule {
 	}
 	return values
 }
-func (s *schedulerProvider) FindSchedulesByDeviceEID(deviceEID dc.EID) []dc.Schedule {
+func (s *schedulerProvider) FindSchedulesByDeviceID(deviceID string) []dc.Schedule {
 	level.Debug(s.logger).Log("event", "Calling FindSchedulesByDeviceID()")
 	return []dc.Schedule{}
 }
-func (s *schedulerProvider) CreateSchedule(networkName string, deviceID dc.EID, transport dc.OTATransport, firmware *dc.Firmware) (dc.EID, error) {
+func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) (dc.EID, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
 	// s.repo.StoreSchedule(schedule)
 	return dc.NewEID(), nil

@@ -82,11 +82,11 @@ The design goal for this file is:
 // Get related device
 // verify OTAEnabled is true [default]
 // if false return error
-func NewSchedule(networkName string, deviceID dc.EID, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
+func NewSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
 	return dc.Schedule{
 		ID:          dc.NewEID(),
 		ElementType: dc.CoreTypeSchedule,
-		DeviceEID:   deviceID,
+		DeviceID:   deviceID,
 		Package:     *firmware,
 		State:       "Pending",
 		Status:      "Waiting",

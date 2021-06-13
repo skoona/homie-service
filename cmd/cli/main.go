@@ -52,7 +52,7 @@ func shutdownDemo() {
 	dss.Stop()
 
 	// List the Devices Found/Recorded
-	dds.ListHomieDB()
+	//dds.ListHomieDB()
 
 	dds.Stop()
 	dc.Stop()
@@ -65,7 +65,7 @@ func shutdownLive() {
 	sch.Stop()
 
 	// List the Devices Found/Recorded
-	dds.ListHomieDB()
+	//dds.ListHomieDB()
 
 	dss.Stop()
 	dds.Stop()
@@ -149,12 +149,21 @@ func main() {
 		os.Exit(2)
 	}
 
-	/* Prepare for clean exit */
-	systemSignalChannel := make(chan os.Signal, 1)
-	signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM)
-	sig := <-systemSignalChannel // wait on ctrl-c
-	level.Debug(logger).Log("event", sig)
-	level.Info(logger).Log("event", "Shutting Down")
+	/*
+	 * Prepare for clean exit
+	*/
+	errs := make(chan error, 1)
+	//go func() {
+	//	logger.Log("transport", "http", "address", *httpAddr, "msg", "listening")
+	//	errs <- http.ListenAndServe(*httpAddr, nil)
+	//}()
+	go func(shutdown chan error) {
+		systemSignalChannel := make(chan os.Signal, 1)
+		signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM)
+		sig := <-systemSignalChannel // wait on ctrl-c
+		shutdown <- fmt.Errorf("%s", sig)
+	}(errs)
+	level.Info(logger).Log("event", "shutdown requested", "cause", <-errs)
 
 	if cfg.RunMode == "live" {
 		shutdownLive()
