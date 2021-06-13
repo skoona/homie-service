@@ -160,12 +160,12 @@ func main() {
 
 
 	// Test Repo
-	net := repo.LoadNetwork("sknSensors")
+	net := repo.RestoreNetworkFromDB("sknSensors")
 	out, err := json.MarshalIndent(net, "", "  ")
 	if err != nil {
 		level.Warn(logger).Log("action", err.Error())
 	} else {
-		fmt.Println("Repository LoadNetwork(snkSensors)")
+		fmt.Println("Repository RestoreNetworkFromDB(snkSensors)")
 		fmt.Println(string(out))
 	}
 

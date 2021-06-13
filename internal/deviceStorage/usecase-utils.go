@@ -11,6 +11,7 @@ import (
 	"fmt"
 	bolt "go.etcd.io/bbolt"
 	"sort"
+	"strings"
 	"time"
 )
 
@@ -48,6 +49,9 @@ func networkList(db *bolt.DB) []string {
 
 	err := db.View(func(tx *bolt.Tx) error {
 		return tx.ForEach(func(name []byte, _ *bolt.Bucket) error {
+			if strings.Contains(string(name), "Schedules") {
+				return nil
+			}
 			networks = append(networks, string(name))
 			return nil
 		})

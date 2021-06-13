@@ -77,7 +77,7 @@ type (
 	Repository interface {
 		Store(d DeviceMessage) error
 		Remove(d DeviceMessage) error
-		LoadNetwork(networkName string) Network
+		RestoreNetworkFromDB(networkName string) Network
 		LoadSchedules() map[EID]Schedule
 		StoreSchedule(d Schedule) error
 		RemoveSchedule(d Schedule) error

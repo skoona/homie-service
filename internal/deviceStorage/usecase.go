@@ -17,22 +17,21 @@ import (
 )
 
 /**
- * LoadSiteNetwork()
- * Reconstitute the Site Network Object
- */
-//goland:noinspection VacuumLines
-func (dbR *dbRepo) LoadNetwork(networkName string) dc.Network {
+ * RestoreNetworkFromDB()
+ * Reconstitute the Site NETWORK Object
+*/
+func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 	nw  := dc.NewNetwork("Restored", networkName)
 
-	devices := deviceList(dbR.db, networkName)
+	devices := deviceList(r.db, networkName)
 	for _, deviceName := range devices {
 		if strings.HasPrefix(deviceName, "$broad") {
 			continue
 		}
 
-		device, err := buildNetworkDevice(dbR.db, networkName, deviceName)
+		device, err := buildNetworkDevice(r.db, networkName, deviceName)
 		if nil != err {
-			level.Error(dbR.logger).Log("method", "LoadNetwork()", "error", err.Error())
+			level.Error(r.logger).Log("method", "()", "error", err.Error())
 			continue
 		}
 
@@ -45,13 +44,12 @@ func (dbR *dbRepo) LoadNetwork(networkName string) dc.Network {
 /**
  * StoreSchedule(schedule Schedule)
  */
-func (dbR *dbRepo) StoreSchedule(d dc.Schedule) error {
-	level.Debug(dbR.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
-	var err error
+func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
+	level.Debug(r.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
 
 	/*
 	* Create Schedules */
-	err = dbR.db.Update(func(tx *bolt.Tx) error {
+	err := r.db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists([]byte("Schedules"))
 		if err != nil {
 			return fmt.Errorf("[WARN] Schedules cannot be created or found!: %s, error: %s", "Schedules", err.Error())
@@ -69,9 +67,9 @@ func (dbR *dbRepo) StoreSchedule(d dc.Schedule) error {
 	})
 
 	if err != nil {
-		level.Error(dbR.logger).Log("Alert", "StoreSchedule() Failed", "error", err.Error(), "schedule", d.String())
+		level.Error(r.logger).Log("Alert", "StoreSchedule() Failed", "error", err.Error(), "schedule", d.String())
 	} else {
-		level.Debug(dbR.logger).Log("event", "StoreSchedule() complete")
+		level.Debug(r.logger).Log("event", "StoreSchedule() complete")
 	}
 
 	return err
@@ -80,25 +78,25 @@ func (dbR *dbRepo) StoreSchedule(d dc.Schedule) error {
 /**
  * RemoveSchedule(schedule Schedule)
  */
-func (dbR *dbRepo) RemoveSchedule(d dc.Schedule) error {
-	level.Debug(dbR.logger).Log("event", "Calling RemoveSchedule()", "schedule", d.String())
+func (r *dbRepo) RemoveSchedule(d dc.Schedule) error {
+	level.Debug(r.logger).Log("event", "Calling RemoveSchedule()", "schedule", d.String())
 
 	/*
 	* Delete Schedules */
-	err := dbR.db.Update(func(tx *bolt.Tx) error {
-		b, err := tx.CreateBucketIfNotExists([]byte("Schedules"))
-		if err != nil {
-			return fmt.Errorf("[WARN] Schedules cannot be created or found!: %s, error: %s", "Schedules", err.Error())
+	err := r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte("Schedules"))
+		if b == nil {
+			return fmt.Errorf("[WARN] Schedules cannot be created or found!: %s", "Schedules")
 		}
 
-		err = b.DeleteBucket([]byte(d.ID))
+		err := b.DeleteBucket([]byte(d.ID))
 		return err
 	})
 
 	if err != nil {
-		level.Error(dbR.logger).Log("Alert", "RemoveSchedule() Failed", "error", err.Error(), "schedule", d.String())
+		level.Error(r.logger).Log("Alert", "RemoveSchedule() Failed", "error", err.Error(), "schedule", d.String())
 	} else {
-		level.Debug(dbR.logger).Log("event", "RemoveSchedule() complete")
+		level.Debug(r.logger).Log("event", "RemoveSchedule() complete")
 	}
 
 	return err
@@ -107,13 +105,13 @@ func (dbR *dbRepo) RemoveSchedule(d dc.Schedule) error {
 /**
  * LoadSchedules()
  */
-func (dbR *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
-	level.Debug(dbR.logger).Log("event", "Calling LoadSchedules()")
+func (r *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
+	level.Debug(r.logger).Log("event", "Calling LoadSchedules()")
 	schedMap := map[dc.EID]dc.Schedule{}
 
 	/*
 	 * Load Schedules */
-	err := dbR.db.View(func(tx *bolt.Tx) error {
+	err := r.db.View(func(tx *bolt.Tx) error {
 		var err error
 		b := tx.Bucket([]byte("Schedules"))
 		if b == nil {
@@ -131,9 +129,9 @@ func (dbR *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
 	})
 
 	if err != nil {
-		level.Warn(dbR.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
+		level.Warn(r.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
 	} else {
-		level.Debug(dbR.logger).Log("event", "LoadSchedules() complete", "retrieved", len(schedMap))
+		level.Debug(r.logger).Log("event", "LoadSchedules() complete", "retrieved", len(schedMap))
 	}
 
 	return schedMap
@@ -144,11 +142,11 @@ func (dbR *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
  *
  * Repository Implementation
  */
-func (dbR *dbRepo) Remove(d dc.DeviceMessage) error {
+func (r *dbRepo) Remove(d dc.DeviceMessage) error {
 
-	level.Debug(dbR.logger).Log("event", "Calling Remove()", "dm", d.String())
+	level.Debug(r.logger).Log("event", "Calling Remove()", "dm", d.String())
 
-	err := dbR.db.Update(func(tx *bolt.Tx) error {
+	err := r.db.Update(func(tx *bolt.Tx) error {
 		var err error
 
 		b := tx.Bucket(d.NetworkID)
@@ -160,9 +158,9 @@ func (dbR *dbRepo) Remove(d dc.DeviceMessage) error {
 	})
 
 	if err != nil {
-		level.Error(dbR.logger).Log("Alert", "Remove() Update Failed", "error", err.Error(), "dm", d.String())
+		level.Error(r.logger).Log("Alert", "Remove() Update Failed", "error", err.Error(), "dm", d.String())
 	} else {
-		level.Debug(dbR.logger).Log("event", "Remove() complete", "device", d.DeviceID)
+		level.Debug(r.logger).Log("event", "Remove() complete", "device", d.DeviceID)
 	}
 
 	return err
@@ -173,25 +171,25 @@ func (dbR *dbRepo) Remove(d dc.DeviceMessage) error {
  *
  * Repository Implementation
  */
-func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
-	//     0         1           2        3              4                         5
+func (r *dbRepo) Store(d dc.DeviceMessage) error {
+	//      1         2           3                  4                           5
 	// sknSensors/device/node/version: 3.0.0
 	//  * homie / device ID / $device-attribute / device-attribute-Property / device-attribute-Property-Property
-	//				Bucket(Bucket(Bucket(bucket(bucket(property:value)))))
+	//	  Bucket( Bucket(     Bucket(             Bucket(                     Bucket(k:v)))))
 	//  * homie / device ID / $device-attribute / device-attribute-Property
-	//				Bucket(Bucket(bucket(bucket(property:value))))
+	//	  Bucket( Bucket(     Bucket(             Bucket(k:v))))
 	//  * homie / device ID / $device-attribute
-	//              Bucket(bucket(bucket(attribute:value)))
+	//    Bucket( Bucket(     Bucket(k:v)))
 	//  * homie / device ID / node ID / property ID / $property-attribute
-	//				Bucket(Bucket(Bucket(bucket(bucket(attribute:value)))))
+	//	  Bucket( Bucket(     Bucket(   Bucket(       Bucket(k:v)))))
 	//  * homie / device ID / node ID / $node-attribute
-	//				Bucket(Bucket(bucket(bucket(attribute:value))))
+	//	  Bucket( Bucket(     Bucket(   Bucket(k:v))))
 	//  * homie / device ID / node ID / property ID
-	//				Bucket(Bucket(Bucket(bucket(property:value))))
+	//	  Bucket( Bucket(     Bucket(   Bucket(k:v))))
 
-	level.Debug(dbR.logger).Log("event", "Calling Store()", "dm", d.String())
+	level.Debug(r.logger).Log("event", "Calling Store()", "dm", d.String())
 
-	err := dbR.db.Update(func(tx *bolt.Tx) error {
+	err := r.db.Update(func(tx *bolt.Tx) error {
 		b, err := tx.CreateBucketIfNotExists(d.NetworkID)
 		if err != nil {
 			return fmt.Errorf("[WARN] Network cannot be created or found!: %s, error: %s", d.NetworkID, err.Error())
@@ -295,9 +293,9 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 	})
 
 	if err != nil {
-		level.Error(dbR.logger).Log("Alert", "Store() Failed", "error", err.Error(), "dm", d.String())
+		level.Error(r.logger).Log("Alert", "Store() Failed", "error", err.Error(), "dm", d.String())
 	} else {
-		level.Debug(dbR.logger).Log("event", "Store() complete", "device", d.DeviceID)
+		level.Debug(r.logger).Log("event", "Store() complete", "device", d.DeviceID)
 	}
 
 	return err
@@ -306,14 +304,15 @@ func (dbR *dbRepo) Store(d dc.DeviceMessage) error {
 /*
  * Returns string array a device's properties (topic:value) */
 func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device, error) {
+	var found bool
 	var device dc.Device
 	var deviceAttribute dc.DeviceAttribute
 	var deviceAttributeProperty dc.DeviceAttributeProperty
 	var deviceAttributePropertyProperty dc.DeviceAttributePropertyProperty
 	var node dc.DeviceNode
-	//var nodeProperty dc.DeviceNodeProperty
-	//var nodeAttribute dc.DeviceNodeAttribute
-	//var nodePropertyAttribute dc.DeviceNodePropertyAttribute
+	var nodeProperty dc.DeviceNodeProperty
+	var nodeAttribute dc.DeviceNodeAttribute
+	var nodePropertyAttribute dc.DeviceNodePropertyAttribute
 
 	// X/D/								bucket(bucket())
 	// X/D/N/							bucket(bucket(bucket()))
@@ -336,6 +335,8 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 		if b == nil {
 			return fmt.Errorf("Network Not Found!: %s", networkName)
 		}
+		fmt.Printf("(2) X/D...... %s/%s \n", networkName, deviceName)
+
 		b = b.Bucket([]byte(deviceName)) // (2) Device Level
 		if b == nil {
 			return fmt.Errorf("Network Not Found!: %s", deviceName)
@@ -345,56 +346,70 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 		/*
 		 * examine device bucket for nodes or attributes */
 		err := b.ForEach(func(k, v []byte) error {
-			fmt.Printf("(2) X/D...... Each Bucket=%s Key=%s Value=[%s]%T \n", deviceName, string(k), string(v), string(v))
-			if !strings.HasPrefix(string(k), "$") && (len(device.Nodes) == 0) {
-				node = dc.NewDeviceNode(deviceName, string(k))
-				device.Nodes[string(k)] = node
-			}
+			fmt.Printf("(2) X/D...... Bucket[2]=%s, enum Key=%s Value=[%s] \n", deviceName, string(k), string(v))
 
-			if string(v) != "" {
-				return nil
-			}
 			c := b.Bucket(k) // (3) Node/Attr Level
 			if c == nil {
 				return nil
 			}
 			/*
-			 * bucket is either a Node or a DeviceAttribute container
-			 * if attr follow device attr path
+			 * bucket is either a Node attrs/props or a DeviceAttribute properties
+			 * if 2=attr follow device attr path
 			 * else follow nodepath
 			*/
-			if strings.HasPrefix(string(k), "$") {  // then device attr path
+			if strings.HasPrefix(string(k), "$") {  // device attr path
 				// 3 attribute
 				// 4 property
 				// 5 propertyProperty
-				err := c.ForEach(func(kk, vv []byte) error {
-					fmt.Printf("(3) X/D/A.... Each Bucket=%s Key=%s Value=[%s] \n", deviceName, kk, vv)
-					deviceAttribute = dc.NewDeviceAttribute(deviceName, string(kk), string(vv))
-					device.Attrs[string(kk)] = deviceAttribute
 
+				err := c.ForEach(func(kk, vv []byte) error {
 					if string(vv) != "" {
-						return nil
+						deviceAttribute, found = device.Attrs[string(kk)]
+						if !found {
+							fmt.Printf("(3) X/D/A.... %s/%s -->[%s] \n", deviceName, kk, vv)
+							deviceAttribute = dc.NewDeviceAttribute(deviceName, string(kk), string(vv))
+							device.Attrs[string(kk)] = deviceAttribute
+						}
 					}
 					d := c.Bucket(kk) // (4) Property
 					if d == nil {
 						return nil
 					}
 					err := d.ForEach(func(kkk, vvv []byte) error {
-						fmt.Printf("(4) X/D/A/P.. Each Bucket=%s Key=%s Value=[%s] \n", k, kkk, vvv)
-						deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kkk), string(vvv))
-						device.Attrs[string(kk)].Props[string(kkk)] = deviceAttributeProperty
-
 						if string(vvv) != "" {
-							return nil
+							deviceAttribute, found = device.Attrs[string(k)]
+							if !found {
+								deviceAttribute = dc.NewDeviceAttribute(deviceName, string(k), string(vv))
+								device.Attrs[string(k)] = deviceAttribute
+							}
+							deviceAttributeProperty, found = deviceAttribute.Props[string(kkk)]
+							if !found {
+								fmt.Printf("(4) X/D/A/P.. %s/%s/%s -->[%s]\n", deviceName, k, kkk, vvv)
+								deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kkk), string(vvv))
+								deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
+							}
 						}
-						e := d.Bucket(kkk) // (5) PProperty/Attr
+						e := d.Bucket(kkk) // (5) PProperty
 						if e == nil {
 							return nil
 						}
 						err := e.ForEach(func(kkkk, vvvv []byte) error {
-							fmt.Printf("(5) X/D/A/P/P Each Bucket=%s Key=%s Value=[%s] \n", kk, kkkk, vvvv)
-							deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kkk), string(kkkk), string(vvvv))
-							device.Attrs[string(kk)].Props[string(kkk)].Props[string(kkkk)] = deviceAttributePropertyProperty
+							deviceAttribute, found = device.Attrs[string(k)]
+							if !found {
+								deviceAttribute = dc.NewDeviceAttribute(deviceName, string(k), string(vv))
+								device.Attrs[string(k)] = deviceAttribute
+							}
+							deviceAttributeProperty, found = deviceAttribute.Props[string(kk)]
+							if !found {
+								deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kk), string(vvv))
+								deviceAttribute.Props[string(kk)] = deviceAttributeProperty
+							}
+							deviceAttributePropertyProperty, found = deviceAttributeProperty.Props[string(kkkk)]
+							if !found {
+								fmt.Printf("(5) X/D/A/P/P %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
+								deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kk), string(kkkk), string(vvvv))
+								deviceAttributeProperty.Props[string(kkkk)] = deviceAttributePropertyProperty
+							}
 							return nil
 						})
 						return err
@@ -409,31 +424,72 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 				// 5 propertyAttribute
 
 				err := c.ForEach(func(kk, vv []byte) error {
-					fmt.Printf("(3) X/D/N.... Each Bucket=%s Key=%s Value=[%s] \n", deviceName, kk, vv)
-
 					if string(vv) != "" {
-						return nil
+						node, found = device.Nodes[string(k)]
+						if !found {
+							fmt.Printf("(3) X/D/N.... %s/%s -->[%s] \n", deviceName, kk, vv)
+							node = dc.NewDeviceNode(deviceName, string(kk))
+							device.Nodes[string(kk)] = node
+						}
 					}
+
 					d := c.Bucket(kk) // (4) Attribute | Property
 					if d == nil {
 						return nil
 					}
 					err := d.ForEach(func(kkk, vvv []byte) error {
-						if strings.HasPrefix(string(kkk), "$") {
-							fmt.Printf("(4) X/D/N/A.. Each Bucket=%s Key=%s Value=[%s] \n", k, kkk, vvv)
-						} else {
-							fmt.Printf("(4) X/D/N/P.. Each Bucket=%s Key=%s Value=[%s] \n", k, kkk, vvv)
+						if string(vvv) != "" {
+
+							if strings.HasPrefix(string(kkk), "$") {
+								node, found = device.Nodes[string(k)]
+								if !found {
+									node = dc.NewDeviceNode(deviceName, string(k))
+									device.Nodes[string(k)] = node
+								}
+								nodeAttribute, found = node.Attrs[string(kkk)]
+								if !found {
+									fmt.Printf("(4) X/D/N/A.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
+									nodeAttribute = dc.NewDeviceNodeAttribute(string(k), string(kkk), string(vvv))
+									node.Attrs[string(kkk)] = nodeAttribute
+								}
+
+							} else {
+								node, found = device.Nodes[string(k)]
+								if !found {
+									node = dc.NewDeviceNode(deviceName, string(k))
+									device.Nodes[string(k)] = node
+								}
+								nodeProperty, found = node.Props[string(kkk)]
+								if !found {
+									fmt.Printf("(4) X/D/N/P.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
+									nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kkk), string(vvv))
+									node.Props[string(kkk)] = nodeProperty
+								}
+
+							}
 						}
 
-						if string(vvv) != "" {
-							return nil
-						}
 						e := d.Bucket(kkk) // (5) PPropertyAttribute
 						if e == nil {
 							return nil
 						}
 						err := e.ForEach(func(kkkk, vvvv []byte) error {
-							fmt.Printf("(5) X/D/N/P/A Each Bucket=%s Key=%s Value=[%s] \n", kk, kkkk, vvvv)
+							node, found = device.Nodes[string(k)]
+							if !found {
+								node = dc.NewDeviceNode(deviceName, string(k))
+								device.Nodes[string(k)] = node
+							}
+							nodeProperty, found = node.Props[string(kk)]
+							if !found {
+								nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kk), string(vvv))
+								node.Props[string(kk)] = nodeProperty
+							}
+							nodePropertyAttribute, found = nodeProperty.Attrs[string(kkkk)]
+							if !found {
+								fmt.Printf("(5) X/D/N/P/A %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
+								nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(string(kk), string(kkkk), string(vvvv))
+								nodeProperty.Attrs[string(kkkk)] = nodePropertyAttribute
+							}
 							return nil
 						})
 						return err
@@ -442,7 +498,6 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 				})
 				return err
 			} // end if path
-			return nil
 		})
 		return err
 	})
