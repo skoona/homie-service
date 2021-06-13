@@ -81,6 +81,8 @@ type (
 		LoadSchedules() map[EID]Schedule
 		StoreSchedule(d Schedule) error
 		RemoveSchedule(d Schedule) error
+		LoadBroadcasts(networkName string) []Broadcast
+		RemoveAllBroadcasts(networkName string) error
 	}
 
 	// Service Implementation

@@ -129,16 +129,14 @@ var (
 )
 
 func main() {
-	// var hns *cl.HomieNetworks
-
 	cfg, err := cc.BuildRuntimeConfig("Homie-Service")
 	if err != nil {
 		os.Exit(1)
 	}
 	logger = log.With(cfg.Logger, "pkg", "main")
 
-	level.Debug(logger).Log("event", "service started")
-	defer level.Debug(logger).Log("event", "service ended")
+	level.Info(logger).Log("event", "service started")
+	defer level.Info(logger).Log("event", "service ended")
 
 	// Run the App
 	if cfg.RunMode == "live" {
@@ -156,18 +154,7 @@ func main() {
 	signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM)
 	sig := <-systemSignalChannel // wait on ctrl-c
 	level.Debug(logger).Log("event", sig)
-	level.Debug(logger).Log("event", "Shutting Down")
-
-
-	// Test Repo
-	net := repo.RestoreNetworkFromDB("sknSensors")
-	out, err := json.MarshalIndent(net, "", "  ")
-	if err != nil {
-		level.Warn(logger).Log("action", err.Error())
-	} else {
-		fmt.Println("Repository RestoreNetworkFromDB(snkSensors)")
-		fmt.Println(string(out))
-	}
+	level.Info(logger).Log("event", "Shutting Down")
 
 	if cfg.RunMode == "live" {
 		shutdownLive()
@@ -180,7 +167,7 @@ func main() {
 	}
 
 	// Dump the SiteNetwork and all nodes as JSON
-	out, err = json.MarshalIndent(siteNetworks, "", "  ")
+	out, err := json.MarshalIndent(siteNetworks, "", "  ")
 	if err != nil {
 		level.Warn(logger).Log("action", err.Error())
 	} else {

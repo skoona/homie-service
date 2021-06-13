@@ -138,6 +138,67 @@ func (r *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
 }
 
 /**
+ * LoadBroadcasts()
+ */
+func (r *dbRepo) LoadBroadcasts(networkName string) []dc.Broadcast {
+	var bc dc.Broadcast
+	broads := []dc.Broadcast{}
+
+	r.db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(networkName)) // (1) Network Level
+		if b == nil {
+			return fmt.Errorf("Network Not Found!: %s", networkName)
+		}
+
+		b = b.Bucket([]byte("$broadcast")) // (2) Broadcast
+		if b == nil {
+			return fmt.Errorf("$broadcast Not Found!: %s", "top level")
+		}
+
+		// x/b/t/i v
+		b.ForEach(func(topic, v []byte) error {
+			c := b.Bucket(topic) // (3) Topic
+			if c == nil {
+				return nil
+			}
+			c.ForEach(func(item, vv []byte) error {
+				d := c.Bucket(item) // (4) item
+				if d == nil {
+					return nil
+				}
+				d.ForEach(func(kkk, vvv []byte) error {
+					bc = dc.NewBroadcast(networkName, string(topic), string(kkk), string(vvv))
+					broads = append(broads, bc)
+					return nil
+				})
+				return nil
+			})
+			return nil
+		})
+
+		return nil
+	})
+
+	return broads
+}
+
+/**
+ * RemoveAllBroadcasts()
+ */
+func (r *dbRepo) RemoveAllBroadcasts(networkName string) error {
+	err := r.db.Update(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(networkName))
+		if b == nil {
+			return fmt.Errorf("[WARN] Network Not Found!: %s", networkName)
+		}
+
+		return b.DeleteBucket([]byte("$broadcast"))
+	})
+
+	return err
+}
+
+/**
  * Remove()
  *
  * Repository Implementation
@@ -193,6 +254,35 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 		b, err := tx.CreateBucketIfNotExists(d.NetworkID)
 		if err != nil {
 			return fmt.Errorf("[WARN] Network cannot be created or found!: %s, error: %s", d.NetworkID, err.Error())
+		}
+
+		// handle special case of $broadcast
+		if strings.HasPrefix(string(d.DeviceID), "$broad") {
+			b, err = b.CreateBucketIfNotExists(d.DeviceID)
+			if err != nil {
+				return fmt.Errorf("[WARN] (x/b....) cannot be created or found!: %s, error: %s", d.DeviceID, err.Error())
+			}
+
+			defaultTopic := d.PropertyID
+			if string(defaultTopic) == "" {
+				defaultTopic  = []byte("item")
+			}
+			b, err = b.CreateBucketIfNotExists(defaultTopic)
+			if err != nil {
+				return fmt.Errorf("[WARN] (x/b/t..) cannot be created or found!: %s, error: %s", defaultTopic, err.Error())
+			}
+
+			defaultProperty := d.PPropertyID
+			if string(defaultProperty) == "" {
+				defaultProperty = []byte("item")
+			}
+			b, err = b.CreateBucketIfNotExists(defaultProperty)
+			if err != nil {
+				return fmt.Errorf("[WARN] (x/b/t/i) cannot be created or found!: %s, error: %s", defaultProperty, err.Error())
+			}
+
+			err = b.Put(defaultProperty, d.Value)
+			return err
 		}
 
 		b, err = b.CreateBucketIfNotExists(d.DeviceID)
@@ -314,28 +404,12 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 	var nodeAttribute dc.DeviceNodeAttribute
 	var nodePropertyAttribute dc.DeviceNodePropertyAttribute
 
-	// X/D/								bucket(bucket())
-	// X/D/N/							bucket(bucket(bucket()))
-	//									  1/     2/     3/
-
-	// X/D/A/(k,v) 						bucket(bucket(bucket(k,v)))
-	//									  1/     2/     3/
-
-	// X/D/A/P/(k,v) 					bucket(bucket(bucket(bucket(k,v))))
-	// X/D/N/P/(k,v) 					bucket(bucket(bucket(bucket(k,v))))
-	// X/D/N/A/(k,v) 					bucket(bucket(bucket(bucket(k,v))))
-	//									  1/     2/     3/     4/
-
-	// X/D/A/P/P/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
-	// X/D/N/P/A/(k,v) 					bucket(bucket(bucket(bucket(bucket(k,v)))))
-	//									  1/     2/     3/     4/     5/
-
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName)) // (1) Network Level
 		if b == nil {
 			return fmt.Errorf("Network Not Found!: %s", networkName)
 		}
-		fmt.Printf("(2) X/D...... %s/%s \n", networkName, deviceName)
+		//fmt.Printf("(2) X/D...... %s/%s \n", networkName, deviceName)
 
 		b = b.Bucket([]byte(deviceName)) // (2) Device Level
 		if b == nil {
@@ -346,7 +420,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 		/*
 		 * examine device bucket for nodes or attributes */
 		err := b.ForEach(func(k, v []byte) error {
-			fmt.Printf("(2) X/D...... Bucket[2]=%s, enum Key=%s Value=[%s] \n", deviceName, string(k), string(v))
+			//fmt.Printf("(2) X/D...... Bucket[2]=%s, enum Key=%s Value=[%s] \n", deviceName, string(k), string(v))
 
 			c := b.Bucket(k) // (3) Node/Attr Level
 			if c == nil {
@@ -366,7 +440,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 					if string(vv) != "" {
 						deviceAttribute, found = device.Attrs[string(kk)]
 						if !found {
-							fmt.Printf("(3) X/D/A.... %s/%s -->[%s] \n", deviceName, kk, vv)
+							//fmt.Printf("(3) X/D/A.... %s/%s -->[%s] \n", deviceName, kk, vv)
 							deviceAttribute = dc.NewDeviceAttribute(deviceName, string(kk), string(vv))
 							device.Attrs[string(kk)] = deviceAttribute
 						}
@@ -384,7 +458,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 							}
 							deviceAttributeProperty, found = deviceAttribute.Props[string(kkk)]
 							if !found {
-								fmt.Printf("(4) X/D/A/P.. %s/%s/%s -->[%s]\n", deviceName, k, kkk, vvv)
+								//fmt.Printf("(4) X/D/A/P.. %s/%s/%s -->[%s]\n", deviceName, k, kkk, vvv)
 								deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kkk), string(vvv))
 								deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
 							}
@@ -406,7 +480,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 							}
 							deviceAttributePropertyProperty, found = deviceAttributeProperty.Props[string(kkkk)]
 							if !found {
-								fmt.Printf("(5) X/D/A/P/P %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
+								//fmt.Printf("(5) X/D/A/P/P %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
 								deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kk), string(kkkk), string(vvvv))
 								deviceAttributeProperty.Props[string(kkkk)] = deviceAttributePropertyProperty
 							}
@@ -427,7 +501,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 					if string(vv) != "" {
 						node, found = device.Nodes[string(k)]
 						if !found {
-							fmt.Printf("(3) X/D/N.... %s/%s -->[%s] \n", deviceName, kk, vv)
+							//fmt.Printf("(3) X/D/N.... %s/%s -->[%s] \n", deviceName, kk, vv)
 							node = dc.NewDeviceNode(deviceName, string(kk))
 							device.Nodes[string(kk)] = node
 						}
@@ -448,7 +522,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 								}
 								nodeAttribute, found = node.Attrs[string(kkk)]
 								if !found {
-									fmt.Printf("(4) X/D/N/A.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
+									//fmt.Printf("(4) X/D/N/A.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
 									nodeAttribute = dc.NewDeviceNodeAttribute(string(k), string(kkk), string(vvv))
 									node.Attrs[string(kkk)] = nodeAttribute
 								}
@@ -461,7 +535,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 								}
 								nodeProperty, found = node.Props[string(kkk)]
 								if !found {
-									fmt.Printf("(4) X/D/N/P.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
+									//fmt.Printf("(4) X/D/N/P.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
 									nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kkk), string(vvv))
 									node.Props[string(kkk)] = nodeProperty
 								}
@@ -486,7 +560,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 							}
 							nodePropertyAttribute, found = nodeProperty.Attrs[string(kkkk)]
 							if !found {
-								fmt.Printf("(5) X/D/N/P/A %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
+								//fmt.Printf("(5) X/D/N/P/A %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
 								nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(string(kk), string(kkkk), string(vvvv))
 								nodeProperty.Attrs[string(kkkk)] = nodePropertyAttribute
 							}

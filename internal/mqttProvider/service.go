@@ -61,6 +61,7 @@ var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
 
 var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err error) {
 	level.Debug(logger).Log("status", "lost MQTT connection", "error", err.Error())
+	//time.Sleep(10 * time.Second)
 }
 
 func publish(topic string, payload []byte, retain bool, qos byte) {
@@ -190,6 +191,9 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	opts.SetDefaultPublishHandler(defaultOnMessage)
 	opts.SetOnConnectHandler(connectHandler)
 	opts.SetConnectionLostHandler(connectLostHandler)
+	opts.SetConnectRetry(true)
+	opts.SetConnectRetryInterval(10 * time.Second)
+	opts.SetMaxReconnectInterval(30 * time.Minute)
 
 	client = mqtt.NewClient(opts)
 	if token := client.Connect(); token.Wait() && token.Error() != nil {
