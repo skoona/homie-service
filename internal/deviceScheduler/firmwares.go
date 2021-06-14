@@ -132,3 +132,53 @@ func buildFirmwareCatalog() []dc.Firmware {
 	level.Debug(logger).Log("event", "buildFirmwareCatalog() completed")
 	return firmware
 }
+
+/*
+        HOW TO PUBLISH FIRMWARE
+ref: https://github.com/skoona/HomieMonitor/blob/master/mains/homie/components/subscription.rb
+
+		# pending
+        #   -- send $implementation/ota/firmware/checksum -> firmware
+        # wait
+        #   -- recv $implementation/ota/firmware/checksum -> MessageBytes=ddd
+        #
+        # disabled = 403
+        # aborted = 400 | 500
+        # accepted = 304
+        #
+        # inprogress = 206 dd/dd
+        #
+        # aborted = 400 | 500
+        # success = 200
+
+
+
+firmware
+def ota_format
+        @ota_format ||= Homie::Handlers::Stream.ota_type
+      end
+
+      def ota_format=(ota)
+        @ota_format = ota
+      end
+
+      def as_binary
+        @path.binread
+      end
+
+      def as_base64_no_pad_url
+        urlsafe_encode64(as_binary, padding: false)
+      end
+
+      def as_base64_with_pad_url
+        Base64.urlsafe_encode64(as_binary, padding: true)
+      end
+
+      def as_strict_base64
+        Base64.strict_encode64(as_binary)
+      end
+
+      def as_base64
+        Base64.encode64(as_binary)
+      end
+ */

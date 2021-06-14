@@ -11,6 +11,7 @@ package mqttProvider
   - Implements the
 */
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -109,6 +110,11 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	}
 
 	dm := dStream.CreateQueueDeviceMessage(msg)
+
+	// firmware load messages require payload to be transformed to smaller message
+	if strings.Contains(msg.Topic(), "$implementation/ota/firmware/") {
+		dm.Value = []byte( fmt.Sprintf("MessageBytes=%d", len(dm.Value)))
+	}
 
 	if trigger {
 		if otastream != nil {

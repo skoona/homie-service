@@ -94,6 +94,7 @@ func handleOTAMessages(network, name string, enabled bool) error {
 }
 
 // WatchOTAProgress for Scheduler
+// ignore these $implementation/ota/firmware
 func WatchOTAProgress(network, device string) error {
 	topic := fmt.Sprintf("%s/%s/$implementation/ota/status", network, device)
 	token := subWithHandler(topic, otaResponses) // OTA Responses
