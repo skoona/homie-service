@@ -63,8 +63,9 @@ func (s *schedulerProvider) FindSchedulesByDeviceID(deviceID string) []dc.Schedu
 }
 func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) (dc.EID, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
-	// s.repo.StoreSchedule(schedule)
-	return dc.NewEID(), nil
+	schedule := NewSchedule(networkName, deviceID, transport, firmware)
+	err := s.repo.StoreSchedule(schedule)
+	return schedule.ID, err
 }
 func (s *schedulerProvider) DeleteSchedule(scheduleID dc.EID) error {
 	level.Debug(s.logger).Log("event", "Calling DeleteSchedule()")

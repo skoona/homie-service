@@ -21,11 +21,11 @@ var (
 	sch       *schedulerProvider
 )
 
-/*
+/**
  * Start()
  *
  * Initialize this service
- */
+*/
 func Start(dfg cc.Config, s OTAInteractor, r dc.Repository) dc.SchedulerProvider {
 	cfg = dfg
 	otaStream = s
@@ -39,10 +39,10 @@ func Start(dfg cc.Config, s OTAInteractor, r dc.Repository) dc.SchedulerProvider
 	return sch
 }
 
-/*
+/**
  * Stop
  * Cleans up this service
- */
+*/
 func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
 

@@ -102,16 +102,9 @@ func establishPublishing(pubChan chan dc.Device, tlog log.Logger) {
 var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	// if this is a trigger route to scheduler
 	// triggers:
-	// sknSensors/GarageMonitor/$state ready
-	// sknSensors/GarageMonitor/$implementation/ota/enabled true
+	// -- sknSensors/GarageMonitor/$fw/{name|version|checksum} value
 	var trigger bool = false
-	if strings.HasSuffix(msg.Topic(), "/$state") &&
-		string(msg.Payload()) == "ready" {
-		trigger = true
-	} else if strings.HasSuffix(msg.Topic(), "$implementation/ota/enabled") &&
-		string(msg.Payload()) == "true" {
-		trigger = true
-	} else if strings.HasSuffix(msg.Topic(), "$implementation/ota/status") {
+	if strings.Contains(msg.Topic(), "$fw/") {
 		trigger = true
 	}
 

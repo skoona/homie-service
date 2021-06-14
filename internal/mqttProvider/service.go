@@ -20,6 +20,7 @@ package mqttProvider
 */
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -145,6 +146,8 @@ var (
 	client    mqtt.Client
 	nNetworks = stringset.New()
 	logger    log.Logger
+	bInitialized  bool
+
 )
 
 /*
@@ -156,7 +159,7 @@ func Start() error {
 	var err error
 
 	// ensure Initialize() is called first
-	if logger == nil {
+	if !bInitialized {
 		return fmt.Errorf("you must call Initialize() in this package before calling Start()")
 	}
 	level.Debug(logger).Log("event", "Calling Start()")
@@ -174,6 +177,11 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	logger = log.With(cfg.Logger, "pkg", "mqttProvider")
 	var err error
 	level.Debug(logger).Log("event", "Calling Initialize()", "broker", config.BrokerIP )
+
+	if config.BrokerIP == "" || len(config.BrokerIP) < 9 {
+		err := errors.New("empty or invalid broker ip address")
+		return nil, nil, nil, err
+	}
 
 	/* Initialize MQTT */
 	opts := mqtt.NewClientOptions()
@@ -206,6 +214,8 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 
 	// allow for network discovery
 	doNetworkDiscovery()
+
+	bInitialized = true
 
 	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","), "clientID", opts.ClientID)
 	return otastream, dStream, DiscoveredNetworks(), err

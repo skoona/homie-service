@@ -107,7 +107,7 @@ func buildScheduleCatalog(plog log.Logger) map[dc.EID]dc.Schedule {
 func processSchedulerMessages(dm dc.DeviceMessage, plog log.Logger) error {
 	level.Debug(plog).Log("event", "Calling processSchedulerMessages()")
 	var err error
-	level.Debug(plog).Log("topic", dm.TopicS, "device", dm.DeviceID)
+	level.Debug(plog).Log("topic", dm.TopicS, "device", dm.DeviceID, "value", dm.Value)
 
 	level.Debug(plog).Log("event", "processSchedulerMessages() completed")
 	return err

@@ -41,7 +41,7 @@ func consumeOTAStream(dm dc.DeviceMessage, plog log.Logger) error {
 		level.Error(plog).Log("method", "consumeOTAStream()", "error", err.Error(), "device", dm.DeviceID)
 	}
 
-	level.Debug(plog).Log("method", "consumeOTAStream()", "device", dm.DeviceID)
+	level.Debug(plog).Log("method", "consumeOTAStream()", "device", dm.DeviceID, "topic", dm.Topic(), "value", dm.Value)
 
 	level.Debug(plog).Log("event", "consumeOTAStream() completed")
 	return err

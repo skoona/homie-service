@@ -30,6 +30,7 @@ var (
 	cfg			cc.Config
 	nNetworks = stringset.New()
 	logger    log.Logger
+	bInitialized bool
 )
 
 /*
@@ -227,6 +228,8 @@ func Initialize(dfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	// allow for network discovery
 	doNetworkDiscovery()
 
+	bInitialized = true
+
 	level.Debug(logger).Log("event", "Initialize() completed", "networks discovered", strings.Join(DiscoveredNetworks(), ","))
 	return otastream, dStream, DiscoveredNetworks(), err
 }
@@ -234,7 +237,7 @@ func Start() error {
 	var err error
 
 	// ensure Initialize() is called first
-	if logger == nil {
+	if !bInitialized {
 		return fmt.Errorf("you must call Initialize() in this package before calling Start()")
 	}
 	level.Debug(logger).Log("event", "Calling Start()")

@@ -29,7 +29,6 @@ package main
  */
 
 import (
-	"encoding/json"
 	"fmt"
 	"os"
 	"os/signal"
@@ -158,7 +157,7 @@ func main() {
 	//	errs <- http.ListenAndServe(*httpAddr, nil)
 	//}()
 	go func(shutdown chan error) {
-		systemSignalChannel := make(chan os.Signal, 1)
+		systemSignalChannel := make(chan os.Signal)
 		signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM)
 		sig := <-systemSignalChannel // wait on ctrl-c
 		shutdown <- fmt.Errorf("%s", sig)
@@ -176,13 +175,13 @@ func main() {
 	}
 
 	// Dump the SiteNetwork and all nodes as JSON
-	out, err := json.MarshalIndent(siteNetworks, "", "  ")
-	if err != nil {
-		level.Warn(logger).Log("action", err.Error())
-	} else {
-		fmt.Println("Site Network")
-		fmt.Println(string(out))
-	}
+	//out, err := json.MarshalIndent(siteNetworks, "", "  ")
+	//if err != nil {
+	//	level.Warn(logger).Log("action", err.Error())
+	//} else {
+	//	fmt.Println("Site Network")
+	//	fmt.Println(string(out))
+	//}
 
 	os.Exit(0)
 }
