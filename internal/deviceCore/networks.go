@@ -62,7 +62,7 @@ func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []
 func NewNetwork(title, name string) Network {
 	level.Debug(em.logger).Log("event", "NewNetwork() called", "title", title, "name", name)
 	return Network{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", title, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", title, name)))),
 		ElementType: CoreTypeNetwork,
 		Title:       title,
 		Name:        name,

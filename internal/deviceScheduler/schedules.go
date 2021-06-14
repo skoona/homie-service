@@ -86,7 +86,7 @@ The design goal for this file is:
 // if false return error
 func NewSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
 	return dc.Schedule{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", networkName, deviceID)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", networkName, deviceID)))),
 		ElementType: dc.CoreTypeSchedule,
 		DeviceID:   deviceID,
 		Package:     *firmware,

@@ -6,7 +6,7 @@ homiemonitor:
   version: 0.5.1
 
   datasources: 
-    dataStorage: ./dataDB/dataDir/devices_test.db
+    dataStorage: ./dataDB/dataDir/storage_test.db
     demoSource: ../../dataDB/testData/mosquitto_test.log
     firmwareStorage: ./dataDB/firmwares
     demoNetworks:

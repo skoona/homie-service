@@ -28,7 +28,7 @@ type Broadcast struct {
 // newBroadcast Creates Component
 func NewBroadcast(parent, topic, level, value string) Broadcast {
 	bc := Broadcast{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s.%s", parent, topic, level)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s.%s", parent, topic, level)))),
 		ElementType: CoreTypeBroadcast,
 		Parent:      parent,
 		Topic:       topic,

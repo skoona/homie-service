@@ -116,7 +116,7 @@ type DeviceNodePropertyAttribute struct {
 // OTAEnabled for Schedules
 func NewDevice(parent, name string) Device {
 	return Device{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDevice,
 		OTAEnabled:  true,
 		Parent:      parent,
@@ -130,7 +130,7 @@ func NewDevice(parent, name string) Device {
 func NewDeviceAttribute(parent, name, value string) DeviceAttribute {
 
 	return DeviceAttribute{
-		ID:         fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:         fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceAttribute,
 		Parent:      parent,
 		Name:        name,
@@ -145,7 +145,7 @@ func NewDeviceAttribute(parent, name, value string) DeviceAttribute {
 //  $DeviceAttr / Property
 func NewDeviceAttributeProperty(parent, name, value string) DeviceAttributeProperty {
 	return DeviceAttributeProperty{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceAttributeProperty,
 		Parent:      parent,
 		Name:        name,
@@ -160,7 +160,7 @@ func NewDeviceAttributeProperty(parent, name, value string) DeviceAttributePrope
 //  $DeviceAttr / Property / Property
 func NewDeviceAttributePropertyProperty(parent, name, value string) DeviceAttributePropertyProperty {
 	return DeviceAttributePropertyProperty{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceAttributePropertyProperty,
 		Parent:      parent,
 		Name:        name,
@@ -171,7 +171,7 @@ func NewDeviceAttributePropertyProperty(parent, name, value string) DeviceAttrib
 // NewDeviceNode Creates Component
 func NewDeviceNode(parent, name string) DeviceNode {
 	return DeviceNode{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNode,
 		Parent:      parent,
 		Name:        name,
@@ -183,7 +183,7 @@ func NewDeviceNode(parent, name string) DeviceNode {
 // NewDeviceNodeAttribute Creates Component
 func NewDeviceNodeAttribute(parent, name, value string) DeviceNodeAttribute {
 	return DeviceNodeAttribute{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNodeAttribute,
 		Parent:      parent,
 		Name:        name,
@@ -194,7 +194,7 @@ func NewDeviceNodeAttribute(parent, name, value string) DeviceNodeAttribute {
 // NewDeviceNodeProperty Creates Component
 func NewDeviceNodeProperty(parent, name, value string) DeviceNodeProperty {
 	return DeviceNodeProperty{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNodeProperty,
 		Parent:      parent,
 		Name:        name,
@@ -206,7 +206,7 @@ func NewDeviceNodeProperty(parent, name, value string) DeviceNodeProperty {
 // NewDeviceNodePropertyAttribute Creates Component
 func NewDeviceNodePropertyAttribute(parent, name, value string) DeviceNodePropertyAttribute {
 	return DeviceNodePropertyAttribute{
-		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNodePropertyAttribute,
 		Parent:      parent,
 		Name:        name,
