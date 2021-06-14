@@ -44,7 +44,7 @@ func (s *schedulerProvider) ApplySiteNetworks(sn *dc.SiteNetworks) {
 	level.Debug(s.logger).Log("event", "ApplySiteNetworks() called")
 	s.snwk = sn
 }
-func (s *schedulerProvider) BuildScheduleCatalog() map[dc.EID]dc.Schedule {
+func (s *schedulerProvider) BuildScheduleCatalog() map[string]dc.Schedule {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
 	sch.snwk.Schedules = buildScheduleCatalog(s.logger)
 	return sch.snwk.Schedules
@@ -61,13 +61,13 @@ func (s *schedulerProvider) FindSchedulesByDeviceID(deviceID string) []dc.Schedu
 	level.Debug(s.logger).Log("event", "Calling FindSchedulesByDeviceID()")
 	return []dc.Schedule{}
 }
-func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) (dc.EID, error) {
+func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) (string, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
 	schedule := NewSchedule(networkName, deviceID, transport, firmware)
 	err := s.repo.StoreSchedule(schedule)
 	return schedule.ID, err
 }
-func (s *schedulerProvider) DeleteSchedule(scheduleID dc.EID) error {
+func (s *schedulerProvider) DeleteSchedule(scheduleID string) error {
 	level.Debug(s.logger).Log("event", "Calling DeleteSchedule()")
 	// s.repo.RemoveSchedule(schedule)
 	return nil

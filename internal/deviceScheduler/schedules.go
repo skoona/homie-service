@@ -1,6 +1,8 @@
 package deviceScheduler
 
 import (
+	"crypto/md5"
+	"fmt"
 	"github.com/go-kit/kit/log"
 	"time"
 
@@ -84,7 +86,7 @@ The design goal for this file is:
 // if false return error
 func NewSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
 	return dc.Schedule{
-		ID:          dc.NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", networkName, deviceID)))),
 		ElementType: dc.CoreTypeSchedule,
 		DeviceID:   deviceID,
 		Package:     *firmware,
@@ -95,7 +97,7 @@ func NewSchedule(networkName string, deviceID string, transport dc.OTATransport,
 	}
 }
 
-func buildScheduleCatalog(plog log.Logger) map[dc.EID]dc.Schedule {
+func buildScheduleCatalog(plog log.Logger) map[string]dc.Schedule {
 	level.Debug(plog).Log("event", "buildScheduleCatalog() called")
 	return sch.repo.LoadSchedules()
 }

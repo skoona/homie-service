@@ -25,25 +25,25 @@ type (
 		AllNetworks() SiteNetworks
 		NetworkByName(networkName string) Network
 		DeviceByNameFromNetwork(deviceName, networkName string) (Device, error)
-		DeviceByEIDFromNetwork(deviceEID EID, networkName string) (Device, error)
-		RemoveDeviceByEIDFromNetwork(deviceEID EID, networkName string) error
+		DeviceByIDFromNetwork(deviceID string, networkName string) (Device, error)
+		RemoveDeviceByIDFromNetwork(deviceID string, networkName string) error
 
 		AllFirmwares() []Firmware
 		AddFirmware(firmware Firmware)
-		RemoveFirmwareByEID(firmwareEID EID)
-		FirmwareByEID(firmwareEID EID) (Firmware, error)
+		RemoveFirmwareByID(firmwareID EID)
+		FirmwareByID(firmwareID EID) (Firmware, error)
 		FirmwareByName(firmwareName string) (Firmware, error)
 
 		AllSchedules() []Schedule
 		AddSchedule(schedule Schedule)
-		RemoveSchedule(scheduleID EID)
-		ScheduleByEID(scheduleID EID) Schedule
+		RemoveSchedule(scheduleID string)
+		ScheduleByID(scheduleID string) Schedule
 		ScheduleByDeviceID(deviceID string) Schedule
 
 		AllBroadcasts() []Broadcast
 		AddBroadcast(broadcast Broadcast)
-		RemoveBroadcastByEID(broadcastEID EID)
-		BroadcastByEID(broadcastID EID) (Broadcast, error)
+		RemoveBroadcastByID(broadcastID string)
+		BroadcastByID(broadcastID string) (Broadcast, error)
 	}
 
 	/*
@@ -56,11 +56,11 @@ type (
 		GetFirmware(id EID) (Firmware, error)
 		CreateFirmware(path string) error
 		DeleteFirmware(id EID) error
-		BuildScheduleCatalog() map[EID]Schedule
+		BuildScheduleCatalog() map[string]Schedule
 		Schedules() []Schedule
 		FindSchedulesByDeviceID(deviceID string) []Schedule
-		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmware *Firmware) (EID, error)
-		DeleteSchedule(scheduleID EID) error
+		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmware *Firmware) (string, error)
+		DeleteSchedule(scheduleID string) error
 	}
 
 	/*
@@ -78,7 +78,7 @@ type (
 		Store(d DeviceMessage) error
 		Remove(d DeviceMessage) error
 		RestoreNetworkFromDB(networkName string) Network
-		LoadSchedules() map[EID]Schedule
+		LoadSchedules() map[string]Schedule
 		StoreSchedule(d Schedule) error
 		RemoveSchedule(d Schedule) error
 		LoadBroadcasts(networkName string) []Broadcast
@@ -215,7 +215,7 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, discov
 		"Homie Monitor (GOLANG)",
 		discoveredNetworks,
 		[]Firmware{},
-		map[EID]Schedule{})
+		map[string]Schedule{})
 
 	level.Debug(em.logger).Log("event", "Start() completed")
 

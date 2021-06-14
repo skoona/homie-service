@@ -8,11 +8,15 @@ The design goal for this file is:
 
 */
 
-import "time"
+import (
+	"crypto/md5"
+	"fmt"
+	"time"
+)
 
 // Broadcast Alert Messages on  Network
 type Broadcast struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Topic       string
@@ -24,7 +28,7 @@ type Broadcast struct {
 // newBroadcast Creates Component
 func NewBroadcast(parent, topic, level, value string) Broadcast {
 	bc := Broadcast{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s.%s", parent, topic, level)))),
 		ElementType: CoreTypeBroadcast,
 		Parent:      parent,
 		Topic:       topic,

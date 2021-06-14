@@ -102,9 +102,9 @@ func (r *dbRepo) RemoveSchedule(d dc.Schedule) error {
 /**
  * LoadSchedules()
  */
-func (r *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
+func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 	level.Debug(r.logger).Log("event", "Calling LoadSchedules()")
-	schedMap := map[dc.EID]dc.Schedule{}
+	schedMap := map[string]dc.Schedule{}
 
 	/*
 	 * Load Schedules */
@@ -119,7 +119,7 @@ func (r *dbRepo) LoadSchedules() map[dc.EID]dc.Schedule {
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			var schedule dc.Schedule
 			err = json.Unmarshal(v, &schedule)
-			schedMap[dc.EID(string(k))] = schedule
+			schedMap[string(k)] = schedule
 			fmt.Printf("schedule key=%s, value=%s\n", k, v)
 		}
 		return err

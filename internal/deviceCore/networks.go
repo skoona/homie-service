@@ -1,6 +1,7 @@
 package deviceCore
 
 import (
+	"crypto/md5"
 	"fmt"
 	"strings"
 
@@ -13,7 +14,7 @@ import (
 
 // Network contains all known devices in application
 type Network struct {
-	ID          EID
+	ID          string
 	Title       string
 	ElementType CoreType // network name
 	Name        string   // any
@@ -29,12 +30,12 @@ type SiteNetworks struct {
 	Names          []string // any
 	Broadcasts     []Broadcast
 	Firmwares      []Firmware
-	Schedules      map[EID]Schedule   // by EID
+	Schedules      map[string]Schedule   // by EID
 	DeviceNetworks map[string]Network // by Device Name
 }
 
 // NewNetworks Creates Component
-func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[EID]Schedule) *SiteNetworks {
+func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) *SiteNetworks {
 	level.Debug(em.logger).Log("event", "NewSiteNetworks() called")
 
 	siteNetworks = SiteNetworks{
@@ -61,7 +62,7 @@ func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []
 func NewNetwork(title, name string) Network {
 	level.Debug(em.logger).Log("event", "NewNetwork() called", "title", title, "name", name)
 	return Network{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", title, name)))),
 		ElementType: CoreTypeNetwork,
 		Title:       title,
 		Name:        name,

@@ -59,7 +59,7 @@ type Firmware struct {
 
 // DeviceSchedule the ota schedule details
 type Schedule struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	DeviceID   string
 	Package     Firmware

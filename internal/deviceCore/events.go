@@ -75,7 +75,7 @@ func (dm *DeviceMessage) String() string {
 func (dm *DeviceMessage) Schedulable() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "Schedulable()")
 	res := false
-	for _, keys := range []string{"$state", "$online", "uptime"} {
+	for _, keys := range []string{"$fw/version", "$fw/checksum", "$fw/name"} {
 		if strings.Contains(dm.TopicS, keys) {
 			res = true
 			break

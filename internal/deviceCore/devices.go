@@ -1,5 +1,10 @@
 package deviceCore
 
+import (
+	"crypto/md5"
+	"fmt"
+)
+
 /**
 	deviceCore/devices.go
 
@@ -10,7 +15,7 @@ The design goal for this file is:
 
 // Device represent a physical device
 type Device struct {
-	ID          EID
+	ID          string
 	Title       string
 	ElementType CoreType
 	OTAEnabled  bool
@@ -22,7 +27,7 @@ type Device struct {
 
 // DeviceAttribute of a Device allowing sub properties, representing a single value or measurement
 type DeviceAttribute struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Name        string
@@ -34,7 +39,7 @@ type DeviceAttribute struct {
 // of a Device Attribute, representing a single value or measurement
 // $implementation/ota/status -- where status will be a regular attribute
 type DeviceAttributeProperty struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Name        string
@@ -46,7 +51,7 @@ type DeviceAttributeProperty struct {
 // of a Device Attribute, representing a single value or measurement
 // $implementation/ota/status -- where status will be a regular attribute
 type DeviceAttributePropertyProperty struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Name        string
@@ -55,7 +60,7 @@ type DeviceAttributePropertyProperty struct {
 
 // Node representing the capabilities or features of device
 type DeviceNode struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Name        string
@@ -65,7 +70,7 @@ type DeviceNode struct {
 
 // Attribute used by Devices, Nodes, and Properties.  Used to describe format
 type DeviceNodeAttribute struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Name        string
@@ -74,7 +79,7 @@ type DeviceNodeAttribute struct {
 
 // NodeProperty of a Node, representing a single value or measurement
 type DeviceNodeProperty struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Name        string
@@ -84,7 +89,7 @@ type DeviceNodeProperty struct {
 
 // DeviceNodePropertyAttribute used by Devices, Nodes, and Properties.  Used to describe format
 type DeviceNodePropertyAttribute struct {
-	ID          EID
+	ID          string
 	ElementType CoreType
 	Parent      string
 	Name        string
@@ -111,7 +116,7 @@ type DeviceNodePropertyAttribute struct {
 // OTAEnabled for Schedules
 func NewDevice(parent, name string) Device {
 	return Device{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDevice,
 		OTAEnabled:  true,
 		Parent:      parent,
@@ -125,7 +130,7 @@ func NewDevice(parent, name string) Device {
 func NewDeviceAttribute(parent, name, value string) DeviceAttribute {
 
 	return DeviceAttribute{
-		ID:          NewEID(),
+		ID:         fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceAttribute,
 		Parent:      parent,
 		Name:        name,
@@ -140,7 +145,7 @@ func NewDeviceAttribute(parent, name, value string) DeviceAttribute {
 //  $DeviceAttr / Property
 func NewDeviceAttributeProperty(parent, name, value string) DeviceAttributeProperty {
 	return DeviceAttributeProperty{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceAttributeProperty,
 		Parent:      parent,
 		Name:        name,
@@ -155,7 +160,7 @@ func NewDeviceAttributeProperty(parent, name, value string) DeviceAttributePrope
 //  $DeviceAttr / Property / Property
 func NewDeviceAttributePropertyProperty(parent, name, value string) DeviceAttributePropertyProperty {
 	return DeviceAttributePropertyProperty{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceAttributePropertyProperty,
 		Parent:      parent,
 		Name:        name,
@@ -166,7 +171,7 @@ func NewDeviceAttributePropertyProperty(parent, name, value string) DeviceAttrib
 // NewDeviceNode Creates Component
 func NewDeviceNode(parent, name string) DeviceNode {
 	return DeviceNode{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNode,
 		Parent:      parent,
 		Name:        name,
@@ -178,7 +183,7 @@ func NewDeviceNode(parent, name string) DeviceNode {
 // NewDeviceNodeAttribute Creates Component
 func NewDeviceNodeAttribute(parent, name, value string) DeviceNodeAttribute {
 	return DeviceNodeAttribute{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNodeAttribute,
 		Parent:      parent,
 		Name:        name,
@@ -189,7 +194,7 @@ func NewDeviceNodeAttribute(parent, name, value string) DeviceNodeAttribute {
 // NewDeviceNodeProperty Creates Component
 func NewDeviceNodeProperty(parent, name, value string) DeviceNodeProperty {
 	return DeviceNodeProperty{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNodeProperty,
 		Parent:      parent,
 		Name:        name,
@@ -201,7 +206,7 @@ func NewDeviceNodeProperty(parent, name, value string) DeviceNodeProperty {
 // NewDeviceNodePropertyAttribute Creates Component
 func NewDeviceNodePropertyAttribute(parent, name, value string) DeviceNodePropertyAttribute {
 	return DeviceNodePropertyAttribute{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%s", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDeviceNodePropertyAttribute,
 		Parent:      parent,
 		Name:        name,
