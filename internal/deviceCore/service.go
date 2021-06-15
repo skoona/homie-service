@@ -58,7 +58,7 @@ type (
 		DeleteFirmware(id EID) error
 		BuildScheduleCatalog() map[string]Schedule
 		Schedules() []Schedule
-		FindSchedulesByDeviceID(deviceID string) []Schedule
+		FindScheduleByDeviceID(deviceID string) *Schedule
 		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmware *Firmware) (string, error)
 		DeleteSchedule(scheduleID string) error
 	}
@@ -80,7 +80,7 @@ type (
 		RestoreNetworkFromDB(networkName string) Network
 		LoadSchedules() map[string]Schedule
 		StoreSchedule(d Schedule) error
-		RemoveSchedule(d Schedule) error
+		RemoveSchedule(scheduleID string) error
 		LoadBroadcasts(networkName string) []Broadcast
 		RemoveAllBroadcasts(networkName string) error
 	}

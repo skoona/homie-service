@@ -102,15 +102,56 @@ func buildScheduleCatalog(plog log.Logger) map[string]dc.Schedule {
 	return sch.repo.LoadSchedules()
 }
 
+func handleOTATrigger(dm dc.DeviceMessage, plog log.Logger) (dc.DeviceMessage, error)  {
+	level.Debug(plog).Log("event", "Calling handleOTATrigger()")
+	dvm := dc.DeviceMessage{}
+	var err error
+ // build ota message
+ // todo: deviceID must be the hash value
+ 	deviceID := fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", dm.NetworkID, dm.DeviceID))))
+ 	schedule := sch.FindScheduleByDeviceID(deviceID)
+ 	if schedule.ElementType != dc.CoreTypeSchedule {  // empty schedule or not found
+ 		return dvm, err
+	}
+	mhash, bundle, err := buildFirmwarePayload(schedule.Transport, &schedule.Package)
+ 	dvm.TopicS = fmt.Sprintf("%s/%s/$implementation/ota/firmware/%s", dm.NetworkID, dm.DeviceID, mhash)
+ 	dvm.NetworkID = dm.NetworkID
+ 	dvm.DeviceID = dm.DeviceID
+ 	dvm.Value = []byte(bundle)
+ 	dvm.RetainedB = false
+ 	schedule.State = "active"
+ 	schedule.Scheduled = time.Now()
+	return dvm, err
+}
+func handleOTAActive(dm dc.DeviceMessage, plog log.Logger) error  {
+	level.Debug(plog).Log("event", "Calling handleOTAActive()")
+	return nil
+}
+func handleOTAComplete(dm dc.DeviceMessage, plog log.Logger) error  {
+	level.Debug(plog).Log("event", "Calling handleOTAComplete()")
+	err := otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), false)
+
+	return err
+}
+
 /*
  * processSchedulerMessages()
  * - handle notifications, triggers, and new core requests
  */
-func processSchedulerMessages(dm dc.DeviceMessage, plog log.Logger) error {
+func processSchedulerMessages(dm dc.DeviceMessage, plog log.Logger) (dc.DeviceMessage, error) {
 	level.Debug(plog).Log("event", "Calling processSchedulerMessages()")
 	var err error
+	dvm := dc.DeviceMessage{}
+
 	level.Debug(plog).Log("topic", dm.TopicS, "device", dm.DeviceID, "value", dm.Value)
+	if dm.OTATrigger {
+		dvm, err = handleOTATrigger(dm, plog)
+	} else 	if dm.OTAActive() {
+		err = handleOTAActive(dm, plog)
+	} else 	if dm.OTAComplete() {
+		err = handleOTAComplete(dm, plog)
+	}
 
 	level.Debug(plog).Log("event", "processSchedulerMessages() completed")
-	return err
+	return dvm, err
 }

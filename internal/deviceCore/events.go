@@ -53,6 +53,7 @@ type DeviceEventIntf interface {
 	String() string
 	Schedulable() bool
 	Settable() bool
+	OTAPublishMessage() bool
 	OTAActive() bool
 	OTAComplete() bool
 	Broadcast() bool
@@ -88,6 +89,11 @@ func (dm *DeviceMessage) Schedulable() bool {
 func (dm *DeviceMessage) Settable() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "Settable()")
 	return strings.HasSuffix(dm.TopicS, "set")
+}
+// OTAactive() determines if device is downloading firmware
+func (dm *DeviceMessage) OTAPublishMessage() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTAPublishMessage()")
+	return strings.Contains(dm.TopicS, "$implementation/ota/firmware/")
 }
 
 // OTAactive() determines if device is downloading firmware

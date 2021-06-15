@@ -33,20 +33,6 @@ func publishOTAStream(dm dc.DeviceMessage, plog log.Logger) {
 	return
 }
 
-func consumeOTAStream(dm dc.DeviceMessage, plog log.Logger) error {
-	level.Debug(plog).Log("event", "Calling consumeOTAStream()")
-
-	err := processSchedulerMessages(dm, plog)
-	if err != nil {
-		level.Error(plog).Log("method", "consumeOTAStream()", "error", err.Error(), "device", dm.DeviceID)
-	}
-
-	level.Debug(plog).Log("method", "consumeOTAStream()", "device", dm.DeviceID, "topic", dm.Topic(), "value", dm.Value)
-
-	level.Debug(plog).Log("event", "consumeOTAStream() completed")
-	return err
-}
-
 /**
  * consumeFromStreamProvider
  * Handles incoming channel DM message
@@ -60,14 +46,13 @@ func consumeFromOTAStreamProvider(consumer chan dc.DeviceMessage, plog log.Logge
 
 		for msg := range consumeChan { // read until closed
 
-			err := consumeOTAStream(msg, tlog)
+			dvm, err := processSchedulerMessages(msg, plog)
 			if err != nil {
 				level.Error(tlog).Log("method", "consumeFromOTAStreamProvider(gofunc)", "error", err.Error())
+			} else if dvm.OTAPublishMessage() {
+				otaStream.EnableNotificationsFor(string(dvm.NetworkID), string(dvm.DeviceID), true)
+				publishOTAStream(dvm, plog)
 			}
-
-			// if nil != publishChan {
-			// 	publishChan <- msg
-			// }
 			level.Debug(tlog).Log("method", "consumeFromOTAStreamProvider(gofunc)", "consume queue depth", len(consumeChan), "device", msg.DeviceID)
 		}
 		level.Debug(tlog).Log("method", "consumeFromOTAStreamProvider()", "event", "Completed")

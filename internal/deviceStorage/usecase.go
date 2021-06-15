@@ -66,8 +66,7 @@ func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 
 	if err != nil {
 		level.Error(r.logger).Log("Alert", "StoreSchedule() Failed", "error", err.Error(), "schedule", d.String())
-	} else {
-		level.Debug(r.logger).Log("event", "StoreSchedule() complete")
+		return err
 	}
 
 	return err
@@ -76,8 +75,8 @@ func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 /**
  * RemoveSchedule(schedule Schedule)
  */
-func (r *dbRepo) RemoveSchedule(d dc.Schedule) error {
-	level.Debug(r.logger).Log("event", "Calling RemoveSchedule()", "schedule", d.String())
+func (r *dbRepo) RemoveSchedule(scheduleID string) error {
+	level.Debug(r.logger).Log("event", "Calling RemoveSchedule()", "schedule", scheduleID)
 
 	/*
 	* Delete Schedules */
@@ -87,14 +86,14 @@ func (r *dbRepo) RemoveSchedule(d dc.Schedule) error {
 			return fmt.Errorf("[WARN] Schedules cannot be created or found!: %s", "Schedules")
 		}
 
-		err := b.DeleteBucket([]byte(d.ID))
+		err := b.DeleteBucket([]byte(scheduleID))
 		return err
 	})
 	if err != nil {
-		level.Error(r.logger).Log("Alert", "RemoveSchedule() Failed", "error", err.Error(), "schedule", d.String())
-	} else {
-		level.Debug(r.logger).Log("event", "RemoveSchedule() complete")
+		level.Error(r.logger).Log("Alert", "RemoveSchedule() Failed", "error", err.Error(), "schedule", scheduleID)
+		return err
 	}
+	level.Debug(r.logger).Log("event", "RemoveSchedule() complete")
 
 	return err
 }
@@ -112,7 +111,7 @@ func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 		var err error
 		b := tx.Bucket([]byte("Schedules"))
 		if b == nil {
-			return fmt.Errorf("No schedules %s", "available")
+			return fmt.Errorf("no schedules %s", "available")
 		}
 		c := b.Cursor()
 
@@ -143,7 +142,7 @@ func (r *dbRepo) LoadBroadcasts(networkName string) []dc.Broadcast {
 	r.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName)) // (1) Network Level
 		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", networkName)
+			return fmt.Errorf("network not found!: %s", networkName)
 		}
 		b = b.Bucket([]byte("$broadcast")) // (2) Broadcast
 		if b == nil {
@@ -196,18 +195,18 @@ func (r *dbRepo) RemoveAllBroadcasts(networkName string) error {
 func (r *dbRepo) Remove(d dc.DeviceMessage) error {
 	level.Debug(r.logger).Log("event", "Calling Remove()", "dm", d.String())
 	err := r.db.Update(func(tx *bolt.Tx) error {
-		var err error
 		b := tx.Bucket(d.NetworkID)
 		if b == nil {
-			return fmt.Errorf("[WARN] Network Not Found!: %s, error: %s", d.NetworkID, err.Error())
+			return fmt.Errorf("[WARN] Network Not Found!: %s", d.NetworkID)
 		}
 		return b.DeleteBucket(d.DeviceID)
 	})
 	if err != nil {
 		level.Error(r.logger).Log("Alert", "Remove() Update Failed", "error", err.Error(), "dm", d.String())
-	} else {
-		level.Debug(r.logger).Log("event", "Remove() complete", "device", d.DeviceID)
+		return err
 	}
+	level.Debug(r.logger).Log("event", "Remove() complete", "device", d.DeviceID)
+
 	return err
 }
 
@@ -327,7 +326,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 				return fmt.Errorf("[WARN] Node cannot be created or found!: %s, error: %s", d.NodeID, err.Error())
 			}
 		} else {
-			return fmt.Errorf("ALERT Unknown(node) Message!: %s, error: %s", d.String(), err.Error())
+			return fmt.Errorf("ALERT Unknown(node) Message!: %s", d.String())
 		}
 
 		// x/d/n/p/a
@@ -393,13 +392,13 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName)) // (1) Network Level
 		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", networkName)
+			return fmt.Errorf("network not found!: %s", networkName)
 		}
 		//fmt.Printf("(2) X/D...... %s/%s \n", networkName, deviceName)
 
 		b = b.Bucket([]byte(deviceName)) // (2) Device Level
 		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", deviceName)
+			return fmt.Errorf("network not found!: %s", deviceName)
 		}
 		device = dc.NewDevice(networkName, deviceName)
 

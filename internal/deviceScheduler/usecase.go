@@ -57,20 +57,31 @@ func (s *schedulerProvider) Schedules() []dc.Schedule {
 	}
 	return values
 }
-func (s *schedulerProvider) FindSchedulesByDeviceID(deviceID string) []dc.Schedule {
+func (s *schedulerProvider) FindScheduleByDeviceID(deviceID string) *dc.Schedule {
 	level.Debug(s.logger).Log("event", "Calling FindSchedulesByDeviceID()")
-	return []dc.Schedule{}
+	schedules := []*dc.Schedule{}
+	for _, schedule := range s.snwk.Schedules {
+		if schedule.DeviceID == deviceID {
+			schedules = append(schedules, &schedule)
+		}
+	}
+	if len(schedules) >= 1 {
+		return schedules[0]
+	}
+	return &dc.Schedule{}
 }
 func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) (string, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
 	schedule := NewSchedule(networkName, deviceID, transport, firmware)
+	s.snwk.Schedules[schedule.ID] = schedule
 	err := s.repo.StoreSchedule(schedule)
 	return schedule.ID, err
 }
 func (s *schedulerProvider) DeleteSchedule(scheduleID string) error {
 	level.Debug(s.logger).Log("event", "Calling DeleteSchedule()")
-	// s.repo.RemoveSchedule(schedule)
-	return nil
+	delete(s.snwk.Schedules, scheduleID)
+	err := s.repo.RemoveSchedule(scheduleID)
+	return err
 }
 func (s *schedulerProvider) BuildFirmwareCatalog() []dc.Firmware {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")

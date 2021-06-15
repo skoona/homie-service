@@ -87,9 +87,8 @@ func (em *coreService) RemoveDeviceByIDFromNetwork(deviceID string, networkName 
 
 		em.dsp.HandleCoreEvent(*ptrToDevice)
 		if em.scp != nil {
-			for _, schedule := range em.scp.FindSchedulesByDeviceID(ptrToDevice.Name) {
-				err = em.scp.DeleteSchedule(schedule.ID)
-			}
+			schedule := em.scp.FindScheduleByDeviceID(ptrToDevice.Name) 
+			err = em.scp.DeleteSchedule(schedule.ID)
 		}
 	}
 	return err
