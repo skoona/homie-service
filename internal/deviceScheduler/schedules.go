@@ -103,8 +103,8 @@ func buildScheduleCatalog(plog log.Logger) map[string]dc.Schedule {
 	return sch.repo.LoadSchedules()
 }
 //
-//schedule.Status = "waiting", "downloading", "complete"
-//schedule.State = "pending", "active", "aborted", "rejected", "complete", "current"
+//schedule.Status = "waiting", "initializing", "downloading", "dd/dddd", "complete"
+//schedule.State = "pending", "active", ["accepted", "aborted", "rejected"], "complete", "current"
 
 func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logger) error  {
 	level.Debug(plog).Log("event", "Calling handleOTATrigger()")
@@ -112,34 +112,42 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 	var err error
 
 	// match existing
-	// "$fw/checksum"
-	if strings.Contains(dm.Topic(), "$fw/checksum") &&
- 		strings.Contains(string(dm.Value), schedule.Package.MD5Digest) {
+	// "$fw/checksum" is the only trigger word
+	if strings.Contains(dm.Topic(), "$fw/checksum") {
+		return err
+	}
+
+	// already being handled
+	if !(schedule.State == "pending" || schedule.State == "current")  {
+		return err
+	}
+
+	// ensure md5's are different
+	if strings.Contains(string(dm.Value), schedule.Package.MD5Digest) {
 		schedule.Completed = time.Now()
 		schedule.Status = "complete"
 		schedule.State = "current"
 		return err
 	}
 
-	// already active
-	if !(schedule.State == "pending" || schedule.State == "current")  {
+	// build and send OTA
+	mhash, bundle, err := buildFirmwarePayload(schedule.Transport, schedule.Package)
+	if err != nil {
+		level.Error(plog).Log("event", "handleOTATrigger()", "error", err.Error())
 		return err
 	}
 
-	// build and send OTA
-	mhash, bundle, err := buildFirmwarePayload(schedule.Transport, schedule.Package)
- 	dvm.TopicS = fmt.Sprintf("%s/%s/$implementation/ota/firmware/%s", dm.NetworkID, dm.DeviceID, mhash)
- 	dvm.NetworkID = dm.NetworkID
- 	dvm.DeviceID = dm.DeviceID
- 	dvm.Value = []byte(bundle)
- 	dvm.RetainedB = false
-	schedule.Status = "downloading"
- 	schedule.State = "active"
- 	schedule.Scheduled = time.Now()
+	dvm.TopicS = fmt.Sprintf("%s/%s/$implementation/ota/firmware/%s", dm.NetworkID, dm.DeviceID, mhash)
+	dvm.NetworkID = dm.NetworkID
+	dvm.DeviceID = dm.DeviceID
+	dvm.Value = []byte(bundle)
+	dvm.RetainedB = false
+	schedule.Status = "initializing"
+	schedule.State = "active"
+	schedule.Scheduled = time.Now()
 
 	level.Debug(plog).Log("event", "handleOTATrigger()", "schedule", schedule.ID)
 
-	otaStream.EnableNotificationsFor(string(dvm.NetworkID), string(dvm.DeviceID), true)
 	publishOTAStream(dvm, plog)
 
 	level.Debug(plog).Log("event", "handleOTATrigger() completed")
@@ -147,8 +155,12 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 }
 func handleOTAStatus(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logger) error  {
 	level.Debug(plog).Log("event", "Calling handleOTAStatus()")
-	if dm.OTAActive() {
+	if dm.OTAAccepted() {
 		schedule.Status = "downloading"
+		schedule.State = "accepted"
+		otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), true)
+	} else if dm.OTAActive() {
+		schedule.Status = string(dm.Value)[3:] // 203 dd/dddd
 		schedule.State = "active"
 	} else if dm.OTAAborted() {
 		schedule.Status = "complete"

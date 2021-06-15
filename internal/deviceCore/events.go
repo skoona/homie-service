@@ -108,6 +108,12 @@ func (dm *DeviceMessage) OTAStatus() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "OTAStatus()")
 	return strings.Contains(dm.TopicS, "$implementation/ota/status")
 }
+// OTAAccepted() determines if device is downloading firmware
+func (dm *DeviceMessage) OTAAccepted() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTAAccepted()")
+	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
+		strings.HasPrefix(string(dm.Value), "304")
+}
 
 // OTAactive() determines if device is downloading firmware
 func (dm *DeviceMessage) OTAActive() bool {
