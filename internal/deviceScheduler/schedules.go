@@ -113,12 +113,12 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 
 	// match existing
 	// "$fw/checksum" is the only trigger word
-	if strings.Contains(dm.Topic(), "$fw/checksum") {
+	if !strings.Contains(dm.Topic(), "$fw/checksum") {
 		return err
 	}
 
 	// already being handled
-	if !(schedule.State == "pending" || schedule.State == "current")  {
+	if schedule.State != "pending" {
 		return err
 	}
 
@@ -148,7 +148,7 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 
 	level.Debug(plog).Log("event", "handleOTATrigger()", "schedule", schedule.ID)
 
-	publishOTAStream(dvm, plog)
+	otaStream.OtaPublish(dvm)
 
 	level.Debug(plog).Log("event", "handleOTATrigger() completed")
 	return err
