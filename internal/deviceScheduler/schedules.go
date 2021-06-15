@@ -148,6 +148,7 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 
 	level.Debug(plog).Log("event", "handleOTATrigger()", "schedule", schedule.ID)
 
+	otaStream.EnableNotificationsFor(string(dvm.NetworkID), string(dvm.DeviceID), false)
 	otaStream.OtaPublish(dvm)
 
 	level.Debug(plog).Log("event", "handleOTATrigger() completed")
@@ -159,7 +160,7 @@ func handleOTAStatus(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logger
 		schedule.Completed = time.Now()
 		schedule.Status = "complete"
 		schedule.State = "current"
-		otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), true)
+		otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), false)
 	} else if dm.OTAActive() {
 		schedule.Status = string(dm.Value)[3:] // 203 dd/dddd
 		schedule.State = "active"
