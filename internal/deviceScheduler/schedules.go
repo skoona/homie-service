@@ -15,7 +15,7 @@ import (
   deviceScheduler/schedules.go:
 
 The design goal for this file is:
-	* Discover existing ESP8266/ESP32 Firmware in dataDB directotry
+	* Discover existing ESP8266/ESP32 Firmware in dataDB directory
 	* Attach the discovered collection to the central HomeNetworks struct
 	* Create Device OTA schedules and prepare for execution of an OTA download
 	* Execute an OTA Download through MQTT using the Homie protocol
@@ -155,9 +155,10 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 }
 func handleOTAStatus(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logger) error  {
 	level.Debug(plog).Log("event", "Calling handleOTAStatus()")
-	if dm.OTAAccepted() {
-		schedule.Status = "downloading"
-		schedule.State = "accepted"
+	if dm.OTACurrent() {
+		schedule.Completed = time.Now()
+		schedule.Status = "complete"
+		schedule.State = "current"
 		otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), true)
 	} else if dm.OTAActive() {
 		schedule.Status = string(dm.Value)[3:] // 203 dd/dddd

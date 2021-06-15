@@ -54,7 +54,11 @@ type DeviceEventIntf interface {
 	Schedulable() bool
 	Settable() bool
 	OTAPublishMessage() bool
+	OTAStatus() bool
 	OTAActive() bool
+	OTACurrent() bool
+	OTARejected() bool
+	OTAAborted() bool
 	OTAComplete() bool
 	Broadcast() bool
 	Parts() []string
@@ -93,7 +97,7 @@ func (dm *DeviceMessage) Settable() bool {
 /*
 	# disabled = 403
 	# aborted = 400 | 500
-	# accepted = 304
+	# accepted/ current = 304
 	# in progress = 206 dd/dd
 	# success = 200
 */
@@ -108,9 +112,9 @@ func (dm *DeviceMessage) OTAStatus() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "OTAStatus()")
 	return strings.Contains(dm.TopicS, "$implementation/ota/status")
 }
-// OTAAccepted() determines if device is downloading firmware
-func (dm *DeviceMessage) OTAAccepted() bool {
-	level.Debug(em.logger).Log("DeviceMessage", "OTAAccepted()")
+// OTACurrent() determines if device is downloading firmware
+func (dm *DeviceMessage) OTACurrent() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTACurrent()")
 	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
 		strings.HasPrefix(string(dm.Value), "304")
 }
