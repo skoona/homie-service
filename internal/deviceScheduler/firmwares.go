@@ -9,8 +9,10 @@ package deviceScheduler
 
 import (
 	"crypto/md5"
+	"encoding/base64"
 	"encoding/hex"
 	"fmt"
+	"github.com/go-kit/kit/log"
 	"io/ioutil"
 	"os"
 	"strings"
@@ -131,6 +133,44 @@ func buildFirmwareCatalog() []dc.Firmware {
 
 	level.Debug(logger).Log("event", "buildFirmwareCatalog() completed")
 	return firmware
+}
+
+/*
+ * buildFirmwarePayload()
+ * return checksum, byteBuffer, and error
+ * transforms file into desired otaFormat
+ */
+func buildFirmwarePayload(transport dc.OTATransport, fw *dc.Firmware) (string, string, error) {
+	var content string
+
+	mlog := log.With(logger,"method", "buildFirmwarePayload()")
+	level.Debug(mlog).Log("event", "buildFirmwarePayload() called")
+
+	buffer, err := ioutil.ReadFile(fw.Path)
+	if err != nil {
+		level.Error(mlog).Log("file open failed", fw.Path, "error", err.Error())
+		return "", "", fmt.Errorf("fileopen(%s) failed: %s", fw.Path, err.Error())
+	}
+
+	if int64(len(buffer)) != fw.Size {
+		return "", "", fmt.Errorf("file(%s) size has changed: %d", fw.FileName, fw.Size)
+	}
+
+	switch transport {
+	case dc.Binary:
+		content = string(buffer)
+	case dc.Base64:
+		content = base64.StdEncoding.EncodeToString(buffer)
+	case dc.Base64Strict:
+		content = base64.StdEncoding.Strict().EncodeToString(buffer)
+	case dc.RFC4648URLSafeWithPadding:
+		content = base64.URLEncoding.EncodeToString(buffer)
+	case dc.RFC4648URLSafeWithoutPadding:
+		content = base64.RawURLEncoding.EncodeToString(buffer)
+	}
+
+	level.Debug(mlog).Log("event", "buildFirmwarePayload() completed")
+	return fw.MD5Digest, content, err
 }
 
 /*
