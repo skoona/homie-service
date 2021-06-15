@@ -90,10 +90,23 @@ func (dm *DeviceMessage) Settable() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "Settable()")
 	return strings.HasSuffix(dm.TopicS, "set")
 }
+/*
+	# disabled = 403
+	# aborted = 400 | 500
+	# accepted = 304
+	# in progress = 206 dd/dd
+	# success = 200
+*/
+
 // OTAactive() determines if device is downloading firmware
 func (dm *DeviceMessage) OTAPublishMessage() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "OTAPublishMessage()")
 	return strings.Contains(dm.TopicS, "$implementation/ota/firmware/")
+}
+// OTAStatus() determines if device is downloading firmware
+func (dm *DeviceMessage) OTAStatus() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTAStatus()")
+	return strings.Contains(dm.TopicS, "$implementation/ota/status")
 }
 
 // OTAactive() determines if device is downloading firmware
@@ -101,6 +114,18 @@ func (dm *DeviceMessage) OTAActive() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "OTAActive()")
 	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
 		strings.HasPrefix(string(dm.Value), "206")
+}
+// OTARejected() determines if device is downloading firmware
+func (dm *DeviceMessage) OTARejected() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTARejected()")
+	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
+		strings.HasPrefix(string(dm.Value), "403")
+}
+// OTAAborted() determines if device is downloading firmware
+func (dm *DeviceMessage) OTAAborted() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTAAborted()")
+	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
+		(strings.HasPrefix(string(dm.Value), "400") || strings.HasPrefix(string(dm.Value), "500"))
 }
 
 // OTAComplete determines if device has accepted new firmware

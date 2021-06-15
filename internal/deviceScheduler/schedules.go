@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"fmt"
 	"github.com/go-kit/kit/log"
+	"strings"
 	"time"
 
 	"github.com/go-kit/kit/log/level"
@@ -90,8 +91,8 @@ func NewSchedule(networkName string, deviceID string, transport dc.OTATransport,
 		ElementType: dc.CoreTypeSchedule,
 		DeviceID:   deviceID,
 		Package:     *firmware,
-		State:       "Pending",
-		Status:      "Waiting",
+		State:       "pending",
+		Status:      "waiting",
 		Transport:   transport,
 		Scheduled:   time.Now(),
 	}
@@ -101,36 +102,79 @@ func buildScheduleCatalog(plog log.Logger) map[string]dc.Schedule {
 	level.Debug(plog).Log("event", "buildScheduleCatalog() called")
 	return sch.repo.LoadSchedules()
 }
+//
+//schedule.Status = "waiting", "downloading", "complete"
+//schedule.State = "pending", "active", "aborted", "rejected", "complete", "current"
 
-func handleOTATrigger(dm dc.DeviceMessage, plog log.Logger) (dc.DeviceMessage, error)  {
+func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logger) error  {
 	level.Debug(plog).Log("event", "Calling handleOTATrigger()")
 	dvm := dc.DeviceMessage{}
 	var err error
- // build ota message
- // todo: deviceID must be the hash value
- 	deviceID := fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", dm.NetworkID, dm.DeviceID))))
- 	schedule := sch.FindScheduleByDeviceID(deviceID)
- 	if schedule.ElementType != dc.CoreTypeSchedule {  // empty schedule or not found
- 		return dvm, err
+
+	// match existing
+	// "$fw/checksum"
+	if strings.Contains(dm.Topic(), "$fw/checksum") &&
+ 		strings.Contains(string(dm.Value), schedule.Package.MD5Digest) {
+		schedule.Completed = time.Now()
+		schedule.Status = "complete"
+		schedule.State = "current"
+		return err
 	}
-	mhash, bundle, err := buildFirmwarePayload(schedule.Transport, &schedule.Package)
+
+	// already active
+	if !(schedule.State == "pending" || schedule.State == "current")  {
+		return err
+	}
+
+	// build and send OTA
+	mhash, bundle, err := buildFirmwarePayload(schedule.Transport, schedule.Package)
  	dvm.TopicS = fmt.Sprintf("%s/%s/$implementation/ota/firmware/%s", dm.NetworkID, dm.DeviceID, mhash)
  	dvm.NetworkID = dm.NetworkID
  	dvm.DeviceID = dm.DeviceID
  	dvm.Value = []byte(bundle)
  	dvm.RetainedB = false
+	schedule.Status = "downloading"
  	schedule.State = "active"
  	schedule.Scheduled = time.Now()
-	return dvm, err
+
+	level.Debug(plog).Log("event", "handleOTATrigger()", "schedule", schedule.ID)
+
+	otaStream.EnableNotificationsFor(string(dvm.NetworkID), string(dvm.DeviceID), true)
+	publishOTAStream(dvm, plog)
+
+	level.Debug(plog).Log("event", "handleOTATrigger() completed")
+	return err
 }
-func handleOTAActive(dm dc.DeviceMessage, plog log.Logger) error  {
-	level.Debug(plog).Log("event", "Calling handleOTAActive()")
+func handleOTAStatus(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logger) error  {
+	level.Debug(plog).Log("event", "Calling handleOTAStatus()")
+	if dm.OTAActive() {
+		schedule.Status = "downloading"
+		schedule.State = "active"
+	} else if dm.OTAAborted() {
+		schedule.Status = "complete"
+		schedule.State = "aborted"
+		otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), false)
+	} else if dm.OTARejected() {
+		schedule.Status = "complete"
+		schedule.State = "rejected"
+		otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), false)
+	}
+	level.Debug(plog).Log("event", "handleOTAStatus()", "schedule", schedule.ID, "status", schedule.Status)
+
+	level.Debug(plog).Log("event", "handleOTAStatus() completed")
 	return nil
 }
-func handleOTAComplete(dm dc.DeviceMessage, plog log.Logger) error  {
+func handleOTAComplete(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logger) error  {
 	level.Debug(plog).Log("event", "Calling handleOTAComplete()")
-	err := otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), false)
-
+	var err error
+	if dm.OTAComplete() {
+		err = otaStream.EnableNotificationsFor(string(dm.NetworkID), string(dm.DeviceID), false)
+		schedule.Completed = time.Now()
+		schedule.Status = "complete"
+		schedule.State = "complete"
+		level.Debug(plog).Log("event", "handleOTAComplete()", "schedule", schedule.ID, "state", "completed")
+	}
+	level.Debug(plog).Log("event", "handleOTAComplete() completed")
 	return err
 }
 
@@ -138,20 +182,24 @@ func handleOTAComplete(dm dc.DeviceMessage, plog log.Logger) error  {
  * processSchedulerMessages()
  * - handle notifications, triggers, and new core requests
  */
-func processSchedulerMessages(dm dc.DeviceMessage, plog log.Logger) (dc.DeviceMessage, error) {
+func processSchedulerMessages(dm dc.DeviceMessage, plog log.Logger) error {
 	level.Debug(plog).Log("event", "Calling processSchedulerMessages()")
 	var err error
-	dvm := dc.DeviceMessage{}
+	deviceID := fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", dm.NetworkID, dm.DeviceID))))
+	schedule := sch.FindScheduleByDeviceID(deviceID)
+	if schedule.ElementType != dc.CoreTypeSchedule {  // empty schedule or not found
+		return fmt.Errorf("no schedule available for device %s", dm.DeviceID)
+	}
 
 	level.Debug(plog).Log("topic", dm.TopicS, "device", dm.DeviceID, "value", dm.Value)
 	if dm.OTATrigger {
-		dvm, err = handleOTATrigger(dm, plog)
-	} else 	if dm.OTAActive() {
-		err = handleOTAActive(dm, plog)
+		err = handleOTATrigger(dm, schedule, plog)
 	} else 	if dm.OTAComplete() {
-		err = handleOTAComplete(dm, plog)
+		err = handleOTAComplete(dm, schedule, plog)
+	} else 	if dm.OTAStatus() {
+		err = handleOTAStatus(dm, schedule, plog)
 	}
 
 	level.Debug(plog).Log("event", "processSchedulerMessages() completed")
-	return dvm, err
+	return err
 }

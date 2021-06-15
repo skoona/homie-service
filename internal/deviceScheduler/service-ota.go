@@ -46,12 +46,9 @@ func consumeFromOTAStreamProvider(consumer chan dc.DeviceMessage, plog log.Logge
 
 		for msg := range consumeChan { // read until closed
 
-			dvm, err := processSchedulerMessages(msg, plog)
+			err := processSchedulerMessages(msg, plog)
 			if err != nil {
 				level.Error(tlog).Log("method", "consumeFromOTAStreamProvider(gofunc)", "error", err.Error())
-			} else if dvm.OTAPublishMessage() {
-				otaStream.EnableNotificationsFor(string(dvm.NetworkID), string(dvm.DeviceID), true)
-				publishOTAStream(dvm, plog)
 			}
 			level.Debug(tlog).Log("method", "consumeFromOTAStreamProvider(gofunc)", "consume queue depth", len(consumeChan), "device", msg.DeviceID)
 		}

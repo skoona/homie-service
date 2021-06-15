@@ -140,7 +140,7 @@ func buildFirmwareCatalog() []dc.Firmware {
  * return checksum, byteBuffer, and error
  * transforms file into desired otaFormat
  */
-func buildFirmwarePayload(transport dc.OTATransport, fw *dc.Firmware) (string, string, error) {
+func buildFirmwarePayload(transport dc.OTATransport, fw dc.Firmware) (string, string, error) {
 	var content string
 
 	mlog := log.With(logger,"method", "buildFirmwarePayload()")
