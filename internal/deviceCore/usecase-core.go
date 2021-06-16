@@ -2,9 +2,8 @@ package deviceCore
 
 import (
 	"fmt"
-	"os"
-
 	"github.com/go-kit/kit/log/level"
+	"os"
 )
 
 /*
@@ -82,10 +81,27 @@ func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) err
 		level.Error(em.logger).Log("error", err.Error())
 	} else {
 		delete(siteNetworks.DeviceNetworks[networkName].Devices, ptrToDevice.Name)
-		// TODO: send delete command to deviceSource and Scheduler
-		// TODO: Device to DeviceMessage is required
 
-		em.dsp.HandleCoreEvent(*ptrToDevice)
+		// Tell the world to delete this device
+		dv := DeviceMessage{}
+		for _, topic := range TopicsFromDevice(*ptrToDevice) {
+			dm := DeviceMessage{
+				NetworkID: []byte(ptrToDevice.Parent),
+				DeviceID: []byte(ptrToDevice.Name),
+				TopicS: topic,
+				Value: nil,
+				Qosb: 0,
+				RetainedB: false,
+			}
+			dv = dm
+			em.dsp.PublishToStreamProvider(dm)
+			level.Debug(em.logger).Log("publishing to", ptrToDevice.Name, "Topic", topic)
+		}
+		
+		// remove from db
+		em.repo.Remove(dv)
+
+		// Update Scheduler
 		if em.scp != nil {
 			schedule := em.scp.FindScheduleByDeviceID(ptrToDevice.ID)
 			err = em.scp.DeleteSchedule(schedule.ID)
@@ -94,8 +110,8 @@ func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) err
 	return err
 }
 
-func (em *coreService) PublishNetworkMessage(networkName, topic string, payload []byte) error {
-	return em.dsp.PublishNetworkMessage(networkName, topic, payload)
+func (em *coreService) PublishNetworkMessage(dm DeviceMessage) {
+	em.dsp.PublishToStreamProvider(dm)
 }
 
 func (em *coreService) AllSchedules() []Schedule {

@@ -22,8 +22,8 @@ const (
 	CoreTypeDeviceNodeAttribute
 	CoreTypeDeviceNodeProperty
 	CoreTypeDeviceNodePropertyAttribute
-	CoreTypeAttribute
-	CoreTypeProperty
+	CoreTypeDeviceDelete
+	CoreTypePublishMessage
 	CoreTypeBroadcast
 	CoreTypeFirmware
 	CoreTypeSchedule

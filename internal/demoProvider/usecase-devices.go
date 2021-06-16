@@ -12,20 +12,18 @@ package demoProvider
 */
 import (
 	"fmt"
-	"strings"
-	"time"
-
 	mqtt "github.com/eclipse/paho.mqtt.golang"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
+	"strings"
 )
 
 type (
 	deviceStream struct {
 		notifyChannel  chan dc.DeviceMessage // in
-		publishChannel chan dc.Device // in
+		publishChannel chan dc.DeviceMessage // in
 		logger         log.Logger
 	}
 )
@@ -59,10 +57,10 @@ func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceM
 	return dm
 }
 
-func (s *deviceStream) GetPublishChannel() chan dc.Device {
+func (s *deviceStream) GetPublishChannel() chan dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "GetPublishChannel()")
 	if s.publishChannel == nil {
-		s.publishChannel = make(chan dc.Device, 120)
+		s.publishChannel = make(chan dc.DeviceMessage, 32)
 		establishPublishing(s.publishChannel, s.logger)
 	}
 	return s.publishChannel
@@ -78,19 +76,13 @@ func (s *deviceStream) GetNotifyChannel() chan dc.DeviceMessage {
 /**
  * establishPublishing()
  */
-func establishPublishing(pubChan chan dc.Device, tlog log.Logger) {
+func establishPublishing(pubChan chan dc.DeviceMessage, tlog log.Logger) {
 	// Listen on incoming channel for device delete messages
-	go func(consumer chan dc.Device) {
-		level.Debug(tlog).Log("event", "establishPublishing(gofunc) called")
+	go func(consumer chan dc.DeviceMessage) {
+		level.Debug(tlog).Log("method", "establishPublishing()", "event", "establishPublishing(gofunc) called")
 		for msg := range consumer { // read until closed
-			// todo unwrap this feature to Core, so msgs are formal pubs
-			for _, topic := range dc.TopicsFromDevice(msg) {
-				publish(topic, nil, false, 0)
-				time.Sleep(5 * time.Millisecond)
-				level.Debug(tlog).Log("publishing to", msg.Name, "Topic", topic)
-			}
-
-			level.Debug(tlog).Log("method", "establishPublishing(gofunc)", "queue depth", len(consumer), "deviceID", msg.ID)
+			publish(msg.Topic(), msg.Payload(), msg.Retained(), msg.Qos())
+			level.Debug(tlog).Log("queue depth",len(consumer), "publishing to", msg.DeviceID, "Topic", msg.Topic())
 		}
 		level.Debug(tlog).Log("method", "establishPublishing()", "event", "Completed")
 	}(pubChan)

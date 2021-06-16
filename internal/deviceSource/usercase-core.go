@@ -10,7 +10,6 @@ package deviceSource
 */
 
 import (
-	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
@@ -35,20 +34,12 @@ func (s *deviceSource) ApplyDeviceEvent(dm dc.DeviceMessage) {
 /*
  * PublishToStreamProvider
  */
-func (s *deviceSource) PublishToStreamProvider(dv dc.Device) {
-	plog := log.With(s.logger, "method", "PublishDeviceStream()")
+func (s *deviceSource) PublishToStreamProvider(dm dc.DeviceMessage) {
+	plog := log.With(s.logger, "method", "PublishToStreamProvider()")
 
-	s.dStream.GetPublishChannel() <- dv
+	s.dStream.GetPublishChannel() <- dm
 
-	level.Debug(plog).Log("DeviceID ", dv.ID)
-}
-func (s *deviceSource) PublishNetworkMessage(networkName, topic string, payload []byte) error {
-	plog := log.With(s.logger, "method", "PublishNetworkMessage()")
-
-	s.dStream.GetPublishChannel() <- dc.Device{}
-
-	level.Debug(plog).Log("Topic", topic)
-	return nil
+	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
 }
 
 // handle incoming device stream events
@@ -66,39 +57,5 @@ func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
 
 	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
 
-	return err
-}
-
-// handle incoming core events
-func (s *deviceSource) HandleCoreEvent(dv dc.Device) error {
-	var err error
-	plog := log.With(s.logger, "method", "HandleCoreEvent()")
-
-	dm := dc.DeviceMessage{
-		ID:        99,
-		Value:     nil,
-		DeviceID: []byte(dv.Name),
-		NetworkID: []byte(dv.Parent),
-		HomieType: dv.ElementType,
-		TopicS: fmt.Sprintf("%s/%s/$state", dv.Parent, dv.Name),
-	}
-
-	// can only be a delete request
-	err = s.repository.Remove(dm)
-	if err != nil {
-		level.Error(plog).Log("error", err)
-		return err
-	}
-
-	// TODO Rework to send individual messages
-	//for _, topic := range dc.TopicsFromDevice(msg) {
-	//	//publish(topic, nil, false, 0)
-	//	s.PublishNetworkMessage(dv.Parent, topic, nil, false, 0)
-	//	time.Sleep(5 * time.Millisecond)
-	//	level.Debug(plog).Log("publishing to", dv.Name, "Topic", topic)
-	//}
-	//s.PublishToStreamProvider(dv)
-
-	level.Debug(plog).Log("DeviceID ", dv.ID)
 	return err
 }

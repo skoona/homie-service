@@ -112,12 +112,11 @@ func (hn *Network) apply(dm DeviceMessage) error {
 
 	/*
 	 * Delete the device if value is nil
+	 * TODO determine if this nil'ed message is looping
+	 * -- i.e we send it, and also receive it which makes us send it again...
 	 */
-	if ok && string(dm.Value) == "" {
-		delete(hn.Devices, string(dm.DeviceID))
-
-		// TODO Refactor this to send individual messages
-		em.dsp.PublishToStreamProvider(dv)
+	if ok && (string(dm.Value) == "" || dm.Value == nil) {
+		em.RemoveDeviceByID(dv.ID, dv.Parent)
 
 		err = fmt.Errorf("device{%s} on network{%s} was deleted since value was nil", dm.DeviceID, hn.Name)
 		level.Warn(em.logger).Log("action", err.Error())

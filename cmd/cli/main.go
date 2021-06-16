@@ -84,7 +84,7 @@ func runLive(cfg cc.Config) error {
 	}
 	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
 	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	_, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
+	_, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
 	err = mq.Start()                                           // activate message stream
 	if err != nil {
 		return err
@@ -105,7 +105,7 @@ func runDemo(cfg cc.Config) error {
 	}
 	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
 	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	_, siteNetworks = dc.Start(cfg, dep, sched, networks) // network logic -- may need scheduler
+	_, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
 	err = dp.Start()                                           // activate message stream
 	if err != nil {
 		return err

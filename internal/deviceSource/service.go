@@ -20,7 +20,7 @@ import (
 type (
 	StreamProvider interface {
 		ActivateNotifications() chan dc.DeviceMessage
-		GetPublishChannel() chan dc.Device
+		GetPublishChannel() chan dc.DeviceMessage
 		GetNotifyChannel() chan dc.DeviceMessage
 		CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceMessage
 		CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage

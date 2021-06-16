@@ -20,7 +20,6 @@ import (
 
 type (
 	/*
-	 * -- TODO need createSchedule, createFirmware, createBroadcast instead of ADD...
 	 * Interactions with UI */
 	CoreService interface {
 		AllNetworks() SiteNetworks
@@ -29,7 +28,7 @@ type (
 		DeviceByID(deviceID string, networkName string) (Device, error)
 		RemoveDeviceByID(deviceID string, networkName string) error
 
-		PublishNetworkMessage(networkName, topic string, payload []byte) error
+		PublishNetworkMessage(dm DeviceMessage)
 
 		AllSchedules() []Schedule
 		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
@@ -70,9 +69,7 @@ type (
 	DeviceEventProvider interface {
 		ActivateStreamProvider()
 		ApplyDeviceEvent(dm DeviceMessage)
-		HandleCoreEvent(dv Device) error
-		PublishToStreamProvider(dv Device)
-		PublishNetworkMessage(networkName, topic string, payload []byte) error
+		PublishToStreamProvider(dm DeviceMessage)
 		ConsumeDeviceStream(dm DeviceMessage) error
 	}
 
@@ -93,6 +90,7 @@ type (
 		cfg    cc.Config
 		dsp    DeviceEventProvider
 		scp    SchedulerProvider
+		repo    Repository
 		logger log.Logger
 	}
 
@@ -109,11 +107,12 @@ var (
  *
  *  Create a New NewCoreService and initializes it.
  */
-func NewCoreService(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider) CoreService {
+func NewCoreService(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, repo Repository) CoreService {
 	em = &coreService{
 		cfg:    dfg,
 		dsp:    sp,
 		scp:    sscp,
+		repo:	repo,
 		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreService"),
 	}
 	return em
@@ -205,9 +204,9 @@ func TopicsFromDevice(dv Device) []string {
  *
  * Initialize this service
  */
-func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, discoveredNetworks []string) (CoreService, *SiteNetworks) {
+func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, repo Repository, discoveredNetworks []string) (CoreService, *SiteNetworks) {
 
-	svc := NewCoreService(dfg, sp, sscp)
+	svc := NewCoreService(dfg, sp, sscp, repo)
 
 	logger = em.logger
 

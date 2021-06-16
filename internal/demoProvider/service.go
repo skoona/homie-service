@@ -176,7 +176,7 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 
 		if limit {
 			if idx >= 106 {
-				break  // todo break then return
+				break
 			}
 		}
 	}
