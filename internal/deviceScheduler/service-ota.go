@@ -24,15 +24,6 @@ type (
 	}
 )
 
-func publishOTAStream(dm dc.DeviceMessage, plog log.Logger) {
-	level.Debug(plog).Log("event", "Calling publishToDeviceSource()")
-
-	otaStream.OtaPublish(dm)
-
-	level.Debug(plog).Log("event", "publishToDeviceSource() completed")
-	return
-}
-
 /**
  * consumeFromStreamProvider
  * Handles incoming channel DM message

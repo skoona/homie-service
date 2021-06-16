@@ -37,7 +37,7 @@ func (em *coreService) NetworkByName(networkName string) Network {
 	copyOfNetwork := siteNetworks.DeviceNetworks[networkName]
 	return copyOfNetwork
 }
-func (em *coreService) DeviceByNameFromNetwork(deviceName, networkName string) (Device, error) {
+func (em *coreService) DeviceByName(deviceName, networkName string) (Device, error) {
 	var err error
 	level.Debug(em.logger).Log("method", "DeviceByNameFromNetwork() called")
 	copyOfDevice, found := siteNetworks.DeviceNetworks[networkName].Devices[deviceName]
@@ -47,7 +47,7 @@ func (em *coreService) DeviceByNameFromNetwork(deviceName, networkName string) (
 	}
 	return copyOfDevice, err
 }
-func (em *coreService) DeviceByIDFromNetwork(deviceID string, networkName string) (Device, error) {
+func (em *coreService) DeviceByID(deviceID string, networkName string) (Device, error) {
 	var err error
 	level.Debug(em.logger).Log("method", "DeviceByIDFromNetwork() called")
 	var ptrToDevice *Device
@@ -66,7 +66,7 @@ func (em *coreService) DeviceByIDFromNetwork(deviceID string, networkName string
 	}
 	return copyOfDevice, err
 }
-func (em *coreService) RemoveDeviceByIDFromNetwork(deviceID string, networkName string) error {
+func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) error {
 	var err error
 	level.Debug(em.logger).Log("method", "RemoveDeviceByIDFromNetwork() called")
 
@@ -87,12 +87,17 @@ func (em *coreService) RemoveDeviceByIDFromNetwork(deviceID string, networkName 
 
 		em.dsp.HandleCoreEvent(*ptrToDevice)
 		if em.scp != nil {
-			schedule := em.scp.FindScheduleByDeviceID(ptrToDevice.Name) 
+			schedule := em.scp.FindScheduleByDeviceID(ptrToDevice.ID)
 			err = em.scp.DeleteSchedule(schedule.ID)
 		}
 	}
 	return err
 }
+
+func (em *coreService) PublishNetworkMessage(networkName, topic string, payload []byte) error {
+	return em.dsp.PublishNetworkMessage(networkName, topic, payload)
+}
+
 func (em *coreService) AllSchedules() []Schedule {
 	level.Debug(em.logger).Log("method", "AllSchedules() called")
 	schedules := make([]Schedule, len(siteNetworks.Schedules))
@@ -101,9 +106,9 @@ func (em *coreService) AllSchedules() []Schedule {
 	}
 	return schedules
 }
-func (em *coreService) AddSchedule(schedule Schedule) {
-	level.Debug(em.logger).Log("method", "AddSchedule() called")
-	siteNetworks.Schedules[schedule.ID] = schedule
+func (em *coreService) CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error) {
+	level.Debug(em.logger).Log("method", "CreateSchedule() called")
+	return em.scp.CreateSchedule(networkName, deviceID, transport, firmwareID)
 }
 func (em *coreService) RemoveSchedule(scheduleID string) {
 	level.Debug(em.logger).Log("method", "RemoveSchedule() called")
@@ -130,9 +135,9 @@ func (em *coreService) AllFirmwares() []Firmware {
 	firmwares := siteNetworks.Firmwares // presumed to actually copy
 	return firmwares
 }
-func (em *coreService) AddFirmware(firmware Firmware) {
-	level.Debug(em.logger).Log("method", "AddFirmware() called")
-	siteNetworks.Firmwares = append(siteNetworks.Firmwares, firmware)
+func (em *coreService) CreateFirmware(path string) (EID, error) {
+	level.Debug(em.logger).Log("method", "CreateFirmware() called")
+	return em.scp.CreateFirmware(path)
 }
 func (em *coreService) RemoveFirmwareByID(firmwareEID EID) {
 	level.Debug(em.logger).Log("method", "RemoveFirmwareByEID() called")
@@ -160,7 +165,6 @@ func (em *coreService) RemoveFirmwareByID(firmwareEID EID) {
 		}
 	}
 }
-
 func (em *coreService) FirmwareByName(firmwareName string) (Firmware, error) {
 	level.Debug(em.logger).Log("method", "FirmwareByName() called")
 	var firmware Firmware
@@ -193,15 +197,12 @@ func (em *coreService) FirmwareByID(firmwareID EID) (Firmware, error) {
 	}
 	return firmware, err
 }
+
 func (em *coreService) AllBroadcasts() []Broadcast {
 	level.Debug(em.logger).Log("method", "AllBroadcasts() called")
 	broadcasts := make([]Broadcast, 3)
 	copy(broadcasts, siteNetworks.Broadcasts) // presumed to actually copy
 	return broadcasts
-}
-func (em *coreService) AddBroadcast(broadcast Broadcast) {
-	level.Debug(em.logger).Log("method", "AddBroadcast() called")
-	siteNetworks.Broadcasts = append(siteNetworks.Broadcasts, broadcast)
 }
 func (em *coreService) RemoveBroadcastByID(broadcastID string) {
 	level.Debug(em.logger).Log("method", "RemoveBroadcastByID() called")

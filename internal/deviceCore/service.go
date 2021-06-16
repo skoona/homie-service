@@ -20,28 +20,30 @@ import (
 
 type (
 	/*
+	 * -- TODO need createSchedule, createFirmware, createBroadcast instead of ADD...
 	 * Interactions with UI */
 	CoreService interface {
 		AllNetworks() SiteNetworks
 		NetworkByName(networkName string) Network
-		DeviceByNameFromNetwork(deviceName, networkName string) (Device, error)
-		DeviceByIDFromNetwork(deviceID string, networkName string) (Device, error)
-		RemoveDeviceByIDFromNetwork(deviceID string, networkName string) error
+		DeviceByName(deviceName, networkName string) (Device, error)
+		DeviceByID(deviceID string, networkName string) (Device, error)
+		RemoveDeviceByID(deviceID string, networkName string) error
 
-		AllFirmwares() []Firmware
-		AddFirmware(firmware Firmware)
-		RemoveFirmwareByID(firmwareID EID)
-		FirmwareByID(firmwareID EID) (Firmware, error)
-		FirmwareByName(firmwareName string) (Firmware, error)
+		PublishNetworkMessage(networkName, topic string, payload []byte) error
 
 		AllSchedules() []Schedule
-		AddSchedule(schedule Schedule)
+		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
 		RemoveSchedule(scheduleID string)
 		ScheduleByID(scheduleID string) Schedule
 		ScheduleByDeviceID(deviceID string) Schedule
 
+		AllFirmwares() []Firmware
+		CreateFirmware(path string) (EID, error)
+		RemoveFirmwareByID(firmwareID EID)
+		FirmwareByID(firmwareID EID) (Firmware, error)
+		FirmwareByName(firmwareName string) (Firmware, error)
+
 		AllBroadcasts() []Broadcast
-		AddBroadcast(broadcast Broadcast)
 		RemoveBroadcastByID(broadcastID string)
 		BroadcastByID(broadcastID string) (Broadcast, error)
 	}
@@ -54,12 +56,12 @@ type (
 		BuildFirmwareCatalog() []Firmware
 		Firmwares() []Firmware
 		GetFirmware(id EID) (Firmware, error)
-		CreateFirmware(path string) error
+		CreateFirmware(path string) (EID, error)
 		DeleteFirmware(id EID) error
 		BuildScheduleCatalog() map[string]Schedule
 		Schedules() []Schedule
 		FindScheduleByDeviceID(deviceID string) *Schedule
-		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmware *Firmware) (string, error)
+		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
 		DeleteSchedule(scheduleID string) error
 	}
 
@@ -70,6 +72,7 @@ type (
 		ApplyDeviceEvent(dm DeviceMessage)
 		HandleCoreEvent(dv Device) error
 		PublishToStreamProvider(dv Device)
+		PublishNetworkMessage(networkName, topic string, payload []byte) error
 		ConsumeDeviceStream(dm DeviceMessage) error
 	}
 

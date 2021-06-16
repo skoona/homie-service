@@ -11,6 +11,7 @@ package demoProvider
   - Implements the
 */
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -82,9 +83,9 @@ func establishPublishing(pubChan chan dc.Device, tlog log.Logger) {
 	go func(consumer chan dc.Device) {
 		level.Debug(tlog).Log("event", "establishPublishing(gofunc) called")
 		for msg := range consumer { // read until closed
-
+			// todo unwrap this feature to Core, so msgs are formal pubs
 			for _, topic := range dc.TopicsFromDevice(msg) {
-				publish(topic, []byte{}, false, 0)
+				publish(topic, nil, false, 0)
 				time.Sleep(5 * time.Millisecond)
 				level.Debug(tlog).Log("publishing to", msg.Name, "Topic", topic)
 			}
@@ -105,17 +106,16 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	// sknSensors/GarageMonitor/$state ready
 	// sknSensors/GarageMonitor/$implementation/ota/enabled true
 	var trigger bool = false
-	if strings.HasSuffix(msg.Topic(), "/$state") &&
-		string(msg.Payload()) == "ready" {
-		trigger = true
-	} else if strings.HasSuffix(msg.Topic(), "$implementation/ota/enabled") &&
-		string(msg.Payload()) == "true" {
-		trigger = true
-	} else if strings.HasSuffix(msg.Topic(), "$implementation/ota/status") {
+	if strings.HasSuffix(msg.Topic(), "$fw/") {
 		trigger = true
 	}
 
 	dm := dStream.CreateQueueDeviceMessage(msg)
+
+	// firmware load messages require payload to be transformed to smaller message
+	if strings.Contains(msg.Topic(), "$implementation/ota/firmware/") {
+		dm.Value = []byte( fmt.Sprintf("MessageBytes=%d", len(dm.Value)))
+	}
 
 	if trigger {
 		if otastream != nil {

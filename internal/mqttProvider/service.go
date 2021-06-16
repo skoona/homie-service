@@ -68,7 +68,7 @@ var connectLostHandler mqtt.ConnectionLostHandler = func(client mqtt.Client, err
 func publish(topic string, payload []byte, retain bool, qos byte) {
 	token := client.Publish(topic, qos, retain, payload)
 	token.Wait()
-	level.Debug(logger).Log("Published topic", topic, "payload", payload)
+	level.Debug(logger).Log("Published topic", topic, "payload", len(payload))
 }
 
 func sub(topic string) mqtt.Token {

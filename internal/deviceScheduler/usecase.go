@@ -70,11 +70,15 @@ func (s *schedulerProvider) FindScheduleByDeviceID(deviceID string) *dc.Schedule
 	}
 	return &dc.Schedule{}
 }
-func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) (string, error) {
+func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmwareID dc.EID) (string, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
-	schedule := NewSchedule(networkName, deviceID, transport, firmware)
+	firmware, err := s.GetFirmware(firmwareID)
+	if err != nil {
+		return "", err
+	}
+	schedule := NewSchedule(networkName, deviceID, transport, &firmware)
 	s.snwk.Schedules[schedule.ID] = schedule
-	err := s.repo.StoreSchedule(schedule)
+	err = s.repo.StoreSchedule(schedule)
 	return schedule.ID, err
 }
 func (s *schedulerProvider) DeleteSchedule(scheduleID string) error {
@@ -96,11 +100,11 @@ func (s *schedulerProvider) GetFirmware(id dc.EID) (dc.Firmware, error) {
 	level.Debug(s.logger).Log("event", "Calling GetFirmware()")
 	return dc.Firmware{}, nil
 }
-func (s *schedulerProvider) CreateFirmware(path string) error {
+func (s *schedulerProvider) CreateFirmware(path string) (dc.EID, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateFirmware()")
 	fw, err := NewFirmware(path)
 	s.snwk.Firmwares = append(s.snwk.Firmwares, fw)
-	return err
+	return fw.ID, err
 }
 func (s *schedulerProvider) DeleteFirmware(id dc.EID) error {
 	level.Debug(s.logger).Log("event", "Calling DeleteFirmware()")

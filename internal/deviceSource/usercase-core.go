@@ -42,6 +42,14 @@ func (s *deviceSource) PublishToStreamProvider(dv dc.Device) {
 
 	level.Debug(plog).Log("DeviceID ", dv.ID)
 }
+func (s *deviceSource) PublishNetworkMessage(networkName, topic string, payload []byte) error {
+	plog := log.With(s.logger, "method", "PublishNetworkMessage()")
+
+	s.dStream.GetPublishChannel() <- dc.Device{}
+
+	level.Debug(plog).Log("Topic", topic)
+	return nil
+}
 
 // handle incoming device stream events
 func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
@@ -82,7 +90,14 @@ func (s *deviceSource) HandleCoreEvent(dv dc.Device) error {
 		return err
 	}
 
-	s.PublishToStreamProvider(dv)
+	// TODO Rework to send individual messages
+	//for _, topic := range dc.TopicsFromDevice(msg) {
+	//	//publish(topic, nil, false, 0)
+	//	s.PublishNetworkMessage(dv.Parent, topic, nil, false, 0)
+	//	time.Sleep(5 * time.Millisecond)
+	//	level.Debug(plog).Log("publishing to", dv.Name, "Topic", topic)
+	//}
+	//s.PublishToStreamProvider(dv)
 
 	level.Debug(plog).Log("DeviceID ", dv.ID)
 	return err

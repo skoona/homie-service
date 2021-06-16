@@ -83,9 +83,9 @@ func establishPublishing(pubChan chan dc.Device, tlog log.Logger) {
 	go func(consumer chan dc.Device) {
 		level.Debug(tlog).Log("event", "establishPublishing(gofunc) called")
 		for msg := range consumer { // read until closed
-
+			// todo unwrap this feature to Core, so msgs are formal pubs
 			for _, topic := range dc.TopicsFromDevice(msg) {
-				publish(topic, []byte{}, false, 0)
+				publish(topic, nil, false, 0)
 				time.Sleep(5 * time.Millisecond)
 				level.Debug(tlog).Log("publishing to", msg.Name, "Topic", topic)
 			}

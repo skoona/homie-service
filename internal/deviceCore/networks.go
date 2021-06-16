@@ -115,6 +115,8 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	 */
 	if ok && string(dm.Value) == "" {
 		delete(hn.Devices, string(dm.DeviceID))
+
+		// TODO Refactor this to send individual messages
 		em.dsp.PublishToStreamProvider(dv)
 
 		err = fmt.Errorf("device{%s} on network{%s} was deleted since value was nil", dm.DeviceID, hn.Name)
