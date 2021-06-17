@@ -8,7 +8,7 @@ import (
 )
 
 /*
-  	deviceScheduler/usecase-stream.go:
+  	deviceScheduler/usecase.go:
 
 	Build Device Network Inventory
 	Provide Interaction to CLI

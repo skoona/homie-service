@@ -22,6 +22,8 @@ import (
 )
 
 type (
+
+	// Implements the OTAInteractor from Scheduler
 	otaStream struct {
 		notifyChannel  chan dc.DeviceMessage
 		publishChannel chan dc.DeviceMessage
@@ -114,7 +116,7 @@ func publishOTAMessages(publisher chan dc.DeviceMessage, plog log.Logger) {
 		level.Debug(tlog).Log("event", "publishOTAMessages(gofunc) called")
 		for otaMessage := range publishChan { // read until closed
 			publish(otaMessage.Topic(), otaMessage.Payload(), otaMessage.Retained(), otaMessage.Qos())
-			level.Debug(tlog).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(publishChan), "device", otaMessage.Topic())
+			level.Debug(tlog).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(publishChan), "topic", otaMessage.Topic())
 		}
 		level.Debug(tlog).Log("method", "publishOTAMessages()", "event", "Completed")
 	}(publisher, plog)

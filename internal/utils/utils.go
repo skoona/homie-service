@@ -35,3 +35,26 @@ func LocateFile(dataFile string) string {
 	return foundFile
 }
 
+
+// RemoveIndexFromSlice()
+// -- No good way to handle various types of slices
+//    since reflection does not support custom types
+func RemoveIndexFromSlice(slice interface{}, index int) interface{} {
+	var idx  int
+
+	switch a := slice.(type) {
+	case []int:
+		if index > len(a) {
+			idx = len(a) - 1
+		} else if index < 0 {
+			idx = 0
+		} else {
+			idx = index
+		}
+		return append(a[:idx], a[idx+1:]...)
+
+	}
+
+	return  slice
+}
+

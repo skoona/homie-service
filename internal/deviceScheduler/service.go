@@ -49,7 +49,7 @@ func consumeFromOTAStreamProvider(consumer chan dc.DeviceMessage, plog log.Logge
 
 		for msg := range consumeChan { // read until closed
 
-			err := processSchedulerMessages(msg, plog)
+			err := scheduleProcessor(msg, plog)
 			if err != nil {
 				level.Error(tlog).Log("method", "consumeFromOTAStreamProvider(gofunc)", "error", err.Error())
 			}

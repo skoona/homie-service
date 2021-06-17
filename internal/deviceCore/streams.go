@@ -74,6 +74,8 @@ type DeviceEventIntf interface {
 	OTACurrent() bool
 	OTARejected() bool
 	OTAAborted() bool
+	OTAFlashError() bool
+	OTAFirmwareError() bool
 	OTAComplete() bool
 	Broadcast() bool
 	Parts() []string
@@ -236,7 +238,18 @@ func (dm *DeviceMessage) OTARejected() bool {
 func (dm *DeviceMessage) OTAAborted() bool {
 	level.Debug(em.logger).Log("DeviceMessage", "OTAAborted()")
 	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
-		(strings.HasPrefix(string(dm.Value), "400") || strings.HasPrefix(string(dm.Value), "500"))
+		(strings.HasPrefix(string(dm.Value), "400") ||
+			strings.HasPrefix(string(dm.Value), "500"))
+}
+func (dm *DeviceMessage) OTAFirmwareError() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTAFirmwareError()")
+	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
+		strings.HasPrefix(string(dm.Value), "400")
+}
+func (dm *DeviceMessage) OTAFlashError() bool {
+	level.Debug(em.logger).Log("DeviceMessage", "OTAFlashError()")
+	return strings.Contains(dm.TopicS, "$implementation/ota/status") &&
+		strings.HasPrefix(string(dm.Value), "500")
 }
 
 // OTAComplete determines if device has accepted new firmware

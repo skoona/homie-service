@@ -18,6 +18,7 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/jjeffery/stringset"
+	mks "github.com/skoona/homie-service/internal/demoProvider/mocks/mqtt"
 	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
 	cc "github.com/skoona/homie-service/internal/utils"
@@ -28,6 +29,7 @@ import (
 
 var (
 	cfg			cc.Config
+	mClient    mqtt.Client
 	nNetworks = stringset.New()
 	logger    log.Logger
 	bInitialized bool
@@ -67,12 +69,6 @@ func publish(topic string, payload []byte, retain bool, qos byte) {
 	level.Debug(logger).Log("Published topic", topic)
 }
 
-func sub(topic string) mqtt.Token {
-	token := mClient.Subscribe(topic, 1, nil)
-	level.Debug(logger).Log("Subscribed to topic", topic)
-
-	return token
-}
 // consider
 // AddRoute(topic string, callback MessageHandler)
 func subWithHandler(topic string, callback mqtt.MessageHandler) mqtt.Token {
@@ -119,7 +115,6 @@ func enableNetworkTraffic( plog log.Logger) error {
 
 func trafficGenerator(demoFile string, plog log.Logger) error {
 	level.Info(plog).Log("event", "calling trafficGenerator()", "source file", demoFile)
-	var err error
 
 	/*
 	 * Create a Go Routine for the MQTT Channel to
@@ -130,7 +125,7 @@ func trafficGenerator(demoFile string, plog log.Logger) error {
 	}(demoFile, plog)
 
 	level.Info(plog).Log("event", "trafficGenerator() active")
-	return err
+	return nil
 }
 
 func demoRender(filepath string, tlog log.Logger, limit bool) {
@@ -161,7 +156,7 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 
 		idx++
 		for k, v := range mClient.subs {
-			msg := newMockMessage(topic, idx, 1, false, []byte(payload))
+			msg := mks.newMockMessage(topic, idx, 1, false, []byte(payload))
 			if strings.Contains(k,topic) {
 				v.callback(mClient, msg)
 			} else if len(tparts) >= 3 {
@@ -215,7 +210,7 @@ func Initialize(dfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 		return nil, nil, nil, fmt.Errorf("FILE NOT FOUND: %s", cfg.Dbc.DemoSource) // vs panic()
 	}
 
-	NewMockClient()
+	mClient = NewMockClient()
 	mClient.SetDefaultHandler(defaultOnMessage)
 	mClient.SetConnLostHandler(connectLostHandler)
 	mClient.SetConnHandler(connectHandler)
@@ -241,9 +236,6 @@ func Start() error {
 		return fmt.Errorf("you must call Initialize() in this package before calling Start()")
 	}
 	level.Debug(logger).Log("event", "Calling Start()")
-
-	// start active processing on discovered networks
-	// enableNetworkTraffic()  -- wait for dss request
 
 	time.Sleep(4 * time.Second) // slow the pace
 

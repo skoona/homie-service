@@ -95,7 +95,7 @@ func establishPublishing(pubChan chan dc.DeviceMessage, tlog log.Logger) {
 var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Message) {
 	// if this is a trigger route to scheduler
 	// triggers:
-	// -- sknSensors/GarageMonitor/$fw/{name|version|checksum} value
+	// -- sknSensors/GarageMonitor/$fw/[checksum | name | version] anyvalue
 	var trigger bool = false
 	if strings.Contains(msg.Topic(), "$fw/") {
 		trigger = true
@@ -106,6 +106,7 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	// firmware load messages require payload to be transformed to smaller message
 	if strings.Contains(msg.Topic(), "$implementation/ota/firmware/") {
 		dm.Value = []byte( fmt.Sprintf("MessageBytes=%d", len(dm.Value)))
+		trigger = true
 	}
 
 	if trigger {

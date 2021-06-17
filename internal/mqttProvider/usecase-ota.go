@@ -115,7 +115,7 @@ func publishOTAMessages(publisher chan dc.DeviceMessage, plog log.Logger) {
 		level.Debug(plog).Log("event", "publishOTAMessages(gofunc) called")
 		for otaMessage := range publishChan { // read until closed
 			publish(otaMessage.Topic(), otaMessage.Payload(), otaMessage.Retained(), otaMessage.Qos())
-			level.Debug(plog).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(publishChan), "device", otaMessage.Topic())
+			level.Debug(plog).Log("method", "publishOTAMessages(gofunc)", "queue depth", len(publishChan), "topic", otaMessage.Topic())
 		}
 		level.Debug(plog).Log("method", "publishOTAMessages()", "event", "Completed")
 	}(publisher)

@@ -76,6 +76,7 @@ type Schedule struct {
 	Package     Firmware
 	State       string
 	Status      string
+	Retries     int
 	Transport   OTATransport
 	Scheduled   time.Time
 	Completed   time.Time
@@ -520,10 +521,6 @@ func (hn *Network) handleNode(dm DeviceMessage) error {
 	level.Debug(em.logger).Log("event", "handleNode() completed", "id", node.ID, "name", node.Name)
 	return err
 }
-
-// func RemoveIndexFromSlice(slice []Broadcast, index int) []Broadcast {
-// 	return append(slice[:index], slice[index+1:]...)
-// }
 
 // HandleBroadcast on HomieNetork
 func (hn *Network) handleBroadcast(dm DeviceMessage) error {

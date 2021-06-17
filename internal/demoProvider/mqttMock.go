@@ -184,7 +184,9 @@ func (mc *mockClient) Connect() mqtt.Token {
 	mc.connected = true
 	mc.exit = make(chan bool)
 
-	mc.cbOnConnectHandler(mc)
+	if mc.cbOnConnectHandler != nil {
+		mc.cbOnConnectHandler(mc)
+	}
 	return &mqtt.ConnectToken{}
 }
 func (mc *mockClient) Disconnect(quiesce uint) {
@@ -204,7 +206,9 @@ func (mc *mockClient) Disconnect(quiesce uint) {
 		close(mc.exit)
 	}
 
-	mc.cbConnectionLostHandler(mc, errors.New("Unknown Value"))
+	if mc.cbConnectionLostHandler != nil {
+		mc.cbConnectionLostHandler(mc, errors.New("Unknown Value"))
+	}
 }
 func (mc *mockClient) Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token {
 	mc.Lock()
