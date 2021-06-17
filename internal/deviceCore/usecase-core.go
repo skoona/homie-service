@@ -22,10 +22,6 @@ var (
  *
  * CoreService for UI or externals
  */
-func (em *coreService) ApplyEvent(dm *DeviceMessage) error {
-	level.Debug(em.logger).Log("method", "ApplyEvent() called")
-	return nil
-}
 func (em *coreService) AllNetworks() SiteNetworks {
 	level.Debug(em.logger).Log("method", "AllNetworks() called")
 	copyOfSiteNetworks := siteNetworks

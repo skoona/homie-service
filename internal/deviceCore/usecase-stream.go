@@ -23,21 +23,21 @@ import (
 
 */
 
-/**
- * ConsumeFromDeviceSource
- * Handles incoming channel DM message
- */
+
+// ConsumeFromDeviceSource
+// Handles incoming channel DM message
+// -- Called directly from deviceSources
 func ConsumeFromDeviceSource(dm DeviceMessage) error {
 	var err error
 	network, ok := siteNetworks.DeviceNetworks[string(dm.NetworkID)]
-	if !ok {
-		err := fmt.Errorf("device{%s} not found in network={%s}", dm.DeviceID, network.Name)
-		level.Error(em.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "error", err.Error())
+	if ok {
+		err = network.apply(dm)
 	} else {
-		network.apply(dm)
+		err := fmt.Errorf("device{%s} not found in network={%s}", dm.DeviceID, network.Name)
+		level.Error(em.logger).Log("method", "ConsumeFromDeviceSource()", "error", err.Error())
 	}
 
-	level.Debug(em.logger).Log("method", "ConsumeFromDeviceSource(gofunc)", "network id", dm.NetworkID, "msg id", dm.ID, "deviceID", dm.DeviceID)
+	level.Debug(em.logger).Log("method", "ConsumeFromDeviceSource()", "network id", dm.NetworkID, "msg id", dm.ID, "deviceID", dm.DeviceID)
 
 	return err
 }

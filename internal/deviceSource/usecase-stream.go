@@ -16,10 +16,8 @@ import (
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
 
-/**
- * ConsumeFromDeviceStream
- * - Stream Listener
- */
+// ConsumeFromDeviceStream
+// - Stream Listener
 func ConsumeFromStreamProvider(consumer chan dc.DeviceMessage, plog log.Logger) {
 	/*
 	 * Create a Go Routine for the Providers Channel to
