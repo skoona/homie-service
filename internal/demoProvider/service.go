@@ -18,7 +18,6 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/jjeffery/stringset"
-	mks "github.com/skoona/homie-service/internal/demoProvider/mocks/mqtt"
 	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
 	cc "github.com/skoona/homie-service/internal/utils"
@@ -29,7 +28,6 @@ import (
 
 var (
 	cfg			cc.Config
-	mClient    mqtt.Client
 	nNetworks = stringset.New()
 	logger    log.Logger
 	bInitialized bool
@@ -156,7 +154,7 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 
 		idx++
 		for k, v := range mClient.subs {
-			msg := mks.newMockMessage(topic, idx, 1, false, []byte(payload))
+			msg := newMockMessage(topic, idx, 1, false, []byte(payload))
 			if strings.Contains(k,topic) {
 				v.callback(mClient, msg)
 			} else if len(tparts) >= 3 {
@@ -210,7 +208,7 @@ func Initialize(dfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 		return nil, nil, nil, fmt.Errorf("FILE NOT FOUND: %s", cfg.Dbc.DemoSource) // vs panic()
 	}
 
-	mClient = NewMockClient()
+	NewMockClient()
 	mClient.SetDefaultHandler(defaultOnMessage)
 	mClient.SetConnLostHandler(connectLostHandler)
 	mClient.SetConnHandler(connectHandler)
