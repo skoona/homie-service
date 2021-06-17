@@ -1,7 +1,7 @@
 package deviceCore
 
 /*
-	deviceCore/domain-networks.go
+	deviceCore/core.go
 
 	Defines the site collection of network models
 */

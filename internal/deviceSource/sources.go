@@ -1,7 +1,7 @@
 package deviceSource
 
 /*
-  deviceSource/usecase-stream.go:
+  deviceSource/sources.go:
 
   Local StreamProvider Service helpers
 

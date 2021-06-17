@@ -1,7 +1,7 @@
 package deviceSource
 
 /*
-  deviceSource/usecase-core.go:
+  deviceSource/usecase.go:
 
   dc.DeviceEventProvider Service Implementation
 

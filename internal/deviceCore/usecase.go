@@ -7,7 +7,7 @@ import (
 )
 
 /*
-  	deviceCore/usecase-core.go:
+  	deviceCore/usecase.go:
 
 	- Implements CoreService
 	- Provides interface to outside UIs
