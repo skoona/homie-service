@@ -1,16 +1,85 @@
 package deviceCore
 
+/*
+	deviceCore/domain-networks.go
+
+	Defines the site collection of network models
+*/
+
 import (
 	"crypto/md5"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/go-kit/kit/log/level"
 )
 
-/*
-	Defines the site collection of network models
-*/
+
+var (
+	siteNetworks SiteNetworks
+)
+
+// Globals required for DeviceMessage Types
+type CoreType int
+
+// OTATransport Flag used to choose OTA transport Format
+type OTATransport int
+
+// CoreType Basic object types
+const (
+	CoreTypeDevice CoreType = (iota + 10)
+	CoreTypeDeviceAttribute
+	CoreTypeDeviceAttributeProperty
+	CoreTypeDeviceAttributePropertyProperty
+	CoreTypeDeviceNode
+	CoreTypeDeviceNodeAttribute
+	CoreTypeDeviceNodeProperty
+	CoreTypeDeviceNodePropertyAttribute
+	CoreTypeDeviceDelete
+	CoreTypePublishMessage
+	CoreTypeBroadcast
+	CoreTypeFirmware
+	CoreTypeSchedule
+	CoreTypeNetwork
+	CoreTypeSiteNetworks
+)
+
+// ENUM Flags used to choose OTA transport Format
+const (
+	Binary OTATransport = iota + 30
+	Base64
+	Base64Strict
+	RFC4648URLSafeWithPadding
+	RFC4648URLSafeWithoutPadding
+)
+
+// Firmware basic firmware model
+type Firmware struct {
+	ID          EID
+	ElementType CoreType
+	Name        string
+	FileName    string
+	Version     string
+	Path        string
+	Size        int64
+	MD5Digest   string
+	Brand       string
+	Created     time.Time
+}
+
+// DeviceSchedule the ota schedule details
+type Schedule struct {
+	ID          string
+	ElementType CoreType
+	DeviceID   string
+	Package     Firmware
+	State       string
+	Status      string
+	Transport   OTATransport
+	Scheduled   time.Time
+	Completed   time.Time
+}
 
 // Network contains all known devices in application
 type Network struct {
@@ -33,6 +102,19 @@ type SiteNetworks struct {
 	Schedules      map[string]Schedule   // by EID
 	DeviceNetworks map[string]Network // by Device Name
 }
+
+// Broadcast Alert Messages on  Network
+type Broadcast struct {
+	ID          string
+	ElementType CoreType
+	Parent      string
+	Topic       string
+	Level       string
+	Value       string
+	Received    time.Time
+}
+
+
 
 // NewNetworks Creates Component
 func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) *SiteNetworks {
@@ -70,10 +152,42 @@ func NewNetwork(title, name string) Network {
 	}
 }
 
-/* EntityBuilder
- * based on Network Entity
- * manages creation and deletion of components
- */
+
+// newBroadcast Creates Component
+func NewBroadcast(parent, topic, level, value string) Broadcast {
+	bc := Broadcast{
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s.%s", parent, topic, level)))),
+		ElementType: CoreTypeBroadcast,
+		Parent:      parent,
+		Topic:       topic,
+		Level:       level,
+		Value:       value,
+		Received:    time.Now(),
+	}
+
+	return bc
+}
+
+type FirmwareTools interface {
+	String()
+}
+type ScheduleTools interface {
+	String()
+}
+
+func (f *Firmware) String() string {
+	return fmt.Sprintf("id=%s, name=%s, fileName=%s, path=%s, size=%d, brand=%s, created=%v",
+		f.ID, f.Name, f.FileName, f.Path, f.Size, f.Brand, f.Created)
+}
+func (s *Schedule) String() string {
+	return fmt.Sprintf("id=%s, device=%s, state=%s, status=%s, scheduled=%v, firmware.id=%s, firmware.name=%s",
+		s.ID, s.DeviceID, s.State, s.Status, s.Scheduled, s.Package.ID, s.Package.Name)
+}
+
+
+// EntityBuilder
+// - based on Network Entity
+// - manages creation and deletion of components
 type EntityBuilder interface {
 	apply(dm DeviceMessage) error
 	handleBroadcast(dm DeviceMessage) error
@@ -87,11 +201,14 @@ type EntityBuilder interface {
 	handleNode(dm DeviceMessage) error
 }
 
-// prefix default = "_$"
+// removeAttributePrefix()
+// - Removes prefixes added by dm builders
+// - prefix default = "_$"
 func removeAttributePrefix(attribute []byte, prefix string) string{
 	var nValue string
 	if strings.HasPrefix(string(attribute), prefix){
-		nValue = string(attribute)[1:]
+		startAtPos := len(prefix)
+		nValue = string(attribute)[startAtPos:]
 	} else{
 		nValue = string(attribute)
 	}

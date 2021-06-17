@@ -32,6 +32,8 @@ func (em *coreService) NetworkByName(networkName string) Network {
 	copyOfNetwork := siteNetworks.DeviceNetworks[networkName]
 	return copyOfNetwork
 }
+
+// TODO Sort out if devices are mapped by deviceName or by Device.ID
 func (em *coreService) DeviceByName(deviceName, networkName string) (Device, error) {
 	var err error
 	level.Debug(em.logger).Log("method", "DeviceByNameFromNetwork() called")

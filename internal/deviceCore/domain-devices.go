@@ -6,7 +6,7 @@ import (
 )
 
 /**
-	deviceCore/devices.go
+	deviceCore/domain-devices.go
 
 The design goal for this file is:
 	* Establish the core Device data model

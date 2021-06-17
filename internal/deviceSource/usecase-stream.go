@@ -7,14 +7,15 @@ package deviceSource
 
   The design goal for this package:
 	* Implement Stream Control Helpers in support of deviceCore operations
-*/
 
+*/
 
 import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 )
+
 
 // ConsumeFromDeviceStream
 // - Stream Listener
