@@ -160,7 +160,12 @@ var _ = Describe("Core Service", func() {
 				var scc dc.Schedule
 
 				dv, err = coreSvc.DeviceByName("GarageMonitor", "sknSensors")
+					//out, _ := json.MarshalIndent(dv, "", "  ")
+					//fmt.Printf("\nDevice: %s\n", out)
 				fw = coreSvc.AllFirmwares()[0]
+					//out, _ = json.MarshalIndent(fw, "", "  ")
+					//fmt.Printf("\nFirmware: %s\n", out)
+
 				scID, err := coreSvc.CreateSchedule("sknSensors", dv.ID, dc.Base64Strict, fw.ID)
 
 				Expect(err).To(BeNil())
@@ -171,7 +176,9 @@ var _ = Describe("Core Service", func() {
 
 				out, _ := json.MarshalIndent(coreSvc.AllSchedules(), "", "  ")
 				Expect(len(coreSvc.AllSchedules())).To(Equal(1), string(out))
+
 				out, _ = json.MarshalIndent(sc, "", "  ")
+					//fmt.Printf("\nSchedule: %s\n", out)
 				Expect(sc.FirmwareID).NotTo(BeEmpty(), string(out))
 			})
 		})

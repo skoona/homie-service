@@ -2,6 +2,7 @@ package deviceScheduler_test
 
 import (
 	"encoding/json"
+	"fmt"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	dp "github.com/skoona/homie-service/internal/demoProvider"
@@ -43,7 +44,7 @@ var _ = Describe("Scheduler Service", func() {
 		if err != nil {
 			Fail(err.Error())
 		}
-		sn = dc.NewSiteNetworks("ginkoo testing","Scheduler suite",
+		sn = dc.NewSiteNetworks("ginkgo testing","Scheduler suite",
 			 networks, []dc.Firmware{},	map[string]dc.Schedule{})
 
 		// Start Repository
@@ -71,6 +72,7 @@ var _ = Describe("Scheduler Service", func() {
 			sch.Stop()
 		})
 	})
+
 	Context("Scheduler Operations ", func() {
 		It("Builds catalog of Schedules", func() {
 			sched = sch.Start(cfg, otap, repo)
@@ -81,7 +83,79 @@ var _ = Describe("Scheduler Service", func() {
 			Expect(len(cat)).To(Equal(0), "no schedules yet")
 			sch.Stop()
 		})
+		It("Returns catalog of Schedules", func() {
+			sched = sch.Start(cfg, otap, repo)
+			Expect(sched).ToNot(BeNil(), "No Service")
+			sched.ApplySiteNetworks(sn)
+
+			cat := sched.BuildScheduleCatalog()
+			Expect(len(cat)).To(Equal(0), "no schedules yet")
+
+			Expect(len(sched.Schedules())).To(Equal(len(cat)), "should be same count")
+
+			sch.Stop()
+		})
+		It("Creates new Schedule and finds it by deviceID", func() {
+			sched = sch.Start(cfg, otap, repo)
+			Expect(sched).ToNot(BeNil(), "No Service")
+			sched.ApplySiteNetworks(sn)
+
+			schedules := sched.BuildScheduleCatalog()
+			Expect(len(schedules)).To(Equal(0), "no schedules yet")
+
+			firmwares := sched.BuildFirmwareCatalog()
+			Expect(len(firmwares)).To(Equal(3), "should be three in package")
+
+			var device dc.Device
+			fw := firmwares[0]
+			for _, dv := range sn.DeviceNetworks["snkSensors"].Devices {
+				device = dv
+			}
+			scheduleID, err := sched.CreateSchedule(device.Parent, device.ID, dc.Base64Strict, fw.ID)
+			Expect(err).To(BeNil(), "must create new")
+
+			schedule := sched.FindScheduleByDeviceID(device.ID)
+			out, _ := json.MarshalIndent(schedule, "", "  ")
+			fmt.Println(string(out))
+			Expect(schedule.ID).To(Equal(scheduleID), string(out))
+
+			sch.Stop()
+		})
+		It("Delete Schedule by scheduleID", func() {
+			sched = sch.Start(cfg, otap, repo)
+			Expect(sched).ToNot(BeNil(), "No Service")
+			sched.ApplySiteNetworks(sn)
+
+			schedules := sched.BuildScheduleCatalog()
+			Expect(len(schedules)).To(Equal(0), "no schedules yet")
+
+			firmwares := sched.BuildFirmwareCatalog()
+			Expect(len(firmwares)).To(Equal(3), "should be three in package")
+
+			var device dc.Device
+			fw := firmwares[0]
+			for _, dv := range sn.DeviceNetworks["snkSensors"].Devices {
+				device = dv
+				break
+			}
+			scheduleID, err := sched.CreateSchedule(device.Parent, device.ID, dc.Base64Strict, fw.ID)
+			Expect(err).To(BeNil(), "must create new")
+
+			Expect(len(sn.Schedules)).To(Equal(1), "should be one")
+
+			schedule := sched.FindScheduleByDeviceID(device.ID)
+			out, _ := json.MarshalIndent(schedule, "", "  ")
+			fmt.Println(string(out))
+			Expect(schedule.ID).To(Equal(scheduleID), string(out))
+
+			err = sched.DeleteSchedule(schedule.ID)
+			Expect(err).To(BeNil(), "must delete schedule")
+			Expect(len(sn.Schedules)).To(Equal(0), "should be zero")
+
+			sch.Stop()
+		})
 	})
+
 	Context("Firmware Operations ", func() {
 		BeforeEach(func() {
 			sched = sch.Start(cfg, otap, repo)

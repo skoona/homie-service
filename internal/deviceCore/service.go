@@ -51,16 +51,16 @@ type (
 	SchedulerProvider interface {
 		ActivateStreamProvider()
 		ApplySiteNetworks(sn *SiteNetworks)
+		Schedules() []Schedule
+		BuildScheduleCatalog() map[string]Schedule
+		FindScheduleByDeviceID(deviceID string) *Schedule
+		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
+		DeleteSchedule(scheduleID string) error
 		BuildFirmwareCatalog() []Firmware
 		Firmwares() []Firmware
 		GetFirmware(id EID) (Firmware, error)
 		CreateFirmware(path string) (EID, error)
 		DeleteFirmware(id EID) error
-		BuildScheduleCatalog() map[string]Schedule
-		Schedules() []Schedule
-		FindScheduleByDeviceID(deviceID string) *Schedule
-		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
-		DeleteSchedule(scheduleID string) error
 	}
 
 	/*

@@ -116,6 +116,8 @@ func (s *schedulerProvider) CreateFirmware(path string) (dc.EID, error) {
 	return fw.ID, err
 }
 func (s *schedulerProvider) DeleteFirmware(id dc.EID) error {
+	// todo: should the filesystem file be removed here?
+	// Todo: appears to be done in Core Service "RemoveFirmwareByID()"
 	level.Debug(s.logger).Log("event", "Calling DeleteFirmware()", "firmwareID", id)
 	fwc := []dc.Firmware{}
 	for _, fw := range s.snwk.Firmwares {
