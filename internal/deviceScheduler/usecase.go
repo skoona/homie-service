@@ -52,8 +52,10 @@ func (s *schedulerProvider) BuildScheduleCatalog() map[string]dc.Schedule {
 func (s *schedulerProvider) Schedules() []dc.Schedule {
 	level.Debug(s.logger).Log("event", "Calling Schedules()")
 	values := []dc.Schedule{}
-	for _, val := range s.snwk.Schedules {
-		values = append(values, val)
+	if len(s.snwk.Schedules) > 0 {
+		for _, val := range s.snwk.Schedules {
+			values = append(values, val)
+		}
 	}
 	return values
 }
@@ -72,13 +74,9 @@ func (s *schedulerProvider) FindScheduleByDeviceID(deviceID string) *dc.Schedule
 }
 func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmwareID dc.EID) (string, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
-	firmware, err := s.GetFirmware(firmwareID)
-	if err != nil {
-		return "", err
-	}
-	schedule := NewSchedule(networkName, deviceID, transport, &firmware)
+	schedule := NewSchedule(networkName, deviceID, transport, firmwareID)
 	s.snwk.Schedules[schedule.ID] = schedule
-	err = s.repo.StoreSchedule(schedule)
+	err := s.repo.StoreSchedule(schedule)
 	return schedule.ID, err
 }
 func (s *schedulerProvider) DeleteSchedule(scheduleID string) error {

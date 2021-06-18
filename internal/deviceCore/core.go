@@ -72,8 +72,8 @@ type Firmware struct {
 type Schedule struct {
 	ID          string
 	ElementType CoreType
-	DeviceID   string
-	Package     Firmware
+	DeviceID    string
+	FirmwareID  EID
 	State       string
 	Status      string
 	Retries     int
@@ -119,7 +119,7 @@ type Broadcast struct {
 
 // NewNetworks Creates Component
 func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) *SiteNetworks {
-	level.Debug(em.logger).Log("event", "NewSiteNetworks() called")
+	//level.Debug(em.logger).Log("event", "NewSiteNetworks() called")
 
 	siteNetworks = SiteNetworks{
 		ID:             NewEID(),
@@ -137,13 +137,13 @@ func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []
 		siteNetworks.DeviceNetworks[nName] = NewNetwork(nName, nName)
 	}
 
-	level.Debug(em.logger).Log("event", "NewSiteNetworks() completed")
+	//level.Debug(em.logger).Log("event", "NewSiteNetworks() completed")
 	return &siteNetworks
 }
 
 // NewNetwork Creates Component
 func NewNetwork(title, name string) Network {
-	level.Debug(em.logger).Log("event", "NewNetwork() called", "title", title, "name", name)
+	//level.Debug(em.logger).Log("event", "NewNetwork() called", "title", title, "name", name)
 	return Network{
 		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", title, name)))),
 		ElementType: CoreTypeNetwork,
@@ -181,8 +181,8 @@ func (f *Firmware) String() string {
 		f.ID, f.Name, f.FileName, f.Path, f.Size, f.Brand, f.Created)
 }
 func (s *Schedule) String() string {
-	return fmt.Sprintf("id=%s, device=%s, state=%s, status=%s, scheduled=%v, firmware.id=%s, firmware.name=%s",
-		s.ID, s.DeviceID, s.State, s.Status, s.Scheduled, s.Package.ID, s.Package.Name)
+	return fmt.Sprintf("id=%s, device=%s, state=%s, status=%s, scheduled=%v, firmware.id=%s",
+		s.ID, s.DeviceID, s.State, s.Status, s.Scheduled, s.FirmwareID)
 }
 
 

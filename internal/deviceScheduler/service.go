@@ -63,12 +63,12 @@ func consumeFromOTAStreamProvider(consumer chan dc.DeviceMessage, plog log.Logge
 // Get related device
 // verify OTAEnabled is true [default]
 // if false return error
-func NewSchedule(networkName string, deviceID string, transport dc.OTATransport, firmware *dc.Firmware) dc.Schedule {
+func NewSchedule(networkName string, deviceID string, transport dc.OTATransport, firmwareEID dc.EID) dc.Schedule {
 	return dc.Schedule{
 		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", networkName, deviceID)))),
 		ElementType: dc.CoreTypeSchedule,
-		DeviceID:   deviceID,
-		Package:     *firmware,
+		DeviceID:    deviceID,
+		FirmwareID:  firmwareEID,
 		State:       "pending",
 		Status:      "waiting",
 		Transport:   transport,

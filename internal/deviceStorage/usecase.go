@@ -59,14 +59,16 @@ func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 		}
 
 		// save as a json blob
-		value, _ := json.Marshal(d)
-		err = b.Put([]byte(d.ID), value)
-		return err
+		value, err := json.Marshal(d)
+		if err != nil {
+			level.Error(r.logger).Log("Alert", "StoreSchedule(a) Failed", "error", err.Error(), "schedule", d.String())
+			return err
+		}
+		return b.Put([]byte(d.ID), value)
 	})
 
 	if err != nil {
-		level.Error(r.logger).Log("Alert", "StoreSchedule() Failed", "error", err.Error(), "schedule", d.String())
-		return err
+		level.Error(r.logger).Log("Alert", "StoreSchedule(b) Failed", "error", err.Error(), "schedule", d.String())
 	}
 
 	return err
@@ -117,9 +119,11 @@ func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			var schedule dc.Schedule
-			err = json.Unmarshal(v, &schedule)
-			schedMap[string(k)] = schedule
-			fmt.Printf("schedule key=%s, value=%s\n", k, v)
+			err = json.Unmarshal([]byte(v), &schedule)
+			if err == nil {
+				schedMap[string(k)] = schedule
+			}
+			fmt.Printf("LoadSchedules(): schedule key=%s, value=%s\n", k, v)
 		}
 		return err
 	})

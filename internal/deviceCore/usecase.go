@@ -114,22 +114,24 @@ func (em *coreService) PublishNetworkMessage(dm DeviceMessage) {
 
 func (em *coreService) AllSchedules() []Schedule {
 	level.Debug(em.logger).Log("method", "AllSchedules() called")
-	schedules := make([]Schedule, len(siteNetworks.Schedules))
-	for _, schedule := range siteNetworks.Schedules {
-		schedules = append(schedules, schedule)
+	schedules := []Schedule{}
+	if len(siteNetworks.Schedules) > 0 {
+		for _, schedule := range siteNetworks.Schedules {
+			schedules = append(schedules, schedule)
+		}
 	}
 	return schedules
 }
 func (em *coreService) CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error) {
-	level.Debug(em.logger).Log("method", "CreateSchedule() called")
+	level.Debug(em.logger).Log("method", "CreateSchedule() called", "device", deviceID, "firmware", firmwareID)
 	return em.scp.CreateSchedule(networkName, deviceID, transport, firmwareID)
 }
 func (em *coreService) RemoveSchedule(scheduleID string) {
-	level.Debug(em.logger).Log("method", "RemoveSchedule() called")
+	level.Debug(em.logger).Log("method", "RemoveSchedule() called", "schedule", scheduleID)
 	delete(siteNetworks.Schedules, scheduleID)
 }
 func (em *coreService) ScheduleByID(scheduleID string) Schedule {
-	level.Debug(em.logger).Log("method", "ScheduleByID() called")
+	level.Debug(em.logger).Log("method", "ScheduleByID() called", "schedule", scheduleID)
 	schedule := siteNetworks.Schedules[scheduleID]
 	return schedule
 }

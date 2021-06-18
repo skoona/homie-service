@@ -18,7 +18,7 @@ import (
   deviceScheduler/scheduler.go:
 
 The design goal for this file is:
-	* Discover existing ESP8266/ESP32 Firmware in dataDB directory
+	* Discover existing ESP8266/ESP32 FirmwareID in dataDB directory
 	* Attach the discovered collection to the central HomeNetworks struct
 	* Create Device OTA schedules and prepare for execution of an OTA download
 	* Execute an OTA Download through MQTT using the Homie protocol
@@ -118,7 +118,12 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 	}
 
 	// ensure md5's are different
-	if strings.Contains(string(dm.Value), schedule.Package.MD5Digest) {
+	fw, err := sch.GetFirmware(schedule.FirmwareID)
+	if err != nil {
+		return err
+	}
+
+	if strings.Contains(string(dm.Value), fw.MD5Digest) {
 		schedule.Completed = time.Now()
 		schedule.Status = "current"
 		schedule.State = "complete"
@@ -126,7 +131,7 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 	}
 
 	// build and send OTA
-	mhash, bundle, err := buildFirmwarePayload(schedule.Transport, schedule.Package)
+	mhash, bundle, err := buildFirmwarePayload(schedule.Transport, fw)
 	if err != nil {
 		level.Error(plog).Log("event", "handleOTATrigger()", "error", err.Error())
 		return err
@@ -255,7 +260,7 @@ func extractValueFromHexStr(str string, startS string, endS string) (result stri
 }
 
 // firmwareDetails()
-//  - Firmware and Scheduling
+//  - FirmwareID and Scheduling
 func firmwareDetails(path string) (string, string, string, string, int64, time.Time, error) {
 	level.Debug(logger).Log("event", "firmwareDetails() called", "filePath", path)
 	fileInfo, err := os.Stat(path)
@@ -275,7 +280,7 @@ func firmwareDetails(path string) (string, string, string, string, int64, time.T
 	hexStr := hex.EncodeToString(content)
 
 	if !strings.Contains(hexStr, "25484f4d49455f455350383236365f465725") {
-		return "", "", "", "", 0, time.Time{}, fmt.Errorf("firmwareDetails() file[%s] is not Homie Firmware", path)
+		return "", "", "", "", 0, time.Time{}, fmt.Errorf("firmwareDetails() file[%s] is not Homie FirmwareID", path)
 	}
 	fwName, _ := extractValueFromHexStr(hexStr, "bf84e41354", "93446ba775")
 	fwVersion, ok := extractValueFromHexStr(hexStr, "6a3f3e0ee1", "b03048d41a")
@@ -305,7 +310,7 @@ func buildFirmwareCatalog() []dc.Firmware {
 			fw, err := NewFirmware(dir + "/" + fi.Name())
 			if err == nil {
 				firmware = append(firmware, fw)
-				level.Debug(logger).Log("created", "Firmware", "brand", fw.Brand, "object", fw.String())
+				level.Debug(logger).Log("created", "FirmwareID", "brand", fw.Brand, "object", fw.String())
 			}
 		}
 	}

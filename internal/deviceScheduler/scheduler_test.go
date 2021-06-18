@@ -42,27 +42,51 @@ var _ = Describe("Scheduler Service", func() {
 		if err != nil {
 			Fail(err.Error())
 		}
-		err = dp.Start()
-		if err != nil {
-			Fail(err.Error())
-		}
+		sn = dc.NewSiteNetworks("ginkoo testing","Scheduler suite",
+			 networks, []dc.Firmware{},	map[string]dc.Schedule{})
 
 		// Start Repository
 		repo, err = dds.Start(cfg)
 		if err != nil {
 			Fail(err.Error())
 		}
+
+		// Start traffic
+		err = dp.Start()
+		if err != nil {
+			Fail(err.Error())
+		}
 	})
 
 	AfterEach(func(){
-		dds.Stop()
 		dp.Stop()
+		dds.Stop()
 	})
 
 	Context("Initializes properly ", func() {
 		It("Start() returns valid service", func() {
 			sched = sch.Start(cfg, otap, repo)
 			Expect(sched).ToNot(BeNil(), "No Service")
+			sch.Stop()
+		})
+	})
+	Context("Scheduler Operations ", func() {
+		It("Builds catalog of Schedules", func() {
+			sched = sch.Start(cfg, otap, repo)
+			Expect(sched).ToNot(BeNil(), "No Service")
+			sched.ApplySiteNetworks(sn)
+
+			cat := sched.BuildScheduleCatalog()
+			Expect(len(cat)).To(Equal(0), "no schedules yet")
+			sch.Stop()
+		})
+		It("Builds catalog of Firmware", func() {
+			sched = sch.Start(cfg, otap, repo)
+			Expect(sched).ToNot(BeNil(), "No Service")
+			sched.ApplySiteNetworks(sn)
+
+			cat := sched.BuildFirmwareCatalog()
+			Expect(len(cat)).To(Equal(3), "should be three in package")
 			sch.Stop()
 		})
 	})

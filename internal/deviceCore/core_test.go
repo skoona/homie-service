@@ -1,6 +1,7 @@
 package deviceCore_test
 
 import (
+	"encoding/json"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	. "github.com/onsi/ginkgo"
@@ -47,26 +48,6 @@ func ShutdownLive() {
 	dc.Stop()
 }
 
-func RunLive(cfg cc.Config)(dc.CoreService, error) {
-	otap, dsp, networks, err = mq.Initialize(cfg)                 // message stream
-	if err != nil {
-		return nil, err
-	}
-	repo, err = dds.Start(cfg)                                    // message db
-	if err != nil {
-		return nil, err
-	}
-	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
-	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
-	err = mq.Start()                                           // activate message stream
-	if err != nil {
-		return nil, err
-	}
-
-	return coreSvc, err
-}
-
 func RunDemo(cfg cc.Config) (dc.CoreService, error) {
 	otap, dsp, networks, err = dp.Initialize(cfg)                 // message stream
 	if err != nil {
@@ -94,11 +75,7 @@ func StartUp() (dc.CoreService, cc.Config, error) {
 	logger = log.With(cfg.Logger, "ginkgo", "testing")
 
 	// Run the App
-	if cfg.RunMode == "live" {
-		coreSvc, err = RunLive(cfg)
-	} else {
-		coreSvc, err = RunDemo(cfg)
-	}
+	coreSvc, err = RunDemo(cfg)
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
 		os.Exit(2)
@@ -108,11 +85,7 @@ func StartUp() (dc.CoreService, cc.Config, error) {
 }
 
 func Shutdown(cfg cc.Config) {
-	if cfg.RunMode == "live" {
-		ShutdownLive()
-	} else {
 		ShutdownDemo()
-	}
 }
 
 var _ = Describe("Core Service", func() {
@@ -121,7 +94,7 @@ var _ = Describe("Core Service", func() {
 		os.Args = []string{oldArgs[0], "--config", ""} // force clearing of prior value
 		defer func() { os.Args = oldArgs }()
 		os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "test-config")
-		os.Args = []string{oldArgs[0], "--config", ""}
+		os.Args = []string{oldArgs[0], "--debug", "true", "--config", ""}
 
 		coreSvc, cfg, err = StartUp()
 		if err != nil {
@@ -162,7 +135,7 @@ var _ = Describe("Core Service", func() {
 				Expect(bc[0]).ToNot(BeNil())
 			})
 		})
-		Context("Firmware Operations", func() {
+		Context("FirmwareID Operations", func() {
 			It("AllFirmwares() returns the current library", func() {
 				var fw []dc.Firmware
 				Expect(coreSvc.AllFirmwares()).To(BeAssignableToTypeOf(fw))
@@ -177,6 +150,29 @@ var _ = Describe("Core Service", func() {
 			It("AllSchedules() returns the available schedules", func() {
 				var sc []dc.Schedule
 				Expect(coreSvc.AllSchedules()).To(BeAssignableToTypeOf(sc))
+				out, _ := json.MarshalIndent(coreSvc.AllSchedules(), "", "  ")
+				Expect(len(coreSvc.AllSchedules())).To(Equal(0), string(out))
+			})
+			It("CreateSchedule() returns a new schedules", func() {
+				var fw dc.Firmware
+				var dv dc.Device
+				var sc dc.Schedule
+				var scc dc.Schedule
+
+				dv, err = coreSvc.DeviceByName("GarageMonitor", "sknSensors")
+				fw = coreSvc.AllFirmwares()[0]
+				scID, err := coreSvc.CreateSchedule("sknSensors", dv.ID, dc.Base64Strict, fw.ID)
+
+				Expect(err).To(BeNil())
+				Expect(scID).NotTo(BeEmpty())
+
+				sc = coreSvc.ScheduleByID(scID)
+				Expect(sc).To(BeAssignableToTypeOf(scc))
+
+				out, _ := json.MarshalIndent(coreSvc.AllSchedules(), "", "  ")
+				Expect(len(coreSvc.AllSchedules())).To(Equal(1), string(out))
+				out, _ = json.MarshalIndent(sc, "", "  ")
+				Expect(sc.FirmwareID).NotTo(BeEmpty(), string(out))
 			})
 		})
 	})
