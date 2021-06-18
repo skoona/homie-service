@@ -1,6 +1,7 @@
 package deviceScheduler
 
 import (
+	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
@@ -96,7 +97,17 @@ func (s *schedulerProvider) Firmwares() []dc.Firmware {
 }
 func (s *schedulerProvider) GetFirmware(id dc.EID) (dc.Firmware, error) {
 	level.Debug(s.logger).Log("event", "Calling GetFirmware()")
-	return dc.Firmware{}, nil
+	var fw dc.Firmware
+	for _, val := range s.snwk.Firmwares {
+		if id == val.ID {
+			fw = val
+		}
+	}
+	if fw.ID == "" {
+		return fw, fmt.Errorf("firmware with ID=%s, was not found", string(id))
+	}
+
+	return fw, nil
 }
 func (s *schedulerProvider) CreateFirmware(path string) (dc.EID, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateFirmware()")
@@ -105,6 +116,17 @@ func (s *schedulerProvider) CreateFirmware(path string) (dc.EID, error) {
 	return fw.ID, err
 }
 func (s *schedulerProvider) DeleteFirmware(id dc.EID) error {
-	level.Debug(s.logger).Log("event", "Calling DeleteFirmware()")
+	level.Debug(s.logger).Log("event", "Calling DeleteFirmware()", "firmwareID", id)
+	fwc := []dc.Firmware{}
+	for _, fw := range s.snwk.Firmwares {
+		if id != fw.ID {
+			fwc = append(fwc, fw)
+		}
+	}
+	if len(fwc) == 0 {
+		fmt.Errorf("firmware with ID=%s, was not found.", id)
+	}
+
+	s.snwk.Firmwares = fwc
 	return nil
 }
