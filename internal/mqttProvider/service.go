@@ -223,6 +223,7 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 
 func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
+	bInitialized = false
 
 	// Unsubscribe and shutdown cleanly
 	disableNetworkTraffic()

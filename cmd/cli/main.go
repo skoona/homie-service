@@ -45,8 +45,8 @@ import (
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
-func shutdownDemo() {
-	level.Debug(logger).Log("event", "shutdownDemo() called")
+func ShutdownDemo() {
+	level.Debug(logger).Log("event", "ShutdownDemo() called")
 	dp.Stop()
 	dss.Stop()
 
@@ -55,11 +55,11 @@ func shutdownDemo() {
 
 	dds.Stop()
 	dc.Stop()
-	level.Debug(logger).Log("event", "shutdownDemo() completed")
+	level.Debug(logger).Log("event", "ShutdownDemo() completed")
 }
 
-func shutdownLive() {
-	level.Debug(logger).Log("event", "shutdownLive() called")
+func ShutdownLive() {
+	level.Debug(logger).Log("event", "ShutdownLive() called")
 	mq.Stop()
 	sch.Stop()
 
@@ -69,49 +69,49 @@ func shutdownLive() {
 	dss.Stop()
 	dds.Stop()
 	dc.Stop()
-	level.Debug(logger).Log("event", "shutdownLive() completed")
+	level.Debug(logger).Log("event", "ShutdownLive() completed")
 }
 
-func runLive(cfg cc.Config) error {
-	level.Debug(logger).Log("event", "runLive() called")
+func RunLive(cfg cc.Config)(dc.CoreService, error) {
+	level.Debug(cfg.Logger).Log("event", "RunLive() called")
 	otap, dsp, networks, err = mq.Initialize(cfg)                 // message stream
 	if err != nil {
-		return err
+		return nil, err
 	}
 	repo, err = dds.Start(cfg)                                    // message db
 	if err != nil {
-		return err
+		return nil, err
 	}
 	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
 	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	_, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
+	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
 	err = mq.Start()                                           // activate message stream
 	if err != nil {
-		return err
+		return nil, err
 	}
-	level.Debug(logger).Log("event", "runLive() completed")
-	return err
+	level.Debug(cfg.Logger).Log("event", "RunLive() completed")
+	return coreSvc, err
 }
 
-func runDemo(cfg cc.Config) error {
-	level.Debug(logger).Log("event", "runDemo() called")
+func RunDemo(cfg cc.Config) (dc.CoreService, error) {
+	level.Debug(cfg.Logger).Log("event", "RunDemo() called")
 	otap, dsp, networks, err = dp.Initialize(cfg)                 // message stream
 	if err != nil {
-		return err
+		return nil, err
 	}
 	repo, err = dds.Start(cfg)                                    // message db
 	if err != nil {
-		return err
+		return nil, err
 	}
 	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
 	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	_, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
+	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
 	err = dp.Start()                                           // activate message stream
 	if err != nil {
-		return err
+		return nil, err
 	}
-	level.Debug(logger).Log("event", "runDemo() completed")
-	return err
+	level.Debug(cfg.Logger).Log("event", "RunDemo() completed")
+	return coreSvc, err
 }
 
 var (
@@ -120,15 +120,16 @@ var (
 	siteNetworks *dc.SiteNetworks
 	dep          dc.DeviceEventProvider
 	sched        dc.SchedulerProvider
-	//coreSvc      dc.CoreService
+	coreSvc      dc.CoreService
 	repo         dc.Repository
 	otap         sch.OTAInteractor
 	dsp          dss.StreamProvider
-	err error
+	err 		 error
+	cfg			cc.Config
 )
 
-func main() {
-	cfg, err := cc.BuildRuntimeConfig("Homie-Service")
+func StartUp() (dc.CoreService, cc.Config, error) {
+	cfg, err = cc.BuildRuntimeConfig("Homie-Service")
 	if err != nil {
 		os.Exit(1)
 	}
@@ -139,14 +140,29 @@ func main() {
 
 	// Run the App
 	if cfg.RunMode == "live" {
-		err = runLive(cfg)
+		coreSvc, err = RunLive(cfg)
 	} else {
-		err = runDemo(cfg)
+		coreSvc, err = RunDemo(cfg)
 	}
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
 		os.Exit(2)
 	}
+
+	return coreSvc, cfg, err
+}
+
+func Shutdown(cfg cc.Config) {
+	if cfg.RunMode == "live" {
+		ShutdownLive()
+	} else {
+		ShutdownDemo()
+	}
+}
+
+func main() {
+
+	_, _, err = StartUp()
 
 	/*
 	 * Prepare for clean exit
@@ -164,15 +180,12 @@ func main() {
 	}(errs)
 	level.Info(logger).Log("event", "shutdown requested", "cause", <-errs)
 
-	if cfg.RunMode == "live" {
-		shutdownLive()
-	} else {
-		shutdownDemo()
-	}
+	Shutdown(cfg)
 
 	if err != nil {
 		level.Error(logger).Log("error", err.Error())
 	}
+
 
 	// Dump the SiteNetwork and all nodes as JSON
 	//out, err := json.MarshalIndent(siteNetworks, "", "  ")

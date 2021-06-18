@@ -239,7 +239,7 @@ func Start(cfg cc.Config) (dc.Repository, error) {
 		dataFile = cfg.Dbc.DataStorage // it will be created
 	}
 
-	pDB, err := bolt.Open(dataFile, 0764, &bolt.Options{Timeout: 5 * time.Second, ReadOnly: false})
+	pDB, err := bolt.Open(dataFile, 0766, &bolt.Options{Timeout: 5 * time.Second, ReadOnly: false})
 	if err != nil {
 		level.Error(logger).Log("event", "Main bBolt DB Open Failed", "datafile", dataFile)
 		err = fmt.Errorf("main bBolt DB Open Failed: %v", err.Error())

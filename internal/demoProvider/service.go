@@ -30,7 +30,7 @@ var (
 	cfg			cc.Config
 	nNetworks = stringset.New()
 	logger    log.Logger
-	bInitialized bool
+	bInitialized bool = false
 )
 
 /*
@@ -243,6 +243,7 @@ func Start() error {
 }
 func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
+	bInitialized = false
 
 	// Unsubscribe and shutdown cleanly
 	disableNetworkTraffic()
