@@ -3,7 +3,6 @@ package deviceStorage_test
 import (
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	dp "github.com/skoona/homie-service/internal/demoProvider"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	dds "github.com/skoona/homie-service/internal/deviceStorage"
 	cc "github.com/skoona/homie-service/internal/utils"
@@ -14,7 +13,7 @@ import (
 
 var _ = Describe("Repository", func() {
 	var (
-		networks     []string
+		//networks     []string
 		//dep          dc.DeviceEventProvider
 		repo         dc.Repository
 		//otap         sch.OTAInteractor
@@ -28,7 +27,7 @@ var _ = Describe("Repository", func() {
 	schedule01 := dc.Schedule{
 		ID: "5058f1af8388633f609cadb75a75dc91",
 		ElementType: 22,
-		DeviceID: "GarageDoor",
+		DeviceID: "36ec4f3d3eedbe07b28e5fa6ab6ddb91",
 		FirmwareID: "5a3a2c57b5084ee4243017beaa0df461",
 		State: "pending",
 		Status: "waiting",
@@ -40,7 +39,7 @@ var _ = Describe("Repository", func() {
 	schedule02 := dc.Schedule{
 		ID: "5058f1af8388633f609cadb75a75dc92",
 		ElementType: 22,
-		DeviceID: "GarageDoor",
+		DeviceID: "36ec4f3d3eedbe07b28e5fa6ab6ddb98",
 		FirmwareID: "5a3a2c57b5084ee4243017beaa0df462",
 		State: "pending",
 		Status: "waiting",
@@ -87,12 +86,15 @@ var _ = Describe("Repository", func() {
 		}
 
 		// Start DemoProvider
-		_, _, networks, err = dp.Initialize(cfg)
-		if err != nil {
-			Fail(err.Error())
-		}
+		//_, _, networks, err = dp.Initialize(cfg)
+		//if err != nil {
+		//	Fail(err.Error())
+		//}
+
+		//sn = dc.NewSiteNetworks("ginkgo testing","Repository suite",
+		//	networks, []dc.Firmware{},	map[string]dc.Schedule{})
 		sn = dc.NewSiteNetworks("ginkgo testing","Repository suite",
-			networks, []dc.Firmware{},	map[string]dc.Schedule{})
+			cfg.Dbc.DemoNetworks, []dc.Firmware{},	map[string]dc.Schedule{})
 
 		// Start Repository
 		repo, err = dds.Start(cfg)
@@ -101,14 +103,14 @@ var _ = Describe("Repository", func() {
 		}
 
 		// Start traffic
-		err = dp.Start()
-		if err != nil {
-			Fail(err.Error())
-		}
+		//err = dp.Start()
+		//if err != nil {
+		//	Fail(err.Error())
+		//}
 	})
 
 	AfterEach(func(){
-		dp.Stop()
+		//dp.Stop()
 		dds.Stop()
 	})
 
@@ -122,7 +124,7 @@ var _ = Describe("Repository", func() {
 	Context("Repository Operations ", func() {
 		It("Schedules Exists...", func() {
 			sn.Schedules = repo.LoadSchedules()
-			Expect(len(sn.Schedules)).To(Equal(0), "starts empty")
+			Expect(len(sn.Schedules)).ToNot(Equal(0), "starting set")
 		})
 		It("Stores Schedules...", func() {
 			err = repo.StoreSchedule(schedule01)
@@ -131,6 +133,37 @@ var _ = Describe("Repository", func() {
 			Expect(err).To(BeNil(), "stores two")
 			err = repo.StoreSchedule(schedule03)
 			Expect(err).To(BeNil(), "stores three")
+		})
+		It("Stores Schedules and Removes Schedules...", func() {
+			schedules := repo.LoadSchedules()
+			count := len(schedules)
+
+			err = repo.StoreSchedule(schedule01)
+			Expect(err).To(BeNil(), "stores one")
+			err = repo.StoreSchedule(schedule02)
+			Expect(err).To(BeNil(), "stores two")
+			err = repo.StoreSchedule(schedule03)
+			Expect(err).To(BeNil(), "stores three")
+
+			schedules = repo.LoadSchedules()
+			Expect(len(schedules)).To(Equal((count - 3) + 3))
+
+			_, ok := schedules[schedule02.ID]
+			Expect(ok).To(BeTrue(), "failed to retrieve existing")
+
+			_ = repo.RemoveSchedule(schedule01.ID)
+			sn.Schedules = repo.LoadSchedules()
+			Expect(len(sn.Schedules)).To(Equal((count - 3) + 2), "one less")
+		})
+		It("Loads broadcasts...", func() {
+			broadcasts := repo.LoadBroadcasts("sknSensors")
+			Expect(len(broadcasts)).ToNot(Equal(0))
+		})
+		It("Clears all broadcasts...", func() {
+			err = repo.RemoveAllBroadcasts("sknSensors")
+			Expect(err).To(BeNil(), "removes them all")
+			broadcasts := repo.LoadBroadcasts("sknSensors")
+			Expect(len(broadcasts)).To(Equal(0))
 		})
 	})
 })

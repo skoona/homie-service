@@ -150,14 +150,20 @@ var _ = Describe("Core Service", func() {
 			It("AllSchedules() returns the available schedules", func() {
 				var sc []dc.Schedule
 				Expect(coreSvc.AllSchedules()).To(BeAssignableToTypeOf(sc))
+
+				schedules := repo.LoadSchedules()
+				count := len(schedules)
+
 				out, _ := json.MarshalIndent(coreSvc.AllSchedules(), "", "  ")
-				Expect(len(coreSvc.AllSchedules())).To(Equal(0), string(out))
+				Expect(len(coreSvc.AllSchedules())).To(Equal(count), string(out))
 			})
 			It("CreateSchedule() returns a new schedules", func() {
 				var fw dc.Firmware
 				var dv dc.Device
 				var sc dc.Schedule
 				var scc dc.Schedule
+				schedules := repo.LoadSchedules()
+				count := len(schedules)
 
 				dv, err = coreSvc.DeviceByName("GarageMonitor", "sknSensors")
 					//out, _ := json.MarshalIndent(dv, "", "  ")
@@ -175,7 +181,7 @@ var _ = Describe("Core Service", func() {
 				Expect(sc).To(BeAssignableToTypeOf(scc))
 
 				out, _ := json.MarshalIndent(coreSvc.AllSchedules(), "", "  ")
-				Expect(len(coreSvc.AllSchedules())).To(Equal(1), string(out))
+				Expect(len(coreSvc.AllSchedules())).To(Equal(((count -1) + 1) ), string(out))
 
 				out, _ = json.MarshalIndent(sc, "", "  ")
 					//fmt.Printf("\nSchedule: %s\n", out)

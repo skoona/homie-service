@@ -115,18 +115,31 @@ func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 		if b == nil {
 			return fmt.Errorf("no schedules %s", "available")
 		}
-		c := b.Cursor()
 
-		for k, v := c.First(); k != nil; k, v = c.Next() {
-			var schedule dc.Schedule
-			err = json.Unmarshal([]byte(v), &schedule)
-			if err == nil {
-				schedMap[string(k)] = schedule
+		err = b.ForEach( func(k, v []byte) error {
+			if string(v) == "" {
+				c := b.Bucket(k)
+				if c == nil {
+					return nil
+				}
+				d := c.Cursor()
+				kk, vv := d.First()
+				schedule := dc.Schedule{}
+
+				err := json.Unmarshal(vv, &schedule)
+				if err == nil {
+					schedMap[schedule.ID] = schedule
+					level.Info(r.logger).Log("Schedule", schedule.String())
+				} else {
+					level.Error(r.logger).Log("error", err.Error())
+				}
+				fmt.Printf("LoadSchedules(): schedule key=%s, value=%s\n", kk, vv)
 			}
-			fmt.Printf("LoadSchedules(): schedule key=%s, value=%s\n", k, v)
-		}
+			return err
+		})
 		return err
 	})
+
 	if err != nil {
 		level.Warn(r.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
 	} else {

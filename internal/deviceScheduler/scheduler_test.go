@@ -2,7 +2,6 @@ package deviceScheduler_test
 
 import (
 	"encoding/json"
-	"fmt"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
 	dp "github.com/skoona/homie-service/internal/demoProvider"
@@ -80,7 +79,7 @@ var _ = Describe("Scheduler Service", func() {
 			sched.ApplySiteNetworks(sn)
 
 			cat := sched.BuildScheduleCatalog()
-			Expect(len(cat)).To(Equal(0), "no schedules yet")
+			Expect(len(cat)).ToNot(Equal(0), "some may be there")
 			sch.Stop()
 		})
 		It("Returns catalog of Schedules", func() {
@@ -89,7 +88,7 @@ var _ = Describe("Scheduler Service", func() {
 			sched.ApplySiteNetworks(sn)
 
 			cat := sched.BuildScheduleCatalog()
-			Expect(len(cat)).To(Equal(0), "no schedules yet")
+			Expect(len(cat)).ToNot(Equal(0), "no schedules yet")
 
 			Expect(len(sched.Schedules())).To(Equal(len(cat)), "should be same count")
 
@@ -100,8 +99,11 @@ var _ = Describe("Scheduler Service", func() {
 			Expect(sched).ToNot(BeNil(), "No Service")
 			sched.ApplySiteNetworks(sn)
 
-			schedules := sched.BuildScheduleCatalog()
-			Expect(len(schedules)).To(Equal(0), "no schedules yet")
+			schedules := repo.LoadSchedules()
+			count := len(schedules)
+
+			schedules = sched.BuildScheduleCatalog()
+			Expect(len(schedules)).To(Equal(count), "same as count")
 
 			firmwares := sched.BuildFirmwareCatalog()
 			Expect(len(firmwares)).To(Equal(3), "should be three in package")
@@ -116,7 +118,6 @@ var _ = Describe("Scheduler Service", func() {
 
 			schedule := sched.FindScheduleByDeviceID(device.ID)
 			out, _ := json.MarshalIndent(schedule, "", "  ")
-			fmt.Println(string(out))
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
 			sch.Stop()
@@ -126,8 +127,11 @@ var _ = Describe("Scheduler Service", func() {
 			Expect(sched).ToNot(BeNil(), "No Service")
 			sched.ApplySiteNetworks(sn)
 
-			schedules := sched.BuildScheduleCatalog()
-			Expect(len(schedules)).To(Equal(0), "no schedules yet")
+			schedules := repo.LoadSchedules()
+			count := len(schedules)
+
+			schedules = sched.BuildScheduleCatalog()
+			Expect(len(schedules)).To(Equal(count), "no schedules yet")
 
 			firmwares := sched.BuildFirmwareCatalog()
 			Expect(len(firmwares)).To(Equal(3), "should be three in package")
@@ -141,16 +145,15 @@ var _ = Describe("Scheduler Service", func() {
 			scheduleID, err := sched.CreateSchedule(device.Parent, device.ID, dc.Base64Strict, fw.ID)
 			Expect(err).To(BeNil(), "must create new")
 
-			Expect(len(sn.Schedules)).To(Equal(1), "should be one")
+			Expect(len(sn.Schedules)).To(Equal(count), "should be one")
 
 			schedule := sched.FindScheduleByDeviceID(device.ID)
 			out, _ := json.MarshalIndent(schedule, "", "  ")
-			fmt.Println(string(out))
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
 			err = sched.DeleteSchedule(schedule.ID)
 			Expect(err).To(BeNil(), "must delete schedule")
-			Expect(len(sn.Schedules)).To(Equal(0), "should be zero")
+			Expect(len(sn.Schedules)).To(Equal(count - 1), "should be zero")
 
 			sch.Stop()
 		})
