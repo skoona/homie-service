@@ -165,7 +165,7 @@ var _ = Describe("Core Service", func() {
 				schedules := repo.LoadSchedules()
 				count := len(schedules)
 
-				dv, err = coreSvc.DeviceByName("GarageMonitor", "sknSensors")
+				dv, err = coreSvc.DeviceByName("GuestRoom", "sknSensors")
 					//out, _ := json.MarshalIndent(dv, "", "  ")
 					//fmt.Printf("\nDevice: %s\n", out)
 				fw = coreSvc.AllFirmwares()[0]
@@ -181,7 +181,7 @@ var _ = Describe("Core Service", func() {
 				Expect(sc).To(BeAssignableToTypeOf(scc))
 
 				out, _ := json.MarshalIndent(coreSvc.AllSchedules(), "", "  ")
-				Expect(len(coreSvc.AllSchedules())).To(Equal(((count -1) + 1) ), string(out))
+				Expect(len(coreSvc.AllSchedules())).To(Equal(count), string(out))
 
 				out, _ = json.MarshalIndent(sc, "", "  ")
 					//fmt.Printf("\nSchedule: %s\n", out)

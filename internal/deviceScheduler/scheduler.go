@@ -307,7 +307,7 @@ func buildFirmwareCatalog() []dc.Firmware {
 	}
 	for _, fi := range fileInfos {
 		if len(fi.Name()) > 0 && !fi.IsDir() && strings.HasSuffix(fi.Name(), ".bin") {
-			fw, err := NewFirmware(dir + "/" + fi.Name())
+			fw, err := NewFirmware(dir + "/" + fi.Name(), "")
 			if err == nil {
 				firmware = append(firmware, fw)
 				level.Debug(logger).Log("created", "FirmwareID", "brand", fw.Brand, "object", fw.String())

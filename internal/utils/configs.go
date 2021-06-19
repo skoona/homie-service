@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"github.com/spf13/pflag"
 	"os"
+	"path/filepath"
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
@@ -174,9 +175,9 @@ func BuildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 		Version: cfg.GetString("homiemonitor.version"),
 		Logger:  log,
 		Dbc: DBConfig{
-			DemoSource:      cfg.GetString("homiemonitor.datasources.demoSource"),
-			DataStorage:     cfg.GetString("homiemonitor.datasources.dataStorage"),
-			FirmwareStorage: cfg.GetString("homiemonitor.datasources.firmwareStorage"),
+			DemoSource:      filepath.FromSlash(cfg.GetString("homiemonitor.datasources.demoSource")),
+			DataStorage:     filepath.FromSlash(cfg.GetString("homiemonitor.datasources.dataStorage")),
+			FirmwareStorage: filepath.FromSlash(cfg.GetString("homiemonitor.datasources.firmwareStorage")),
 			DemoNetworks:    cfg.GetStringSlice("homiemonitor.datasources.demoNetworks"),
 		},
 		Mqc: MQTTConfig{

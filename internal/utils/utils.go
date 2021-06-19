@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -18,14 +19,15 @@ func fileExists(filename string) bool {
 	return !info.IsDir()
 }
 
-func LocateFile(dataFile string) string {
+func LocateFile(dFile string) string {
 	var foundFile string
+	dataFile := filepath.FromSlash(dFile)
 
 	if fileExists(dataFile) {
 		foundFile = dataFile
 	} else {
-		if strings.HasPrefix(dataFile, "../") {
-			foundFile = strings.ReplaceAll(dataFile, "../.", "")
+		if strings.HasPrefix(dataFile, ".."+string(os.PathSeparator)+"") {
+			foundFile = strings.ReplaceAll(dataFile, ".."+string(os.PathSeparator)+".", "")
 			if !fileExists(foundFile) {
 				fmt.Printf("error FILE NOT FOUND: %s or %s", foundFile, dataFile)
 				return ""

@@ -117,7 +117,7 @@ var _ = Describe("Scheduler Service", func() {
 			Expect(err).To(BeNil(), "must create new")
 
 			schedule := sched.FindScheduleByDeviceID(device.ID)
-			out, _ := json.MarshalIndent(schedule, "", "  ")
+			out, _ := json.MarshalIndent(sn.Schedules, "", "  ")
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
 			sch.Stop()
@@ -148,7 +148,7 @@ var _ = Describe("Scheduler Service", func() {
 			Expect(len(sn.Schedules)).To(Equal(count), "should be one")
 
 			schedule := sched.FindScheduleByDeviceID(device.ID)
-			out, _ := json.MarshalIndent(schedule, "", "  ")
+			out, _ := json.MarshalIndent(sn.Schedules, "", "  ")
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
 			err = sched.DeleteSchedule(schedule.ID)

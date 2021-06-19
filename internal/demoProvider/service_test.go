@@ -70,7 +70,8 @@ var _ = Describe("DemoProvider active service", func() {
 			wg.Add(1)
 			go func(mChan chan dc.DeviceMessage) {
 				defer wg.Done()
-				for range mChan {
+				for dm := range mChan {
+					fmt.Printf("DeviceMessage: %s\n", dm.String())
 					counter += 1
 					if counter >= 106 { // number of lines in test log
 						break

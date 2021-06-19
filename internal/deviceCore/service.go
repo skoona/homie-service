@@ -36,7 +36,7 @@ type (
 		ScheduleByDeviceID(deviceID string) Schedule
 
 		AllFirmwares() []Firmware
-		CreateFirmware(path string) (EID, error)
+		CreateFirmware(srcFile, dstFile string) (EID, error)
 		RemoveFirmwareByID(firmwareID EID)
 		FirmwareByID(firmwareID EID) (Firmware, error)
 		FirmwareByName(firmwareName string) (Firmware, error)
@@ -59,7 +59,7 @@ type (
 		BuildFirmwareCatalog() []Firmware
 		Firmwares() []Firmware
 		GetFirmware(id EID) (Firmware, error)
-		CreateFirmware(path string) (EID, error)
+		CreateFirmware(srcFile, dstFile string) (EID, error)
 		DeleteFirmware(id EID) error
 	}
 

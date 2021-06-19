@@ -69,7 +69,7 @@ func (s *schedulerProvider) FindScheduleByDeviceID(deviceID string) *dc.Schedule
 		}
 	}
 	if len(schedules) >= 1 {
-		return schedules[0]
+		return schedules[len(schedules)-1] // return last one, shouldn't be more that one per device
 	}
 	return &dc.Schedule{}
 }
@@ -109,12 +109,15 @@ func (s *schedulerProvider) GetFirmware(id dc.EID) (dc.Firmware, error) {
 
 	return fw, nil
 }
-func (s *schedulerProvider) CreateFirmware(path string) (dc.EID, error) {
+func (s *schedulerProvider) CreateFirmware(srcFile, dstFile string) (dc.EID, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateFirmware()")
-	fw, err := NewFirmware(path)
-	s.snwk.Firmwares = append(s.snwk.Firmwares, fw)
+	fw, err := NewFirmware(srcFile, dstFile)
+	if err == nil {
+		s.snwk.Firmwares = append(s.snwk.Firmwares, fw)
+	}
 	return fw.ID, err
 }
+
 func (s *schedulerProvider) DeleteFirmware(id dc.EID) error {
 	// todo: should the filesystem file be removed here?
 	// Todo: appears to be done in Core Service "RemoveFirmwareByID()"

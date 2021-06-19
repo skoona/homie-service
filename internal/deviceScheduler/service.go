@@ -11,6 +11,9 @@ import (
 	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 	"time"
 
 	dc "github.com/skoona/homie-service/internal/deviceCore"
@@ -78,18 +81,56 @@ func NewSchedule(networkName string, deviceID string, transport dc.OTATransport,
 
 
 // newFirmware Creates Component
-func NewFirmware(path string) (dc.Firmware, error) {
-	level.Debug(logger).Log("event", "NewFirmware() called", "path", path)
-	// call resolver routine
-	md5Sum, fwName, fwVersion, fwBrand, fsize, modtime, err := firmwareDetails(path)
+func NewFirmware(sFile, dFile string) (dc.Firmware, error) {
+	destinationFile := filepath.FromSlash(dFile)
+	sourceFile := filepath.FromSlash(sFile)
 
+	level.Debug(logger).Log("event", "NewFirmware() called", "source", sourceFile, "destination", destinationFile)
+	var dstFile string
+
+	if destinationFile != "" { // will be empty when creating library
+		fileInfo, err := os.Stat(sourceFile)
+		if err != nil {
+			return dc.Firmware{}, fmt.Errorf("NewFirmware() file[%s] is not found: %s", sourceFile, err.Error())
+		}
+
+		// apply destination path
+		// -- may fail with windows path input when running on linux server
+		if fileInfo.IsDir() {
+			dstFile = fmt.Sprintf("%s%s%s", cfg.Dbc.FirmwareStorage, string(os.PathSeparator), filepath.Base(sourceFile))
+		} else {
+			dstFile = fmt.Sprintf("%s%s%s", cfg.Dbc.FirmwareStorage, string(os.PathSeparator), filepath.Base(destinationFile))
+		}
+
+		// Copy file to storage location
+		input, err := ioutil.ReadFile(sourceFile)
+		if err != nil {
+			return dc.Firmware{}, fmt.Errorf("NewFirmware() error reading source[%s]; %s", sourceFile, err.Error())
+		}
+
+		err = ioutil.WriteFile(dstFile, input, 0644)
+		if err != nil {
+			return dc.Firmware{}, fmt.Errorf("NewFirmware() error writing destination[%s]; %s", destinationFile, err.Error())
+		}
+	} else {
+		dstFile = sourceFile
+	}
+
+	// call resolver routine
+	md5Sum, fwName, fwVersion, fwBrand, fsize, modtime, err := firmwareDetails(dstFile)
+	if err != nil {
+		os.Remove(dstFile)  // cleanup if not firmware
+		return dc.Firmware{}, err
+	}
+
+	// create firmware object
 	fw := dc.Firmware{
 		ID:          dc.EID(md5Sum),
 		ElementType: dc.CoreTypeFirmware,
 		Name:        fwName,
-		FileName:    path,
+		FileName:    dstFile,
 		Version:     fwVersion,
-		Path:        path,
+		Path:        dstFile,
 		Size:        fsize,
 		MD5Digest:   md5Sum,
 		Brand:       fwBrand,

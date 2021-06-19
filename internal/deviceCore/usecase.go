@@ -151,9 +151,9 @@ func (em *coreService) AllFirmwares() []Firmware {
 	firmwares := siteNetworks.Firmwares // presumed to actually copy
 	return firmwares
 }
-func (em *coreService) CreateFirmware(path string) (EID, error) {
+func (em *coreService) CreateFirmware(srcFile, dstFile string) (EID, error) {
 	level.Debug(em.logger).Log("method", "CreateFirmware() called")
-	return em.scp.CreateFirmware(path)
+	return em.scp.CreateFirmware(srcFile, dstFile)
 }
 func (em *coreService) RemoveFirmwareByID(firmwareEID EID) {
 	level.Debug(em.logger).Log("method", "RemoveFirmwareByEID() called")
