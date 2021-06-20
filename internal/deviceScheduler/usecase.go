@@ -6,6 +6,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	cc "github.com/skoona/homie-service/internal/utils"
+	"strings"
 )
 
 /*
@@ -61,20 +62,22 @@ func (s *schedulerProvider) Schedules() []dc.Schedule {
 	return values
 }
 func (s *schedulerProvider) FindScheduleByDeviceID(deviceID string) *dc.Schedule {
-	level.Debug(s.logger).Log("event", "Calling FindSchedulesByDeviceID()")
+	level.Debug(s.logger).Log("event", "Calling FindSchedulesByDeviceID()", "device", deviceID)
 	schedules := []*dc.Schedule{}
 	for _, schedule := range s.snwk.Schedules {
-		if schedule.DeviceID == deviceID {
+		if strings.Contains(schedule.DeviceID, deviceID) {
 			schedules = append(schedules, &schedule)
+			break
 		}
 	}
+
 	if len(schedules) >= 1 {
-		return schedules[len(schedules)-1] // return last one, shouldn't be more that one per device
+		return schedules[0] // return first one, shouldn't be more that one per device
 	}
 	return &dc.Schedule{}
 }
 func (s *schedulerProvider) CreateSchedule(networkName string, deviceID string, transport dc.OTATransport, firmwareID dc.EID) (string, error) {
-	level.Debug(s.logger).Log("event", "Calling CreateSchedule()")
+	level.Debug(s.logger).Log("event", "Calling CreateSchedule()", "network", networkName, "deviceID", deviceID)
 	schedule := NewSchedule(networkName, deviceID, transport, firmwareID)
 	s.snwk.Schedules[schedule.ID] = schedule
 	err := s.repo.StoreSchedule(schedule)

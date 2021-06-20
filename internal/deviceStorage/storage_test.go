@@ -160,7 +160,7 @@ var _ = Describe("Repository", func() {
 		Context("Broadcast Operations ", func() {
 			It("Loads broadcasts...", func() {
 				broadcasts := repo.LoadBroadcasts("sknSensors")
-				Expect(len(broadcasts)).To(Equal(0))
+				Expect(len(broadcasts)).To(Equal(2))
 			})
 			It("Clears all broadcasts...", func() {
 				err = repo.RemoveAllBroadcasts("sknSensors")

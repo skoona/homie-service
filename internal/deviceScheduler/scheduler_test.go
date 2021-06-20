@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	dp "github.com/skoona/homie-service/internal/demoProvider"
 	dc "github.com/skoona/homie-service/internal/deviceCore"
 	sch "github.com/skoona/homie-service/internal/deviceScheduler"
 	dss "github.com/skoona/homie-service/internal/deviceSource"
@@ -39,12 +38,12 @@ var _ = Describe("Scheduler Service", func() {
 		}
 
 		// Start DemoProvider
-		otap, dsp, networks, err = dp.Initialize(cfg)
-		if err != nil {
-			Fail(err.Error())
-		}
+		//otap, dsp, networks, err = dp.Initialize(cfg)
+		//if err != nil {
+		//	Fail(err.Error())
+		//}
 		sn = dc.NewSiteNetworks("ginkgo testing","Scheduler suite",
-			 networks, []dc.Firmware{},	map[string]dc.Schedule{})
+			 cfg.Dbc.DemoNetworks, []dc.Firmware{},	map[string]dc.Schedule{})
 
 		// Start Repository
 		repo, err = dds.Start(cfg)
@@ -52,15 +51,17 @@ var _ = Describe("Scheduler Service", func() {
 			Fail(err.Error())
 		}
 
+		sn.DeviceNetworks["sknSensors"] = repo.RestoreNetworkFromDB("sknSensors")
+
 		// Start traffic
-		err = dp.Start()
-		if err != nil {
-			Fail(err.Error())
-		}
+		//err = dp.Start()
+		//if err != nil {
+		//	Fail(err.Error())
+		//}
 	})
 
 	AfterEach(func(){
-		dp.Stop()
+		//dp.Stop()
 		dds.Stop()
 	})
 
@@ -110,14 +111,17 @@ var _ = Describe("Scheduler Service", func() {
 
 			var device dc.Device
 			fw := firmwares[0]
-			for _, dv := range sn.DeviceNetworks["snkSensors"].Devices {
+			for _, dv := range sn.DeviceNetworks["sknSensors"].Devices {
 				device = dv
 			}
+			out, _ := json.MarshalIndent(device, "", "  ")
+			Expect(device.Name).ToNot(BeEmpty(), out)
+
 			scheduleID, err := sched.CreateSchedule(device.Parent, device.ID, dc.Base64Strict, fw.ID)
 			Expect(err).To(BeNil(), "must create new")
 
 			schedule := sched.FindScheduleByDeviceID(device.ID)
-			out, _ := json.MarshalIndent(sn.Schedules, "", "  ")
+			out, _ = json.MarshalIndent(sn.Schedules, "", "  ")
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
 			sch.Stop()
@@ -127,10 +131,8 @@ var _ = Describe("Scheduler Service", func() {
 			Expect(sched).ToNot(BeNil(), "No Service")
 			sched.ApplySiteNetworks(sn)
 
-			schedules := repo.LoadSchedules()
+			schedules := sched.BuildScheduleCatalog()
 			count := len(schedules)
-
-			schedules = sched.BuildScheduleCatalog()
 			Expect(len(schedules)).To(Equal(count), "no schedules yet")
 
 			firmwares := sched.BuildFirmwareCatalog()
@@ -138,17 +140,22 @@ var _ = Describe("Scheduler Service", func() {
 
 			var device dc.Device
 			fw := firmwares[0]
-			for _, dv := range sn.DeviceNetworks["snkSensors"].Devices {
+			for _, dv := range sn.DeviceNetworks["sknSensors"].Devices {
 				device = dv
 				break
 			}
+			out, _ := json.MarshalIndent(device, "", "  ")
+			Expect(device.Name).ToNot(BeEmpty(), out)
+
 			scheduleID, err := sched.CreateSchedule(device.Parent, device.ID, dc.Base64Strict, fw.ID)
 			Expect(err).To(BeNil(), "must create new")
 
-			Expect(len(sn.Schedules)).To(Equal(count), "should be one")
+			schedules = sched.BuildScheduleCatalog()
+
+			Expect(len(schedules)).ToNot(Equal(0), "should be one")
 
 			schedule := sched.FindScheduleByDeviceID(device.ID)
-			out, _ := json.MarshalIndent(sn.Schedules, "", "  ")
+			out, _ = json.MarshalIndent(sn.Schedules, "", "  ")
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
 			err = sched.DeleteSchedule(schedule.ID)
