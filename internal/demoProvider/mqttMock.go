@@ -207,7 +207,7 @@ func (mc *mockClient) Disconnect(quiesce uint) {
 	}
 
 	if mc.cbConnectionLostHandler != nil {
-		mc.cbConnectionLostHandler(mc, errors.New("Unknown Value"))
+		mc.cbConnectionLostHandler(mc, errors.New("Shutdown Requested"))
 	}
 }
 func (mc *mockClient) Publish(topic string, qos byte, retained bool, payload interface{}) mqtt.Token {
@@ -248,6 +248,7 @@ func (mc *mockClient) SubscribeMultiple(filters map[string]byte, callback mqtt.M
 }
 func (mc *mockClient) Unsubscribe(topics ...string) mqtt.Token {
 	var key string = "key"
+	var topic string
 	mc.Lock()
 	defer mc.Unlock()
 	if !mc.connected {
@@ -255,7 +256,13 @@ func (mc *mockClient) Unsubscribe(topics ...string) mqtt.Token {
 	}
 
 	for _, k := range topics {
-		key = fmt.Sprintf("%s|%s", key, k)
+		if strings.ContainsAny(k, "+#") {
+			topic = strings.ReplaceAll(k, "+/", "")
+			topic = strings.ReplaceAll(topic, "/#", "")
+		} else {
+			topic = k
+		}
+		key = fmt.Sprintf("%s|%s", key, topic)
 	}
 	delete(mc.subs, key)
 

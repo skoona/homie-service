@@ -14,7 +14,6 @@ import (
 	mq "github.com/skoona/homie-service/internal/mqttProvider"
 	cc "github.com/skoona/homie-service/internal/utils"
 	"os"
-	"time"
 )
 
 var (
@@ -49,18 +48,18 @@ func ShutdownLive() {
 }
 
 func RunDemo(cfg cc.Config) (dc.CoreService, error) {
-	otap, dsp, networks, err = dp.Initialize(cfg)                 // message stream
+	otap, dsp, networks, err = dp.Initialize(cfg)                     // message stream
 	if err != nil {
 		return nil, err
 	}
-	repo, err = dds.Start(cfg)                                    // message db
+	repo, err = dds.Start(cfg)                                        // message db
 	if err != nil {
 		return nil, err
 	}
-	dep, _ = dss.Start(cfg, repo, dsp)                          // message aggregation
-	sched = sch.Start(cfg, otap, repo)                          // ota scheduler
-	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic -- may need scheduler
-	err = dp.Start()                                           // activate message stream
+	dep, _ = dss.Start(cfg, repo, dsp)                                // message aggregation
+	sched = sch.Start(cfg, otap, repo)                                // ota scheduler
+	coreSvc, siteNetworks = dc.Start(cfg, dep, sched, repo, networks) // network logic
+	err = dp.Start()                                                  // activate message stream
 	if err != nil {
 		return nil, err
 	}
@@ -73,6 +72,10 @@ func StartUp() (dc.CoreService, cc.Config, error) {
 		os.Exit(1)
 	}
 	logger = log.With(cfg.Logger, "ginkgo", "testing")
+
+	// remove db file
+	os.Remove(cfg.Dbc.DataStorage)
+	level.Debug(logger).Log("removed DB", cfg.Dbc.DataStorage)
 
 	// Run the App
 	coreSvc, err = RunDemo(cfg)
@@ -120,8 +123,7 @@ var _ = Describe("Core Service", func() {
 			})
 			It("AllNetworks() known network has Devices", func() {
 				sn := coreSvc.AllNetworks()
-				time.Sleep(5 * time.Second)
-				Expect(len(sn.DeviceNetworks["sknSensors"].Devices)).To(Equal(2))
+				Expect(len(sn.DeviceNetworks["sknSensors"].Devices)).NotTo(Equal(0))
 			})
 		})
 		Context("Broadcast Operations", func() {
@@ -131,19 +133,20 @@ var _ = Describe("Core Service", func() {
 			})
 			It("AllBroadcasts() have known items", func() {
 				bc := coreSvc.AllBroadcasts()
-				Expect(len(bc)).To(Equal(3))
+				Expect(len(bc)).ToNot(Equal(0))
 				Expect(bc[0]).ToNot(BeNil())
 			})
 		})
-		Context("FirmwareID Operations", func() {
+		Context("Firmware Operations", func() {
 			It("AllFirmwares() returns the current library", func() {
 				var fw []dc.Firmware
 				Expect(coreSvc.AllFirmwares()).To(BeAssignableToTypeOf(fw))
 			})
 			It("AllFirmwares() have known items", func() {
-				fw := coreSvc.AllFirmwares()
-				Expect(len(fw)).To(Equal(3))
-				Expect(fw[0]).ToNot(BeNil())
+				var fw []dc.Firmware
+				fws := coreSvc.AllFirmwares()
+				Expect(len(fws)).ToNot(Equal(0))
+				Expect(fw).To(BeAssignableToTypeOf(fw))
 			})
 		})
 		Context("Schedule Operations", func() {
@@ -162,7 +165,7 @@ var _ = Describe("Core Service", func() {
 				var dv dc.Device
 				var sc dc.Schedule
 				var scc dc.Schedule
-				schedules := repo.LoadSchedules()
+				schedules := coreSvc.AllSchedules()
 				count := len(schedules)
 
 				dv, err = coreSvc.DeviceByName("GuestRoom", "sknSensors")
@@ -173,7 +176,6 @@ var _ = Describe("Core Service", func() {
 					//fmt.Printf("\nFirmware: %s\n", out)
 
 				scID, err := coreSvc.CreateSchedule("sknSensors", dv.ID, dc.Base64Strict, fw.ID)
-
 				Expect(err).To(BeNil())
 				Expect(scID).NotTo(BeEmpty())
 

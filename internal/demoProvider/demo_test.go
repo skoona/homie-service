@@ -14,14 +14,14 @@ var cfg cc.Config
 var oldArgs []string
 var err error
 
-var _ = Describe("DemoProvider inactive service", func() {
+var _ = Describe("DemoProvider offLine service", func() {
 
 	BeforeEach(func() {
 		oldArgs = os.Args
 		os.Args = []string{oldArgs[0], "--config", ""} // force clearing of prior value
 		defer func() { os.Args = oldArgs }()
 		os.Setenv("HOMIE_SERVICE_CONFIG_FILE", "test-config")
-		os.Args = []string{oldArgs[0], "--config", ""}
+		os.Args = []string{oldArgs[0], "--debug", "true", "--config", ""}
 		cfg, err = cc.BuildRuntimeConfig("Homie-Service-Test")
 	})
 
@@ -55,7 +55,8 @@ var _ = Describe("DemoProvider inactive service", func() {
 var _ = Describe("DemoProvider active service", func() {
 	BeforeEach(func() {
 		oldArgs = os.Args
-		os.Args = []string{oldArgs[0], "--config", "test-config"} // force clearing of prior value
+		//os.Args = []string{oldArgs[0], "--config", "test-config"} // force clearing of prior value
+		os.Args = []string{oldArgs[0], "--debug", "true", "--config", "test-config"}
 		defer func() { os.Args = oldArgs }()
 		cfg, err = cc.BuildRuntimeConfig("Homie-Service-Test")
 	})
@@ -70,14 +71,48 @@ var _ = Describe("DemoProvider active service", func() {
 			wg.Add(1)
 			go func(mChan chan dc.DeviceMessage) {
 				defer wg.Done()
-				for dm := range mChan {
-					fmt.Printf("DeviceMessage: %s\n", dm.String())
+				for range mChan {
+					//fmt.Printf("DeviceMessage: %s\n", dm.String())
 					counter += 1
 					if counter >= 106 { // number of lines in test log
 						break
 					}
 				}
-				fmt.Printf("Test drain completed, counter=%d\n", counter)
+				fmt.Printf("Device Test drain completed, counter=%d\n", counter)
+			}(sp.ActivateNotifications())
+			wg.Wait()
+			dp.Stop()
+			Expect(counter).To(Equal(106))
+		})
+		It("StreamProvider produces OTA messages on ota.notify channel", func() {
+			var wg sync.WaitGroup
+			otap, sp, _, _ := dp.Initialize(cfg)
+			Expect(err).To(BeNil())
+			err = dp.Start()
+			var counter int = 0
+			wg.Add(1)
+			go func(mChan chan dc.DeviceMessage) {
+				defer wg.Done()
+				for dm := range mChan {
+					fmt.Printf("OTA DeviceMessage: %s\n", dm.String())
+					counter += 1
+					if counter >= 6 { // number of '$fw' lines in test log
+						break
+					}
+				}
+				fmt.Printf("OTA Test drain completed, counter=%d\n", counter)
+			}(otap.EnableTriggers())
+			wg.Add(1)
+			go func(mChan chan dc.DeviceMessage) {
+				defer wg.Done()
+				for range mChan {
+					//fmt.Printf("DeviceMessage: %s\n", dm.String())
+					counter += 1
+					if counter >= 106 { // number of lines in test log
+						break
+					}
+				}
+				fmt.Printf("Device Test drain completed, counter=%d\n", counter)
 			}(sp.ActivateNotifications())
 			wg.Wait()
 			dp.Stop()

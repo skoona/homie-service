@@ -122,48 +122,54 @@ var _ = Describe("Repository", func() {
 	})
 
 	Context("Repository Operations ", func() {
-		It("Schedules Exists...", func() {
-			sn.Schedules = repo.LoadSchedules()
-			Expect(len(sn.Schedules)).ToNot(Equal(0), "starting set")
-		})
-		It("Stores Schedules...", func() {
-			err = repo.StoreSchedule(schedule01)
-			Expect(err).To(BeNil(), "stores one")
-			err = repo.StoreSchedule(schedule02)
-			Expect(err).To(BeNil(), "stores two")
-			err = repo.StoreSchedule(schedule03)
-			Expect(err).To(BeNil(), "stores three")
-		})
-		It("Stores Schedules and Removes Schedules...", func() {
-			schedules := repo.LoadSchedules()
-			count := len(schedules)
+		Context("Schedule Operations ", func() {
+			It("Schedules Exists...", func() {
+				sn.Schedules = repo.LoadSchedules()
+				Expect(len(sn.Schedules)).ToNot(Equal(0), "starting set")
+			})
+			It("Stores Schedules...", func() {
+				err = repo.StoreSchedule(schedule01)
+				Expect(err).To(BeNil(), "stores one")
+				err = repo.StoreSchedule(schedule02)
+				Expect(err).To(BeNil(), "stores two")
+				err = repo.StoreSchedule(schedule03)
+				Expect(err).To(BeNil(), "stores three")
+			})
+			It("Stores Schedules and Removes Schedules...", func() {
+				schedules := repo.LoadSchedules()
+				count := len(schedules)
 
-			err = repo.StoreSchedule(schedule01)
-			Expect(err).To(BeNil(), "stores one")
-			err = repo.StoreSchedule(schedule02)
-			Expect(err).To(BeNil(), "stores two")
-			err = repo.StoreSchedule(schedule03)
-			Expect(err).To(BeNil(), "stores three")
+				err = repo.StoreSchedule(schedule01)
+				Expect(err).To(BeNil(), "stores one")
+				err = repo.StoreSchedule(schedule02)
+				Expect(err).To(BeNil(), "stores two")
+				err = repo.StoreSchedule(schedule03)
+				Expect(err).To(BeNil(), "stores three")
 
-			schedules = repo.LoadSchedules()
-			Expect(len(schedules)).To(Equal((count - 3) + 3))
+				schedules = repo.LoadSchedules()
+				Expect(len(schedules)).To(Equal((count - 3) + 3))
 
-			_, ok := schedules[schedule02.ID]
-			Expect(ok).To(BeTrue(), "failed to retrieve existing")
+				_, ok := schedules[schedule02.ID]
+				Expect(ok).To(BeTrue(), "failed to retrieve existing")
 
-			_ = repo.RemoveSchedule(schedule01.ID)
-			sn.Schedules = repo.LoadSchedules()
-			Expect(len(sn.Schedules)).To(Equal((count - 3) + 2), "one less")
+				_ = repo.RemoveSchedule(schedule01.ID)
+				sn.Schedules = repo.LoadSchedules()
+				Expect(len(sn.Schedules)).To(Equal((count-3)+2), "one less")
+			})
 		})
-		It("Loads broadcasts...", func() {
-			broadcasts := repo.LoadBroadcasts("sknSensors")
-			Expect(len(broadcasts)).ToNot(Equal(0))
+		Context("Broadcast Operations ", func() {
+			It("Loads broadcasts...", func() {
+				broadcasts := repo.LoadBroadcasts("sknSensors")
+				Expect(len(broadcasts)).To(Equal(0))
+			})
+			It("Clears all broadcasts...", func() {
+				err = repo.RemoveAllBroadcasts("sknSensors")
+				Expect(err).To(BeNil(), "removes them all")
+				broadcasts := repo.LoadBroadcasts("sknSensors")
+				Expect(len(broadcasts)).To(Equal(0))
+			})
 		})
-		It("Clears all broadcasts...", func() {
-			err = repo.RemoveAllBroadcasts("sknSensors")
-			Expect(err).To(BeNil(), "removes them all")
-			broadcasts := repo.LoadBroadcasts("sknSensors")
-			Expect(len(broadcasts)).To(Equal(0))
+		Context("Network Operations ", func() {
 		})
 	})
 })

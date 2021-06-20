@@ -16,10 +16,8 @@ import (
 	"strings"
 )
 
-/**
- * RestoreNetworkFromDB()
- * Reconstitute the Site NETWORK Object
-*/
+// RestoreNetworkFromDB()
+// Reconstitute the Site NETWORK Object
 func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 	nw  := dc.NewNetwork("Restored", networkName)
 
@@ -39,9 +37,7 @@ func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 	return nw
 }
 
-/**
- * StoreSchedule(schedule Schedule)
- */
+// StoreSchedule(schedule Schedule)
 func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 	level.Debug(r.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
 
@@ -74,9 +70,8 @@ func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 	return err
 }
 
-/**
- * RemoveSchedule(schedule Schedule)
- */
+// RemoveSchedule(schedule Schedule)
+//
 func (r *dbRepo) RemoveSchedule(scheduleID string) error {
 	level.Debug(r.logger).Log("event", "Calling RemoveSchedule()", "schedule", scheduleID)
 
@@ -100,9 +95,8 @@ func (r *dbRepo) RemoveSchedule(scheduleID string) error {
 	return err
 }
 
-/**
- * LoadSchedules()
- */
+
+// LoadSchedules()
 func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 	level.Debug(r.logger).Log("event", "Calling LoadSchedules()")
 	schedMap := map[string]dc.Schedule{}
@@ -149,9 +143,8 @@ func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 	return schedMap
 }
 
-/**
- * LoadBroadcasts()
- */
+
+// LoadBroadcasts()
 func (r *dbRepo) LoadBroadcasts(networkName string) []dc.Broadcast {
 	var bc dc.Broadcast
 	broads := []dc.Broadcast{}
@@ -190,25 +183,20 @@ func (r *dbRepo) LoadBroadcasts(networkName string) []dc.Broadcast {
 	return broads
 }
 
-/**
- * RemoveAllBroadcasts()
- */
+// RemoveAllBroadcasts()
 func (r *dbRepo) RemoveAllBroadcasts(networkName string) error {
-	err := r.db.Update(func(tx *bolt.Tx) error {
+	_ = r.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName))
 		if b == nil {
 			return fmt.Errorf("[WARN] Network Not Found!: %s", networkName)
 		}
 		return b.DeleteBucket([]byte("$broadcast"))
 	})
-	return err
+	return nil
 }
 
-/**
- * Remove()
- *
- * Repository Implementation
- */
+// Remove()
+// Repository Implementation
 func (r *dbRepo) Remove(d dc.DeviceMessage) error {
 	level.Debug(r.logger).Log("event", "Calling Remove()", "dm", d.String())
 	err := r.db.Update(func(tx *bolt.Tx) error {

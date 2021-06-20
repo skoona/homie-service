@@ -149,22 +149,30 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 
 		parts := strings.Split(line, " ")
 		topic := parts[0]
-		tparts := strings.Split(topic, "/")
+		tparts  := strings.Split(topic, "/")
 		payload := strings.Join(parts[1:], " ")
 
 		idx++
+		msg := newMockMessage(topic, idx, 1, false, []byte(payload))
+
+		// Honor subscriptions
 		for k, v := range mClient.subs {
-			msg := newMockMessage(topic, idx, 1, false, []byte(payload))
-			if strings.Contains(k,topic) {
+			if strings.Contains(k,topic) { // ota watches
 				v.callback(mClient, msg)
+				//fmt.Printf("A:[%d] %s <--> %s \n", msg.MessageID(), k, topic)
+				break
 			} else if len(tparts) >= 3 {
-				if strings.Contains(k, tparts[2]) {
+				if strings.Contains(k, tparts[2]) { // +/+/$name  Discovery
 					v.callback(mClient, msg)
+					//fmt.Printf("B:[%d] %s <--> %s \n", msg.MessageID(), k, tparts[2])
+					break
 				}
 			}
-			if !limit {  // runmode if false, discovery mode if true
-					mClient.cbDefault(mClient, msg)
-			}
+		}
+
+		if !limit {  // runmode if false, discovery mode if true
+			mClient.cbDefault(mClient, msg)
+			//fmt.Printf("C:[%d] %s\n", msg.MessageID(), msg.Topic())
 		}
 
 		if limit {

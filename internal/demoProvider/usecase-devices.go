@@ -97,7 +97,7 @@ var defaultOnMessage mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 	// triggers:
 	// sknSensors/GarageMonitor/$fw/[checksum | name | version] anyvalue
 	var trigger bool = false
-	if strings.HasSuffix(msg.Topic(), "$fw/") {
+	if strings.Contains(msg.Topic(), "$fw/") {
 		trigger = true
 	}
 

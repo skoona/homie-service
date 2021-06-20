@@ -115,8 +115,6 @@ type Broadcast struct {
 	Received    time.Time
 }
 
-
-
 // NewNetworks Creates Component
 func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) *SiteNetworks {
 	//level.Debug(em.logger).Log("event", "NewSiteNetworks() called")
