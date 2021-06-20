@@ -160,7 +160,7 @@ var _ = Describe("Scheduler Service", func() {
 
 			err = sched.DeleteSchedule(schedule.ID)
 			Expect(err).To(BeNil(), "must delete schedule")
-			Expect(len(sn.Schedules)).To(Equal(count - 1), "should be zero")
+			Expect(len(sched.BuildScheduleCatalog())).To(Equal(count - 1), "should be zero")
 
 			sch.Stop()
 		})
