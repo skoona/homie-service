@@ -13,7 +13,6 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 
-	"github.com/google/uuid"
 	cc "github.com/skoona/homie-service/internal/utils"
 )
 
@@ -92,9 +91,6 @@ type (
 		repo    Repository
 		logger log.Logger
 	}
-
-	//EID entity EID
-	EID string
 )
 
 var (
@@ -115,12 +111,6 @@ func NewCoreService(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvide
 		logger: log.With(dfg.Logger, "pkg", "deviceCore", "service", "coreService"),
 	}
 	return em
-}
-
-//NewID create a new entity ID
-func NewEID() EID {
-	uuid := uuid.New()
-	return EID(uuid.String())
 }
 
 

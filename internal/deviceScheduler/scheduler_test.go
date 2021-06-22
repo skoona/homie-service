@@ -117,10 +117,10 @@ var _ = Describe("Scheduler Service", func() {
 			out, _ := json.MarshalIndent(device, "", "  ")
 			Expect(device.Name).ToNot(BeEmpty(), out)
 
-			scheduleID, err := sched.CreateSchedule(device.Parent, device.ID, dc.Base64Strict, fw.ID)
+			scheduleID, err := sched.CreateSchedule(device.Parent, string(device.ID), dc.Base64Strict, fw.ID)
 			Expect(err).To(BeNil(), "must create new")
 
-			schedule := sched.FindScheduleByDeviceID(device.ID)
+			schedule := sched.FindScheduleByDeviceID(string(device.ID))
 			out, _ = json.MarshalIndent(sn.Schedules, "", "  ")
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
@@ -147,20 +147,20 @@ var _ = Describe("Scheduler Service", func() {
 			out, _ := json.MarshalIndent(device, "", "  ")
 			Expect(device.Name).ToNot(BeEmpty(), out)
 
-			scheduleID, err := sched.CreateSchedule(device.Parent, device.ID, dc.Base64Strict, fw.ID)
+			scheduleID, err := sched.CreateSchedule(device.Parent, string(device.ID), dc.Base64Strict, fw.ID)
 			Expect(err).To(BeNil(), "must create new")
 
 			schedules = sched.BuildScheduleCatalog()
 
 			Expect(len(schedules)).ToNot(Equal(0), "should be one")
 
-			schedule := sched.FindScheduleByDeviceID(device.ID)
+			schedule := sched.FindScheduleByDeviceID(string(device.ID))
 			out, _ = json.MarshalIndent(sn.Schedules, "", "  ")
 			Expect(schedule.ID).To(Equal(scheduleID), string(out))
 
 			err = sched.DeleteSchedule(schedule.ID)
 			Expect(err).To(BeNil(), "must delete schedule")
-			Expect(len(sched.BuildScheduleCatalog())).To(Equal(count - 1), "should be zero")
+			Expect(len(sched.BuildScheduleCatalog())).To(Equal(count), "should be zero")
 
 			sch.Stop()
 		})

@@ -35,5 +35,25 @@ var _ = Describe("Utils Utils", func() {
 			Expect(cc.RemoveIndexFromSlice(slice, 6)).To(Equal(expected))
 		})
 	})
+	Context("HumanFormatFromBytes() Operations", func() {
+		It("Handles 120 B", func() {
+			Expect(cc.HumanFormatFromBytes(120)).To(Equal("120 B"))
+		})
+		It("Handles 1 KB", func() {
+			Expect(cc.HumanFormatFromBytes(1200)).To(Equal("1.2 KB"))
+		})
+		It("Handles 100 KB", func() {
+			Expect(cc.HumanFormatFromBytes(120000)).To(Equal("117.2 KB"))
+		})
+		It("Handles 1 MB", func() {
+			Expect(cc.HumanFormatFromBytes(1200000)).To(Equal("1.1 MB"))
+		})
+		It("Handles 1 GB", func() {
+			Expect(cc.HumanFormatFromBytes(1200000000)).To(Equal("1.1 GB"))
+		})
+		It("Handles 1 TB", func() {
+			Expect(cc.HumanFormatFromBytes(1200000000000)).To(Equal("1.1 TB"))
+		})
+	})
 
 })

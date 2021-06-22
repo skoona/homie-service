@@ -50,7 +50,7 @@ func (em *coreService) DeviceByID(deviceID string, networkName string) (Device, 
 	var ptrToDevice *Device
 	var copyOfDevice Device
 	for _, device := range siteNetworks.DeviceNetworks[networkName].Devices {
-		if device.ID == deviceID {
+		if string(device.ID) == deviceID {
 			ptrToDevice = &device
 			break
 		}
@@ -69,7 +69,7 @@ func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) err
 
 	var ptrToDevice *Device
 	for _, device := range siteNetworks.DeviceNetworks[networkName].Devices {
-		if device.ID == deviceID {
+		if string(device.ID) == deviceID {
 			ptrToDevice = &device
 			break
 		}
@@ -101,7 +101,7 @@ func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) err
 
 		// Update Scheduler
 		if em.scp != nil {
-			schedule := em.scp.FindScheduleByDeviceID(ptrToDevice.ID)
+			schedule := em.scp.FindScheduleByDeviceID(string(ptrToDevice.ID))
 			err = em.scp.DeleteSchedule(schedule.ID)
 		}
 	}

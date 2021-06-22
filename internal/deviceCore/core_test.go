@@ -175,7 +175,7 @@ var _ = Describe("Core Service", func() {
 					//out, _ = json.MarshalIndent(fw, "", "  ")
 					//fmt.Printf("\nFirmware: %s\n", out)
 
-				scID, err := coreSvc.CreateSchedule("sknSensors", dv.ID, dc.Base64Strict, fw.ID)
+				scID, err := coreSvc.CreateSchedule("sknSensors", string(dv.ID), dc.Base64Strict, fw.ID)
 				Expect(err).To(BeNil())
 				Expect(scID).NotTo(BeEmpty())
 

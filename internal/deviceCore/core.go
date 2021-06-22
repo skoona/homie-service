@@ -15,10 +15,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 )
 
-
-var (
-	siteNetworks SiteNetworks
-)
+var siteNetworks SiteNetworks
 
 // Globals required for DeviceMessage Types
 type CoreType int
@@ -232,7 +229,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	 * -- i.e we send it, and also receive it which makes us send it again...
 	 */
 	if ok && (string(dm.Value) == "" || dm.Value == nil) {
-		em.RemoveDeviceByID(dv.ID, dv.Parent)
+		err := em.RemoveDeviceByID(string(dv.ID), dv.Parent)
 
 		err = fmt.Errorf("device{%s} on network{%s} was deleted since value was nil", dm.DeviceID, hn.Name)
 		level.Warn(em.logger).Log("action", err.Error())
