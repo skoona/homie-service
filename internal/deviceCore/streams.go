@@ -17,7 +17,6 @@ package deviceCore
 
 * Direct method interface rather than channel based exchanges
 		-- method may need logger passed by caller
-
 */
 
 import (
@@ -26,7 +25,6 @@ import (
 	"github.com/go-kit/kit/log/level"
 	"strings"
 )
-
 
 /*
  * DeviceMessage
@@ -405,11 +403,8 @@ func homieDeviceFilter(attributeID []byte, parts []string) error {
 	return nil
 }
 
-/**
- * buildDeviceMessage()
- *
- *  Create a New DeviceMessage and initializes it.
- */
+// buildDeviceMessage()
+// - Create a New DeviceMessage and initializes it.
 func buildDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte, logger log.Logger) (DeviceMessage, error) {
 	var deviceID, nodeID, propertyID, attributeID, networkID, propertyPropertyID []byte
 	var dm DeviceMessage
