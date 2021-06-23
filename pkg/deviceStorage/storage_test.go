@@ -123,10 +123,6 @@ var _ = Describe("Repository", func() {
 
 	Context("Repository Operations ", func() {
 		Context("Schedule Operations ", func() {
-			It("Schedules Exists...", func() {
-				sn.Schedules = repo.LoadSchedules()
-				Expect(len(sn.Schedules)).ToNot(Equal(0), "starting set")
-			})
 			It("Stores Schedules...", func() {
 				err = repo.StoreSchedule(schedule01)
 				Expect(err).To(BeNil(), "stores one")
