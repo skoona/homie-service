@@ -231,6 +231,26 @@ func (em *coreService) RemoveBroadcastByID(broadcastID string) {
 			break
 		}
 	}
+
+	// maybe send null messages to remove from network
+	//  NewBroadcast(string(dm.NetworkID), string(dm.AttributeID), string(dm.PropertyID), string(dm.Value))
+	// NewBroadcast(parent, topic, level, value string)
+	var topic string
+	if broadcast.Level == "" {
+		topic = fmt.Sprintf("%s/$broadcast/%s", broadcast.Parent, broadcast.Topic)
+	} else {
+		topic = fmt.Sprintf("%s/$broadcast/%s/%s", broadcast.Parent, broadcast.Topic, broadcast.Level)
+	}
+	dm := DeviceMessage{
+		NetworkID: []byte(broadcast.Parent),
+		DeviceID: []byte(broadcast.Level),
+		TopicS: topic,
+		Value: []byte(broadcast.Value),
+		Qosb: 1,
+		RetainedB: false,
+	}
+	em.dsp.PublishToStreamProvider(dm)
+
 	if (broadcast != Broadcast{}) {
 		siteNetworks.Broadcasts = append(siteNetworks.Broadcasts[:index], siteNetworks.Broadcasts[index+1:]...) // remove from slice
 	}

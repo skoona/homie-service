@@ -61,7 +61,7 @@ const (
 	CoreTypeSiteNetworks
 )
 
-// ENUM Flags used to choose OTA transport Format
+// OTATransport Flags used to choose OTA transport Format
 const (
 	Binary OTATransport = iota + 30
 	Base64
@@ -84,7 +84,7 @@ type Firmware struct {
 	Created     time.Time
 }
 
-// DeviceSchedule the ota schedule details
+// Schedule the ota schedule details
 type Schedule struct {
 	ID          string
 	ElementType CoreType
@@ -133,7 +133,7 @@ type Broadcast struct {
 
 // Device represent a physical device
 type Device struct {
-	ID          EID
+	ID          string
 	Title       string
 	ElementType CoreType
 	OTAEnabled  bool
@@ -153,8 +153,7 @@ type DeviceAttribute struct {
 	Props       map[string]DeviceAttributeProperty
 }
 
-// DeviceAttributeProperty
-// of a Device Attribute, representing a single value or measurement
+// DeviceAttributeProperty of a Device Attribute, representing a single value or measurement
 // $implementation/ota/status -- where status will be a regular attribute
 type DeviceAttributeProperty struct {
 	ID          EID
@@ -165,8 +164,7 @@ type DeviceAttributeProperty struct {
 	Props       map[string]DeviceAttributePropertyProperty
 }
 
-// DeviceAttributePropertyProperty
-// of a Device Attribute, representing a single value or measurement
+// DeviceAttributePropertyProperty  of a Device Attribute, representing a single value or measurement
 // $implementation/ota/status -- where status will be a regular attribute
 type DeviceAttributePropertyProperty struct {
 	ID          EID
@@ -176,7 +174,7 @@ type DeviceAttributePropertyProperty struct {
 	Value       string
 }
 
-// Node representing the capabilities or features of device
+// DeviceNode representing the capabilities or features of device
 type DeviceNode struct {
 	ID          EID
 	ElementType CoreType
@@ -186,7 +184,7 @@ type DeviceNode struct {
 	Props       map[string]DeviceNodeProperty
 }
 
-// Attribute used by Devices, Nodes, and Properties.  Used to describe format
+// DeviceNodeAttribute used by Devices, Nodes, and Properties.  Used to describe format
 type DeviceNodeAttribute struct {
 	ID          EID
 	ElementType CoreType
@@ -195,7 +193,7 @@ type DeviceNodeAttribute struct {
 	Value       string
 }
 
-// NodeProperty of a Node, representing a single value or measurement
+// DeviceNodeProperty of a Node, representing a single value or measurement
 type DeviceNodeProperty struct {
 	ID          EID
 	ElementType CoreType
@@ -214,7 +212,7 @@ type DeviceNodePropertyAttribute struct {
 	Value       string
 }
 
-// NewNetworks Creates Component
+// NewSiteNetworks Creates Component
 func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []Firmware, schedules map[string]Schedule) *SiteNetworks {
 	//level.Debug(em.logger).Log("event", "NewSiteNetworks() called")
 
@@ -251,7 +249,7 @@ func NewNetwork(title, name string) Network {
 }
 
 
-// newBroadcast Creates Component
+// NewBroadcast Creates Component
 func NewBroadcast(parent, topic, level, value string) Broadcast {
 	bc := Broadcast{
 		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s.%s", parent, topic, level)))),
@@ -267,7 +265,7 @@ func NewBroadcast(parent, topic, level, value string) Broadcast {
 }
 
 
-//NewID create a new entity ID
+// NewEID create a new entity ID
 func NewEID() EID {
 	uuid := uuid.New()
 	return EID(uuid.String())
@@ -278,7 +276,7 @@ func NewEID() EID {
 // OTAEnabled for Schedules
 func NewDevice(parent, name string) Device {
 	return Device{
-		ID:          NewEID(),
+		ID:          fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", parent, name)))),
 		ElementType: CoreTypeDevice,
 		OTAEnabled:  true,
 		Parent:      parent,

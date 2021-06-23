@@ -112,6 +112,20 @@ func (s *schedulerProvider) GetFirmware(id dc.EID) (dc.Firmware, error) {
 
 	return fw, nil
 }
+
+// CreateFirmware File Params
+//{
+//  "qquuid"=>"43636118-c89e-48bc-a354-c52799628757",  -- qq...
+//  "qqfilename"=>"Butterfly_HubbleVargas_5075.jpg",
+//  "qqtotalfilesize"=>"981840",
+//  "qqfile"=>{
+//      :filename=>"Butterfly_HubbleVargas_5075.jpg",
+//      :type=>"image/jpeg",
+//      :name=>"qqfile",
+//      :tempfile=>#<Tempfile:/var/folders/gm/6hf5xns52cddrgnqz6zz48bxyht1rq/T/RackMultipart20190308-29136-w5rdv7.jpg>,
+//      :head=>"Content-Disposition: form-data; name=\"qqfile\"; filename=\"Butterfly_HubbleVargas_5075.jpg\"\r\nContent-Type: image/jpeg\r\n"
+//    }
+//}
 func (s *schedulerProvider) CreateFirmware(srcFile, dstFile string) (dc.EID, error) {
 	level.Debug(s.logger).Log("event", "Calling CreateFirmware()")
 	fw, err := NewFirmware(srcFile, dstFile)
