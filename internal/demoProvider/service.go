@@ -182,7 +182,7 @@ func demoRender(filepath string, tlog log.Logger, limit bool) {
 		}
 	}
 
-	level.Info(tlog).Log("event", "demoRender() completed")
+	level.Info(tlog).Log("event", "demoRender() completed", "limit", limit)
 }
 
 /**
