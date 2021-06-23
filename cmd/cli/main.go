@@ -37,13 +37,13 @@ import (
 
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	dp "github.com/skoona/homie-service/internal/demoProvider"
-	dc "github.com/skoona/homie-service/internal/deviceCore"
-	sch "github.com/skoona/homie-service/internal/deviceScheduler"
-	dss "github.com/skoona/homie-service/internal/deviceSource"
-	dds "github.com/skoona/homie-service/internal/deviceStorage"
-	mq "github.com/skoona/homie-service/internal/mqttProvider"
-	cc "github.com/skoona/homie-service/internal/utils"
+	dp "github.com/skoona/homie-service/pkg/demoProvider"
+	dc "github.com/skoona/homie-service/pkg/deviceCore"
+	sch "github.com/skoona/homie-service/pkg/deviceScheduler"
+	dss "github.com/skoona/homie-service/pkg/deviceSource"
+	dds "github.com/skoona/homie-service/pkg/deviceStorage"
+	mq "github.com/skoona/homie-service/pkg/mqttProvider"
+	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
 func ShutdownDemo() {
