@@ -86,6 +86,7 @@ func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) err
 			dm := DeviceMessage{
 				NetworkID: []byte(ptrToDevice.Parent),
 				DeviceID: []byte(ptrToDevice.Name),
+				HomieType: CoreTypeDeviceDelete,
 				TopicS: topic,
 				Value: nil,
 				Qosb: 0,
@@ -244,6 +245,7 @@ func (em *coreService) RemoveBroadcastByID(broadcastID string) {
 	dm := DeviceMessage{
 		NetworkID: []byte(broadcast.Parent),
 		DeviceID: []byte(broadcast.Level),
+		HomieType: CoreTypeDeviceDelete,
 		TopicS: topic,
 		Value: []byte(broadcast.Value),
 		Qosb: 1,

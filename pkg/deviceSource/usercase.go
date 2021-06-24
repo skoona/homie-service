@@ -31,9 +31,7 @@ func (s *deviceSource) ApplyDeviceEvent(dm dc.DeviceMessage) {
 	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
 }
 
-/*
- * PublishToStreamProvider
- */
+// PublishToStreamProvider send a message on the outgoing mqtt channel
 func (s *deviceSource) PublishToStreamProvider(dm dc.DeviceMessage) {
 	plog := log.With(s.logger, "method", "PublishToStreamProvider()")
 
@@ -42,7 +40,7 @@ func (s *deviceSource) PublishToStreamProvider(dm dc.DeviceMessage) {
 	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
 }
 
-// handle incoming device stream events
+// ConsumeDeviceStream handle incoming device stream events
 func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
 	var err error
 	plog := log.With(s.logger, "method", "ConsumeDeviceStream")
