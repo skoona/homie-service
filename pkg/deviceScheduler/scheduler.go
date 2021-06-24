@@ -140,6 +140,7 @@ func handleOTATrigger(dm dc.DeviceMessage, schedule *dc.Schedule, plog log.Logge
 	dvm.TopicS = fmt.Sprintf("%s/%s/$implementation/ota/firmware/%s", dm.NetworkID, dm.DeviceID, mhash)
 	dvm.NetworkID = dm.NetworkID
 	dvm.DeviceID = dm.DeviceID
+	dvm.HomieType = dc.CoreTypePublishMessage
 	dvm.Value = []byte(bundle)
 	dvm.RetainedB = false
 	schedule.Status = "initializing"
