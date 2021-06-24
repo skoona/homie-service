@@ -26,6 +26,11 @@ func (em *coreService) AllNetworks() SiteNetworks {
 	copyOfSiteNetworks := siteNetworks
 	return copyOfSiteNetworks
 }
+func (em *coreService) PrivateSiteNetworks() *SiteNetworks {
+	level.Debug(em.logger).Log("method", "PrivateSiteNetworks() called")
+	return &siteNetworks
+}
+
 func (em *coreService) NetworkByName(networkName string) Network {
 	level.Debug(em.logger).Log("method", "NetworkByName() called")
 	copyOfNetwork := siteNetworks.DeviceNetworks[networkName]

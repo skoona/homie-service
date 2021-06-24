@@ -216,7 +216,7 @@ func scheduleProcessor(dm dc.DeviceMessage, plog log.Logger) error {
 	deviceID := fmt.Sprintf("%x", md5.Sum([]byte(fmt.Sprintf("%s.%s", dm.NetworkID, dm.DeviceID))))
 	schedule := sch.FindScheduleByDeviceID(deviceID)
 	if schedule.ElementType != dc.CoreTypeSchedule {  // empty schedule or not found
-		return fmt.Errorf("no schedule available for device %s", dm.DeviceID)
+		return fmt.Errorf("no schedule available for device %s", dm.String())
 	}
 
 	level.Debug(plog).Log("topic", dm.TopicS, "device", dm.DeviceID, "value", dm.Value)
