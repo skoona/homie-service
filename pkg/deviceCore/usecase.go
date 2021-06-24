@@ -3,7 +3,6 @@ package deviceCore
 import (
 	"fmt"
 	"github.com/go-kit/kit/log/level"
-	"os"
 )
 
 /*
@@ -89,7 +88,7 @@ func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) err
 				HomieType: CoreTypeDeviceDelete,
 				TopicS: topic,
 				Value: nil,
-				Qosb: 0,
+				Qosb: 1,
 				RetainedB: false,
 			}
 			dv = dm
@@ -158,29 +157,7 @@ func (em *coreService) CreateFirmware(srcFile, dstFile string) (EID, error) {
 }
 func (em *coreService) RemoveFirmwareByID(firmwareEID EID) {
 	level.Debug(em.logger).Log("method", "RemoveFirmwareByEID() called")
-	var firmware Firmware
-	var index int
-	for idx, fw := range siteNetworks.Firmwares {
-		if fw.ID == firmwareEID {
-			firmware = fw
-			index = idx
-			break
-		}
-	}
-	if (firmware != Firmware{}) {
-		siteNetworks.Firmwares = append(siteNetworks.Firmwares[:index], siteNetworks.Firmwares[index+1:]...) // remove from slice
-		if _, err := os.Stat(firmware.Path); err == nil {
-			err = os.Remove(firmware.Path)
-			if err != nil {
-				err = fmt.Errorf("firmware with name {%s} was  not found to remove(): error=%s", firmware.Name, err.Error())
-				level.Error(em.logger).Log("error", err.Error())
-			}
-
-		} else if os.IsNotExist(err) {
-			err = fmt.Errorf("firmware with name {%s} was  not found to remove(): error=%s", firmware.Name, err.Error())
-			level.Error(em.logger).Log("error", err.Error())
-		}
-	}
+	_ = em.scp.DeleteFirmware(firmwareEID)
 }
 func (em *coreService) FirmwareByName(firmwareName string) (Firmware, error) {
 	level.Debug(em.logger).Log("method", "FirmwareByName() called")

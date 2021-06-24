@@ -6,6 +6,7 @@ import (
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	cc "github.com/skoona/homie-service/pkg/utils"
+	"os"
 	"strings"
 )
 
@@ -140,15 +141,38 @@ func (s *schedulerProvider) DeleteFirmware(id dc.EID) error {
 	// Todo: appears to be done in Core Service "RemoveFirmwareByID()"
 	level.Debug(s.logger).Log("event", "Calling DeleteFirmware()", "firmwareID", id)
 	fwc := []dc.Firmware{}
+	var firmware dc.Firmware
+	var err error
 	for _, fw := range s.snwk.Firmwares {
 		if id != fw.ID {
 			fwc = append(fwc, fw)
+		} else {
+			firmware = fw
 		}
 	}
 	if len(fwc) == 0 {
-		fmt.Errorf("firmware with ID=%s, was not found.", id)
+		return fmt.Errorf("firmware with ID=%s, was not found.", id)
 	}
-
+	
+	// remove from collection
 	s.snwk.Firmwares = fwc
-	return nil
+
+	// remove from file systems, unless testing
+	if _, err := os.Stat(firmware.Path); err == nil {
+		if s.cfg.RunMode == "live" {
+			err = os.Remove(firmware.Path)
+			if err != nil {
+				err = fmt.Errorf("firmware with name {%s} was  not found to remove(): error=%s", firmware.Name, err.Error())
+				level.Error(s.logger).Log("error", err.Error())
+			}
+		} else {
+			err = fmt.Errorf("delete request ignored in test and demo run modes: " , s.cfg.RunMode)
+			level.Info(s.logger).Log("event", "ignored", "cause", err.Error())
+		}
+
+	} else if os.IsNotExist(err) {
+		err = fmt.Errorf("firmware with name {%s} was  not found to remove(): error=%s", firmware.Name, err.Error())
+		level.Error(s.logger).Log("error", err.Error())
+	}
+	return err
 }
