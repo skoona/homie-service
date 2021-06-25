@@ -23,3 +23,6 @@ homiemonitor:
     homiesubscriptiontopic: "sknSensors/#"
     lwttopic: sknSensors/$broadcast/LWT
     lwtmsg: HomieMonitor Offline!
+
+  api:
+    bindAddress: ":9090"

@@ -38,12 +38,17 @@ type (
 		LwtMessage        string
 	}
 
+	ApiConfig struct {
+		BindAddress   string
+	}
+
 	Config struct {
 		Title   string
 		RunMode string
 		Version string
 		Dbc     DBConfig
 		Mqc     MQTTConfig
+		Api     ApiConfig
 		Logger  log.Logger
 	}
 )
@@ -58,12 +63,15 @@ var (
 	configPath string
 	debugFlag bool
 	envConfigPath string
+	bindAddress string
 )
 
 func init() {
 	fmt.Println("Configs.go init() called")
 	pflag.StringVar(&configPath, "config", "", "path to config file")
 	pflag.BoolVar(&debugFlag, "debug", false, "enable debug logging : default is true")
+	pflag.StringVar(&bindAddress, "bind", "localhost:9090", "Bind address for the server, ex: localhost:9090")
+
 	pflag.CommandLine.AddGoFlagSet(goflag.CommandLine)
 	fmt.Printf("Configs.go init() completed:  %s \n", configPath)
 }
@@ -73,6 +81,7 @@ func handleCommandLineParams() (string, bool) {
 	if "" == envConfigPath {
 		envConfigPath = "mqtt-config"
 	}
+
 	pflag.Parse()
 
 	if pflag.Lookup("config") != nil {
@@ -108,6 +117,8 @@ func BuildConfigForCLI(configFilename string, log log.Logger) (*viper.Viper, err
 	cfg.SetDefault("homiemonitor.mqtt.lwtmsg", "HomieMonitor Offline!")
 	cfg.SetDefault("homiemonitor.mqtt.port", 1883)
 
+	cfg.SetDefault("homiemonitor.api.bindAddress", "localhost:9090")
+
 	err := cfg.ReadInConfig() // Find and read the config file
 	if err != nil {              // Handle errors reading the config file
 		err = fmt.Errorf("fatal error config file: %s \n", err.Error())
@@ -142,6 +153,14 @@ func BuildConfigForCLI(configFilename string, log log.Logger) (*viper.Viper, err
 	if err = cfg.BindEnv("subscription_topic"); err == nil {
 		cfg.Set("homiemonitor.mqtt.homiesubscriptiontopic", cfg.Get("subscription_topic"))
 	}
+
+	cfg.SetEnvPrefix("api")
+	if err = cfg.BindEnv("bind_address"); err == nil {
+		cfg.Set("homiemonitor.api.bindAddress", cfg.Get("bind_address"))
+	}
+
+	//envHostURL := os.Getenv("BIND_ADDRESS", false, ":9090", "Bind address for the server")
+
 
 	return cfg, err
 }
@@ -190,6 +209,9 @@ func BuildAppConfig(cfg *viper.Viper, log log.Logger) Config {
 			SubscriptionTopic: cfg.GetString("homiemonitor.mqtt.homiesubscriptiontopic"),
 			LwtTopic:          cfg.GetString("homiemonitor.mqtt.lwttopic"),
 			LwtMessage:        cfg.GetString("homiemonitor.mqtt.lwtmsg"),
+		},
+		Api: ApiConfig{
+			BindAddress: cfg.GetString("homiemonitor.api.bindAddress"),
 		},
 	}
 }

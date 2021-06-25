@@ -5,8 +5,13 @@ go 1.16
 require (
 	github.com/eclipse/paho.mqtt.golang v1.3.5
 	github.com/go-kit/kit v0.10.0
+	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/go-playground/validator v9.31.0+incompatible
 	github.com/google/uuid v1.2.0
+	github.com/gorilla/handlers v1.5.1
+	github.com/gorilla/mux v1.7.3
 	github.com/jjeffery/stringset v1.0.2
+	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.1 // indirect
 	github.com/onsi/ginkgo v1.16.4
@@ -20,5 +25,6 @@ require (
 	go.etcd.io/bbolt v1.3.6
 	golang.org/x/net v0.0.0-20210610132358-84b48f89b13b // indirect
 	golang.org/x/sys v0.0.0-20210611083646-a4fc73990273 // indirect
+	gopkg.in/go-playground/assert.v1 v1.2.1 // indirect
 	gopkg.in/ini.v1 v1.62.0 // indirect
 )

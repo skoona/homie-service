@@ -16,7 +16,8 @@ import (
 
 
 func StartUp() (dc.CoreService, cc.Config) {
-	return services.Service()
+	ca, cb := services.Service()
+	return *ca, *cb
 }
 
 func Shutdown() {

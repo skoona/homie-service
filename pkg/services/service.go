@@ -124,10 +124,10 @@ func runDemo(cfg cc.Config, logger log.Logger) (dc.CoreService, error) {
 
 var (
 	cfg			cc.Config
+	coreSvc dc.CoreService
 )
 
 func startUp() (dc.CoreService, cc.Config, error) {
-	var coreSvc dc.CoreService
 	var err error
 	cfg, err = cc.BuildRuntimeConfig("Homie-Service")
 	if err != nil {
@@ -162,7 +162,7 @@ func Shutdown() {
 }
 
 // Service main entry point for Core Service
-func Service() (dc.CoreService, cc.Config) {
+func Service() (*dc.CoreService, *cc.Config) {
 
 	coreSvc, cfg, err := startUp()
 	if err != nil {
@@ -170,6 +170,6 @@ func Service() (dc.CoreService, cc.Config) {
 		panic(e.Error())
 	}
 
-	return coreSvc, cfg
+	return &coreSvc, &cfg
 }
 

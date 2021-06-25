@@ -74,4 +74,3 @@ func RemoveIndexFromSlice(slice interface{}, index int) interface{} {
 
 	return  slice
 }
-

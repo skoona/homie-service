@@ -191,3 +191,8 @@ type BroadcastByIDResponse struct {
 		Broadcast dc.Broadcast `json:"broadcast"`
 	}
 }
+
+// ValidationError is a collection of validation error messages
+type ValidationError struct {
+	Messages []string `json:"messages"`
+}
