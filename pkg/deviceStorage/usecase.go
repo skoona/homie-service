@@ -40,6 +40,9 @@ func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 // StoreSchedule(schedule Schedule)
 func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 	level.Debug(r.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
+	if d.ElementType != dc.CoreTypeSchedule {
+		return nil
+	}
 
 	/*
 	* Create Schedules */
