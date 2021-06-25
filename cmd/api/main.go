@@ -40,7 +40,6 @@ import (
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
 	cc "github.com/skoona/homie-service/pkg/utils"
-	stdlog "log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -76,15 +75,36 @@ func main() {
 		Methods(http.MethodGet).
 		Subrouter()
 
-	getR.HandleFunc("/site", ctrl.AllNetworks)
-	getR.HandleFunc("/network/{networkName:[a-z|A-Z]+}", ctrl.NetworkByName)
-	getR.HandleFunc("/deviceByName/{networkName:[a-z|A-Z]+}/{deviceName:[a-z|A-Z]+}", ctrl.DeviceByName)
-	getR.HandleFunc("/deviceById/{networkName:[a-z|A-Z]+}/{deviceID:[a-z|A-Z|0-9]+}", ctrl.DeviceByID)
+	getR.HandleFunc("/networks", ctrl.AllNetworks)
+	getR.HandleFunc("/network/{networkName:[a-zA-Z]+}", ctrl.NetworkByName)
+	getR.HandleFunc("/deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+}", ctrl.DeviceByName)
+	getR.HandleFunc("/deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+}", ctrl.DeviceByID)
+
+	getR.HandleFunc("/schedules", ctrl.AllSchedules)
+	getR.HandleFunc("/scheduleById/{scheduleID:[a-zA-Z0-9]+}", ctrl.ScheduleByID)
+	getR.HandleFunc("/scheduleByDeviceId/{deviceID:[a-zA-Z0-9]+}", ctrl.ScheduleByDeviceID)
+
+	getR.HandleFunc("/firmwares", ctrl.AllFirmwares)
+	getR.HandleFunc("/firmwareByName/{firmwareName:[a-zA-Z0-9]+}", ctrl.FirmwareByName)
+	getR.HandleFunc("/firmwareById/{firmwareID:[a-zA-Z0-9]+}", ctrl.FirmwareByID)
+
+	getR.HandleFunc("/broadcasts", ctrl.AllBroadcasts)
+	getR.HandleFunc("/broadcastById/{broadcastID:[a-zA-Z0-9]+}", ctrl.BroadcastByID)
 
 	delR := sm.PathPrefix("/api/v1").
 		Methods(http.MethodDelete).
 		Subrouter()
-	delR.HandleFunc("/removeDeviceId/{networkName:[a-z|A-Z]+}/{deviceID:[a-z|A-Z|0-9]+}", ctrl.RemoveDeviceID)
+	delR.HandleFunc("/removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+}", ctrl.RemoveDeviceID)
+	delR.HandleFunc("/removeFirmwareId/{firmwareID:[a-zA-Z0-9]+}", ctrl.RemoveFirmwareID)
+	delR.HandleFunc("/removeScheduleId/{scheduleID:[a-zA-Z0-9]+}", ctrl.RemoveSchedule)
+	delR.HandleFunc("/removeBroadcastId/{broadcastID:[a-zA-Z0-9]+}", ctrl.RemoveBroadcastID)
+
+	poR := sm.PathPrefix("/api/v1").
+		Methods(http.MethodPost).
+		Subrouter()
+	poR.HandleFunc("/createFirmware/{srcFile:[a-zA-Z0-9\\-\\_]+\\.bin}/{dstFile:[a-zA-Z0-9\\-\\_]+\\.bin}", ctrl.CreateFirmware)
+	poR.HandleFunc("/createSchedule/{networkName:[a-zA-Z0-9]+}/{deviceID:[a-zA-Z0-9]+}/{otaTransport:[0-9]+}/{firmwareID:[a-zA-Z0-9]+}", ctrl.CreateSchedule)
+
 
 	// CORS
 	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
@@ -93,15 +113,18 @@ func main() {
 	 * Prepare for clean exit
 	 */
 	errs := make(chan error, 1)
-	stdlog.SetOutput(log.NewStdlibAdapter(logger))
+
+	// Create an instance of our LoggingMiddleware with our configured logger
+	loggingMiddleware := api.LoggingMiddleware(logger)
+	loggedRouter := loggingMiddleware(ch(sm))
+
 	// create a new server
 	s := http.Server{
 		Addr:         cfg.Api.BindAddress,  // configure the bind address
-		Handler:      ch(sm),            // set the default handler
-		ErrorLog:     stdlog.Default(),            // set the logger for the server
-		ReadTimeout:  5 * time.Second,   // max time to read request from the client
-		WriteTimeout: 10 * time.Second,  // max time to write response to the client
-		IdleTimeout:  120 * time.Second, // max time for connections using TCP Keep-Alive
+		Handler:      loggedRouter,         // set the default handler
+		ReadTimeout:  5 * time.Second,      // max time to read request from the client
+		WriteTimeout: 10 * time.Second,     // max time to write response to the client
+		IdleTimeout:  120 * time.Second,    // max time for connections using TCP Keep-Alive
 	}
 
 	// start the server
