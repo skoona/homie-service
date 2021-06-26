@@ -3,7 +3,6 @@ package handlers
 import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/gorilla/mux"
-	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"net/http"
 )
 
@@ -53,6 +52,6 @@ func (c *Controller) RemoveBroadcastID(rw http.ResponseWriter, r *http.Request) 
 
 	vars := mux.Vars(r)
 
-	c.service.RemoveFirmwareByID(dc.EID(vars["broadcastID"]))
+	c.service.RemoveBroadcastByID(vars["broadcastID"])
 	rw.WriteHeader(http.StatusNoContent)
 }

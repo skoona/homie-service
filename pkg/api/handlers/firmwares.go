@@ -23,17 +23,46 @@ func (c *Controller) AllFirmwares(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateFirmwareRequest upload a new firmware
+type CreateFirmwareRequest struct {
+	SrcFile string `json:"srcFile" validate:"required"`
+	DstFile string `json:"dstFile" validate:"required"`
+}
+// CreateFirmwareResponse id of newly created firmware
+type CreateFirmwareResponse struct {
+	FirmwareID string `json:"firmwareID"`
+}
+
 // CreateFirmware (srcFile, dstFile string) (EID, error)
 func (c *Controller) CreateFirmware(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "CreateFirmware() called")
 	rw.Header().Add("Content-Type", "application/json")
 
-	vars := mux.Vars(r)
 
-	body, err := c.service.CreateFirmware(vars["srcFile"],vars["dstFile"])
+	cfr := CreateFirmwareRequest{}
+	err := FromJSON(&cfr, r.Body)
+	if err != nil {
+		level.Error(c.logger).Log( "error", err.Error())
+		rw.WriteHeader(http.StatusUnprocessableEntity)
+		ToJSON(&GenericError{Message: err.Error()}, rw)
+		return
+	}
+
+	// validate the product
+	errs := c.validator.Validate(cfr)
+	if len(errs) != 0 {
+		c.logger.Log("validation", errs)
+
+		// return the validation messages as an array
+		rw.WriteHeader(http.StatusUnprocessableEntity)
+		ToJSON(&ValidationErrorMessage{Messages: errs.Errors()}, rw)
+		return
+	}
+
+	body, err := c.service.CreateFirmware(cfr.SrcFile, cfr.DstFile)
 	if err == nil {
 		rw.WriteHeader(http.StatusOK)
-		err := ToJSON(body, rw)
+		err := ToJSON(CreateFirmwareResponse{string(body)}, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
 			level.Error(c.logger).Log( "error", err.Error())

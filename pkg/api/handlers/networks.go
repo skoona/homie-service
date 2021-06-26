@@ -3,7 +3,9 @@ package handlers
 import (
 	"github.com/go-kit/kit/log/level"
 	"github.com/gorilla/mux"
+	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"net/http"
+	"strings"
 )
 
 // AllNetworks  SiteNetworks
@@ -99,4 +101,53 @@ func (c *Controller) RemoveDeviceID(rw http.ResponseWriter, r *http.Request) {
 		rw.WriteHeader(http.StatusNotFound)
 		ToJSON(&GenericError{Message: err.Error()}, rw)
 	}
+}
+
+// NetworkMessageRequest send any message over MQTT
+type NetworkMessageRequest struct {
+	Topic    string `json:"topic" validate:"required"`
+	Qos      int    `json:"qos" validate:"required"`
+	Retained string   `json:"retained" validate:"required"`
+	Value    string `json:"value"`
+}
+
+// PublishNetworkMessage (dm DeviceMessage) topic, payload, qos, bRetained
+func (c *Controller) PublishNetworkMessage(rw http.ResponseWriter, r *http.Request) {
+	level.Debug(c.logger).Log( "api-method", "RemoveDeviceID() called")
+	rw.Header().Add("Content-Type", "application/json")
+
+	nmr := NetworkMessageRequest{}
+	err := FromJSON(&nmr, r.Body)
+	if err != nil {
+		level.Error(c.logger).Log( "error", err.Error())
+		rw.WriteHeader(http.StatusUnprocessableEntity)
+		ToJSON(&GenericError{Message: err.Error()}, rw)
+		return
+	}
+
+	// validate the product
+	errs := c.validator.Validate(nmr)
+	if len(errs) != 0 {
+		c.logger.Log("validation", errs)
+
+		// return the validation messages as an array
+		rw.WriteHeader(http.StatusUnprocessableEntity)
+		ToJSON(&ValidationErrorMessage{Messages: errs.Errors()}, rw)
+		return
+	}
+
+	tParts := strings.Split(nmr.Topic, "/")
+
+	dm := dc.DeviceMessage{
+		NetworkID: []byte(tParts[0]),
+		DeviceID: []byte(tParts[1]),
+		HomieType: dc.CoreTypePublishMessage,
+		TopicS: nmr.Topic,
+		Value: []byte(nmr.Value),
+		Qosb: byte(nmr.Qos),
+		RetainedB: strings.EqualFold(nmr.Retained, "true"),
+	}
+
+	c.service.PublishNetworkMessage(dm)
+	rw.WriteHeader(http.StatusNoContent)
 }

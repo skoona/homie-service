@@ -67,4 +67,3 @@ func LoggingMiddleware(logger log.Logger) func(http.Handler) http.Handler {
 		return http.HandlerFunc(fn)
 	}
 }
-

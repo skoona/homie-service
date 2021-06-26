@@ -102,8 +102,9 @@ func main() {
 	poR := sm.PathPrefix("/api/v1").
 		Methods(http.MethodPost).
 		Subrouter()
-	poR.HandleFunc("/createFirmware/{srcFile:[a-zA-Z0-9\\-\\_]+\\.bin}/{dstFile:[a-zA-Z0-9\\-\\_]+\\.bin}", ctrl.CreateFirmware)
-	poR.HandleFunc("/createSchedule/{networkName:[a-zA-Z0-9]+}/{deviceID:[a-zA-Z0-9]+}/{otaTransport:[0-9]+}/{firmwareID:[a-zA-Z0-9]+}", ctrl.CreateSchedule)
+	poR.HandleFunc("/createFirmware", ctrl.CreateFirmware) // has req/rsp
+	poR.HandleFunc("/createSchedule", ctrl.CreateSchedule) // has req/rsp
+	poR.HandleFunc("/publishNetworkMessage", ctrl.PublishNetworkMessage) // has req/noc
 
 
 	// CORS
@@ -115,7 +116,7 @@ func main() {
 	errs := make(chan error, 1)
 
 	// Create an instance of our LoggingMiddleware with our configured logger
-	loggingMiddleware := api.LoggingMiddleware(logger)
+	loggingMiddleware := api.LoggingMiddleware(level.Info(logger))
 	loggedRouter := loggingMiddleware(ch(sm))
 
 	// create a new server

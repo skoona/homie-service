@@ -41,7 +41,7 @@ func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 	level.Debug(r.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
 	if d.ElementType != dc.CoreTypeSchedule {
-		return nil
+		return fmt.Errorf("warn", "invalid schedule type", "type", d.ElementType)
 	}
 
 	/*

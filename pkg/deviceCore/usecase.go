@@ -23,8 +23,7 @@ var (
  */
 func (em *coreService) AllNetworks() SiteNetworks {
 	level.Debug(em.logger).Log("method", "AllNetworks() called")
-	copyOfSiteNetworks := siteNetworks
-	return copyOfSiteNetworks
+	return siteNetworks
 }
 func (em *coreService) PrivateSiteNetworks() *SiteNetworks {
 	level.Debug(em.logger).Log("method", "PrivateSiteNetworks() called")
@@ -33,63 +32,63 @@ func (em *coreService) PrivateSiteNetworks() *SiteNetworks {
 
 func (em *coreService) NetworkByName(networkName string) Network {
 	level.Debug(em.logger).Log("method", "NetworkByName() called")
-	copyOfNetwork := siteNetworks.DeviceNetworks[networkName]
-	return copyOfNetwork
+	network := siteNetworks.DeviceNetworks[networkName]
+	return network
 }
 
-// TODO Sort out if devices are mapped by deviceName or by Device.ID
+// DeviceByName devices are mapped by deviceName
 func (em *coreService) DeviceByName(deviceName, networkName string) (Device, error) {
-	var err error
 	level.Debug(em.logger).Log("method", "DeviceByNameFromNetwork() called")
-	copyOfDevice, found := siteNetworks.DeviceNetworks[networkName].Devices[deviceName]
+	var err error
+	var device = Device{}
+	var found  = false
+	device, found = siteNetworks.DeviceNetworks[networkName].Devices[deviceName]
 	if !found {
 		err = fmt.Errorf("device with name {%s} was  not found on {%s} network", deviceName, networkName)
 		level.Error(em.logger).Log("error", err.Error())
 	}
-	return copyOfDevice, err
+	return device, err
 }
 func (em *coreService) DeviceByID(deviceID string, networkName string) (Device, error) {
 	var err error
 	level.Debug(em.logger).Log("method", "DeviceByIDFromNetwork() called")
-	var ptrToDevice *Device
-	var copyOfDevice Device
-	for _, device := range siteNetworks.DeviceNetworks[networkName].Devices {
-		if string(device.ID) == deviceID {
-			ptrToDevice = &device
+	var device Device = Device{}
+	
+	for _, dev := range siteNetworks.DeviceNetworks[networkName].Devices {
+		if string(dev.ID) == deviceID {
+			device = dev
 			break
 		}
 	}
-	if ptrToDevice == nil {
+	if device.ElementType != CoreTypeDevice {
 		err = fmt.Errorf("device with id {%s} was  not found on {%s} network", deviceID, networkName)
 		level.Error(em.logger).Log("error", err.Error())
-	} else {
-		copyOfDevice = *ptrToDevice // TODO: hoping this copies vs references
 	}
-	return copyOfDevice, err
+	return device, err
 }
 func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) error {
 	var err error
 	level.Debug(em.logger).Log("method", "RemoveDeviceByIDFromNetwork() called")
 
-	var ptrToDevice *Device
-	for _, device := range siteNetworks.DeviceNetworks[networkName].Devices {
-		if string(device.ID) == deviceID {
-			ptrToDevice = &device
+	var device Device = Device{}
+	for _, dev := range siteNetworks.DeviceNetworks[networkName].Devices {
+		if string(dev.ID) == deviceID {
+			device = dev
 			break
 		}
 	}
-	if ptrToDevice == nil {
+	if device.ElementType != CoreTypeDevice {
 		err = fmt.Errorf("device with id {%s} was  not found on {%s} network", deviceID, networkName)
 		level.Error(em.logger).Log("error", err.Error())
 	} else {
-		delete(siteNetworks.DeviceNetworks[networkName].Devices, ptrToDevice.Name)
+		delete(siteNetworks.DeviceNetworks[networkName].Devices, device.Name)
 
 		// Tell the world to delete this device
 		dv := DeviceMessage{}
-		for _, topic := range TopicsFromDevice(*ptrToDevice) {
+		for _, topic := range TopicsFromDevice(device) {
 			dm := DeviceMessage{
-				NetworkID: []byte(ptrToDevice.Parent),
-				DeviceID: []byte(ptrToDevice.Name),
+				NetworkID: []byte(device.Parent),
+				DeviceID: []byte(device.Name),
 				HomieType: CoreTypeDeviceDelete,
 				TopicS: topic,
 				Value: nil,
@@ -98,16 +97,18 @@ func (em *coreService) RemoveDeviceByID(deviceID string, networkName string) err
 			}
 			dv = dm
 			em.dsp.PublishToStreamProvider(dm)
-			level.Debug(em.logger).Log("publishing to", ptrToDevice.Name, "Topic", topic)
+			level.Debug(em.logger).Log("publishing to", device.Name, "Topic", topic)
 		}
 		
 		// remove from db
-		em.repo.Remove(dv)
+		_ = em.repo.Remove(dv)
 
 		// Update Scheduler
 		if em.scp != nil {
-			schedule := em.scp.FindScheduleByDeviceID(string(ptrToDevice.ID))
-			err = em.scp.DeleteSchedule(schedule.ID)
+			schedule := em.scp.FindScheduleByDeviceID(string(device.ID))
+			if schedule.ElementType == CoreTypeSchedule {
+				err = em.scp.DeleteSchedule(schedule.ID)
+			}
 		}
 	}
 	return err
@@ -119,42 +120,28 @@ func (em *coreService) PublishNetworkMessage(dm DeviceMessage) {
 
 func (em *coreService) AllSchedules() []Schedule {
 	level.Debug(em.logger).Log("method", "AllSchedules() called")
-	schedules := []Schedule{}
-	if len(siteNetworks.Schedules) > 0 {
-		for _, schedule := range siteNetworks.Schedules {
-			schedules = append(schedules, schedule)
-		}
-	}
-	return schedules
+	return em.scp.Schedules()
 }
 func (em *coreService) CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error) {
 	level.Debug(em.logger).Log("method", "CreateSchedule() called", "device", deviceID, "firmware", firmwareID)
 	return em.scp.CreateSchedule(networkName, deviceID, transport, firmwareID)
 }
-func (em *coreService) RemoveSchedule(scheduleID string) {
+func (em *coreService) RemoveSchedule(scheduleID string) error {
 	level.Debug(em.logger).Log("method", "RemoveSchedule() called", "schedule", scheduleID)
-	delete(siteNetworks.Schedules, scheduleID)
+	return em.scp.DeleteSchedule(scheduleID)
 }
 func (em *coreService) ScheduleByID(scheduleID string) Schedule {
 	level.Debug(em.logger).Log("method", "ScheduleByID() called", "schedule", scheduleID)
 	schedule := siteNetworks.Schedules[scheduleID]
 	return schedule
 }
-func (em *coreService) ScheduleByDeviceID(deviceID string) Schedule {
+func (em *coreService) ScheduleByDeviceID(deviceID string) *Schedule {
 	level.Debug(em.logger).Log("method", "ScheduleByDeviceID() called")
-	var schedule Schedule
-	for _, obj := range siteNetworks.Schedules {
-		if obj.DeviceID == deviceID {
-			schedule = obj
-			break
-		}
-	}
-	return schedule
+	return em.scp.FindScheduleByDeviceID(deviceID)
 }
 func (em *coreService) AllFirmwares() []Firmware {
 	level.Debug(em.logger).Log("method", "AllFirmwares() called")
-	firmwares := siteNetworks.Firmwares // presumed to actually copy
-	return firmwares
+	return em.scp.Firmwares()
 }
 func (em *coreService) CreateFirmware(srcFile, dstFile string) (EID, error) {
 	level.Debug(em.logger).Log("method", "CreateFirmware() called")
@@ -166,7 +153,7 @@ func (em *coreService) RemoveFirmwareByID(firmwareEID EID) {
 }
 func (em *coreService) FirmwareByName(firmwareName string) (Firmware, error) {
 	level.Debug(em.logger).Log("method", "FirmwareByName() called")
-	var firmware Firmware
+	var firmware Firmware = Firmware{}
 	var err error
 	for _, fw := range siteNetworks.Firmwares {
 		if fw.Name == firmwareName {
@@ -174,7 +161,7 @@ func (em *coreService) FirmwareByName(firmwareName string) (Firmware, error) {
 			break
 		}
 	}
-	if (firmware == Firmware{}) {
+	if (firmware.ElementType != CoreTypeFirmware) {
 		err = fmt.Errorf("firmware with name {%s} was  not found", firmwareName)
 		level.Error(em.logger).Log("error", err.Error())
 	}
@@ -182,31 +169,17 @@ func (em *coreService) FirmwareByName(firmwareName string) (Firmware, error) {
 }
 func (em *coreService) FirmwareByID(firmwareID EID) (Firmware, error) {
 	level.Debug(em.logger).Log("method", "FirmwareByID() called")
-	var firmware Firmware
-	var err error
-	for _, fw := range siteNetworks.Firmwares {
-		if fw.ID == firmwareID {
-			firmware = fw
-			break
-		}
-	}
-	if (firmware == Firmware{}) {
-		err = fmt.Errorf("firmware with id {%s} was  not found", firmwareID)
-		level.Error(em.logger).Log("error", err.Error())
-	}
-	return firmware, err
+	return em.scp.GetFirmware(firmwareID)
 }
 
 func (em *coreService) AllBroadcasts() []Broadcast {
 	level.Debug(em.logger).Log("method", "AllBroadcasts() called")
-	broadcasts := make([]Broadcast, 3)
-	copy(broadcasts, siteNetworks.Broadcasts) // presumed to actually copy
-	return broadcasts
+	return siteNetworks.Broadcasts
 }
 func (em *coreService) RemoveBroadcastByID(broadcastID string) {
 	level.Debug(em.logger).Log("method", "RemoveBroadcastByID() called")
 	var index int
-	var broadcast Broadcast
+	var broadcast Broadcast = Broadcast{}
 	for idx, bc := range siteNetworks.Broadcasts {
 		if bc.ID == broadcastID {
 			broadcast = bc
@@ -215,33 +188,34 @@ func (em *coreService) RemoveBroadcastByID(broadcastID string) {
 		}
 	}
 
-	// maybe send null messages to remove from network
-	//  NewBroadcast(string(dm.NetworkID), string(dm.AttributeID), string(dm.PropertyID), string(dm.Value))
-	// NewBroadcast(parent, topic, level, value string)
-	var topic string
-	if broadcast.Level == "" {
-		topic = fmt.Sprintf("%s/$broadcast/%s", broadcast.Parent, broadcast.Topic)
-	} else {
-		topic = fmt.Sprintf("%s/$broadcast/%s/%s", broadcast.Parent, broadcast.Topic, broadcast.Level)
-	}
-	dm := DeviceMessage{
-		NetworkID: []byte(broadcast.Parent),
-		DeviceID: []byte(broadcast.Level),
-		HomieType: CoreTypeDeviceDelete,
-		TopicS: topic,
-		Value: []byte(broadcast.Value),
-		Qosb: 1,
-		RetainedB: false,
-	}
-	em.dsp.PublishToStreamProvider(dm)
+	if broadcast.ElementType == CoreTypeBroadcast {
 
-	if (broadcast != Broadcast{}) {
+		// maybe send null messages to remove from network
+		//  NewBroadcast(string(dm.NetworkID), string(dm.AttributeID), string(dm.PropertyID), string(dm.Value))
+		// NewBroadcast(parent, topic, level, value string)
+		var topic string
+		if broadcast.Level == "" {
+			topic = fmt.Sprintf("%s/$broadcast/%s", broadcast.Parent, broadcast.Topic)
+		} else {
+			topic = fmt.Sprintf("%s/$broadcast/%s/%s", broadcast.Parent, broadcast.Topic, broadcast.Level)
+		}
+		dm := DeviceMessage{
+			NetworkID: []byte(broadcast.Parent),
+			DeviceID: []byte(broadcast.Level),
+			HomieType: CoreTypeDeviceDelete,
+			TopicS: topic,
+			Value: []byte(broadcast.Value),
+			Qosb: 1,
+			RetainedB: false,
+		}
+		em.dsp.PublishToStreamProvider(dm)
+
 		siteNetworks.Broadcasts = append(siteNetworks.Broadcasts[:index], siteNetworks.Broadcasts[index+1:]...) // remove from slice
 	}
 }
 func (em *coreService) BroadcastByID(broadcastID string) (Broadcast, error) {
 	level.Debug(em.logger).Log("method", "BroadcastByID() called")
-	var broadcast Broadcast
+	var broadcast Broadcast = Broadcast{}
 	var err error
 	for _, bc := range siteNetworks.Broadcasts {
 		if bc.ID == broadcastID {
@@ -249,7 +223,7 @@ func (em *coreService) BroadcastByID(broadcastID string) (Broadcast, error) {
 			break
 		}
 	}
-	if (broadcast == Broadcast{}) {
+	if (broadcast.ElementType != CoreTypeBroadcast) {
 		err = fmt.Errorf("broadcast with id {%s} was  not found", broadcastID)
 		level.Error(em.logger).Log("error", err.Error())
 	}

@@ -130,13 +130,12 @@ type AllFirmwaresResponse struct {
 
 // CreateFirmwareRequest upload a new firmware
 type CreateFirmwareRequest struct {
-	FirmwareID string `json:"firmwareID"`
+	SrcFile string `json:"srcFile"`
+	DstFile string `json:"dstFile"`
 }
-// CreateFirmwareResponse id of newly created firmeware
+// CreateFirmwareResponse id of newly created firmware
 type CreateFirmwareResponse struct {
-	Body struct {
-		FirmwareID string `json:"firmwareID"`
-	}
+	FirmwareID string `json:"firmwareID"`
 }
 
 // RemoveFirmwareByIDRequest delete existing firmware

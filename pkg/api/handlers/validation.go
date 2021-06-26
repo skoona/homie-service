@@ -5,6 +5,11 @@ import (
 	"github.com/go-playground/validator"
 )
 
+// ValidationError is a collection of validation error messages
+type ValidationErrorMessage struct {
+	Messages []string `json:"messages"`
+}
+
 // ValidationError wraps the validators FieldError so we do not
 // expose this to out code
 type ValidationError struct {

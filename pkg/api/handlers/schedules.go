@@ -5,7 +5,6 @@ import (
 	"github.com/gorilla/mux"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"net/http"
-	"strconv"
 )
 
 
@@ -68,24 +67,46 @@ func (c *Controller) ScheduleByID(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// CreateScheduleRequest  create a new firmware OTA schedule
+type CreateScheduleRequest struct {
+	NetworkName string          `json:"networkName" validate:"required"`
+	DeviceID    string          `json:"deviceID" validate:"required"`
+	Transport   int             `json:"transportType" validate:"required"`
+	FirmwareID  string          `json:"firmwareID" validate:"required"`
+}
+// CreateScheduleResponse returns id of created schedule
+type CreateScheduleResponse struct {
+	ScheduleID string `json:"scheduleID"`
+}
 // CreateSchedule (networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
-// TODO write method
 func (c *Controller) CreateSchedule(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "CreateSchedule() called")
 	rw.Header().Add("Content-Type", "application/json")
 
-	vars := mux.Vars(r)
-	trans, _ := strconv.Atoi(vars["transport"])
+	csr := CreateScheduleRequest{}
+	err := FromJSON(&csr, r.Body)
+	if err != nil {
+		level.Error(c.logger).Log( "error", err.Error())
+		rw.WriteHeader(http.StatusUnprocessableEntity)
+		ToJSON(&GenericError{Message: err.Error()}, rw)
+		return
+	}
 
-	body, err := c.service.CreateSchedule(
-		vars["networkName"],
-		vars["deviceID"],
-		dc.OTATransport(trans),
-		dc.EID(vars["firmwareID"]),
-		)
+	// validate the product
+	errs := c.validator.Validate(csr)
+	if len(errs) != 0 {
+		c.logger.Log("validation", errs)
+
+		// return the validation messages as an array
+		rw.WriteHeader(http.StatusUnprocessableEntity)
+		ToJSON(&ValidationErrorMessage{Messages: errs.Errors()}, rw)
+		return
+	}
+
+	body, err := c.service.CreateSchedule(csr.NetworkName, csr.DeviceID, dc.OTATransport(csr.Transport), dc.EID(csr.FirmwareID))
 	if err == nil {
 		rw.WriteHeader(http.StatusOK)
-		err := ToJSON(body, rw)
+		err := ToJSON(CreateScheduleResponse{body}, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
 			level.Error(c.logger).Log( "error", err.Error())
@@ -105,6 +126,12 @@ func (c *Controller) RemoveSchedule(rw http.ResponseWriter, r *http.Request) {
 
 	vars := mux.Vars(r)
 
-	c.service.RemoveSchedule(vars["scheduleID"])
-	rw.WriteHeader(http.StatusNoContent)
+	err := c.service.RemoveSchedule(vars["scheduleID"])
+	if err == nil {
+		rw.WriteHeader(http.StatusNoContent)
+	} else {
+		level.Error(c.logger).Log( "error", err.Error())
+		rw.WriteHeader(http.StatusNotFound)
+		ToJSON(&GenericError{Message: err.Error()}, rw)
+	}
 }

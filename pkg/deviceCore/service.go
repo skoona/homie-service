@@ -31,9 +31,9 @@ type (
 
 		AllSchedules() []Schedule
 		CreateSchedule(networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
-		RemoveSchedule(scheduleID string)
+		RemoveSchedule(scheduleID string) error
 		ScheduleByID(scheduleID string) Schedule
-		ScheduleByDeviceID(deviceID string) Schedule
+		ScheduleByDeviceID(deviceID string) *Schedule
 
 		AllFirmwares() []Firmware
 		CreateFirmware(srcFile, dstFile string) (EID, error)
