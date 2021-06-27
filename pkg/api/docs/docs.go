@@ -86,7 +86,7 @@ type genericErrorWrapper struct {
 }
 
 // indicates a specific network by name.
-// swagger:parameters network
+// swagger:parameters network devices
 type networkNameParamsWrapper struct {
 	// pattern: [a-zA-Z]+
 	// In: path
@@ -147,6 +147,14 @@ type deviceByNameResponseWrapper struct {
 	// homie device structure.
 	// In: body
 	Body dc.Device
+}
+
+// list of all devices details on a network
+// swagger:response devicesResponse
+type devicesResponseWrapper struct {
+	// homie device structures.
+	// In: body
+	Body map[string]dc.Device `json:"devices"`
 }
 
 // params  to send any message over MQTT.

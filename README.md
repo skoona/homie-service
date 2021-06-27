@@ -243,13 +243,18 @@ homiemonitor:
 Usage of ./program
   -config string
         path to config file (default "live-config")
+
+$ ./cmd/api/main --config=demo-config        
+$ curl/x   http://localhost:9090/docs        
 ```
 
 * program 
 ```
-$ go build cmd/cli/main.go 
+$ go build cmd/api/main.go 
 $ ./program --config mqtt-config
 $ ./program --config demo-config
+ ...
+$ curl/x   http://localhost:9090/docs
 ```
 
 ### Contributing

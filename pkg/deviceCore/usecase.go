@@ -30,6 +30,16 @@ func (em *coreService) PrivateSiteNetworks() *SiteNetworks {
 	return &siteNetworks
 }
 
+func (em *coreService) NetworkDevices(networkName string) (map[string]Device, error) {
+	level.Debug(em.logger).Log("method", "NetworkDevices() called")
+	var err error
+	devices := siteNetworks.DeviceNetworks[networkName].Devices
+	if devices == nil {
+		err = fmt.Errorf("devices not found for network: %s", networkName)
+	}
+	return devices, err
+}
+
 func (em *coreService) NetworkByName(networkName string) Network {
 	level.Debug(em.logger).Log("method", "NetworkByName() called")
 	network := siteNetworks.DeviceNetworks[networkName]

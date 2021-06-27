@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/go-kit/kit/log/level"
 	"github.com/gorilla/mux"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
@@ -30,11 +31,44 @@ func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 }
 
 
+// swagger:route GET /devices/{networkName} Network-Operations devices
+// List devices on the named network
+// responses:
+//	202: devicesResponse
+//  404: genericError
+//  406: validationError
+
+// NetworkDevices (networkName string) (map[string]Device)
+func (c *Controller) NetworkDevices(rw http.ResponseWriter, r *http.Request) {
+	level.Debug(c.logger).Log( "api-method", "NetworkDevices() called")
+	rw.Header().Add("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+
+	body, err := c.service.NetworkDevices(vars["networkName"])
+	if err != nil {
+		level.Error(c.logger).Log( "error", err.Error())
+		rw.WriteHeader(http.StatusNotFound)
+		ToJSON(&GenericError{Message: fmt.Sprintf("Network with id: %s not found", vars["networkName"])}, rw)
+		return
+	}
+
+	rw.WriteHeader(http.StatusAccepted)
+	err = ToJSON(body, rw)
+	if err != nil {
+		level.Error(c.logger).Log( "error", err.Error())
+		rw.WriteHeader(http.StatusNotFound)
+		ToJSON(&GenericError{Message: err.Error()}, rw)
+	}
+}
+
+
 // swagger:route GET /network/{networkName} Network-Operations network
 // Get specific network by name
 // responses:
 //	202: networkResponse
 //  404: genericError
+//  406: validationError
 
 // NetworkByName (networkName string) Network
 func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
@@ -44,6 +78,12 @@ func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 
 	body := c.service.NetworkByName(vars["networkName"])
+	if body.ElementType != dc.CoreTypeNetwork {
+		level.Error(c.logger).Log( "error", fmt.Sprintf("Network with id: %s not found", vars["networkName"]))
+		rw.WriteHeader(http.StatusNotAcceptable)
+		ToJSON(&GenericError{Message: fmt.Sprintf("Network with id: %s not found", vars["networkName"])}, rw)
+		return
+	}
 
 	rw.WriteHeader(http.StatusAccepted)
 	err := ToJSON(body, rw)

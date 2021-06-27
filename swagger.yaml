@@ -547,6 +547,26 @@ paths:
           $ref: '#/responses/genericError'
       tags:
       - Network-Operations
+  /devices/{networkName}:
+    get:
+      description: List devices on the named network
+      operationId: devices
+      parameters:
+      - in: path
+        name: networkName
+        pattern: '[a-zA-Z]+'
+        required: true
+        type: string
+        x-go-name: NetworkName
+      responses:
+        "202":
+          $ref: '#/responses/devicesResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+      tags:
+      - Network-Operations
   /firmwareById/{firmwareID}:
     get:
       description: Get specific firmware details
@@ -618,6 +638,8 @@ paths:
           $ref: '#/responses/networkResponse'
         "404":
           $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
       tags:
       - Network-Operations
   /networks:
@@ -803,6 +825,12 @@ responses:
     description: device details
     schema:
       $ref: '#/definitions/Device'
+  devicesResponse:
+    description: list of all devices details on a network
+    schema:
+      additionalProperties:
+        $ref: '#/definitions/Device'
+      type: object
   firmwareIdResponse:
     description: ID of firmware.
   firmwareResponse:

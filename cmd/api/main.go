@@ -79,6 +79,7 @@ func main() {
 
 	getR.HandleFunc("/networks", ctrl.AllNetworks)
 	getR.HandleFunc("/network/{networkName:[a-zA-Z]+}", ctrl.NetworkByName)
+	getR.HandleFunc("/devices/{networkName:[a-zA-Z]+}", ctrl.NetworkDevices)
 	getR.HandleFunc("/deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+}", ctrl.DeviceByName)
 	getR.HandleFunc("/deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+}", ctrl.DeviceByID)
 

@@ -22,6 +22,7 @@ type (
 	CoreService interface {
 		AllNetworks() SiteNetworks
 		PrivateSiteNetworks() *SiteNetworks
+		NetworkDevices(networkName string) (map[string]Device, error)
 		NetworkByName(networkName string) Network
 		DeviceByName(deviceName, networkName string) (Device, error)
 		DeviceByID(deviceID string, networkName string) (Device, error)

@@ -1,6 +1,20 @@
 Configs.go init() called
 Configs.go init() completed:   
 event=calling handleCommandLineParams(), Config=mqtt-config, Environment=mqtt-config, debug=false 
-level=info module=Homie-Service time:=2021-06-27T22:17:11.703737Z caller=service.go:138 pkg=services event="service started"
-level=warn module=Homie-Service time:=2021-06-27T22:17:16.720404Z caller=usecase.go:141 pkg=deviceStorage Alert="LoadSchedules() Failed" error="no schedules available"
-level=info module=Homie-Service time:=2021-06-27T22:17:16.730489Z caller=main.go:142 ui=api event="starting server" serving=:9090
+level=info module=Homie-Service time:=2021-06-27T23:02:24.903941Z caller=service.go:138 pkg=services event="service started"
+level=warn module=Homie-Service time:=2021-06-27T23:02:29.92195Z caller=usecase.go:141 pkg=deviceStorage Alert="LoadSchedules() Failed" error="no schedules available"
+level=info module=Homie-Service time:=2021-06-27T23:02:29.934442Z caller=main.go:143 ui=api event="starting server" serving=:9090
+level=info module=Homie-Service time:=2021-06-27T23:05:00.674359Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=48.836µs
+level=info module=Homie-Service time:=2021-06-27T23:05:00.745547Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=3.624274ms
+level=info module=Homie-Service time:=2021-06-27T23:05:51.879509Z caller=middlewares.go:59 ui=api status=202 method=GET path=/api/v1/devices/sknSensors duration=455.907µs
+level=error module=Homie-Service time:=2021-06-27T23:06:01.164018Z caller=networks.go:50 ui=api error="devices not found for network: sknSensor"
+level=info module=Homie-Service time:=2021-06-27T23:06:01.16408Z caller=middlewares.go:59 ui=api status=404 method=GET path=/api/v1/devices/sknSensor duration=93.785µs
+level=info module=Homie-Service time:=2021-06-27T23:06:07.938404Z caller=middlewares.go:59 ui=api status=202 method=GET path=/api/v1/devices/sknSensors duration=312.698µs
+level=info module=Homie-Service time:=2021-06-27T23:08:44.95291Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=23.529µs
+level=info module=Homie-Service time:=2021-06-27T23:08:45.026121Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=217.04µs
+level=info module=Homie-Service time:=2021-06-27T23:09:39.666128Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=11.66µs
+level=info module=Homie-Service time:=2021-06-27T23:09:39.72893Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=219.629µs
+level=info module=Homie-Service time:=2021-06-27T23:10:04.934304Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=9.766µs
+level=info module=Homie-Service time:=2021-06-27T23:10:04.999967Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=126.742µs
+level=info module=Homie-Service time:=2021-06-27T23:19:37.310352Z caller=main.go:153 ui=api event="shutdown requested" cause=interrupt
+level=info module=Homie-Service time:=2021-06-27T23:19:40.314217Z caller=service.go:162 event="service ended"
