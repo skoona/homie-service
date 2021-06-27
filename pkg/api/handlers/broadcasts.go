@@ -21,7 +21,7 @@ func (c *Controller) AllBroadcasts(rw http.ResponseWriter, r *http.Request) {
 
 	body := c.service.AllBroadcasts()
 
-	rw.WriteHeader(http.StatusOK)
+	rw.WriteHeader(http.StatusAccepted)
 	err := ToJSON(body, rw)
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
@@ -71,7 +71,7 @@ func (c *Controller) BroadcastByID(rw http.ResponseWriter, r *http.Request) {
 // swagger:route DELETE /removeBroadcastId/{broadcastID} Broadcast-Operations  removeBroadcastId
 // Remove a specific broadcast
 // responses:
-//	202: noContentResponse
+//	204: noContentResponse
 //  406: validationError
 //  500: genericError
 

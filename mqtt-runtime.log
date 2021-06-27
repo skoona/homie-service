@@ -1,8 +1,6 @@
 Configs.go init() called
 Configs.go init() completed:   
 event=calling handleCommandLineParams(), Config=mqtt-config, Environment=mqtt-config, debug=false 
-level=info module=Homie-Service time:=2021-06-27T22:05:08.808066Z caller=service.go:138 pkg=services event="service started"
-level=warn module=Homie-Service time:=2021-06-27T22:05:13.829177Z caller=usecase.go:141 pkg=deviceStorage Alert="LoadSchedules() Failed" error="no schedules available"
-level=info module=Homie-Service time:=2021-06-27T22:05:13.841839Z caller=main.go:142 ui=api event="starting server" serving=:9090
-level=info module=Homie-Service time:=2021-06-27T22:05:22.052863Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=47.065µs
-level=info module=Homie-Service time:=2021-06-27T22:05:22.119743Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=3.152971ms
+level=info module=Homie-Service time:=2021-06-27T22:17:11.703737Z caller=service.go:138 pkg=services event="service started"
+level=warn module=Homie-Service time:=2021-06-27T22:17:16.720404Z caller=usecase.go:141 pkg=deviceStorage Alert="LoadSchedules() Failed" error="no schedules available"
+level=info module=Homie-Service time:=2021-06-27T22:17:16.730489Z caller=main.go:142 ui=api event="starting server" serving=:9090

@@ -433,6 +433,18 @@ paths:
       tags:
       - Broadcast-Operations
       - ""
+  /broadcasts:
+    get:
+      description: List all broadcasts
+      operationId: broadcasts
+      responses:
+        "202":
+          $ref: '#/responses/broadcastsResponse'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Broadcast-Operations
+      - ""
   /createFirmware:
     post:
       description: Add a new homie firmware to the collection
@@ -454,17 +466,6 @@ paths:
       tags:
       - Firmware-Operations
   /createSchedule:
-    get:
-      description: List all broadcasts
-      operationId: broadcasts
-      responses:
-        "202":
-          $ref: '#/responses/broadcastsResponse'
-        "500":
-          $ref: '#/responses/genericError'
-      tags:
-      - Broadcast-Operations
-      - ""
     post:
       description: Create a new device OTA schedule
       operationId: createSchedule
@@ -661,7 +662,7 @@ paths:
         type: string
         x-go-name: BroadcastID
       responses:
-        "202":
+        "204":
           $ref: '#/responses/noContentResponse'
         "406":
           $ref: '#/responses/validationError'
