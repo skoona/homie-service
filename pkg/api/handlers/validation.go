@@ -2,7 +2,8 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/go-playground/validator"
+	validator "github.com/go-playground/validator/v10"
+	"regexp"
 )
 
 // ValidationError is a collection of validation error messages
@@ -10,50 +11,21 @@ type ValidationErrorMessage struct {
 	Messages []string `json:"messages"`
 }
 
-// ValidationError wraps the validators FieldError so we do not
-// expose this to out code
-type ValidationError struct {
-	validator.FieldError
-}
-
-func (v ValidationError) Error() string {
-	return fmt.Sprintf(
-		"Key: '%s' Error: Field validation for '%s' failed on the '%s' tag",
-		v.Namespace(),
-		v.Field(),
-		v.Tag(),
-	)
-}
-
-// ValidationErrors is a collection of ValidationError
-type ValidationErrors []ValidationError
-
-// Errors converts the slice into a string slice
-func (v ValidationErrors) Errors() []string {
-	errs := []string{}
-	for _, err := range v {
-		errs = append(errs, err.Error())
-	}
-
-	return errs
-}
-
 // Validation contains
 type Validation struct {
 	validate *validator.Validate
 }
 
-// NewValidation creates a new Validation type
+//NewValidation creates a new Validation type
 func NewValidation() *Validation {
-	validate := validator.New()
-	//validate.RegisterValidation("sku", validateSKU)
+	validator := validator.New()
+	validator.RegisterValidation("fwfn", validateFwFn)
+	validator.RegisterValidation("eid", ValidateEID)
 
-	return &Validation{validate}
+	return &Validation{validate: validator}
 }
 
-// Validate the item
-// for more detail the returned error can be cast into a
-// validator.ValidationErrors collection
+// ValidateStruct verify contents of a structure object
 //
 // if ve, ok := err.(validator.ValidationErrors); ok {
 //			fmt.Println(ve.Namespace())
@@ -68,34 +40,62 @@ func NewValidation() *Validation {
 //			fmt.Println(ve.Param())
 //			fmt.Println()
 //	}
-func (v *Validation) Validate(i interface{}) ValidationErrors {
-	errs := v.validate.Struct(i).(validator.ValidationErrors)
+func (v *Validation) ValidateStruct(i interface{}) ValidationErrorMessage {
+	errs := v.validate.Struct(i)
 
-	if len(errs) == 0 {
-		return nil
+	if errs == nil {
+		return ValidationErrorMessage{}
 	}
 
-	var returnErrs []ValidationError
-	for _, err := range errs {
+	if _, ok := errs.(*validator.InvalidValidationError); ok {
+		fmt.Println(errs)
+		return ValidationErrorMessage{Messages: []string{errs.Error()}}
+	}
+
+	msgs := []string{}
+	for _, err := range errs.(validator.ValidationErrors) {
 		// cast the FieldError into our ValidationError and append to the slice
-		ve := ValidationError{err.(validator.FieldError)}
-		returnErrs = append(returnErrs, ve)
+		msgs = append(msgs, fmt.Sprintf(
+			"Key: '%s' Error: Field validation for '%s' failed on the '%s' tag",
+			err.Namespace(),
+			err.Field(),
+			err.Tag(),
+		))
 	}
-
-	return returnErrs
+	return ValidationErrorMessage{Messages: msgs}
 }
 
-/*
-// validateSKU
-func validateSKU(fl validator.FieldLevel) bool {
-	// SKU must be in the format abc-abc-abc
-	re := regexp.MustCompile(`[a-z]+-[a-z]+-[a-z]+`)
-	sku := re.FindAllString(fl.Field().String(), -1)
+// ValidateParam validates individual params
+// example: ValidateParam(email, "required,email")
+// returns: []string
+func (v *Validation) ValidateParam(param interface{}, tag string) ValidationErrorMessage {
+	msgs := []string{}
 
-	if len(sku) == 1 {
-		return true
+	errs := v.validate.Var(param, tag)
+	if errs != nil {
+		msgs = append(msgs, errs.Error())
+		// output: Key: "" Error:Field validation for "" failed on the "email" tag
 	}
 
-	return false
+	return ValidationErrorMessage{Messages: msgs}
 }
-*/
+
+// validateFwFn verifies Firmware Filenames
+// key: fwfn
+func validateFwFn(fl validator.FieldLevel) bool {
+	// Firmware File Name must be in the format 'alphaNum.bin'
+	re := regexp.MustCompile(`[[:print:]]+\.bin`)
+	items := re.FindAllString(fl.Field().String(), -1)
+
+	return (len(items) == 1)
+}
+
+// ValidateEID verify EID uuid-like field
+// key: eid
+func ValidateEID(fl validator.FieldLevel) bool {
+	// EID is a UUID with/out dashes, no more than 36 chars
+	re := regexp.MustCompile(`[\-0-9A-Fa-f]{32,36}?`)
+	items := re.FindAllString(fl.Field().String(), -1)
+
+	return (len(items) == 1)
+}

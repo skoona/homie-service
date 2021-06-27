@@ -29,6 +29,13 @@ func (c *Controller) ScheduleByDeviceID(rw http.ResponseWriter, r *http.Request)
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["deviceID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	body := c.service.ScheduleByDeviceID(vars["deviceID"])
 	if body.ElementType == dc.CoreTypeSchedule {
@@ -51,6 +58,13 @@ func (c *Controller) ScheduleByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["scheduleID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	body := c.service.ScheduleByID(vars["scheduleID"])
 	if body.ElementType == dc.CoreTypeSchedule {
@@ -70,9 +84,9 @@ func (c *Controller) ScheduleByID(rw http.ResponseWriter, r *http.Request) {
 // CreateScheduleRequest  create a new firmware OTA schedule
 type CreateScheduleRequest struct {
 	NetworkName string          `json:"networkName" validate:"required"`
-	DeviceID    string          `json:"deviceID" validate:"required"`
+	DeviceID    string          `json:"deviceID" validate:"required,eid"`
 	Transport   int             `json:"transportType" validate:"required"`
-	FirmwareID  string          `json:"firmwareID" validate:"required"`
+	FirmwareID  string          `json:"firmwareID" validate:"required,eid"`
 }
 // CreateScheduleResponse returns id of created schedule
 type CreateScheduleResponse struct {
@@ -93,13 +107,13 @@ func (c *Controller) CreateSchedule(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate the product
-	errs := c.validator.Validate(csr)
-	if len(errs) != 0 {
+	errs := c.validation.ValidateStruct(csr)
+	if len(errs.Messages) != 0 {
 		c.logger.Log("validation", errs)
 
 		// return the validation messages as an array
 		rw.WriteHeader(http.StatusUnprocessableEntity)
-		ToJSON(&ValidationErrorMessage{Messages: errs.Errors()}, rw)
+		ToJSON(&errs, rw)
 		return
 	}
 
@@ -125,6 +139,13 @@ func (c *Controller) RemoveSchedule(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["scheduleID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	err := c.service.RemoveSchedule(vars["scheduleID"])
 	if err == nil {

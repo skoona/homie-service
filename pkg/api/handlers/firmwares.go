@@ -25,8 +25,8 @@ func (c *Controller) AllFirmwares(rw http.ResponseWriter, r *http.Request) {
 
 // CreateFirmwareRequest upload a new firmware
 type CreateFirmwareRequest struct {
-	SrcFile string `json:"srcFile" validate:"required"`
-	DstFile string `json:"dstFile" validate:"required"`
+	SrcFile string `json:"srcFile" validate:"required,fwfn"`
+	DstFile string `json:"dstFile" validate:"required,fwfn"`
 }
 // CreateFirmwareResponse id of newly created firmware
 type CreateFirmwareResponse struct {
@@ -49,13 +49,13 @@ func (c *Controller) CreateFirmware(rw http.ResponseWriter, r *http.Request) {
 	}
 
 	// validate the product
-	errs := c.validator.Validate(cfr)
-	if len(errs) != 0 {
+	errs := c.validation.ValidateStruct(cfr)
+	if len(errs.Messages) != 0 {
 		c.logger.Log("validation", errs)
 
 		// return the validation messages as an array
 		rw.WriteHeader(http.StatusUnprocessableEntity)
-		ToJSON(&ValidationErrorMessage{Messages: errs.Errors()}, rw)
+		ToJSON(&errs, rw)
 		return
 	}
 
@@ -80,6 +80,14 @@ func (c *Controller) FirmwareByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+
+	emsg := c.validation.ValidateParam(vars["firmwareID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	body, err := c.service.FirmwareByID(dc.EID(vars["firmwareID"]))
 	if err == nil {
@@ -124,6 +132,13 @@ func (c *Controller) RemoveFirmwareID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["firmwareID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	c.service.RemoveFirmwareByID(dc.EID(vars["firmwareID"]))
 	rw.WriteHeader(http.StatusNoContent)

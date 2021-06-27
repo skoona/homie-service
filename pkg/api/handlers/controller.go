@@ -7,7 +7,7 @@ import (
 	"io"
 )
 
-// KeyProduct is a key used for the Product object in the context
+// CtxKeyOne is a key used for the Product object in the context
 type CtxKeyOne struct{}
 
 // Controller handler for getting and updating API Items
@@ -15,7 +15,7 @@ type Controller struct {
 	_ struct{}
 	service dc.CoreService
 	logger log.Logger
-	validator *Validation
+	validation *Validation
 }
 
 var (
@@ -28,7 +28,7 @@ func NewApiController(s *dc.CoreService, l *log.Logger, v *Validation) *Controll
 	ctrl = &Controller{
 		service: *s,
 		logger: *l,
-		validator: v,
+		validation: v,
 	}
 	return ctrl
 }

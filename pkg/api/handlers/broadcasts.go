@@ -29,6 +29,13 @@ func (c *Controller) BroadcastByID(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["broadcastID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	body, err := c.service.BroadcastByID(vars["broadcastID"])
 	if err == nil {
@@ -51,6 +58,13 @@ func (c *Controller) RemoveBroadcastID(rw http.ResponseWriter, r *http.Request) 
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["broadcastID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	c.service.RemoveBroadcastByID(vars["broadcastID"])
 	rw.WriteHeader(http.StatusNoContent)

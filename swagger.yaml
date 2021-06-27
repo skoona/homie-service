@@ -1,0 +1,83 @@
+basePath: /api/v1
+consumes:
+- application/json
+info:
+  description: Documentation for Homie-Service
+  title: Homie-Service API
+  version: 1.0.0
+paths:
+  /deviceByID:
+    get:
+      description: Return a specified device using it unique deviceID the named network
+      operationId: Device
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: ""
+        "500":
+          description: ""
+      tags:
+      - deviceByID
+  /deviceByName:
+    get:
+      description: Return a specified device on the named network
+      operationId: Device
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: ""
+        "500":
+          description: ""
+      tags:
+      - deviceByName
+  /network:
+    get:
+      description: Return a specified named network
+      operationId: Network
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: ""
+      tags:
+      - network
+  /networks:
+    get:
+      description: Return a list of all onsite networks
+      operationId: SiteNetworks
+      responses:
+        "200":
+          description: ""
+        "500":
+          description: ""
+      tags:
+      - networks
+  /publishNetworkMessage:
+    post:
+      description: Return a specified device on the named network
+      operationId: NetworkMessageRequest
+      responses:
+        "204":
+          description: ""
+        "422":
+          description: ""
+      tags:
+      - publishNetworkMessage
+  /removeDeviceID:
+    delete:
+      description: Removes a device from the specified network
+      operationId: removeDeviceID
+      responses:
+        "204":
+          description: ""
+        "404":
+          description: ""
+        "406":
+          description: ""
+produces:
+- application/json
+schemes:
+- http
+swagger: "2.0"

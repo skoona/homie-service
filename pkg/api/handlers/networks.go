@@ -8,7 +8,12 @@ import (
 	"strings"
 )
 
-// AllNetworks  SiteNetworks
+// swagger:route GET /networks networks SiteNetworks
+// Return a list of all onsite networks
+// responses:
+//	200:
+//  500:
+// AllNetworks  List all SiteNetworks
 func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllNetworks() called")
 	rw.Header().Add("Content-Type", "application/json")
@@ -23,6 +28,11 @@ func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// swagger:route GET /network network Network
+// Return a specified named network
+// responses:
+//	200:
+//  404:
 // NetworkByName (networkName string) Network
 func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "NetworkByName() called")
@@ -41,6 +51,12 @@ func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// swagger:route GET /deviceByName deviceByName Device
+// Return a specified device on the named network
+// responses:
+//	200:
+//  404:
+//  500:
 // DeviceByName (deviceName, networkName string) (Device, error)
 func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "DeviceByName() called")
@@ -64,12 +80,25 @@ func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 }
 
 
+// swagger:route GET /deviceByID deviceByID Device
+// Return a specified device using it unique deviceID the named network
+// responses:
+//	200:
+//  404:
+//  500:
 // DeviceByID (deviceID string, networkName string) (Device, error)
 func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "DeviceByID() called")
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["deviceID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	body, err := c.service.DeviceByID(vars["deviceID"], vars["networkName"])
 	if err == nil {
@@ -86,12 +115,26 @@ func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+
+// swagger:route DELETE /removeDeviceID removeDeviceID
+// Removes a device from the specified network
+// responses:
+//	204:
+//  404:
+//  406:
 // RemoveDeviceID (deviceID string, networkName string) error
 func (c *Controller) RemoveDeviceID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveDeviceID() called")
 	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
+	emsg := c.validation.ValidateParam(vars["deviceID"], "eid")
+	if len(emsg.Messages) != 0 {
+		rw.WriteHeader(http.StatusNotAcceptable)
+		level.Error(c.logger).Log( "validation", emsg.Messages)
+		ToJSON(&emsg, rw)
+		return
+	}
 
 	err := c.service.RemoveDeviceByID(vars["deviceID"], vars["networkName"])
 	if err == nil {
@@ -111,6 +154,12 @@ type NetworkMessageRequest struct {
 	Value    string `json:"value"`
 }
 
+// swagger:route POST /publishNetworkMessage publishNetworkMessage NetworkMessageRequest
+// Return a specified device on the named network
+// responses:
+//	204:
+//  422:
+
 // PublishNetworkMessage (dm DeviceMessage) topic, payload, qos, bRetained
 func (c *Controller) PublishNetworkMessage(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveDeviceID() called")
@@ -126,13 +175,13 @@ func (c *Controller) PublishNetworkMessage(rw http.ResponseWriter, r *http.Reque
 	}
 
 	// validate the product
-	errs := c.validator.Validate(nmr)
-	if len(errs) != 0 {
+	errs := c.validation.ValidateStruct(nmr)
+	if len(errs.Messages) != 0 {
 		c.logger.Log("validation", errs)
 
 		// return the validation messages as an array
 		rw.WriteHeader(http.StatusUnprocessableEntity)
-		ToJSON(&ValidationErrorMessage{Messages: errs.Errors()}, rw)
+		ToJSON(&errs, rw)
 		return
 	}
 

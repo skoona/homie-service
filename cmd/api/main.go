@@ -34,6 +34,7 @@ import (
 	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
+	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
 	api "github.com/skoona/homie-service/pkg/api/handlers"
@@ -106,6 +107,13 @@ func main() {
 	poR.HandleFunc("/createSchedule", ctrl.CreateSchedule) // has req/rsp
 	poR.HandleFunc("/publishNetworkMessage", ctrl.PublishNetworkMessage) // has req/noc
 
+	// handler for documentation
+	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
+	sh := middleware.Redoc(opts, nil)
+
+	gDocs := sm.Methods(http.MethodGet).Subrouter()
+	gDocs.Handle("/docs", sh)
+	gDocs.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
 	// CORS
 	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
