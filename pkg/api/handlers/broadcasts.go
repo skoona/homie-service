@@ -8,7 +8,7 @@ import (
 
 
 
-// swagger:route GET /createSchedule Broadcast-Operations  broadcasts
+// swagger:route GET /broadcasts Broadcast-Operations  broadcasts
 // List all broadcasts
 // responses:
 //	202: broadcastsResponse
