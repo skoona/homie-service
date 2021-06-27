@@ -89,3 +89,13 @@ level=info module=Homie-Service time:=2021-06-27T16:24:02.831043Z caller=middlew
 level=info module=Homie-Service time:=2021-06-27T16:24:02.892037Z caller=middlewares.go:59 ui=api status=304 method=GET path=/swagger.yaml duration=97.556µs
 level=info module=Homie-Service time:=2021-06-27T16:41:56.1471Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=22.044µs
 level=info module=Homie-Service time:=2021-06-27T16:41:56.208016Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=624.421µs
+level=info module=Homie-Service time:=2021-06-27T16:51:54.132233Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=24.156µs
+level=info module=Homie-Service time:=2021-06-27T16:51:54.192605Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=162.88µs
+level=info module=Homie-Service time:=2021-06-27T16:57:14.871983Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=22.72µs
+level=info module=Homie-Service time:=2021-06-27T16:57:14.934328Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=170.409µs
+level=info module=Homie-Service time:=2021-06-27T17:11:46.436128Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=24.729µs
+level=info module=Homie-Service time:=2021-06-27T17:11:46.493548Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=141.247µs
+level=info module=Homie-Service time:=2021-06-27T17:14:13.382509Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=23.914µs
+level=info module=Homie-Service time:=2021-06-27T17:14:13.442737Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=159.181µs
+level=info module=Homie-Service time:=2021-06-27T17:15:44.996162Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=23.989µs
+level=info module=Homie-Service time:=2021-06-27T17:15:45.055283Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=161.065µs

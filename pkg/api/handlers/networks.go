@@ -10,6 +10,9 @@ import (
 
 // swagger:route GET /networks network-tag noParamsRequired
 // Return a list of all onsite networks.
+// ---
+// parameters:
+// - none
 // responses:
 //	202: networksResponse
 //  500: genericError
@@ -32,6 +35,11 @@ func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 
 // swagger:route GET /network/{networkName:[a-zA-Z]+} network-tag networkNameParam
 // Return a specified named network.
+// ---
+// parameters:
+//  - networkName
+//    in: path
+//    type: string
 // responses:
 //	202: networkResponse
 //  404: genericError
@@ -91,6 +99,7 @@ func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 //  404: genericError
 //  406: validationError
 //  500: genericError
+
 // DeviceByID (deviceID string, networkName string) (Device, error)
 func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "DeviceByID() called")
@@ -127,6 +136,7 @@ func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 //	204: noContentResponse
 //  404: genericError
 //  406: validationError
+
 // RemoveDeviceID (deviceID string, networkName string) error
 func (c *Controller) RemoveDeviceID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveDeviceID() called")

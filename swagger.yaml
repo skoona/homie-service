@@ -366,6 +366,9 @@ definitions:
     type: object
     x-go-package: github.com/skoona/homie-service/pkg/api/handlers
 info:
+  contact:
+    email: skoona@gmail.com
+    name: James Scott Jr
   description: |-
     ### Documentation for Homie-Service API.
 

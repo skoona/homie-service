@@ -42,6 +42,7 @@
 //	Schemes: http
 //	BasePath: /api/v1
 //	Version: 1.0.0
+//  Contact: James Scott Jr<skoona@gmail.com>
 //
 //	Consumes:
 //	- application/json
@@ -58,6 +59,55 @@ import (
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 )
 
+// swagger:route GET /networks network-tag noParamsRequired
+// Return a list of all onsite networks.
+// ---
+// parameters:
+// - none
+// responses:
+//	202: networksResponse
+//  500: genericError
+
+// swagger:route GET /network/{networkName:[a-zA-Z]+} network-tag networkNameParam
+// Return a specified named network.
+// ---
+// parameters:
+//  - networkName
+//    in: path
+//    type: string
+// responses:
+//	202: networkResponse
+//  404: genericError
+
+// swagger:route GET /deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+} network-tag deviceByNameParams
+// Return a specified device on the named network.
+// responses:
+//	202: deviceResponse
+//  404: genericError
+//  500: genericError
+
+// swagger:route GET /deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag  deviceByIdParams
+// Return a specified device using it unique deviceID the named network
+// responses:
+//	202: deviceResponse
+//  404: genericError
+//  406: validationError
+//  500: genericError
+
+// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams
+// Removes a device from the specified network
+// responses:
+//	204: noContentResponse
+//  404: genericError
+//  406: validationError
+
+// swagger:route POST /publishNetworkMessage network-tag networkMessageParams
+// Return a specified device on the named network
+// responses:
+//	204: noContentResponse
+//  404: genericError
+//  406: validationError
+//  422: genericError
 
 // swagger:parameters noParamsRequired
 type noContentRequestWrapper struct {
