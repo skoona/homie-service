@@ -3,11 +3,10 @@
   <img src="https://homieiot.github.io/img/works-with-homie.png" alt="works with MQTT Homie">
 </a>
 
-Rewrite of HomieMonitor in GOlang.
+Rewrite of [HomieMonitor](https://github.com/skoona/homieMonitor) in Golang.
 
-
-This application is designed to act as a `Homie Controller`, or `Monitor`, 
-in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `Homie Device` implementation should be supported.
+Application implements the `Homie Controller`, or `Monitor`, supporting development of IOT/Devices 
+using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `Homie Device` specification should be supported.
 
 #### References: 
 * [Homie: An MQTT Convention for IOT/M2M](https://homieiot.github.io/specification/)
@@ -16,12 +15,12 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 ## Status
 * Support Mutliple Homie Networks (auto discovery); /homie/#, /custom/#, ...
 * [MQTT](https://github.com/eclipse/paho.mqtt.golang) Unsecured connection.
-* Produce MQTT messages decoded to Homie Device Model.
-* Produce MQTT messages from MQTT Logfile for Demo use.
-* [bBolt DB](https://github.com/etcd-io/bbolt) data storage for decoded device messages
+* Produce MQTT messages decoded to internal Device Model.
+* Produce MQTT messages from MQTT logfile for Demo use.
+* [bBolt DB](https://github.com/etcd-io/bbolt) data storage for decoded device messages, and ota schedules
 * CoreLogic 
 * * decode and transform data into Homie's Broadcast, Device, Node, Property, and Attribute collections.
-* * encode firmware information into the Firmware Scheduling Service
+* * encode firmware information into the Firmware OTA Scheduling Service
 * * implement firmware schedule
 * * implement data retention on change service
 * Create Web UI with WedSocket Driven Components
@@ -31,58 +30,94 @@ in support of IOT/Devices using [Homie-esp8266](https://github.com/homieiot/homi
 ### Project Tree
 ```
 ├── LICENSE
+├── Makefile
 ├── README.md
 ├── bin
 ├── cmd
-│   └── cli
-│       └── main.go
+│   ├── api
+│   │   └── main.go
+│   ├── base
+│   │   └── main.go
+│   ├── cli
+│   └── gui
 ├── config
-│   ├── demo-config.yml
-│   └── mqtt-config.yml
+│   ├── demo-config.yml
+│   ├── mqtt-config.yml
+│   └── test-config.yml
 ├── dataDB
-│   ├── dataDir
-│   │   └── devices.db
-│   ├── demoData
-│   │   └── mosquitto.log
-│   └── firmwares
-│       ├── Environment-DS18B20.bin
-│       ├── Monitor-DHT-RCWL-Metrics-200.bin
-│       └── Monitor-SHT31-RCWL-Metrics-200.bin
-├── demo-runtime.log
+│   ├── dataDir
+│   │   └── storage.db
+│   ├── demoData
+│   │   └── mosquitto.log
+│   ├── firmwares
+│   │   ├── Environment-DS18B20.bin
+│   │   ├── Monitor-DHT-RCWL-Metrics-200.bin
+│   │   └── Monitor-SHT31-RCWL-Metrics-200.bin
+│   └── testData
+│       ├── mosquitto_test.log
+│       └── storage_test.db
 ├── docs
-│   └── notes.md
+│   ├── notes.md
+│   └── testData.txt
 ├── go.mod
 ├── go.sum
-├── internal
-│   ├── demoProvider
-│   │   └── service.go
-│   ├── mqttProvider
-│   │   └── service.go
-│   ├── deviceSource
-│   │   ├── service.go
-│   │   └── usecase.go
-│   ├── deviceStorage
-│   │   ├── repository.go
-│   │   └── usecase.go
-│   ├── deviceScheduler
-│   │   ├── firmwares.go
-│   │   ├── schedules.go
-│   │   ├── service.go
-│   │   └── usecase.go
-│   ├── deviceCore
-│   │   ├── broadcasts.go
-│   │   ├── devices.go
-│   │   ├── domain.go
-│   │   ├── events.go
-│   │   ├── networks.go
-│   │   ├── service.go
-│   │   └── usecase.go
-│   └── utils
-│       └── configs.go
-├── main
-└── mqtt-runtime.log
-
-18 directories, 34 files
+├── pkg
+│   ├── api
+│   │   ├── docs
+│   │   │   └── docs.go
+│   │   └── handlers
+│   │       ├── broadcasts.go
+│   │       ├── controller.go
+│   │       ├── files.go
+│   │       ├── firmwares.go
+│   │       ├── middlewares.go
+│   │       ├── networks.go
+│   │       ├── schedules.go
+│   │       └── validation.go
+│   ├── demoProvider
+│   │   ├── demoProvider_suite_test.go
+│   │   ├── demo_test.go
+│   │   ├── mqttMock.go
+│   │   ├── service.go
+│   │   ├── usecase-devices.go
+│   │   └── usecase-ota.go
+│   ├── deviceCore
+│   │   ├── core.go
+│   │   ├── core_test.go
+│   │   ├── deviceCore_suite_test.go
+│   │   ├── service.go
+│   │   ├── streams.go
+│   │   └── usecase.go
+│   ├── deviceScheduler
+│   │   ├── deviceScheduler_suite_test.go
+│   │   ├── scheduler.go
+│   │   ├── scheduler_test.go
+│   │   ├── service.go
+│   │   └── usecase.go
+│   ├── deviceSource
+│   │   ├── service.go
+│   │   ├── sources.go
+│   │   └── usercase.go
+│   ├── deviceStorage
+│   │   ├── deviceStorage_suite_test.go
+│   │   ├── repository.go
+│   │   ├── storage_test.go
+│   │   └── usecase.go
+│   ├── mqttProvider
+│   │   ├── mqttProvider_suite_test.go
+│   │   ├── service.go
+│   │   ├── service_test.go
+│   │   ├── usecase-devices.go
+│   │   └── usecase-ota.go
+│   ├── services
+│   │   └── service.go
+│   └── utils
+│       ├── configs.go
+│       ├── configs_test.go
+│       ├── utils.go
+│       ├── utils_suite_test.go
+│       └── utils_test.go
+└── swagger.yaml
 ```
 
 #### Package Description

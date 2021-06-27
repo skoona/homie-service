@@ -33,6 +33,9 @@ func NewApiController(s *dc.CoreService, l *log.Logger, v *Validation) *Controll
 	return ctrl
 }
 
+// NoContent No content is expected
+type NoContent struct {
+}
 
 // GenericError is a generic error message returned by a server
 type GenericError struct {

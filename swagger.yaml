@@ -1,83 +1,500 @@
 basePath: /api/v1
 consumes:
 - application/json
+definitions:
+  Broadcast:
+    description: Broadcast Alert Messages on  Network
+    properties:
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        type: string
+      Level:
+        type: string
+      Parent:
+        type: string
+      Received:
+        format: date-time
+        type: string
+      Topic:
+        type: string
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  CoreType:
+    description: Globals required for DeviceMessage Types
+    format: int64
+    type: integer
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  CreateFirmwareRequest:
+    description: CreateFirmwareRequest upload a new firmware
+    properties:
+      dstFile:
+        type: string
+        x-go-name: DstFile
+      srcFile:
+        type: string
+        x-go-name: SrcFile
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/api/handlers
+  CreateScheduleRequest:
+    description: CreateScheduleRequest  create a new firmware OTA schedule
+    properties:
+      deviceID:
+        type: string
+        x-go-name: DeviceID
+      firmwareID:
+        type: string
+        x-go-name: FirmwareID
+      networkName:
+        type: string
+        x-go-name: NetworkName
+      transportType:
+        format: int64
+        type: integer
+        x-go-name: Transport
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/api/handlers
+  Device:
+    description: Device represent a physical device
+    properties:
+      Attrs:
+        additionalProperties:
+          $ref: '#/definitions/DeviceAttribute'
+        type: object
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        type: string
+      Name:
+        type: string
+      Nodes:
+        additionalProperties:
+          $ref: '#/definitions/DeviceNode'
+        type: object
+      OTAEnabled:
+        type: boolean
+      Parent:
+        type: string
+      Title:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  DeviceAttribute:
+    description: DeviceAttribute of a Device allowing sub properties, representing
+      a single value or measurement
+    properties:
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        $ref: '#/definitions/EID'
+      Name:
+        type: string
+      Parent:
+        type: string
+      Props:
+        additionalProperties:
+          $ref: '#/definitions/DeviceAttributeProperty'
+        type: object
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  DeviceAttributeProperty:
+    description: |-
+      DeviceAttributeProperty of a Device Attribute, representing a single value or measurement
+      $implementation/ota/status -- where status will be a regular attribute
+    properties:
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        $ref: '#/definitions/EID'
+      Name:
+        type: string
+      Parent:
+        type: string
+      Props:
+        additionalProperties:
+          $ref: '#/definitions/DeviceAttributePropertyProperty'
+        type: object
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  DeviceAttributePropertyProperty:
+    description: |-
+      DeviceAttributePropertyProperty  of a Device Attribute, representing a single value or measurement
+      $implementation/ota/status -- where status will be a regular attribute
+    properties:
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        $ref: '#/definitions/EID'
+      Name:
+        type: string
+      Parent:
+        type: string
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  DeviceNode:
+    description: DeviceNode representing the capabilities or features of device
+    properties:
+      Attrs:
+        additionalProperties:
+          $ref: '#/definitions/DeviceNodeAttribute'
+        type: object
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        $ref: '#/definitions/EID'
+      Name:
+        type: string
+      Parent:
+        type: string
+      Props:
+        additionalProperties:
+          $ref: '#/definitions/DeviceNodeProperty'
+        type: object
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  DeviceNodeAttribute:
+    description: DeviceNodeAttribute used by Devices, Nodes, and Properties.  Used
+      to describe format
+    properties:
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        $ref: '#/definitions/EID'
+      Name:
+        type: string
+      Parent:
+        type: string
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  DeviceNodeProperty:
+    description: DeviceNodeProperty of a Node, representing a single value or measurement
+    properties:
+      Attrs:
+        additionalProperties:
+          $ref: '#/definitions/DeviceNodePropertyAttribute'
+        type: object
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        $ref: '#/definitions/EID'
+      Name:
+        type: string
+      Parent:
+        type: string
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  DeviceNodePropertyAttribute:
+    description: DeviceNodePropertyAttribute used by Devices, Nodes, and Properties.  Used
+      to describe format
+    properties:
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        $ref: '#/definitions/EID'
+      Name:
+        type: string
+      Parent:
+        type: string
+      Value:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  EID:
+    description: EID entity EID
+    type: string
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  Firmware:
+    description: Firmware basic firmware model
+    properties:
+      Brand:
+        type: string
+      Created:
+        format: date-time
+        type: string
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      FileName:
+        type: string
+      ID:
+        $ref: '#/definitions/EID'
+      MD5Digest:
+        type: string
+      Name:
+        type: string
+      Path:
+        type: string
+      Size:
+        format: int64
+        type: integer
+      Version:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  GenericError:
+    description: GenericError is a generic error message returned by a server
+    properties:
+      message:
+        type: string
+        x-go-name: Message
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/api/handlers
+  Network:
+    description: Network contains all known devices in application
+    properties:
+      Devices:
+        additionalProperties:
+          $ref: '#/definitions/Device'
+        type: object
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      ID:
+        type: string
+      Name:
+        type: string
+      Title:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  NetworkMessageRequest:
+    description: NetworkMessageRequest send any message over MQTT
+    properties:
+      qos:
+        format: int64
+        type: integer
+        x-go-name: Qos
+      retained:
+        type: string
+        x-go-name: Retained
+      topic:
+        type: string
+        x-go-name: Topic
+      value:
+        type: string
+        x-go-name: Value
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/api/handlers
+  NoContent:
+    description: NoContent No content is expected
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/api/handlers
+  OTATransport:
+    description: OTATransport Flag used to choose OTA transport Format
+    format: int64
+    type: integer
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  Schedule:
+    description: Schedule the ota schedule details
+    properties:
+      Completed:
+        format: date-time
+        type: string
+      DeviceID:
+        type: string
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      FirmwareID:
+        $ref: '#/definitions/EID'
+      ID:
+        type: string
+      Retries:
+        format: int64
+        type: integer
+      Scheduled:
+        format: date-time
+        type: string
+      State:
+        type: string
+      Status:
+        type: string
+      Transport:
+        $ref: '#/definitions/OTATransport'
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  SiteNetworks:
+    description: SiteNetworks contains all known/valid Collections
+    properties:
+      Broadcasts:
+        items:
+          $ref: '#/definitions/Broadcast'
+        type: array
+      DeviceNetworks:
+        additionalProperties:
+          $ref: '#/definitions/Network'
+        type: object
+      ElementType:
+        $ref: '#/definitions/CoreType'
+      Firmwares:
+        items:
+          $ref: '#/definitions/Firmware'
+        type: array
+      ID:
+        $ref: '#/definitions/EID'
+      Names:
+        items:
+          type: string
+        type: array
+      Schedules:
+        additionalProperties:
+          $ref: '#/definitions/Schedule'
+        type: object
+      SiteName:
+        type: string
+      Title:
+        type: string
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/deviceCore
+  ValidationErrorMessage:
+    description: ValidationErrorMessage is a collection of validation error messages
+    properties:
+      messages:
+        items:
+          type: string
+        type: array
+        x-go-name: Messages
+    type: object
+    x-go-package: github.com/skoona/homie-service/pkg/api/handlers
 info:
-  description: Documentation for Homie-Service
+  description: |-
+    ### Documentation for Homie-Service API.
+
+    Rewrite of [HomieMonitor](https://github.com/skoona/homieMonitor) in Golang.
+
+    API service implements the `Homie Controller`, or `Monitor`, supporting development of IOT/Devices
+    using [Homie-esp8266](https://github.com/homieiot/homie-esp8266) repository; although any `Homie Device` specification should be supported.
+
+    ### References:
+    [Homie: An MQTT Convention for IOT/M2M](https://homieiot.github.io/specification/)
+
+    [Homie-ESP8266 Example of RCWL-0516 Microwave Presence Detector and DHT22 Temperature and Humidity sensors](https://github.com/skoona/EnvironmentMonitor_DHT)
+
+    ### Status
+    Support Mutliple Homie Networks (auto discovery); /homie/#, /custom/#, ...
+
+    [MQTT](https://github.com/eclipse/paho.mqtt.golang) Unsecured connection.
+
+    Produce MQTT messages decoded to internal Device Model.
+
+    Produce MQTT messages from MQTT logfile for Demo use.
+
+    [bBolt DB](https://github.com/etcd-io/bbolt) data storage for decoded device messages, and ota schedules
+
+    CoreLogic
+
+    decode and transform data into Homie's Broadcast, Device, Node, Property, and Attribute collections.
+
+    encode firmware information into the Firmware OTA Scheduling Service
+
+    implement firmware schedule
+
+    implement data retention on change service
+
+    Create Web UI with WedSocket Driven Components
+
+    Enable SSL/TLS Connection to MQTT
+
+    Enabled OTA Scheduling.
   title: Homie-Service API
   version: 1.0.0
 paths:
-  /deviceByID:
-    get:
-      description: Return a specified device using it unique deviceID the named network
-      operationId: Device
-      responses:
-        "200":
-          description: ""
-        "404":
-          description: ""
-        "500":
-          description: ""
-      tags:
-      - deviceByID
-  /deviceByName:
-    get:
-      description: Return a specified device on the named network
-      operationId: Device
-      responses:
-        "200":
-          description: ""
-        "404":
-          description: ""
-        "500":
-          description: ""
-      tags:
-      - deviceByName
-  /network:
-    get:
-      description: Return a specified named network
-      operationId: Network
-      responses:
-        "200":
-          description: ""
-        "404":
-          description: ""
-      tags:
-      - network
   /networks:
     get:
-      description: Return a list of all onsite networks
-      operationId: SiteNetworks
+      operationId: noParamsRequired
       responses:
-        "200":
-          description: ""
+        "202":
+          $ref: '#/responses/networksResponse'
         "500":
-          description: ""
+          $ref: '#/responses/genericError'
+      summary: Return a list of all onsite networks.
       tags:
-      - networks
+      - network-tag
   /publishNetworkMessage:
     post:
       description: Return a specified device on the named network
-      operationId: NetworkMessageRequest
+      operationId: networkMessageParams
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/NetworkMessageRequest'
       responses:
         "204":
-          description: ""
-        "422":
-          description: ""
-      tags:
-      - publishNetworkMessage
-  /removeDeviceID:
-    delete:
-      description: Removes a device from the specified network
-      operationId: removeDeviceID
-      responses:
-        "204":
-          description: ""
+          $ref: '#/responses/noContentResponse'
         "404":
-          description: ""
+          $ref: '#/responses/genericError'
         "406":
-          description: ""
+          $ref: '#/responses/validationError'
+        "422":
+          $ref: '#/responses/genericError'
+      tags:
+      - network-tag
 produces:
 - application/json
+responses:
+  broadcastResponse:
+    description: details of requested broadcast.
+    schema:
+      $ref: '#/definitions/Broadcast'
+  broadcastsResponse:
+    description: list of known broadcasts.
+    headers:
+      broadcasts:
+        items:
+          $ref: '#/definitions/Broadcast'
+        type: array
+  deviceResponse:
+    description: device details
+    schema:
+      $ref: '#/definitions/Device'
+  firmwareIdResponse:
+    description: ID of firmware.
+  firmwareResponse:
+    description: details of requested firmware.
+    schema:
+      $ref: '#/definitions/Firmware'
+  firmwaresResponse:
+    description: details of every firmware on file.
+    schema:
+      items:
+        $ref: '#/definitions/Firmware'
+      type: array
+  genericError:
+    description: generic error message returned by the server.
+    schema:
+      $ref: '#/definitions/GenericError'
+  networkResponse:
+    description: Individual network structure.
+    schema:
+      $ref: '#/definitions/Network'
+  networksResponse:
+    description: returns site network structure.
+    schema:
+      $ref: '#/definitions/SiteNetworks'
+  noContentResponse:
+    description: No content is expected.
+    schema:
+      $ref: '#/definitions/NoContent'
+  scheduleIdResponse:
+    description: ID of a schedule.
+  scheduleResponse:
+    description: schedule declared for device.
+    schema:
+      $ref: '#/definitions/Schedule'
+  validationError:
+    description: a collection of validation error messages.
+    schema:
+      $ref: '#/definitions/ValidationErrorMessage'
 schemes:
 - http
 swagger: "2.0"

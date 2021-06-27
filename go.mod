@@ -23,6 +23,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/onsi/ginkgo v1.16.4
 	github.com/onsi/gomega v1.13.0
+	github.com/pdrum/swagger-automation v0.0.0-20190629163613-c8c7c80ba858
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.8.1
 	go.etcd.io/bbolt v1.3.6

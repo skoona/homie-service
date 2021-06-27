@@ -6,7 +6,7 @@ import (
 	"regexp"
 )
 
-// ValidationError is a collection of validation error messages
+// ValidationErrorMessage is a collection of validation error messages
 type ValidationErrorMessage struct {
 	Messages []string `json:"messages"`
 }

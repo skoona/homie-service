@@ -25,71 +25,6 @@
 Domain <- UseCases <- Interfaces <- Infrastructure: <== Main(Dependency Injection)
 ```
 
-## Project Tree
-```
-❯ homieExplorer
-.
-├── LICENSE
-├── README.md
-├── go.mod
-├── go.sum
-├── bin
-├── config
-│   ├── demo-config.yml
-│   └── live-config.yml
-├── dataDB
-│   ├── demo
-│   │   └── homiedemo.log
-│   ├── firmwares
-│   │   ├── Environment-DS18B20.bin
-│   │   ├── Monitor-DHT-RCWL-Metrics-200.bin
-│   │   └── Monitor-SHT31-RCWL-Metrics-200.bin
-│   └── live
-├── docs
-│   └── notes.md
-└── src
-    ├── main.go
-    ├── entities
-    │   ├── domain.go
-    │   ├── devices.go
-    │   ├── firmwares.go
-    │   ├── networks.go
-    │   └── schedules.go
-    ├── infrastructure
-    │   ├── db
-    │   │   ├── bbolt-db.go
-    │   │   └── db.go
-    │   ├── router
-    │   │   ├── mux-router.go
-    │   │   └── router.go
-    │   └── stream
-    │       ├── stream.go
-    │       ├── mqtt-stream.go
-    │       └── stream.go
-    ├── interfaces
-    │   ├── controllers
-    │   │   ├── controller.go
-    │   │   ├── configuration-controller.go
-    │   │   ├── firmwares-controller.go
-    │   │   ├── networks-controller.go
-    │   │   └── schedule-controller.go
-    │   ├── repository
-    │   │   ├── repository.go
-    │   │   ├── firmware-repository.go
-    │   │   ├── networks-repository.go
-    │   │   └── schedules-repository.go
-    │   └── services
-    │       ├── services.go
-    │       └── stream-service.go
-    └── usecases
-        ├── usecases.go
-        ├── uc-devices.go
-        ├── uc-firmwares.go
-        ├── uc-networks.go
-        └── uc-schedules.go
-
-```
-
 ### General Notes:
 #### Generate Interface Stubs
     https://github.com/josharian/impl
@@ -132,12 +67,12 @@ Domain <- UseCases <- Interfaces <- Infrastructure: <== Main(Dependency Injectio
  *                attributes characterizing them.
  * Attributes ->  Represented by topic identifier starting with $
  * 
+ *   0       1            2                   3            4
  * homie / $broadcast / level : message
  * homie / device ID  / $state : last      (LWT)
  * homie / device ID  / $device-attribute
  * homie / device ID  / $device-attribute / property 
  * homie / device ID  / $device-attribute / property   / property
- *   0       1            2                   3            4
  * homie / device ID  / node ID           / $node-attribute
  * homie / device ID  / node ID           / property ID
  * homie / device ID  / node ID           / property ID / set-command
@@ -157,10 +92,6 @@ Domain <- UseCases <- Interfaces <- Infrastructure: <== Main(Dependency Injectio
  * homie / device ID  / $stats         / signal           : 92
  * homie / device ID  / $localip                          : 10.100.1.x
  *
- ** Currently $device-attributes longer than 1 are combined as single key
- * homie / device ID  / ($implmentation/ota/enabled)      : true
- * 
- *
  ** Special MQTT Message formats
  * BROADCAST MESSAGE FORMAT (low)
  * homie / $broadcast / level : message
@@ -169,37 +100,37 @@ Domain <- UseCases <- Interfaces <- Infrastructure: <== Main(Dependency Injectio
  * homie / device ID  / $implementation / ota    / status   : 206 written/total
  *
  * OTA FIRMWARE DOWNLOADS MESSAGE FORMAT
- * homie / device ID  / $implementation / ota    / firmware : <md5>
+ * homie / device ID  / $implementation / ota    / firmware / <md5> : <ota-transport-formatted>
  *
  * CONFIGURATION CHANGE MESSAGE FORMAT
  * homie / device ID  / $implementation / config / set      : <json>
  * 
  */
 
-/*
+/*  boltDB Operations
  *     0         1           2                   3                 4
  * sknSensors/device/node/version: 3.0.0
  *  * homie / device ID / $device-attribute
- *              NetworkBucket(Bucket(topic:value))
+ *    NetworkBucket(DeviceBucket(AttributeBucket(topic:value)))
  *
  *  * homie / device ID / $device-attribute / attribute-property 
- *              NetworkBucket(Bucket(Bucket(topic:value)))
+ *    NetworkBucket(DeviceBucket(AttributeBucket(PropertyBucket(topic:value)))))
  *
  *  * homie / device ID / $device-attribute / attribute-property / attr-prop-attr
- *				NetworkBucket(Bucket(Bucket(Bucket(topic:value))))
+ *	  NetworkBucket(DeviceBucket(AttributeBucket(PropertyBucket(PropertyBucket(topic:value)))))
  *
  *  * homie / device ID / node ID / $node-attribute
- *				NetworkBucket(Bucket(Bucket(topic:value)))
+ *	  NetworkBucket(DeviceBucket(NodeBucket(AttributeBucket(topic:value))))
  *
  *  * homie / device ID / node ID / node-property
- *				NetworkBucket(Bucket(Bucket(topic:value)))
+ *	  NetworkBucket(DeviceBucket(NodeBucket(PropertyBucket(topic:value))))
  *
  *  * homie / device ID / node ID /      property ID /        $property-attribute
- *				NetworkBucket(Bucket(Bucket(Bucket(topic:value))))
+ *	  NetworkBucket(DeviceBucket(NodeBucket(PropertyBucket(AttributeBucket(topic:value)))))
 */
 ```
 
-Database Console log od a single device
+Database Console log of a single device
 ```
 2021/02/22 14:19:07     [11] Device: OutsideMonitor
 2021/02/22 14:19:07              $fw/checksum --> 615fed382ab44bd43fe83508aecac682

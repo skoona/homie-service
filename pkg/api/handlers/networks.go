@@ -8,11 +8,12 @@ import (
 	"strings"
 )
 
-// swagger:route GET /networks networks SiteNetworks
-// Return a list of all onsite networks
+// swagger:route GET /networks network-tag noParamsRequired
+// Return a list of all onsite networks.
 // responses:
-//	200:
-//  500:
+//	202: networksResponse
+//  500: genericError
+
 // AllNetworks  List all SiteNetworks
 func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllNetworks() called")
@@ -20,7 +21,7 @@ func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 
 	body := c.service.AllNetworks()
 
-	rw.WriteHeader(http.StatusOK)
+	rw.WriteHeader(http.StatusAccepted)
 	err := ToJSON(body, rw)
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
@@ -28,11 +29,13 @@ func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /network network Network
-// Return a specified named network
+
+// swagger:route GET /network/{networkName:[a-zA-Z]+} network-tag networkNameParam
+// Return a specified named network.
 // responses:
-//	200:
-//  404:
+//	202: networkResponse
+//  404: genericError
+
 // NetworkByName (networkName string) Network
 func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "NetworkByName() called")
@@ -42,7 +45,7 @@ func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 
 	body := c.service.NetworkByName(vars["networkName"])
 
-	rw.WriteHeader(http.StatusOK)
+	rw.WriteHeader(http.StatusAccepted)
 	err := ToJSON(body, rw)
 	if err != nil {
 		level.Error(c.logger).Log( "error", err.Error())
@@ -51,12 +54,13 @@ func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /deviceByName deviceByName Device
-// Return a specified device on the named network
+// swagger:route GET /deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+} network-tag deviceByNameParams
+// Return a specified device on the named network.
 // responses:
-//	200:
-//  404:
-//  500:
+//	202: deviceResponse
+//  404: genericError
+//  500: genericError
+
 // DeviceByName (deviceName, networkName string) (Device, error)
 func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "DeviceByName() called")
@@ -66,7 +70,7 @@ func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 
 	body, err := c.service.DeviceByName(vars["deviceName"], vars["networkName"])
 	if err == nil {
-		rw.WriteHeader(http.StatusOK)
+		rw.WriteHeader(http.StatusAccepted)
 		err := ToJSON(body, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -80,12 +84,13 @@ func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 }
 
 
-// swagger:route GET /deviceByID deviceByID Device
+// swagger:route GET /deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag  deviceByIdParams
 // Return a specified device using it unique deviceID the named network
 // responses:
-//	200:
-//  404:
-//  500:
+//	202: deviceResponse
+//  404: genericError
+//  406: validationError
+//  500: genericError
 // DeviceByID (deviceID string, networkName string) (Device, error)
 func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "DeviceByID() called")
@@ -102,7 +107,7 @@ func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 
 	body, err := c.service.DeviceByID(vars["deviceID"], vars["networkName"])
 	if err == nil {
-		rw.WriteHeader(http.StatusOK)
+		rw.WriteHeader(http.StatusAccepted)
 		err := ToJSON(body, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -116,12 +121,12 @@ func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 }
 
 
-// swagger:route DELETE /removeDeviceID removeDeviceID
+// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams
 // Removes a device from the specified network
 // responses:
-//	204:
-//  404:
-//  406:
+//	204: noContentResponse
+//  404: genericError
+//  406: validationError
 // RemoveDeviceID (deviceID string, networkName string) error
 func (c *Controller) RemoveDeviceID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveDeviceID() called")
@@ -154,11 +159,13 @@ type NetworkMessageRequest struct {
 	Value    string `json:"value"`
 }
 
-// swagger:route POST /publishNetworkMessage publishNetworkMessage NetworkMessageRequest
+// swagger:route POST /publishNetworkMessage network-tag networkMessageParams
 // Return a specified device on the named network
 // responses:
-//	204:
-//  422:
+//	204: noContentResponse
+//  404: genericError
+//  406: validationError
+//  422: genericError
 
 // PublishNetworkMessage (dm DeviceMessage) topic, payload, qos, bRetained
 func (c *Controller) PublishNetworkMessage(rw http.ResponseWriter, r *http.Request) {
@@ -180,7 +187,7 @@ func (c *Controller) PublishNetworkMessage(rw http.ResponseWriter, r *http.Reque
 		c.logger.Log("validation", errs)
 
 		// return the validation messages as an array
-		rw.WriteHeader(http.StatusUnprocessableEntity)
+		rw.WriteHeader(http.StatusNotAcceptable)
 		ToJSON(&errs, rw)
 		return
 	}
