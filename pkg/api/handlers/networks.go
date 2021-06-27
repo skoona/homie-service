@@ -130,7 +130,7 @@ func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 }
 
 
-// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams
+// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams2
 // Removes a device from the specified network
 // responses:
 //	204: noContentResponse

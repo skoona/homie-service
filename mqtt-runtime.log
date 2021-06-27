@@ -99,3 +99,6 @@ level=info module=Homie-Service time:=2021-06-27T17:14:13.382509Z caller=middlew
 level=info module=Homie-Service time:=2021-06-27T17:14:13.442737Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=159.181µs
 level=info module=Homie-Service time:=2021-06-27T17:15:44.996162Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=23.989µs
 level=info module=Homie-Service time:=2021-06-27T17:15:45.055283Z caller=middlewares.go:59 ui=api status=200 method=GET path=/swagger.yaml duration=161.065µs
+level=info module=Homie-Service time:=2021-06-27T17:44:23.762796Z caller=middlewares.go:59 ui=api status=200 method=GET path=/docs duration=26.877µs
+level=info module=Homie-Service time:=2021-06-27T17:44:23.980987Z caller=middlewares.go:59 ui=api status=304 method=GET path=/swagger.yaml duration=70.095µs
+level=info module=Homie-Service time:=2021-06-27T18:08:28.587247Z caller=middlewares.go:59 ui=api status=404 method=GET path=/ duration=55.84µs

@@ -81,6 +81,14 @@ import (
 
 // swagger:route GET /deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+} network-tag deviceByNameParams
 // Return a specified device on the named network.
+// ---
+// parameters:
+//  - networkName
+//    in: path
+//    type: string
+//  - deviceName
+//    in: path
+//    type: string
 // responses:
 //	202: deviceResponse
 //  404: genericError
@@ -88,14 +96,30 @@ import (
 
 // swagger:route GET /deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag  deviceByIdParams
 // Return a specified device using it unique deviceID the named network
+// ---
+// parameters:
+//  - networkName
+//    in: path
+//    type: string
+//  - deviceID
+//    in: path
+//    type: string
 // responses:
 //	202: deviceResponse
 //  404: genericError
 //  406: validationError
 //  500: genericError
 
-// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams
+// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams2
 // Removes a device from the specified network
+// ---
+// parameters:
+//  - networkName
+//    in: path
+//    type: string
+//  - deviceID
+//    in: path
+//    type: string
 // responses:
 //	204: noContentResponse
 //  404: genericError
@@ -103,6 +127,9 @@ import (
 
 // swagger:route POST /publishNetworkMessage network-tag networkMessageParams
 // Return a specified device on the named network
+// ---
+// parameters:
+//  - networkMessageParams
 // responses:
 //	204: noContentResponse
 //  404: genericError
@@ -172,7 +199,7 @@ type deviceByNameRequestWrapper struct {
 }
 
 // params of network name and device ID
-// swagger:parameters deviceByIdParams
+// swagger:parameters deviceByIdParams deviceByIdParams2
 type deviceByIdRequestWrapper struct {
 	// name of network for device.
 	// pattern: [a-zA-Z]+
