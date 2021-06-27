@@ -8,11 +8,8 @@ import (
 	"strings"
 )
 
-// swagger:route GET /networks network-tag noParamsRequired
-// Return a list of all onsite networks.
-// ---
-// parameters:
-// - none
+// swagger:route GET /networks Network-Operations networks
+// List all SiteNetworks
 // responses:
 //	202: networksResponse
 //  500: genericError
@@ -33,13 +30,8 @@ func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 }
 
 
-// swagger:route GET /network/{networkName:[a-zA-Z]+} network-tag networkNameParam
-// Return a specified named network.
-// ---
-// parameters:
-//  - networkName
-//    in: path
-//    type: string
+// swagger:route GET /network/{networkName} Network-Operations network
+// Get specific network by name
 // responses:
 //	202: networkResponse
 //  404: genericError
@@ -62,8 +54,8 @@ func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// swagger:route GET /deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+} network-tag deviceByNameParams
-// Return a specified device on the named network.
+// swagger:route GET /deviceByName/{networkName}/{deviceName} Network-Operations deviceByName
+// Get a specific device on the named network
 // responses:
 //	202: deviceResponse
 //  404: genericError
@@ -92,8 +84,8 @@ func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 }
 
 
-// swagger:route GET /deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag  deviceByIdParams
-// Return a specified device using it unique deviceID the named network
+// swagger:route GET /deviceById/{networkName}/{deviceID} Network-Operations  deviceById
+// Get a specific device using its unique deviceID the named network
 // responses:
 //	202: deviceResponse
 //  404: genericError
@@ -130,8 +122,8 @@ func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 }
 
 
-// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams2
-// Removes a device from the specified network
+// swagger:route DELETE /removeDeviceId/{networkName}/{deviceID} Network-Operations removeDeviceId
+// Remove a device from the named network
 // responses:
 //	204: noContentResponse
 //  404: genericError
@@ -169,8 +161,8 @@ type NetworkMessageRequest struct {
 	Value    string `json:"value"`
 }
 
-// swagger:route POST /publishNetworkMessage network-tag networkMessageParams
-// Return a specified device on the named network
+// swagger:route POST /publishNetworkMessage Network-Operations publishNetworkMessage
+// Publish MQTT Message
 // responses:
 //	204: noContentResponse
 //  404: genericError

@@ -37,7 +37,6 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	_ "github.com/skoona/homie-service/pkg/api/docs"
 	api "github.com/skoona/homie-service/pkg/api/handlers"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
@@ -48,6 +47,7 @@ import (
 	"syscall"
 	"time"
 )
+
 
 func StartUp() (*dc.CoreService, *cc.Config) {
 	return services.Service()

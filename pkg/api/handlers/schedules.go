@@ -8,6 +8,12 @@ import (
 )
 
 
+// swagger:route GET /schedules Schedule-Operations schedules
+// List all device schedules
+// responses:
+//	202: schedulesResponse
+//  500: genericError
+
 // AllSchedules  []Schedule
 func (c *Controller) AllSchedules(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllSchedules() called")
@@ -15,13 +21,21 @@ func (c *Controller) AllSchedules(rw http.ResponseWriter, r *http.Request) {
 
 	body := c.service.AllSchedules()
 
-	rw.WriteHeader(http.StatusOK)
+	rw.WriteHeader(http.StatusAccepted)
 	err := ToJSON(body, rw)
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 		level.Error(c.logger).Log( "error", err.Error())
 	}
 }
+
+// swagger:route GET /scheduleByDeviceId/{deviceID} Schedule-Operations  scheduleByDeviceId
+// Get OTA schedule for a specific device
+// responses:
+//	202: scheduleResponse
+//  404: genericError
+//  406: validationError
+//  500: genericError
 
 // ScheduleByDeviceID (deviceID string) Schedule
 func (c *Controller) ScheduleByDeviceID(rw http.ResponseWriter, r *http.Request) {
@@ -39,7 +53,7 @@ func (c *Controller) ScheduleByDeviceID(rw http.ResponseWriter, r *http.Request)
 
 	body := c.service.ScheduleByDeviceID(vars["deviceID"])
 	if body.ElementType == dc.CoreTypeSchedule {
-		rw.WriteHeader(http.StatusOK)
+		rw.WriteHeader(http.StatusAccepted)
 		err := ToJSON(body, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -51,6 +65,14 @@ func (c *Controller) ScheduleByDeviceID(rw http.ResponseWriter, r *http.Request)
 		ToJSON(&GenericError{Message: "schedule not found"}, rw)
 	}
 }
+
+// swagger:route GET /scheduleById/{scheduleID} Schedule-Operations  scheduleById
+// Get a specific schedule using its unique id
+// responses:
+//	202: scheduleResponse
+//  404: genericError
+//  406: validationError
+//  500: genericError
 
 // ScheduleByID (scheduleID string) Schedule
 func (c *Controller) ScheduleByID(rw http.ResponseWriter, r *http.Request) {
@@ -68,7 +90,7 @@ func (c *Controller) ScheduleByID(rw http.ResponseWriter, r *http.Request) {
 
 	body := c.service.ScheduleByID(vars["scheduleID"])
 	if body.ElementType == dc.CoreTypeSchedule {
-		rw.WriteHeader(http.StatusOK)
+		rw.WriteHeader(http.StatusAccepted)
 		err := ToJSON(body, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -92,6 +114,16 @@ type CreateScheduleRequest struct {
 type CreateScheduleResponse struct {
 	ScheduleID string `json:"scheduleID"`
 }
+
+// swagger:route POST /createSchedule Schedule-Operations  createSchedule
+// Create a new device OTA schedule
+// responses:
+//	202: scheduleIdResponse
+//  404: genericError
+//  406: validationError
+//  422: genericError
+//  500: genericError
+
 // CreateSchedule (networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
 func (c *Controller) CreateSchedule(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "CreateSchedule() called")
@@ -112,14 +144,14 @@ func (c *Controller) CreateSchedule(rw http.ResponseWriter, r *http.Request) {
 		c.logger.Log("validation", errs)
 
 		// return the validation messages as an array
-		rw.WriteHeader(http.StatusUnprocessableEntity)
+		rw.WriteHeader(http.StatusNotAcceptable)
 		ToJSON(&errs, rw)
 		return
 	}
 
 	body, err := c.service.CreateSchedule(csr.NetworkName, csr.DeviceID, dc.OTATransport(csr.Transport), dc.EID(csr.FirmwareID))
 	if err == nil {
-		rw.WriteHeader(http.StatusOK)
+		rw.WriteHeader(http.StatusAccepted)
 		err := ToJSON(CreateScheduleResponse{body}, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -132,6 +164,12 @@ func (c *Controller) CreateSchedule(rw http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// swagger:route DELETE /removeScheduleId/{scheduleID} Schedule-Operations removeScheduleId
+// Remove a device from the named network
+// responses:
+//	204: noContentResponse
+//  404: genericError
+//  406: validationError
 
 // RemoveSchedule (scheduleID string)
 func (c *Controller) RemoveSchedule(rw http.ResponseWriter, r *http.Request) {

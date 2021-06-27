@@ -411,21 +411,229 @@ info:
   title: Homie-Service API
   version: 1.0.0
 paths:
+  /broadcastById/{broadcastID}:
+    get:
+      description: Get a specific broadcast
+      operationId: broadcastById
+      parameters:
+      - in: path
+        name: broadcastID
+        required: true
+        type: string
+        x-go-name: BroadcastID
+      responses:
+        "202":
+          $ref: '#/responses/broadcastResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Broadcast-Operations
+      - ""
+  /createFirmware:
+    post:
+      description: Add a new homie firmware to the collection
+      operationId: createFirmware
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/CreateFirmwareRequest'
+      responses:
+        "202":
+          $ref: '#/responses/firmwareIdResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Firmware-Operations
+  /createSchedule:
+    get:
+      description: List all broadcasts
+      operationId: broadcasts
+      responses:
+        "202":
+          $ref: '#/responses/broadcastsResponse'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Broadcast-Operations
+      - ""
+    post:
+      description: Create a new device OTA schedule
+      operationId: createSchedule
+      parameters:
+      - in: body
+        name: Body
+        schema:
+          $ref: '#/definitions/CreateScheduleRequest'
+      responses:
+        "202":
+          $ref: '#/responses/scheduleIdResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "422":
+          $ref: '#/responses/genericError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Schedule-Operations
+      - ""
+  /deviceById/{networkName}/{deviceID}:
+    get:
+      description: Get a specific device using its unique deviceID the named network
+      operationId: deviceById
+      parameters:
+      - description: name of network for device.
+        in: path
+        name: networkName
+        pattern: '[a-zA-Z]+'
+        required: true
+        type: string
+        x-go-name: NetworkName
+      - description: 32 char identifier for device
+        in: path
+        name: deviceID
+        pattern: '[a-zA-Z0-9]+'
+        required: true
+        type: string
+        x-go-name: DeviceID
+      responses:
+        "202":
+          $ref: '#/responses/deviceResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Network-Operations
+      - ""
+  /deviceByName/{networkName}/{deviceName}:
+    get:
+      description: Get a specific device on the named network
+      operationId: deviceByName
+      parameters:
+      - description: name of network for device.
+        in: path
+        name: networkName
+        pattern: '[a-zA-Z]+'
+        required: true
+        type: string
+        x-go-name: NetworkName
+      - description: homie device name
+        in: path
+        name: deviceName
+        pattern: '[a-zA-Z]+'
+        required: true
+        type: string
+        x-go-name: DeviceName
+      responses:
+        "202":
+          $ref: '#/responses/deviceResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Network-Operations
+  /firmwareById/{firmwareID}:
+    get:
+      description: Get specific firmware details
+      operationId: firmwareById
+      parameters:
+      - in: path
+        name: firmwareID
+        required: true
+        type: string
+        x-go-name: FirmwareID
+      responses:
+        "202":
+          $ref: '#/responses/firmwareResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Firmware-Operations
+  /firmwareByName/{firmwareName}:
+    get:
+      description: Get specific firmware details
+      operationId: firmwareByName
+      parameters:
+      - in: path
+        name: firmwareName
+        required: true
+        type: string
+        x-go-name: FirmwareName
+      responses:
+        "202":
+          $ref: '#/responses/firmwareResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Firmware-Operations
+  /firmwares:
+    get:
+      description: List all firmwares on file
+      operationId: firmwares
+      responses:
+        "202":
+          $ref: '#/responses/firmwaresResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Firmware-Operations
+  /network/{networkName}:
+    get:
+      description: Get specific network by name
+      operationId: network
+      parameters:
+      - in: path
+        name: networkName
+        pattern: '[a-zA-Z]+'
+        required: true
+        type: string
+        x-go-name: NetworkName
+      responses:
+        "202":
+          $ref: '#/responses/networkResponse'
+        "404":
+          $ref: '#/responses/genericError'
+      tags:
+      - Network-Operations
   /networks:
     get:
-      operationId: noParamsRequired
+      description: List all SiteNetworks
+      operationId: networks
       responses:
         "202":
           $ref: '#/responses/networksResponse'
         "500":
           $ref: '#/responses/genericError'
-      summary: Return a list of all onsite networks.
       tags:
-      - network-tag
+      - Network-Operations
   /publishNetworkMessage:
     post:
-      description: Return a specified device on the named network
-      operationId: networkMessageParams
+      description: Publish MQTT Message
+      operationId: publishNetworkMessage
       parameters:
       - in: body
         name: Body
@@ -441,7 +649,141 @@ paths:
         "422":
           $ref: '#/responses/genericError'
       tags:
-      - network-tag
+      - Network-Operations
+  /removeBroadcastId/{broadcastID}:
+    delete:
+      description: Remove a specific broadcast
+      operationId: removeBroadcastId
+      parameters:
+      - in: path
+        name: broadcastID
+        required: true
+        type: string
+        x-go-name: BroadcastID
+      responses:
+        "202":
+          $ref: '#/responses/noContentResponse'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Broadcast-Operations
+      - ""
+  /removeDeviceId/{networkName}/{deviceID}:
+    delete:
+      description: Remove a device from the named network
+      operationId: removeDeviceId
+      parameters:
+      - description: name of network for device.
+        in: path
+        name: networkName
+        pattern: '[a-zA-Z]+'
+        required: true
+        type: string
+        x-go-name: NetworkName
+      - description: 32 char identifier for device
+        in: path
+        name: deviceID
+        pattern: '[a-zA-Z0-9]+'
+        required: true
+        type: string
+        x-go-name: DeviceID
+      responses:
+        "204":
+          $ref: '#/responses/noContentResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+      tags:
+      - Network-Operations
+  /removeFirmwareId/{firmwareID}:
+    delete:
+      description: delete a specific firmware and filesystem file
+      operationId: removeFirmwareId
+      parameters:
+      - in: path
+        name: firmwareID
+        required: true
+        type: string
+        x-go-name: FirmwareID
+      responses:
+        "204":
+          $ref: '#/responses/noContentResponse'
+        "406":
+          $ref: '#/responses/validationError'
+      tags:
+      - Firmware-Operations
+  /removeScheduleId/{scheduleID}:
+    delete:
+      description: Remove a device from the named network
+      operationId: removeScheduleId
+      parameters:
+      - in: path
+        name: scheduleID
+        required: true
+        type: string
+        x-go-name: ScheduleID
+      responses:
+        "204":
+          $ref: '#/responses/noContentResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+      tags:
+      - Schedule-Operations
+  /scheduleByDeviceId/{deviceID}:
+    get:
+      description: Get OTA schedule for a specific device
+      operationId: scheduleByDeviceId
+      parameters:
+      - in: path
+        name: deviceID
+        pattern: '[0-9a-zA-Z]+'
+        required: true
+        type: string
+        x-go-name: DeviceID
+      responses:
+        "202":
+          $ref: '#/responses/scheduleResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Schedule-Operations
+      - ""
+  /scheduleById/{scheduleID}:
+    get:
+      description: Get a specific schedule using its unique id
+      operationId: scheduleById
+      responses:
+        "202":
+          $ref: '#/responses/scheduleResponse'
+        "404":
+          $ref: '#/responses/genericError'
+        "406":
+          $ref: '#/responses/validationError'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Schedule-Operations
+      - ""
+  /schedules:
+    get:
+      description: List all device schedules
+      operationId: schedules
+      responses:
+        "202":
+          $ref: '#/responses/schedulesResponse'
+        "500":
+          $ref: '#/responses/genericError'
+      tags:
+      - Schedule-Operations
 produces:
 - application/json
 responses:
@@ -494,6 +836,12 @@ responses:
     description: schedule declared for device.
     schema:
       $ref: '#/definitions/Schedule'
+  schedulesResponse:
+    description: list all device schedules
+    schema:
+      items:
+        $ref: '#/definitions/Schedule'
+      type: array
   validationError:
     description: a collection of validation error messages.
     schema:

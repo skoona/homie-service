@@ -54,89 +54,11 @@
 package docs
 
 import (
-	_ "github.com/pdrum/swagger-automation/api"
 	"github.com/skoona/homie-service/pkg/api/handlers"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 )
 
-// swagger:route GET /networks network-tag noParamsRequired
-// Return a list of all onsite networks.
-// ---
-// parameters:
-// - none
-// responses:
-//	202: networksResponse
-//  500: genericError
-
-// swagger:route GET /network/{networkName:[a-zA-Z]+} network-tag networkNameParam
-// Return a specified named network.
-// ---
-// parameters:
-//  - networkName
-//    in: path
-//    type: string
-// responses:
-//	202: networkResponse
-//  404: genericError
-
-// swagger:route GET /deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+} network-tag deviceByNameParams
-// Return a specified device on the named network.
-// ---
-// parameters:
-//  - networkName
-//    in: path
-//    type: string
-//  - deviceName
-//    in: path
-//    type: string
-// responses:
-//	202: deviceResponse
-//  404: genericError
-//  500: genericError
-
-// swagger:route GET /deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag  deviceByIdParams
-// Return a specified device using it unique deviceID the named network
-// ---
-// parameters:
-//  - networkName
-//    in: path
-//    type: string
-//  - deviceID
-//    in: path
-//    type: string
-// responses:
-//	202: deviceResponse
-//  404: genericError
-//  406: validationError
-//  500: genericError
-
-// swagger:route DELETE /removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+} network-tag deviceByIdParams2
-// Removes a device from the specified network
-// ---
-// parameters:
-//  - networkName
-//    in: path
-//    type: string
-//  - deviceID
-//    in: path
-//    type: string
-// responses:
-//	204: noContentResponse
-//  404: genericError
-//  406: validationError
-
-// swagger:route POST /publishNetworkMessage network-tag networkMessageParams
-// Return a specified device on the named network
-// ---
-// parameters:
-//  - networkMessageParams
-// responses:
-//	204: noContentResponse
-//  404: genericError
-//  406: validationError
-//  422: genericError
-
-// swagger:parameters noParamsRequired
+// swagger:parameters networks schedules firmwares broadcasts
 type noContentRequestWrapper struct {
 	// No content is expected
 	// In: path
@@ -164,11 +86,19 @@ type genericErrorWrapper struct {
 }
 
 // indicates a specific network by name.
-// swagger:parameters networkNameParam
+// swagger:parameters network
 type networkNameParamsWrapper struct {
 	// pattern: [a-zA-Z]+
 	// In: path
 	NetworkName string `json:"networkName"`
+}
+
+// indicates a specific device by id.
+// swagger:parameters scheduleByDeviceId
+type deviceIdParamsWrapper struct {
+	// pattern: [0-9a-zA-Z]+
+	// In: path
+	DeviceID string `json:"deviceID"`
 }
 
 // returns site network structure.
@@ -186,7 +116,7 @@ type networkByNameResponseWrapper struct {
 }
 
 // params of network and device names
-// swagger:parameters deviceByNameParams
+// swagger:parameters deviceByName
 type deviceByNameRequestWrapper struct {
 	// name of network for device.
 	// pattern: [a-zA-Z]+
@@ -199,7 +129,7 @@ type deviceByNameRequestWrapper struct {
 }
 
 // params of network name and device ID
-// swagger:parameters deviceByIdParams deviceByIdParams2
+// swagger:parameters deviceById removeDeviceId
 type deviceByIdRequestWrapper struct {
 	// name of network for device.
 	// pattern: [a-zA-Z]+
@@ -220,21 +150,21 @@ type deviceByNameResponseWrapper struct {
 }
 
 // params  to send any message over MQTT.
-// swagger:parameters networkMessageParams
+// swagger:parameters publishNetworkMessage
 type NetworkMessageRequestWrapper struct {
 	// In: body
 	Body handlers.NetworkMessageRequest
 }
 
 // params to create a new firmware OTA schedule.
-// swagger:parameters createScheduleParams
+// swagger:parameters createSchedule
 type CreateScheduleRequestWrapper struct {
 	// In: body
 	Body handlers.CreateScheduleRequest
 }
 
 // ID of a schedule.
-// swagger:parameters scheduleIdParam
+// swagger:parameters scheduleIdParam  Schedule removeScheduleId
 type ScheduleIdRequestWrapper struct {
 	// In: path
 	ScheduleID string `json:"scheduleID"`
@@ -254,6 +184,13 @@ type ScheduleResponseWrapper struct {
 	Body dc.Schedule `json:"schedule"`
 }
 
+// list all device schedules
+// swagger:response schedulesResponse
+type SchedulesResponseWrapper struct {
+	// In: body
+	Body []dc.Schedule `json:"schedules"`
+}
+
 // details of every firmware on file.
 // swagger:response firmwaresResponse
 type FirmwaresResponseWrapper struct {
@@ -262,21 +199,21 @@ type FirmwaresResponseWrapper struct {
 }
 
 // params to upload a new firmware.
-// swagger:parameters firmwareCreateParams
+// swagger:parameters createFirmware
 type CreateFirmwareRequestWrapper struct {
 	// In: body
 	Body handlers.CreateFirmwareRequest
 }
 
 // get a firmware by its ID.
-// swagger:parameters firmwareIdParam
+// swagger:parameters firmwareById removeFirmwareId
 type FirmwareIdParamWrapper struct {
 	// In: path
 	FirmwareID string `json:"firmwareID"`
 }
 
 // get firmware by its filename.
-// swagger:parameters firmwareNameParam
+// swagger:parameters firmwareByName
 type FirmwareNameParamWrapper struct {
 	// In: path
 	FirmwareName string `json:"firmwareName"`
@@ -297,7 +234,7 @@ type FirmwareResponseWrapper struct {
 }
 
 // get a particular broadcast by its ID.
-// swagger:parameters broadcastIdParam
+// swagger:parameters broadcastById removeBroadcastId
 type BroadcastIdParamWrapper struct {
 	// In: path
 	BroadcastID string `json:"broadcastID"`

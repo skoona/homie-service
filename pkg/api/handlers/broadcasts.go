@@ -8,6 +8,12 @@ import (
 
 
 
+// swagger:route GET /createSchedule Broadcast-Operations  broadcasts
+// List all broadcasts
+// responses:
+//	202: broadcastsResponse
+//  500: genericError
+
 // AllBroadcasts () []Broadcast
 func (c *Controller) AllBroadcasts(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllBroadcasts() called")
@@ -22,6 +28,15 @@ func (c *Controller) AllBroadcasts(rw http.ResponseWriter, r *http.Request) {
 		level.Error(c.logger).Log( "error", err.Error())
 	}
 }
+
+
+// swagger:route GET /broadcastById/{broadcastID} Broadcast-Operations  broadcastById
+// Get a specific broadcast
+// responses:
+//	202: broadcastResponse
+//  404: genericError
+//  406: validationError
+//  500: genericError
 
 // BroadcastByID (broadcastID string) (Broadcast, error)
 func (c *Controller) BroadcastByID(rw http.ResponseWriter, r *http.Request) {
@@ -39,7 +54,7 @@ func (c *Controller) BroadcastByID(rw http.ResponseWriter, r *http.Request) {
 
 	body, err := c.service.BroadcastByID(vars["broadcastID"])
 	if err == nil {
-		rw.WriteHeader(http.StatusOK)
+		rw.WriteHeader(http.StatusAccepted)
 		err := ToJSON(body, rw)
 		if err != nil {
 			rw.WriteHeader(http.StatusInternalServerError)
@@ -51,6 +66,14 @@ func (c *Controller) BroadcastByID(rw http.ResponseWriter, r *http.Request) {
 		ToJSON(&GenericError{Message: err.Error()}, rw)
 	}
 }
+
+
+// swagger:route DELETE /removeBroadcastId/{broadcastID} Broadcast-Operations  removeBroadcastId
+// Remove a specific broadcast
+// responses:
+//	202: noContentResponse
+//  406: validationError
+//  500: genericError
 
 // RemoveBroadcastID (broadcastID string)
 func (c *Controller) RemoveBroadcastID(rw http.ResponseWriter, r *http.Request) {
