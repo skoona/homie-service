@@ -4,17 +4,24 @@
 package main
 
 import (
-	"encoding/json"
+	"errors"
 	"fmt"
+	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/theme"
+	"github.com/skoona/homie-service/pkg/gui/views"
 	"os"
 	"os/signal"
 	"syscall"
 
+	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/container"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
 	cc "github.com/skoona/homie-service/pkg/utils"
+	//"fyne.io/fyne/v2/theme"
+	"fyne.io/fyne/v2/widget"
 )
 
 
@@ -29,11 +36,25 @@ func Shutdown() {
 
 func main() {
 
-	coreSvc, cfg := StartUp()
-	siteNetworks := coreSvc.PrivateSiteNetworks()
+	//coreSvc, cfg := StartUp()
+	_, cfg := StartUp()
 	logger := log.With(cfg.Logger, "ui", "base")
 
 	// implement gui here and in ./pkg/gui/{controllers,views,actions}
+	myApp := app.New()
+	myWindow := myApp.NewWindow("Homie Service")
+
+	tabs := container.NewAppTabs(
+		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), views.DefaultContent()),
+		container.NewTabItemWithIcon("Schedules", theme.DocumentCreateIcon(), views.DefaultContent()),
+		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), views.DefaultContent()),
+		container.NewTabItemWithIcon("Broadcasts", theme.InfoIcon(), views.DefaultContent()),
+		container.NewTabItemWithIcon("Preferences", theme.SettingsIcon(), widget.NewLabel("Preferences!")),
+	)
+	tabs.SetTabLocation(container.TabLocationTop)
+	myWindow.SetContent(tabs)
+	myWindow.Resize(fyne.NewSize(600, 800))
+
 
 	/*
 	 * Prepare for clean exit
@@ -45,18 +66,14 @@ func main() {
 		sig := <-systemSignalChannel // wait on ctrl-c
 		shutdown <- fmt.Errorf("%s", sig)
 	}(errs)
+
+	myWindow.ShowAndRun()
+	errs <- errors.New("Fyne GUI Shutdown")
+
+
 	level.Info(logger).Log("event", "shutdown requested", "cause", <-errs)
 
 	Shutdown()
-
-	// Dump the SiteNetwork and all nodes as JSON
-	out, err := json.MarshalIndent(siteNetworks, "", "  ")
-	if err != nil {
-		level.Warn(logger).Log("action", err.Error())
-	} else {
-		fmt.Println("Site Network")
-		fmt.Println(string(out))
-	}
 
 	os.Exit(0)
 }
