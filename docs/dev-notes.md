@@ -1,5 +1,9 @@
 # HomieExplorer Tech Notes
 
+### Swagger build spec
+    $  make
+    $  swagger generate spec -o ./swagger.yaml --scan-models
+
 ## Work flows
 * From infra.MQTT --> intf.MQTT --> usec.MQTT --> Domain
 * From infra.WebAPI --> intf.WebAPI --> usec.WebAPI --> Domain

@@ -14,8 +14,8 @@ import (
 //	202: broadcastsResponse
 //  500: genericError
 
-// AllBroadcasts () []Broadcast
-func (c *Controller) AllBroadcasts(rw http.ResponseWriter, r *http.Request) {
+// Broadcasts () []Broadcast
+func (c *Controller) Broadcasts(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllBroadcasts() called")
 	rw.Header().Add("Content-Type", "application/json")
 

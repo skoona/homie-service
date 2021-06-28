@@ -91,7 +91,7 @@ func main() {
 	getR.HandleFunc("/firmwareByName/{firmwareName:[a-zA-Z0-9]+}", ctrl.FirmwareByName)
 	getR.HandleFunc("/firmwareById/{firmwareID:[a-zA-Z0-9]+}", ctrl.FirmwareByID)
 
-	getR.HandleFunc("/broadcasts", ctrl.AllBroadcasts)
+	getR.HandleFunc("/broadcasts", ctrl.Broadcasts)
 	getR.HandleFunc("/broadcastById/{broadcastID:[a-zA-Z0-9]+}", ctrl.BroadcastByID)
 
 	delR := sm.PathPrefix("/api/v1").
