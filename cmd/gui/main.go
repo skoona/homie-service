@@ -8,7 +8,7 @@ import (
 	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/theme"
-	"github.com/skoona/homie-service/pkg/gui/views"
+	views2 "github.com/skoona/homie-service/pkg/UIAdapters/gui/views"
 	"os"
 	"os/signal"
 	"syscall"
@@ -45,10 +45,10 @@ func main() {
 	myWindow := myApp.NewWindow("Homie Service")
 
 	tabs := container.NewAppTabs(
-		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), views.DefaultContent()),
-		container.NewTabItemWithIcon("Schedules", theme.DocumentCreateIcon(), views.DefaultContent()),
-		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), views.DefaultContent()),
-		container.NewTabItemWithIcon("Broadcasts", theme.InfoIcon(), views.DefaultContent()),
+		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), views2.DefaultContent()),
+		container.NewTabItemWithIcon("Schedules", theme.DocumentCreateIcon(), views2.DefaultContent()),
+		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), views2.DefaultContent()),
+		container.NewTabItemWithIcon("Broadcasts", theme.InfoIcon(), views2.DefaultContent()),
 		container.NewTabItemWithIcon("Preferences", theme.SettingsIcon(), widget.NewLabel("Preferences!")),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)

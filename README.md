@@ -32,20 +32,22 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 ├── LICENSE
 ├── Makefile
 ├── README.md
-├── bin
 ├── cmd
 │   ├── api
 │   │   └── main.go
 │   ├── base
 │   │   └── main.go
 │   ├── cli
+│   │   └── main
 │   └── gui
+│       └── main.go
 ├── config
 │   ├── demo-config.yml
 │   ├── mqtt-config.yml
 │   └── test-config.yml
 ├── dataDB
 │   ├── dataDir
+│   │   ├── devices.db
 │   │   └── storage.db
 │   ├── demoData
 │   │   └── mosquitto.log
@@ -56,11 +58,12 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 │   └── testData
 │       ├── mosquitto_test.log
 │       └── storage_test.db
+├── demo-runtime.log
 ├── docs
-│   ├── notes.md
-│   └── testData.txt
+│   └── dev-notes.md
 ├── go.mod
 ├── go.sum
+├── mqtt-runtime.log
 ├── pkg
 │   ├── api
 │   │   ├── docs
@@ -103,6 +106,20 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 │   │   ├── repository.go
 │   │   ├── storage_test.go
 │   │   └── usecase.go
+│   ├── gui
+│   │   ├── controllers
+│   │   │   └── controller.go
+│   │   ├── events
+│   │   │   ├── broadcasts.go
+│   │   │   ├── firmwares.go
+│   │   │   ├── networks.go
+│   │   │   └── schedules.go
+│   │   └── views
+│   │       ├── broadcasts.go
+│   │       ├── firmwares.go
+│   │       ├── networks.go
+│   │       ├── schedules.go
+│   │       └── views.go
 │   ├── mqttProvider
 │   │   ├── mqttProvider_suite_test.go
 │   │   ├── service.go

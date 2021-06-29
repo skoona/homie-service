@@ -37,7 +37,7 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	api "github.com/skoona/homie-service/pkg/api/handlers"
+	"github.com/skoona/homie-service/pkg/UIAdapters/api/handlers"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
 	cc "github.com/skoona/homie-service/pkg/utils"
@@ -66,8 +66,8 @@ func main() {
 
 	logger := log.With(cfg.Logger, "ui", "api")
 
-	validator := api.NewValidation()
-	ctrl := api.NewApiController(coreSvc, &logger, validator)
+	validator := handlers.NewValidation()
+	ctrl := handlers.NewApiController(coreSvc, &logger, validator)
 
 	// create a new serve mux and register the handlers
 	sm := mux.NewRouter()
@@ -126,7 +126,7 @@ func main() {
 	errs := make(chan error, 1)
 
 	// Create an instance of our LoggingMiddleware with our configured logger
-	loggingMiddleware := api.LoggingMiddleware(level.Info(logger))
+	loggingMiddleware := handlers.LoggingMiddleware(level.Info(logger))
 	loggedRouter := loggingMiddleware(ch(sm))
 
 	// create a new server

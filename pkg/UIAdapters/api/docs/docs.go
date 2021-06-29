@@ -54,7 +54,7 @@
 package docs
 
 import (
-	"github.com/skoona/homie-service/pkg/api/handlers"
+	handlers2 "github.com/skoona/homie-service/pkg/UIAdapters/api/handlers"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 )
 
@@ -68,21 +68,21 @@ type noContentRequestWrapper struct {
 // swagger:response noContentResponse
 type noContentResponseWrapper struct {
 	// In: body
-	Body handlers.NoContent
+	Body handlers2.NoContent
 }
 
 // a collection of validation error messages.
 // swagger:response validationError
 type validationErrorMessageWrapper struct {
 	// In: body
-	Body handlers.ValidationErrorMessage
+	Body handlers2.ValidationErrorMessage
 }
 
 // generic error message returned by the server.
 // swagger:response genericError
 type genericErrorWrapper struct {
 	// In: body
-	Body handlers.GenericError
+	Body handlers2.GenericError
 }
 
 // indicates a specific network by name.
@@ -161,14 +161,14 @@ type devicesResponseWrapper struct {
 // swagger:parameters publishNetworkMessage
 type NetworkMessageRequestWrapper struct {
 	// In: body
-	Body handlers.NetworkMessageRequest
+	Body handlers2.NetworkMessageRequest
 }
 
 // params to create a new firmware OTA schedule.
 // swagger:parameters createSchedule
 type CreateScheduleRequestWrapper struct {
 	// In: body
-	Body handlers.CreateScheduleRequest
+	Body handlers2.CreateScheduleRequest
 }
 
 // ID of a schedule.
@@ -210,7 +210,7 @@ type FirmwaresResponseWrapper struct {
 // swagger:parameters createFirmware
 type CreateFirmwareRequestWrapper struct {
 	// In: body
-	Body handlers.CreateFirmwareRequest
+	Body handlers2.CreateFirmwareRequest
 }
 
 // get a firmware by its ID.
