@@ -17,7 +17,6 @@ import (
 // AllSchedules  []Schedule
 func (c *Controller) AllSchedules(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllSchedules() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	body := c.service.AllSchedules()
 
@@ -40,7 +39,6 @@ func (c *Controller) AllSchedules(rw http.ResponseWriter, r *http.Request) {
 // ScheduleByDeviceID (deviceID string) Schedule
 func (c *Controller) ScheduleByDeviceID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "ScheduleByDeviceID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["deviceID"], "eid")
@@ -77,7 +75,6 @@ func (c *Controller) ScheduleByDeviceID(rw http.ResponseWriter, r *http.Request)
 // ScheduleByID (scheduleID string) Schedule
 func (c *Controller) ScheduleByID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "ScheduleByID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["scheduleID"], "eid")
@@ -127,7 +124,6 @@ type CreateScheduleResponse struct {
 // CreateSchedule (networkName string, deviceID string, transport OTATransport, firmwareID EID) (string, error)
 func (c *Controller) CreateSchedule(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "CreateSchedule() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	csr := CreateScheduleRequest{}
 	err := FromJSON(&csr, r.Body)
@@ -174,7 +170,6 @@ func (c *Controller) CreateSchedule(rw http.ResponseWriter, r *http.Request) {
 // RemoveSchedule (scheduleID string)
 func (c *Controller) RemoveSchedule(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveSchedule() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["scheduleID"], "eid")

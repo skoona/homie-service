@@ -18,7 +18,6 @@ import (
 // AllNetworks  List all SiteNetworks
 func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllNetworks() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	body := c.service.AllNetworks()
 
@@ -41,7 +40,6 @@ func (c *Controller) AllNetworks(rw http.ResponseWriter, r *http.Request) {
 // NetworkDevices (networkName string) (map[string]Device)
 func (c *Controller) NetworkDevices(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "NetworkDevices() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 
@@ -73,7 +71,6 @@ func (c *Controller) NetworkDevices(rw http.ResponseWriter, r *http.Request) {
 // NetworkByName (networkName string) Network
 func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "NetworkByName() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 
@@ -104,7 +101,6 @@ func (c *Controller) NetworkByName(rw http.ResponseWriter, r *http.Request) {
 // DeviceByName (deviceName, networkName string) (Device, error)
 func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "DeviceByName() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 
@@ -135,7 +131,6 @@ func (c *Controller) DeviceByName(rw http.ResponseWriter, r *http.Request) {
 // DeviceByID (deviceID string, networkName string) (Device, error)
 func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "DeviceByID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["deviceID"], "eid")
@@ -172,7 +167,6 @@ func (c *Controller) DeviceByID(rw http.ResponseWriter, r *http.Request) {
 // RemoveDeviceID (deviceID string, networkName string) error
 func (c *Controller) RemoveDeviceID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveDeviceID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["deviceID"], "eid")
@@ -212,7 +206,6 @@ type NetworkMessageRequest struct {
 // PublishNetworkMessage (dm DeviceMessage) topic, payload, qos, bRetained
 func (c *Controller) PublishNetworkMessage(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveDeviceID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	nmr := NetworkMessageRequest{}
 	err := FromJSON(&nmr, r.Body)
@@ -223,7 +216,7 @@ func (c *Controller) PublishNetworkMessage(rw http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	// validate the product
+	// validate the request
 	errs := c.validation.ValidateStruct(nmr)
 	if len(errs.Messages) != 0 {
 		c.logger.Log("validation", errs)

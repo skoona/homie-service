@@ -71,6 +71,10 @@ func main() {
 
 	// create a new serve mux and register the handlers
 	sm := mux.NewRouter()
+	lmw := handlers.LoggingMiddleware(logger)
+	sm.Use(lmw)
+	sm.Use(handlers.CommonMiddleware)
+	sm.Use( gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"})))
 
 	// handlers for API
 	getR := sm.PathPrefix("/api/v1").
@@ -117,31 +121,17 @@ func main() {
 	gDocs.Handle("/docs", sh)
 	gDocs.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
 
-	// CORS
-	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"}))
+	apiServer := handlers.NewAPIServer(cfg.Api.BindAddress, sm,5, 10, 120)
 
 	/*
 	 * Prepare for clean exit
 	 */
 	errs := make(chan error, 1)
 
-	// Create an instance of our LoggingMiddleware with our configured logger
-	loggingMiddleware := handlers.LoggingMiddleware(level.Info(logger))
-	loggedRouter := loggingMiddleware(ch(sm))
-
-	// create a new server
-	s := http.Server{
-		Addr:         cfg.Api.BindAddress,  // configure the bind address
-		Handler:      loggedRouter,         // set the default handler
-		ReadTimeout:  5 * time.Second,      // max time to read request from the client
-		WriteTimeout: 10 * time.Second,     // max time to write response to the client
-		IdleTimeout:  120 * time.Second,    // max time for connections using TCP Keep-Alive
-	}
-
 	// start the server
 	go func() {
 		level.Info(logger).Log("event", "starting server", "serving", cfg.Api.BindAddress)
-		errs <- s.ListenAndServe()
+		errs <- apiServer.ListenAndServe()
 	}()
 
 	go func(shutdown chan error) {
@@ -153,7 +143,7 @@ func main() {
 	level.Info(logger).Log("event", "shutdown requested", "cause", <-errs)
 
 	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	s.Shutdown(ctx)
+	apiServer.Shutdown(ctx)
 	Shutdown()
 
 	os.Exit(0)

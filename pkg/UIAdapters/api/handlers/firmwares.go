@@ -19,7 +19,6 @@ import (
 // AllFirmwares a list of  []Firmware
 func (c *Controller) AllFirmwares(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllFirmwares() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	body := c.service.AllFirmwares()
 
@@ -53,8 +52,6 @@ type CreateFirmwareResponse struct {
 // CreateFirmware (srcFile, dstFile string) (EID, error)
 func (c *Controller) CreateFirmware(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "CreateFirmware() called")
-	rw.Header().Add("Content-Type", "application/json")
-
 
 	cfr := CreateFirmwareRequest{}
 	err := FromJSON(&cfr, r.Body)
@@ -103,10 +100,8 @@ func (c *Controller) CreateFirmware(rw http.ResponseWriter, r *http.Request) {
 // FirmwareByID (firmwareID EID) (Firmware, error)
 func (c *Controller) FirmwareByID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "FirmwareByID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
-
 	emsg := c.validation.ValidateParam(vars["firmwareID"], "eid")
 	if len(emsg.Messages) != 0 {
 		rw.WriteHeader(http.StatusNotAcceptable)
@@ -141,10 +136,8 @@ func (c *Controller) FirmwareByID(rw http.ResponseWriter, r *http.Request) {
 // FirmwareByName (firmwareName string) (Firmware, error)
 func (c *Controller) FirmwareByName(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "FirmwareByName() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
-
 	body, err := c.service.FirmwareByName(vars["firmwareName"])
 	if err == nil {
 		rw.WriteHeader(http.StatusAccepted)
@@ -170,7 +163,6 @@ func (c *Controller) FirmwareByName(rw http.ResponseWriter, r *http.Request) {
 // RemoveFirmwareID (firmwareID EID)
 func (c *Controller) RemoveFirmwareID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveFirmwareByID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["firmwareID"], "eid")

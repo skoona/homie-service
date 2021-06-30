@@ -17,7 +17,6 @@ import (
 // Broadcasts () []Broadcast
 func (c *Controller) Broadcasts(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "AllBroadcasts() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	body := c.service.AllBroadcasts()
 
@@ -41,7 +40,6 @@ func (c *Controller) Broadcasts(rw http.ResponseWriter, r *http.Request) {
 // BroadcastByID (broadcastID string) (Broadcast, error)
 func (c *Controller) BroadcastByID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "BroadcastByID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["broadcastID"], "eid")
@@ -78,7 +76,6 @@ func (c *Controller) BroadcastByID(rw http.ResponseWriter, r *http.Request) {
 // RemoveBroadcastID (broadcastID string)
 func (c *Controller) RemoveBroadcastID(rw http.ResponseWriter, r *http.Request) {
 	level.Debug(c.logger).Log( "api-method", "RemoveBroadcastID() called")
-	rw.Header().Add("Content-Type", "application/json")
 
 	vars := mux.Vars(r)
 	emsg := c.validation.ValidateParam(vars["broadcastID"], "eid")

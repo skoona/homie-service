@@ -5,6 +5,8 @@ import (
 	"github.com/go-kit/kit/log"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"io"
+	"net/http"
+	"time"
 )
 
 // CtxKeyOne is a key used for the Product object in the context
@@ -22,6 +24,17 @@ var (
 	// Controller interface to Core Service
 	ctrl *Controller
 )
+
+func NewAPIServer(bindAddress string, router http.Handler, read, write, idle time.Duration) *http.Server {
+// create a new server
+	return &http.Server{
+		Addr:         bindAddress, // configure the bind address
+		Handler:      router,                  // set the default handler
+		ReadTimeout:  read * time.Second,     // max time to read request from the client
+		WriteTimeout: write * time.Second,    // max time to write response to the client
+		IdleTimeout:  idle * time.Second,   // max time for connections using TCP Keep-Alive
+	}
+}
 
 // NewApiController returns a new products handler with the given logger
 func NewApiController(s *dc.CoreService, l *log.Logger, v *Validation) *Controller {
@@ -54,4 +67,3 @@ func FromJSON(i interface{}, r io.Reader) error {
 	d := json.NewDecoder(r)
 	return d.Decode(i)
 }
-
