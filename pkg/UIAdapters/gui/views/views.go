@@ -152,9 +152,5 @@ func SvgImageFromFile(filename string) *canvas.Image  {
 	image.SetMinSize(fyne.NewSize(24,16))
 	image.Resize(fyne.NewSize(64,48))
 
-	//circle := canvas.NewCircle(color.White)
-	//circle.StrokeColor = color.Gray{0x99}
-	//circle.StrokeWidth = 5
-
 	return image
 }
