@@ -100,9 +100,14 @@ func topPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
 		if tab.Text == "Home" {
 			selector.Hide()
 		} else {
-			selector.Show()
+			selector.PlaceHolder = tab.Text
+			statusText.SetText(tab.Text)
+			if selector.Visible() {
+				selector.Refresh()
+			} else {
+				selector.Show()
+			}
 		}
-		statusText.SetText("")
 	}
 	return statusWindow
 }
