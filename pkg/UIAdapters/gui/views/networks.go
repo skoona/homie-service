@@ -4,7 +4,6 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 )
 
@@ -13,11 +12,12 @@ import (
 func NetworksTab() fyne.CanvasObject {
 
 	side := widget.NewAccordion(
-			widget.NewAccordionItem("sknSensors", widget.NewIcon(theme.ComputerIcon())),
-		widget.NewAccordionItem("homie", widget.NewIcon(theme.ComputerIcon())),
-		widget.NewAccordionItem("SknNetwork", widget.NewIcon(theme.ComputerIcon())),
-		widget.NewAccordionItem("yourNetwork", widget.NewIcon(theme.ComputerIcon())),
+		widget.NewAccordionItem("sknSensors", SknLoadImageFromPath("./docs/switch-on-svgrepo-com.svg")),
+		widget.NewAccordionItem("homie", SknLoadImageFromPath("./docs/switch-off-svgrepo-com.svg")),
+		widget.NewAccordionItem("SknNetwork", SknLoadImageFromPath("./docs/switch-on_sq-svgrepo-com.svg")),
+		widget.NewAccordionItem("yourNetwork", SknLoadImageFromPath("./docs/switch-off_sq-svgrepo-com.svg")),
 		)
+	side.Open(0)
 
 	card := widget.NewCard("HomeOffice", "80%", widget.NewLabel("motion"))
 		card.SetImage(SknCanvasImageFromPath("./docs/d1min.png"))
