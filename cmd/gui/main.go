@@ -52,27 +52,8 @@ func (t *hsTheme) Icon(n fyne.ThemeIconName) fyne.Resource {
 }
 // end theme implementation
 
-
-func StartUp() (dc.CoreService, cc.Config) {
-	ca, cb := services.Service()
-	return *ca, *cb
-}
-
-func Shutdown() {
-	services.Shutdown()
-}
-
-func main() {
-
-	//coreSvc, cfg := StartUp()
-	_, cfg := StartUp()
-	logger := log.With(cfg.Logger, "ui", "base")
-
-	// implement gui here and in ./pkg/gui/{controllers,views,actions}
-	myApp := app.New()
-	myApp.Settings().SetTheme(&hsTheme{})
-
-	myWindow := myApp.NewWindow("Homie Service")
+// main page
+func topPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
 
 	tabs := container.NewAppTabs(
 		container.NewTabItemWithIcon("Home", theme.HomeIcon(), views2.BroadcastsTab()),
@@ -114,7 +95,6 @@ func main() {
 	statusLine := container.NewHBox(bar, selector, statusText)
 
 	statusWindow := container.NewBorder(nil, statusLine,nil, nil, tabs) //  NewVSplit(split, widget.NewLabel("Status"))
-	myWindow.SetContent(statusWindow)
 
 	tabs.OnChanged = func(tab *container.TabItem) {
 		if tab.Text == "Home" {
@@ -124,6 +104,31 @@ func main() {
 		}
 		statusText.SetText("")
 	}
+	return statusWindow
+}
+
+func StartUp() (dc.CoreService, cc.Config) {
+	ca, cb := services.Service()
+	return *ca, *cb
+}
+
+func Shutdown() {
+	services.Shutdown()
+}
+
+func main() {
+
+	//coreSvc, cfg := StartUp()
+	_, cfg := StartUp()
+	logger := log.With(cfg.Logger, "ui", "base")
+
+	// implement gui here and in ./pkg/gui/{controllers,views,actions}
+	myApp := app.New()
+	myApp.Settings().SetTheme(&hsTheme{})
+
+	myWindow := myApp.NewWindow("Homie Service")
+	content := topPage(&myWindow, logger)
+	myWindow.SetContent(content)
 
 	//myWindow.Resize(fyne.NewSize(600, 800))
 
