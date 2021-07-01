@@ -4,6 +4,7 @@
 package main
 
 import (
+	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"fyne.io/fyne/v2/container"
@@ -74,37 +75,59 @@ func main() {
 	myWindow := myApp.NewWindow("Homie Service")
 
 	tabs := container.NewAppTabs(
-		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), views2.DefaultContent()),
-		container.NewTabItemWithIcon("Schedules", theme.DocumentCreateIcon(), views2.DefaultContent()),
-		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), views2.DefaultContent()),
-		container.NewTabItemWithIcon("Broadcasts", theme.InfoIcon(), views2.DefaultContent()),
+		container.NewTabItemWithIcon("Home", theme.HomeIcon(), views2.BroadcastsTab()),
+		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), views2.NetworksTab()),
+		container.NewTabItemWithIcon("Schedules", theme.DocumentCreateIcon(), views2.SchedulesTab()),
+		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), views2.FirmwaresTab()),
 		container.NewTabItemWithIcon("Preferences", theme.SettingsIcon(), widget.NewLabel("Preferences!")),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
+	tabs.OnChanged = func(tab *container.TabItem) {
+		if tab.Text == "Home" {
 
-	statusLine := widget.NewLabel("Status")
+		} else {
+
+		}
+	}
+
+	// Status Line
+	statusText := widget.NewLabel("Status")
+	bar := widget.NewToolbar(
+		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
+			sText := tabs.CurrentTab().Text
+			statusText.SetText(fmt.Sprintf("%s Add Selected", sText))
+			logger.Log("tab", sText, "event", "add called")
+		}),
+		widget.NewToolbarAction(theme.ContentRemoveIcon(), func(){
+			sText := tabs.CurrentTab().Text
+			statusText.SetText(fmt.Sprintf("%s Remove Selected", sText))
+			logger.Log("tab", sText, "event", "remove called")
+		}),
+	)
+	selector := widget.NewSelect([]string{"sknNetworks", "homie"}, func(s string) {
+		sText := tabs.CurrentTab().Text
+		statusText.SetText(fmt.Sprintf("[%s] was Selected on tab: %s", s, sText))
+		logger.Log("tab", sText, "event", "selector called", "value", s)
+	})
+	selector.Hide()  // initial state
+
+	statusLine := container.NewHBox(bar, selector, statusText)
 
 	statusWindow := container.NewBorder(nil, statusLine,nil, nil, tabs) //  NewVSplit(split, widget.NewLabel("Status"))
-	//statusWindow.Offset = 0.95
-
 	myWindow.SetContent(statusWindow)
+
+	tabs.OnChanged = func(tab *container.TabItem) {
+		if tab.Text == "Home" {
+			selector.Hide()
+		} else {
+			selector.Show()
+		}
+		statusText.SetText("")
+	}
+
 	//myWindow.Resize(fyne.NewSize(600, 800))
 
-
-/*
- * Prepare for clean exit
-	errs := make(chan error, 1)
-	go func(shutdown chan error) {
-		systemSignalChannel := make(chan os.Signal, 1)
-		signal.Notify(systemSignalChannel, syscall.SIGINT, syscall.SIGTERM)
-		sig := <-systemSignalChannel // wait on ctrl-c
-		shutdown <- fmt.Errorf("%s", sig)
-	}(errs)
-*/
-
 	myWindow.ShowAndRun()
-	//errs <- errors.New("Fyne GUI Shutdown")
-
 
 	level.Info(logger).Log("event", "shutdown requested", "cause", "Fyne GUI Shutdown") // <-errs)
 
