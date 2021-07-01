@@ -11,14 +11,13 @@ import (
 // NetworksTab ui page which includes networks
 // the is to be used on main page
 func NetworksTab() fyne.CanvasObject {
-	bar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.ContentAddIcon(), func() {}),
-		widget.NewToolbarAction(theme.ContentRemoveIcon(), func(){}),
-	)
-	list := container.NewVBox()
-	list.Add(widget.NewLabel("label 1"))
-	list.Add(widget.NewLabel("label 2"))
-	side := container.New(layout.NewBorderLayout(bar, nil, nil, nil), bar, list)
+
+	side := widget.NewAccordion(
+			widget.NewAccordionItem("sknSensors", widget.NewIcon(theme.ComputerIcon())),
+		widget.NewAccordionItem("homie", widget.NewIcon(theme.ComputerIcon())),
+		widget.NewAccordionItem("SknNetwork", widget.NewIcon(theme.ComputerIcon())),
+		widget.NewAccordionItem("yourNetwork", widget.NewIcon(theme.ComputerIcon())),
+		)
 
 	card := widget.NewCard("HomeOffice", "80%", widget.NewLabel("motion"))
 		card.SetImage(SknCanvasImageFromPath("./docs/d1min.png"))

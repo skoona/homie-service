@@ -84,6 +84,8 @@ func topPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
 			statusText.SetText(fmt.Sprintf("%s Remove Selected", sText))
 			logger.Log("tab", sText, "event", "remove called")
 		}),
+		widget.NewToolbarSpacer(),
+		widget.NewToolbarSeparator(),
 	)
 	selector := widget.NewSelect([]string{"sknNetworks", "homie"}, func(s string) {
 		sText := tabs.CurrentTab().Text
@@ -98,6 +100,7 @@ func topPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
 
 	tabs.OnChanged = func(tab *container.TabItem) {
 		if tab.Text == "Home" {
+			statusText.SetText(tab.Text)
 			selector.Hide()
 		} else {
 			selector.PlaceHolder = tab.Text
@@ -132,6 +135,7 @@ func main() {
 	myApp.Settings().SetTheme(&hsTheme{})
 
 	myWindow := myApp.NewWindow("Homie Service")
+
 	content := topPage(&myWindow, logger)
 	myWindow.SetContent(content)
 

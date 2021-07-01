@@ -31,8 +31,7 @@ func SknLoadImageFromURI(u fyne.URI) fyne.CanvasObject {
 		log.Println("Error opening image", err)
 		return canvas.NewRectangle(color.Black)
 	}
-	res, err :=
-		storage.LoadResourceFromURI(read.URI())
+	res, err :=	storage.LoadResourceFromURI(read.URI())
 	if err != nil {
 		log.Println("Error reading image", err)
 		return canvas.NewRectangle(color.Black)
