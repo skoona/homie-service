@@ -4,15 +4,12 @@
 package main
 
 import (
-	"fmt"
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
-	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
-	"fyne.io/fyne/v2/widget"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	views2 "github.com/skoona/homie-service/pkg/UIAdapters/gui/views"
+	wv "github.com/skoona/homie-service/pkg/UIAdapters/gui/views"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
 	cc "github.com/skoona/homie-service/pkg/utils"
@@ -52,62 +49,6 @@ func (t *hsTheme) Icon(n fyne.ThemeIconName) fyne.Resource {
 }
 // end theme implementation
 
-// main page
-func topPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
-	scheduleRes := views2.SknCanvasSVGImageFromPath("./docs/timeLapse-mbo-24px.svg")
-	tabs := container.NewAppTabs(
-		container.NewTabItemWithIcon("Home", theme.HomeIcon(), views2.BroadcastsTab()),
-		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), views2.NetworksTab()),
-		container.NewTabItemWithIcon("Schedules", scheduleRes.Resource, views2.SchedulesTab()),
-		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), views2.FirmwaresTab()),
-		container.NewTabItemWithIcon("Preferences", theme.SettingsIcon(), widget.NewLabel("Preferences!")),
-	)
-	tabs.SetTabLocation(container.TabLocationTop)
-
-	// Status Line
-	statusText := widget.NewLabel("Status")
-	bar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.ContentAddIcon(), func() {
-			sText := tabs.CurrentTab().Text
-			statusText.SetText(fmt.Sprintf("%s Add Selected", sText))
-			logger.Log("tab", sText, "event", "add called")
-		}),
-		widget.NewToolbarAction(theme.ContentRemoveIcon(), func(){
-			sText := tabs.CurrentTab().Text
-			statusText.SetText(fmt.Sprintf("%s Remove Selected", sText))
-			logger.Log("tab", sText, "event", "remove called")
-		}),
-		widget.NewToolbarSpacer(),
-		widget.NewToolbarSeparator(),
-	)
-	selector := widget.NewSelect([]string{"sknNetworks", "homie"}, func(s string) {
-		sText := tabs.CurrentTab().Text
-		statusText.SetText(fmt.Sprintf("[%s] was Selected on tab: %s", s, sText))
-		logger.Log("tab", sText, "event", "selector called", "value", s)
-	})
-	selector.Hide()  // initial state
-
-	statusLine := container.NewHBox(bar, selector, statusText)
-
-	statusWindow := container.NewBorder(nil, statusLine,nil, nil, tabs)
-
-	tabs.OnChanged = func(tab *container.TabItem) {
-		if tab.Text == "Home" {
-			statusText.SetText(tab.Text)
-			selector.Hide()
-		} else {
-			selector.PlaceHolder = tab.Text
-			statusText.SetText(tab.Text)
-			if selector.Visible() {
-				selector.Refresh()
-			} else {
-				selector.Show()
-			}
-		}
-	}
-	return statusWindow
-}
-
 func StartUp() (dc.CoreService, cc.Config) {
 	ca, cb := services.Service()
 	return *ca, *cb
@@ -124,14 +65,12 @@ func main() {
 	logger := log.With(cfg.Logger, "ui", "base")
 
 	// implement gui here and in ./pkg/gui/{controllers,views,actions}
-	myApp := app.New()
+	myApp := app.NewWithID("net.skoona.projects.homie-service")
 	myApp.Settings().SetTheme(&hsTheme{})
 
-	myWindow := myApp.NewWindow("Homie Service")
+	myWindow := myApp.NewWindow("Homie Service, GUI by Fyne")
 
-	content := topPage(&myWindow, logger)
-	myWindow.SetContent(content)
-
+	myWindow.SetContent( wv.MainPage(&myWindow, logger) )
 	//myWindow.Resize(fyne.NewSize(600, 800))
 
 	myWindow.ShowAndRun()

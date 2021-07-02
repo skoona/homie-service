@@ -12,13 +12,12 @@ import (
 // the is to be used on main page
 func NetworksTab() fyne.CanvasObject {
 
-	side := widget.NewAccordion(
-		widget.NewAccordionItem("sknSensors", SknLoadImageFromPath("./docs/wall-clock-svgrepo-com.svg")),
-		widget.NewAccordionItem("homie", SknLoadImageFromPath("./docs/wall-clock-svgrepo-com.svg")),
-		widget.NewAccordionItem("SknNetwork", SknLoadImageFromPath("./docs/wall-clock-svgrepo-com.svg")),
-		widget.NewAccordionItem("yourNetwork", SknLoadImageFromPath("./docs/wall-clock-svgrepo-com.svg")),
-		)
-	side.Open(0)
+	clk := SknLoadImageFromPath("./docs/wall-clock-svgrepo-com.svg")
+	clk.Resize(fyne.NewSize(48,32))
+	rect := canvas.NewRectangle(Green)
+	rect.SetMinSize(fyne.NewSize(64,48))
+
+	side := container.New(layout.NewPaddedLayout(), rect, clk)
 
 	card := widget.NewCard("HomeOffice", "80%", widget.NewLabel("motion"))
 		card.SetImage(SknCanvasSVGImageFromPath("./docs/thumbsUp-mds-24px.svg"))
@@ -37,10 +36,9 @@ func NetworksTab() fyne.CanvasObject {
 	card7 := widget.NewCard("MechanicalRoom", "49%", widget.NewLabel("motion"))
 		card7.SetImage(SknLoadImageFromPath("./docs/d1min.png").(*canvas.Image))
 	content := container.New(layout.NewGridLayout(5), card, card1, card2, card3, card4, card5, card6, card7)
-
 	scroller := container.NewVScroll(content)
-	split := container.NewHSplit(side, scroller)
-	split.Offset = 0.2
 
-	return split
+	page := container.NewBorder(nil,nil, side, nil, scroller)
+
+	return page
 }

@@ -28,7 +28,6 @@ func BroadcastsTab() fyne.CanvasObject {
 	banner := container.NewPadded(image)
 
 	content := container.NewBorder(banner,nil, nil, nil, scroller)
-	//content.Offset = 0.4
 
 	return content
 }
