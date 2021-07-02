@@ -10,7 +10,7 @@ import (
 
 // SchedulesTab ui page which includes schedules
 // the is to be used on main page
-func SchedulesTab() fyne.CanvasObject {
+func (vp *viewProvider) SchedulesTab() fyne.CanvasObject {
 	clk := SknLoadImageFromPath("./docs/wall-clock-svgrepo-com.svg")
 	clk.Resize(fyne.NewSize(48,32))
 	rect := canvas.NewRectangle(Green)
@@ -33,7 +33,7 @@ func SchedulesTab() fyne.CanvasObject {
 		card6.SetImage(SknCanvasSVGImageFromPath("./docs/timeLapse-mbo-24px.svg"))
 	card7 := widget.NewCard("MechanicalRoom", "49%", widget.NewLabel("motion"))
 		card7.SetImage(SknCanvasSVGImageFromPath("./docs/timeLapse-mbo-24px.svg"))
-	content := container.New(layout.NewGridLayout(5), card, card1, card2, card3, card4, card5, card6, card7)
+	content := container.New(layout.NewGridLayout(3), card, card1, card2, card3, card4, card5, card6, card7)
 	scroller := container.NewVScroll(content)
 
 	page := container.NewBorder(nil,nil, side, nil, scroller)

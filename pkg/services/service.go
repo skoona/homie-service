@@ -71,10 +71,11 @@ func shutdownLive(logger log.Logger) {
 
 func runLive(cfg cc.Config, logger log.Logger)(dc.CoreService, error) {
 	level.Debug(logger).Log("event", "RunLive() called")
-	otap, dsp, networks, err := mq.Initialize(cfg)                 // message stream
+	otap, dsp, netw, err := mq.Initialize(cfg)                 // message stream
 	if err != nil {
 		return nil, err
 	}
+	networks = netw
 
 	repo, err := dds.Start(cfg)                                    // message db
 	if err != nil {
@@ -125,10 +126,12 @@ func runDemo(cfg cc.Config, logger log.Logger) (dc.CoreService, error) {
 var (
 	cfg			cc.Config
 	coreSvc dc.CoreService
+	networks []string
 )
 
 func startUp() (dc.CoreService, cc.Config, error) {
 	var err error
+
 	cfg, err = cc.BuildRuntimeConfig("Homie-Service")
 	if err != nil {
 		os.Exit(1)
@@ -148,7 +151,7 @@ func startUp() (dc.CoreService, cc.Config, error) {
 		os.Exit(2)
 	}
 
-	return coreSvc, cfg, err
+	return coreSvc, cfg,  err
 }
 
 // Shutdown shutdown func for Core Service
@@ -162,7 +165,7 @@ func Shutdown() {
 }
 
 // Service main entry point for Core Service
-func Service() (*dc.CoreService, *cc.Config) {
+func Service() (*dc.CoreService, *cc.Config, []string) {
 
 	coreSvc, cfg, err := startUp()
 	if err != nil {
@@ -170,6 +173,6 @@ func Service() (*dc.CoreService, *cc.Config) {
 		panic(e.Error())
 	}
 
-	return &coreSvc, &cfg
+	return &coreSvc, &cfg, networks
 }
 

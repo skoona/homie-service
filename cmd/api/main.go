@@ -30,26 +30,20 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/go-openapi/runtime/middleware"
-	gohandlers "github.com/gorilla/handlers"
-	"github.com/gorilla/mux"
 	"github.com/skoona/homie-service/pkg/UIAdapters/api/handlers"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
 	cc "github.com/skoona/homie-service/pkg/utils"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 )
 
 
-func StartUp() (*dc.CoreService, *cc.Config) {
+func StartUp() (*dc.CoreService, *cc.Config, []string) {
 	return services.Service()
 }
 
@@ -59,69 +53,14 @@ func Shutdown() {
 
 func main() {
 
-	coreSvc, cfg := StartUp()
+	coreSvc, cfg, _ := StartUp()
 	if coreSvc == nil {
 		panic("Service Failed to start")
 	}
 
 	logger := log.With(cfg.Logger, "ui", "api")
 
-	validator := handlers.NewValidation()
-	ctrl := handlers.NewApiController(coreSvc, &logger, validator)
-
-	// create a new serve mux and register the handlers
-	sm := mux.NewRouter()
-	lmw := handlers.LoggingMiddleware(logger)
-	sm.Use(lmw)
-	sm.Use(handlers.CommonMiddleware)
-	sm.Use( gohandlers.CORS(gohandlers.AllowedOrigins([]string{"*"})))
-
-	// handlers for API
-	getR := sm.PathPrefix("/api/v1").
-		Methods(http.MethodGet).
-		Subrouter()
-
-	getR.HandleFunc("/networks", ctrl.AllNetworks)
-	getR.HandleFunc("/network/{networkName:[a-zA-Z]+}", ctrl.NetworkByName)
-	getR.HandleFunc("/devices/{networkName:[a-zA-Z]+}", ctrl.NetworkDevices)
-	getR.HandleFunc("/deviceByName/{networkName:[a-zA-Z]+}/{deviceName:[a-zA-Z]+}", ctrl.DeviceByName)
-	getR.HandleFunc("/deviceById/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+}", ctrl.DeviceByID)
-
-	getR.HandleFunc("/schedules", ctrl.AllSchedules)
-	getR.HandleFunc("/scheduleById/{scheduleID:[a-zA-Z0-9]+}", ctrl.ScheduleByID)
-	getR.HandleFunc("/scheduleByDeviceId/{deviceID:[a-zA-Z0-9]+}", ctrl.ScheduleByDeviceID)
-
-	getR.HandleFunc("/firmwares", ctrl.AllFirmwares)
-	getR.HandleFunc("/firmwareByName/{firmwareName:[a-zA-Z0-9]+}", ctrl.FirmwareByName)
-	getR.HandleFunc("/firmwareById/{firmwareID:[a-zA-Z0-9]+}", ctrl.FirmwareByID)
-
-	getR.HandleFunc("/broadcasts", ctrl.Broadcasts)
-	getR.HandleFunc("/broadcastById/{broadcastID:[a-zA-Z0-9]+}", ctrl.BroadcastByID)
-
-	delR := sm.PathPrefix("/api/v1").
-		Methods(http.MethodDelete).
-		Subrouter()
-	delR.HandleFunc("/removeDeviceId/{networkName:[a-zA-Z]+}/{deviceID:[a-zA-Z0-9]+}", ctrl.RemoveDeviceID)
-	delR.HandleFunc("/removeFirmwareId/{firmwareID:[a-zA-Z0-9]+}", ctrl.RemoveFirmwareID)
-	delR.HandleFunc("/removeScheduleId/{scheduleID:[a-zA-Z0-9]+}", ctrl.RemoveSchedule)
-	delR.HandleFunc("/removeBroadcastId/{broadcastID:[a-zA-Z0-9]+}", ctrl.RemoveBroadcastID)
-
-	poR := sm.PathPrefix("/api/v1").
-		Methods(http.MethodPost).
-		Subrouter()
-	poR.HandleFunc("/createFirmware", ctrl.CreateFirmware) // has req/rsp
-	poR.HandleFunc("/createSchedule", ctrl.CreateSchedule) // has req/rsp
-	poR.HandleFunc("/publishNetworkMessage", ctrl.PublishNetworkMessage) // has req/noc
-
-	// handler for documentation
-	opts := middleware.RedocOpts{SpecURL: "/swagger.yaml"}
-	sh := middleware.Redoc(opts, nil)
-
-	gDocs := sm.Methods(http.MethodGet).Subrouter()
-	gDocs.Handle("/docs", sh)
-	gDocs.Handle("/swagger.yaml", http.FileServer(http.Dir("./")))
-
-	apiServer := handlers.NewAPIServer(cfg.Api.BindAddress, sm,5, 10, 120)
+	ctrl := handlers.NewApiProvider(cfg, coreSvc, &logger)
 
 	/*
 	 * Prepare for clean exit
@@ -129,10 +68,10 @@ func main() {
 	errs := make(chan error, 1)
 
 	// start the server
-	go func() {
+	go func(shutdown chan error) {
 		level.Info(logger).Log("event", "starting server", "serving", cfg.Api.BindAddress)
-		errs <- apiServer.ListenAndServe()
-	}()
+		shutdown <- ctrl.Run()
+	}(errs)
 
 	go func(shutdown chan error) {
 		systemSignalChannel := make(chan os.Signal, 1)
@@ -140,10 +79,11 @@ func main() {
 		sig := <-systemSignalChannel // wait on ctrl-c
 		shutdown <- fmt.Errorf("%s", sig)
 	}(errs)
+
+	// wait for server or interrupt
 	level.Info(logger).Log("event", "shutdown requested", "cause", <-errs)
 
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	apiServer.Shutdown(ctx)
+	ctrl.Shutdown()
 	Shutdown()
 
 	os.Exit(0)

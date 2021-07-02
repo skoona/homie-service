@@ -16,7 +16,7 @@ import (
 
 
 func StartUp() (dc.CoreService, cc.Config) {
-	ca, cb := services.Service()
+	ca, cb, _ := services.Service()
 	return *ca, *cb
 }
 

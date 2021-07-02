@@ -7,9 +7,14 @@ import (
 )
 
 // Fyne Theme Implementation
-type HsTheme struct {
+type homieTheme struct {
 }
-func (m *HsTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
+
+func NewHomieTheme() fyne.Theme {
+	return &homieTheme{}
+}
+
+func (m *homieTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color {
 	switch n {
 	case theme.ColorNameBackground:
 		if v == theme.VariantLight {
@@ -25,15 +30,15 @@ func (m *HsTheme) Color(n fyne.ThemeColorName, v fyne.ThemeVariant) color.Color 
 	return theme.DefaultTheme().Color(n, v)
 }
 
-func (t *HsTheme) Size(n fyne.ThemeSizeName) float32 {
+func (t *homieTheme) Size(n fyne.ThemeSizeName) float32 {
 	return theme.DefaultTheme().Size(n)
 }
 
-func (t *HsTheme) Font(fyne.TextStyle) fyne.Resource {
+func (t *homieTheme) Font(fyne.TextStyle) fyne.Resource {
 	return theme.DefaultTextMonospaceFont()
 }
 
-func (t *HsTheme) Icon(n fyne.ThemeIconName) fyne.Resource {
+func (t *homieTheme) Icon(n fyne.ThemeIconName) fyne.Resource {
 	return theme.DefaultTheme().Icon(n)
 }
 // end theme implementation

@@ -4,38 +4,40 @@
 package main
 
 import (
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
-	"github.com/skoona/homie-service/pkg/UIAdapters/gui/components"
-	 "github.com/skoona/homie-service/pkg/UIAdapters/gui/views"
+	"github.com/skoona/homie-service/pkg/UIAdapters/gui/providers"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
 	cc "github.com/skoona/homie-service/pkg/utils"
 	"os"
 )
 
-func StartUp() (dc.CoreService, cc.Config) {
-	ca, cb := services.Service()
-	return *ca, *cb
+// StartUp core services
+func StartUp() (dc.CoreService, cc.Config, []string) {
+	ca, cb, networks := services.Service()
+	return *ca, *cb, networks
 }
 
+// Shutdown coreServices
 func Shutdown() {
 	services.Shutdown()
 }
 
 func main() {
 
-	//coreSvc, cfg := StartUp()
-	_, cfg := StartUp()
+	coreSvc, cfg, networks := StartUp()
 	logger := log.With(cfg.Logger, "ui", "base")
 
 	myApp := app.NewWithID("net.skoona.projects.homie-service")
-	myApp.Settings().SetTheme(&components.HsTheme{})
-
 	myWindow := myApp.NewWindow("Homie Service, GUI by Fyne")
-	myWindow.SetContent( views.MainPage(&myWindow, logger) )
-	//myWindow.Resize(fyne.NewSize(600, 800))
+	provider := providers.NewGuiController(&cfg, &myWindow, &coreSvc, &networks, &logger)
+	myApp.Settings().SetTheme(provider.HomieTheme())
+
+	myWindow.SetContent( provider.MainPage() )
+	myWindow.Resize(fyne.NewSize(560, 400))
 
 	myWindow.ShowAndRun()
 
