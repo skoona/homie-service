@@ -8,9 +8,9 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-// BroadcastsTab ui page which includes broadcasts
+// HomeTab ui page which includes broadcasts
 // this is to be used as the main page
-func BroadcastsTab() fyne.CanvasObject {
+func HomeTab() fyne.CanvasObject {
 	badge := SknLoadImageFromPath("./docs/homie-banner.png").(*canvas.Image)
 
 	card := widget.NewCard("LWT", "Homie Monitor Offline", widget.NewLabel("Received: 2021-06-30T18:43:15.067335"))

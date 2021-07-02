@@ -13,7 +13,7 @@ import (
 func MainPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
 	scheduleRes := SknCanvasSVGImageFromPath("./docs/timeLapse-mbo-24px.svg")
 	tabs := container.NewAppTabs(
-		container.NewTabItemWithIcon("Home", theme.HomeIcon(), BroadcastsTab()),
+		container.NewTabItemWithIcon("Home", theme.HomeIcon(), HomeTab()),
 		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), NetworksTab()),
 		container.NewTabItemWithIcon("Schedules", scheduleRes.Resource, SchedulesTab()),
 		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), FirmwaresTab()),
