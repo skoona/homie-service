@@ -2,6 +2,7 @@ package views
 
 import (
 	"fyne.io/fyne/v2"
+	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
@@ -10,8 +11,7 @@ import (
 // BroadcastsTab ui page which includes broadcasts
 // this is to be used as the main page
 func BroadcastsTab() fyne.CanvasObject {
-	badge := SknCanvasImageFromPath("./docs/homie-banner.png")
-	badge.SetMinSize(fyne.NewSize(160,240))
+	badge := SknLoadImageFromPath("./docs/homie-banner.png").(*canvas.Image)
 
 	card := widget.NewCard("LWT", "Homie Monitor Offline", widget.NewLabel("Received: 2021-06-30T18:43:15.067335"))
 		card.SetImage(badge)

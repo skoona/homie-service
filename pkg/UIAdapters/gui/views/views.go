@@ -4,6 +4,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/storage"
+	"fyne.io/fyne/v2/theme"
 	cc "github.com/skoona/homie-service/pkg/utils"
 	"image/color"
 	"log"
@@ -12,9 +13,10 @@ import (
 var Green color.Color = color.NRGBA{R: 0, G: 180, B: 0, A: 255}
 //text1 := canvas.NewText("Hello", green)
 
-// SknCanvasImageFromPath loads as an canvas.Image
-func SknCanvasImageFromPath(filename string) *canvas.Image  {
+// SknCanvasSVGImageFromPath loads as an canvas.Image
+func SknCanvasSVGImageFromPath(filename string) *canvas.Image  {
 	image := SknLoadImageFromURI(storage.NewFileURI( cc.LocateFile(filename))).(*canvas.Image)
+	image.Resource = theme.NewThemedResource(image.Resource)
 	image.FillMode = canvas.ImageFillContain
 	return image
 }

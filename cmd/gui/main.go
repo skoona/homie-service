@@ -54,22 +54,15 @@ func (t *hsTheme) Icon(n fyne.ThemeIconName) fyne.Resource {
 
 // main page
 func topPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
-
+	scheduleRes := views2.SknCanvasSVGImageFromPath("./docs/timeLapse-mbo-24px.svg")
 	tabs := container.NewAppTabs(
 		container.NewTabItemWithIcon("Home", theme.HomeIcon(), views2.BroadcastsTab()),
 		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), views2.NetworksTab()),
-		container.NewTabItemWithIcon("Schedules", theme.DocumentCreateIcon(), views2.SchedulesTab()),
+		container.NewTabItemWithIcon("Schedules", scheduleRes.Resource, views2.SchedulesTab()),
 		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), views2.FirmwaresTab()),
 		container.NewTabItemWithIcon("Preferences", theme.SettingsIcon(), widget.NewLabel("Preferences!")),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
-	tabs.OnChanged = func(tab *container.TabItem) {
-		if tab.Text == "Home" {
-
-		} else {
-
-		}
-	}
 
 	// Status Line
 	statusText := widget.NewLabel("Status")
@@ -96,7 +89,7 @@ func topPage(w *fyne.Window, logger log.Logger) fyne.CanvasObject {
 
 	statusLine := container.NewHBox(bar, selector, statusText)
 
-	statusWindow := container.NewBorder(nil, statusLine,nil, nil, tabs) //  NewVSplit(split, widget.NewLabel("Status"))
+	statusWindow := container.NewBorder(nil, statusLine,nil, nil, tabs)
 
 	tabs.OnChanged = func(tab *container.TabItem) {
 		if tab.Text == "Home" {
