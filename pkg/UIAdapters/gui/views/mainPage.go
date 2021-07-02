@@ -22,12 +22,12 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 
 	// Status Line
 	bar := widget.NewToolbar(
-		widget.NewToolbarAction(theme.ContentAddIcon(), func() { vp.ToolBarAddActionCb()}),
-		widget.NewToolbarAction(theme.ContentRemoveIcon(), func() { vp.ToolBarRemoveActionCb()}),
+		widget.NewToolbarAction(theme.ContentAddIcon(), vp.ToolBarAddActionCb),
+		widget.NewToolbarAction(theme.ContentRemoveIcon(), vp.ToolBarRemoveActionCb),
 		widget.NewToolbarSpacer(),
 		widget.NewToolbarSeparator(),
 	)
-	selector := widget.NewSelect(*vp.networks, func(s string) {vp.OnNetworkSelectionChangedCb(s)})
+	selector := widget.NewSelect(*vp.networks, vp.OnNetworkSelectionChangedCb)
 
 	vp.pageTabs = tabs
 	vp.statLine = statusText
@@ -44,7 +44,7 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	bar.Hide() // Initial State
 	vp.tabStatus["Preferences"] = "GOLang is Wonderful!!!"
 
-	tabs.OnChanged = func(tab *container.TabItem) { vp.OnMainTabsChangedCb(tab) }
+	tabs.OnChanged = vp.OnMainTabsChangedCb
 
 	return page
 }
