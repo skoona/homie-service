@@ -1,3 +1,6 @@
+//go:generate fyne bundle -o ./svgImages.go ../../svgResources
+
+
 // cmd/gui/main.go
 // GUI Main using tView
 

@@ -3,21 +3,14 @@ package views
 import (
 	"fmt"
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/storage"
-	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/go-kit/kit/log"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
-	cc "github.com/skoona/homie-service/pkg/utils"
-	"image/color"
-
 )
 
-
-
 type (
+	// ViewProvider interface provides GUI features
 	ViewProvider interface {
 		HomeTab() fyne.CanvasObject
 		NetworksTab() fyne.CanvasObject
@@ -30,6 +23,7 @@ type (
 		OnMainTabsChangedCb(tab *container.TabItem)
 	}
 
+	// ViewProvider struct contains GUI state information
 	viewProvider struct {
 		logger log.Logger
 		dSvc   *dc.CoreService
@@ -44,64 +38,33 @@ type (
 	}
 )
 
+var vp    *viewProvider
 
+// NewViewProvider manages Tab level pages and their callbacks
 func NewViewProvider(ds *dc.CoreService, nets *[]string, logger *log.Logger) ViewProvider {
 	vp = &viewProvider{
 		logger: log.With(*logger, "component", "ViewProvider"),
 		dSvc: ds,
 		networks: nets,
 		tabStatus: map[string]string{},
+		netSelectedStr: (*nets)[0],
 	}
 	return vp
 }
 
-var (
-	Green color.Color = color.NRGBA{R: 0, G: 180, B: 0, A: 255}
-	vp  *viewProvider
-)
-//text1 := canvas.NewText("Hello", green)
-
-// SknCanvasSVGImageFromPath loads as an canvas.Image
-func SknCanvasSVGImageFromPath(filename string) *canvas.Image  {
-	image := SknLoadImageFromURI(storage.NewFileURI( cc.LocateFile(filename))).(*canvas.Image)
-	image.Resource = theme.NewThemedResource(image.Resource)
-	image.FillMode = canvas.ImageFillContain
-	return image
-}
-
-// SknLoadImageFromPath returns a CanvasObject
-func SknLoadImageFromPath(path string) fyne.CanvasObject {
-	return SknLoadImageFromURI(storage.NewFileURI(path))
-}
-
-// SknLoadImageFromURI returns a CanvasObject
-func SknLoadImageFromURI(u fyne.URI) fyne.CanvasObject {
-	read, err := storage.Reader(u)
-	if err != nil {
-		fmt.Println("Error opening image", err)
-		return canvas.NewRectangle(color.Black)
-	}
-	res, err :=	storage.LoadResourceFromURI(read.URI())
-	if err != nil {
-		fmt.Println("Error reading image", err)
-		return canvas.NewRectangle(color.Black)
-	}
-	img := canvas.NewImageFromResource(res)
-	//img.FillMode = canvas.ImageFillContain
-	img.FillMode = canvas.ImageFillOriginal
-	return img
-}
-
+// ToolBarAddActionCb callback for statusline toolbar Add button
 func (vp *viewProvider) ToolBarAddActionCb() {
 	sText := vp.pageTabs.CurrentTab().Text
 	vp.statLine.SetText(fmt.Sprintf("%s Add Selected", sText))
 	vp.logger.Log("tab", sText, "event", "add called")
 }
+// ToolBarRemoveActionCb callback for statusline toolbar Remove button
 func (vp *viewProvider) ToolBarRemoveActionCb() {
 	sText := vp.pageTabs.CurrentTab().Text
 	vp.statLine.SetText(fmt.Sprintf("%s Remove Selected", sText))
 	vp.logger.Log("tab", sText, "event", "remove called")
 }
+// OnNetworkSelectionChangedCb callback for OnSelect Network selection
 func (vp *viewProvider) OnNetworkSelectionChangedCb(s string) {
 	vp.netSelectedStr = s
 	vp.logger.Log("tab", vp.pageTabs.CurrentTab().Text,
@@ -109,6 +72,7 @@ func (vp *viewProvider) OnNetworkSelectionChangedCb(s string) {
 		"value", s,
 		"status", vp.tabStatus[vp.pageTabs.CurrentTab().Text])
 }
+// OnMainTabsChangedCb callback from OnChange Application Tabs
 func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 	// capture any changes before restoring
 	_, found := vp.tabStatus[vp.lastTabStr]
@@ -135,6 +99,7 @@ func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 		if vp.statusActions.Visible() {
 			vp.statusActions.Hide()
 		}
+		tab.Content.Refresh()
 	case "Schedules", "Firmwares":
 		if vp.netselect.Visible() {
 			vp.netselect.Hide()

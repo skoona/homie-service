@@ -3,8 +3,8 @@ package views
 import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/container"
-	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
+	cc "github.com/skoona/homie-service/pkg/utils"
 	"net/url"
 )
 
@@ -18,20 +18,18 @@ import (
 // this is to be used as the main page
 func (vp *viewProvider) HomeTab() fyne.CanvasObject {
 
-	card := widget.NewCard("LWT", "Homie Monitor Offline", widget.NewLabel("Received: 2021-06-30T18:43:15.067335"))
-		card.SetImage(SknCanvasSVGImageFromPath("./docs/notificationAlert-mbo-24px.svg"))
+	cards := container.NewGridWithColumns(3)
+	for _, bc := range (*vp.dSvc).AllBroadcasts() {
+		card := widget.NewCard(bc.Level, bc.Value, widget.NewLabel(bc.Received.String()))
+		card.SetImage( cc.SknSelectThemedImage("notificationAlert_o"))
+		cards.Add(card)
+	}
 
-	card1 := widget.NewCard("Alert", "Go Lang is wonderful", widget.NewLabel("Received: 2021-06-30T18:44:48.306133"))
-		card1.SetImage(SknCanvasSVGImageFromPath("./docs/notificationAlert-mbr-24px.svg"))
-
-	scroller := container.NewVScroll(
-		container.New(layout.NewGridLayout(3), card, card1))
-
-
-	image := SknLoadImageFromPath("./works-with-homie.svg")
+	image := cc.SknSelectImage("worksWithHomie")
 	uri, _ := url.Parse("https://homieiot.github.io/")
 	banner := container.NewPadded(image, widget.NewHyperlink("Homie for ESP8266/ESP32", uri))
 
+	scroller := container.NewVScroll(cards)
 	content := container.NewBorder(banner,nil, nil, nil, scroller)
 
 	return content

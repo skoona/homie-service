@@ -5,15 +5,15 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
 // main page
 func (vp *viewProvider) MainPage() fyne.CanvasObject {
-	scheduleRes := SknCanvasSVGImageFromPath("./docs/timeLapse-mbo-24px.svg")
 	tabs := container.NewAppTabs(
 		container.NewTabItemWithIcon("Home", theme.HomeIcon(), vp.HomeTab()),
 		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), vp.NetworksTab()),
-		container.NewTabItemWithIcon("Schedules", scheduleRes.Resource, vp.SchedulesTab()),
+		container.NewTabItemWithIcon("Schedules", cc.SknSelectThemedResource("timeLapse_o"), vp.SchedulesTab()),
 		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), vp.FirmwaresTab()),
 		container.NewTabItemWithIcon("Preferences", theme.SettingsIcon(), widget.NewLabel("Preferences!")),
 	)
