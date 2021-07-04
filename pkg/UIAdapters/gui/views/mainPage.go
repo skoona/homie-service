@@ -5,18 +5,17 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
-	"github.com/skoona/homie-service/pkg/UIAdapters/gui/components"
 	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
 // main page
 func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	tabs := container.NewAppTabs(
-		container.NewTabItemWithIcon("Home", theme.HomeIcon(), vp.HomeTab()),
-		container.NewTabItemWithIcon("Networks", theme.ComputerIcon(), vp.NetworksTab()),
-		container.NewTabItemWithIcon("Schedules", cc.SknSelectThemedResource("timeLapse_o"), vp.SchedulesTab()),
-		container.NewTabItemWithIcon("Firmwares", theme.StorageIcon(), vp.FirmwaresTab()),
-		container.NewTabItemWithIcon("Preferences", theme.SettingsIcon(), components.MakeTableTab()),
+		container.NewTabItemWithIcon(HomeTab, theme.HomeIcon(), vp.HomeTab()),
+		container.NewTabItemWithIcon(NetworksTab, theme.ComputerIcon(), vp.NetworksTab()),
+		container.NewTabItemWithIcon(ScheduleTab, cc.SknSelectThemedResource("timeLapse_o"), vp.SchedulesTab()),
+		container.NewTabItemWithIcon(FirmwareTab, theme.StorageIcon(), vp.FirmwaresTab()),
+		container.NewTabItemWithIcon(SitesTab, theme.SettingsIcon(), vp.SitesTab()),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
 	statusText := widget.NewLabel("Status")
@@ -41,7 +40,7 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	vp.pageTabs = tabs
 	vp.statLine = statusText
 	vp.statusActions = bar
-	vp.netselect = selector
+	vp.netSelect = selector
 	vp.netSelectedStr = (*vp.networks)[0]   // maybe from a saved preference
 
 	statusLine := container.NewHBox(nBar, bar, selector, statusText)
@@ -52,7 +51,7 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	selector.Hide()  // initial state
 	bar.Hide() // Initial State
 	nBar.Show() // on all pages
-	vp.tabStatus["Preferences"] = "GOLang is Wonderful!!!"
+	vp.tabStatus[SitesTab] = "GOLang is Wonderful!!!"
 
 	tabs.OnChanged = vp.OnMainTabsChangedCb
 

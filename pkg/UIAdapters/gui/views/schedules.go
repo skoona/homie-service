@@ -17,14 +17,17 @@ func (vp *viewProvider) SchedulesTab() fyne.CanvasObject {
 	rect := canvas.NewRectangle(cc.Green)
 	rect.SetMinSize(fyne.NewSize(64,64))
 	side := container.New(layout.NewPaddedLayout(), rect, clk)
+	vp.scheduleSide = side
 
 	card := widget.NewCard("HomeOffice", "80%", widget.NewLabel("motion"))
 		card.SetImage( cc.SknSelectThemedImage("toggleOff_r"))
 	card1 := widget.NewCard("MediaRoom", "60%", widget.NewLabel("motion"))
 		card1.SetImage(cc.SknSelectThemedImage("toggleOn_r"))
 
-	content := container.New(layout.NewGridLayout(3), card, card1)
-	scroller := container.NewVScroll(content)
+	cards := container.New(layout.NewGridLayout(3), card, card1)
+	vp.scheduleCards = cards
+
+	scroller := container.NewVScroll(cards)
 
 	page := container.NewBorder(nil,nil, side, nil, scroller)
 

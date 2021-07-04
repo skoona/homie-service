@@ -19,6 +19,8 @@ import (
 func (vp *viewProvider) HomeTab() fyne.CanvasObject {
 
 	cards := container.NewGridWithColumns(3)
+	vp.homeCards = cards // retain ref for later updates
+
 	for _, bc := range (*vp.dSvc).AllBroadcasts() {
 		card := widget.NewCard(bc.Level, bc.Value, widget.NewLabel(bc.Received.String()))
 		card.SetImage( cc.SknSelectThemedImage("notificationAlert_o"))
@@ -26,11 +28,14 @@ func (vp *viewProvider) HomeTab() fyne.CanvasObject {
 	}
 
 	image := cc.SknSelectImage("worksWithHomie")
+	image.SetMinSize(fyne.NewSize(160, 120))
 	uri, _ := url.Parse("https://homieiot.github.io/")
-	banner := container.NewPadded(image, widget.NewHyperlink("Homie for ESP8266/ESP32", uri))
+	specLink := widget.NewHyperlink("Homie for ESP8266/ESP32", uri)
+	specLink.Alignment = fyne.TextAlignCenter
+	banner := container.NewVBox(image, specLink)
 
 	scroller := container.NewVScroll(cards)
-	content := container.NewBorder(banner,nil, nil, nil, scroller)
+	page := container.NewBorder(banner,nil, nil, nil, scroller)
 
-	return content
+	return page
 }

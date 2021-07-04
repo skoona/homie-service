@@ -13,7 +13,7 @@ import (
 
 // containers for GridLayout
 
-func NewDevice(dv dc.Device, logger log.Logger) fyne.CanvasObject {
+func SknNewBadge(dv dc.Device, logger log.Logger) fyne.CanvasObject {
 	var sensor *canvas.Image
 	devList := unWrapDevice(dv)
 

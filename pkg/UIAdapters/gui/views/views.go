@@ -9,6 +9,14 @@ import (
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 )
 
+const (
+	HomeTab = "Home"
+	NetworksTab = "Networks"
+	FirmwareTab = "Firmwares"
+	ScheduleTab = "Schedules"
+	SitesTab = "Sites"
+)
+
 type (
 	// ViewProvider interface provides GUI features
 	ViewProvider interface {
@@ -25,16 +33,22 @@ type (
 
 	// ViewProvider struct contains GUI state information
 	viewProvider struct {
-		logger log.Logger
-		dSvc   *dc.CoreService
-		networks *[]string
-		pageTabs      *container.AppTabs
-		statLine      *widget.Label
-		netselect     *widget.Select
-		statusActions *widget.Toolbar
+		logger         log.Logger
+		dSvc           *dc.CoreService
+		networks       *[]string
+		pageTabs       *container.AppTabs
+		statLine       *widget.Label
+		netSelect      *widget.Select
+		statusActions  *widget.Toolbar
 		netSelectedStr string
 		lastTabStr     string
-		tabStatus   map[string]string
+		tabStatus      map[string]string
+		siteMlEntry    *widget.Entry
+		homeCards      *fyne.Container
+		networkCards   *fyne.Container
+		networkSide    *fyne.Container
+		scheduleCards  *fyne.Container
+		scheduleSide   *fyne.Container
 	}
 )
 
@@ -98,24 +112,24 @@ func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 
 	// manage stat line objects
 	switch tab.Text {
-	case "Networks":
-		if !vp.netselect.Visible() {
-			vp.netselect.Show()
+	case NetworksTab:
+		if !vp.netSelect.Visible() {
+			vp.netSelect.Show()
 		}
 		if vp.statusActions.Visible() {
 			vp.statusActions.Hide()
 		}
 		tab.Content.Refresh()
-	case "Schedules", "Firmwares":
-		if vp.netselect.Visible() {
-			vp.netselect.Hide()
+	case ScheduleTab, FirmwareTab:
+		if vp.netSelect.Visible() {
+			vp.netSelect.Hide()
 		}
 		if !vp.statusActions.Visible() {
 			vp.statusActions.Show()
 		}
 	default:
 		vp.statusActions.Hide()
-		vp.netselect.Hide()
+		vp.netSelect.Hide()
 	}
 	vp.statLine.Refresh()
 }
