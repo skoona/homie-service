@@ -85,21 +85,28 @@ func SknImageByName(alias string, themed bool) *canvas.Image {
 	return image
 }
 
-// SknCanvasSVGImageFromPath loads a image, icon, or svg from filesystem with Themeing
-func SknCanvasSVGImageFromPath(filename string) *canvas.Image  {
-	image := SknLoadImageFromURI(storage.NewFileURI( LocateFile(filename))).(*canvas.Image)
-	image.Resource = theme.NewThemedResource(image.Resource)
-	image.FillMode = canvas.ImageFillContain
-	return image
+// SknImageResourceFromPath loads a image, icon, or svg from filesystem
+func SknImageResourceFromPath(path string) fyne.Resource {
+	uri, err := storage.LoadResourceFromURI(storage.NewFileURI(LocateFile(path)))
+	if err != nil {
+		fmt.Println("Error opening image:",path, err.Error())
+		return nil
+	}
+	return uri
 }
 
-// SknLoadImageFromPath loads a image, icon, or svg from filesystem
-func SknLoadImageFromPath(path string) fyne.CanvasObject {
-	return SknLoadImageFromURI(storage.NewFileURI(path))
+// SknThemedCanvasImageFromPath loads a image, icon, or svg from filesystem with Themeing
+func SknThemedCanvasImageFromPath(path string) *canvas.Image  {
+	return SknLoadImageFromURI(storage.NewFileURI( LocateFile(path)), true).(*canvas.Image)
+}
+
+// SknImageFromPath loads a image, icon, or svg from filesystem
+func SknImageFromPath(path string) fyne.CanvasObject {
+	return SknLoadImageFromURI(storage.NewFileURI(path), false)
 }
 
 // SknLoadImageFromURI loads an image or svg from filesystem
-func SknLoadImageFromURI(u fyne.URI) fyne.CanvasObject {
+func SknLoadImageFromURI(u fyne.URI, themed bool) fyne.CanvasObject {
 	read, err := storage.Reader(u)
 	if err != nil {
 		fmt.Println("Error opening image", err)
@@ -111,8 +118,10 @@ func SknLoadImageFromURI(u fyne.URI) fyne.CanvasObject {
 		return canvas.NewRectangle(color.Black)
 	}
 	img := canvas.NewImageFromResource(res)
-	//img.FillMode = canvas.ImageFillContain
-	img.FillMode = canvas.ImageFillOriginal
+	img.FillMode = canvas.ImageFillContain
+	if themed {
+		img.Resource = theme.NewThemedResource(img.Resource)
+	}
 	return img
 }
 

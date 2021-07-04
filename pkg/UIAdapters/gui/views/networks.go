@@ -13,7 +13,7 @@ import (
 // NetworksTab ui page which includes networks
 // the is to be used on main page
 func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
-	
+
 	clk := cc.SknSelectImage("wallClock")
 	clk.Resize(fyne.NewSize(48,32))
 	rect := canvas.NewRectangle(cc.Green)
@@ -29,9 +29,9 @@ func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
 	}
 	vp.logger.Log("selected network", vp.netSelectedStr)
 	for _, device := range nMaps {
-		card := components.NewDevice( device )
+		card := components.NewDevice( device, vp.logger )
 		cards.Add(card)
-		vp.logger.Log("loading device", device.Name)
+		vp.logger.Log("completed device loading", device.Name)
 	}
 
 	scroller := container.NewVScroll(cards)

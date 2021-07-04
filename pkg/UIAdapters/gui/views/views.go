@@ -52,6 +52,12 @@ func NewViewProvider(ds *dc.CoreService, nets *[]string, logger *log.Logger) Vie
 	return vp
 }
 
+// ToolBarRefreshActionCb callback for refresh toolbar button
+func (vp *viewProvider) ToolBarRefreshActionCb() {
+	sText := vp.pageTabs.CurrentTab().Text
+	vp.statLine.SetText(fmt.Sprintf("%s refresh Selected", sText))
+	vp.logger.Log("tab", sText, "event", "refresh called")
+}
 // ToolBarAddActionCb callback for statusline toolbar Add button
 func (vp *viewProvider) ToolBarAddActionCb() {
 	sText := vp.pageTabs.CurrentTab().Text

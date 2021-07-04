@@ -511,6 +511,7 @@ func (hn *Network) handleDeviceAttributePropertyProperty(dm DeviceMessage) error
 		devattrpropprop = NewDeviceAttributePropertyProperty(string(dm.PropertyID), string(dm.PPropertyID), string(dm.Value))
 		devattrprop.Props[string(dm.PropertyID)] = devattrpropprop
 	}
+	devattrpropprop.Value = string(dm.Value)
 
 	_ = level.Debug(em.logger).Log("event", "handleDeviceAttributePropertyProperty() completed", "id", devattrpropprop.ID, "name", devattrpropprop.Name)
 	return err
@@ -545,6 +546,7 @@ func (hn *Network) handleDeviceAttributeProperty(dm DeviceMessage) error {
 		devattrprop = NewDeviceAttributeProperty(nValue, string(dm.PropertyID), string(dm.Value))
 		devattr.Props[string(dm.PropertyID)] = devattrprop
 	}
+	devattrprop.Value = string(dm.Value)
 
 	_ = level.Debug(em.logger).Log("event", "handleDeviceAttributeProperty() completed", "id", devattrprop.ID, "name", devattrprop.Name)
 	return err
@@ -571,6 +573,7 @@ func (hn *Network) handleDeviceAttribute(dm DeviceMessage) error {
 		devattr = NewDeviceAttribute(string(dm.DeviceID), nValue, string(dm.Value))
 		dev.Attrs[string(dm.AttributeID)] = devattr
 	}
+	devattr.Value = string(dm.Value)
 
 	_ = level.Debug(em.logger).Log("event", "handleDeviceAttribute() completed", "id", devattr.ID, "name", devattr.Name)
 	return err
@@ -630,6 +633,7 @@ func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 		nodepropattr = NewDeviceNodePropertyAttribute(string(dm.PropertyID), nValue, string(dm.Value))
 		nodeprop.Attrs[nValue] = nodepropattr
 	}
+	nodepropattr.Value = string(dm.Value)
 
 	_ = level.Debug(em.logger).Log("event", "handleNodePropertyAttribute() completed", "id", nodepropattr.ID, "name", nodepropattr.Name)
 	return err
@@ -663,6 +667,7 @@ func (hn *Network) handleNodeProperty(dm DeviceMessage) error {
 		nodeprop = NewDeviceNodeProperty(string(dm.NodeID), string(dm.PropertyID), string(dm.Value))
 		node.Props[string(dm.PropertyID)] = nodeprop
 	}
+	nodeprop.Value = string(dm.Value)
 
 	_ = level.Debug(em.logger).Log("event", "handleNodeProperty() completed", "id", nodeprop.ID, "name", nodeprop.Name)
 	return err
@@ -697,6 +702,7 @@ func (hn *Network) handleNodeAttribute(dm DeviceMessage) error {
 		nodeattr = NewDeviceNodeAttribute(string(dm.NodeID), nValue, string(dm.Value))
 		node.Attrs[nValue] = nodeattr
 	}
+	nodeattr.Value = string(dm.Value)
 
 	_ = level.Debug(em.logger).Log("event", "handleNodeAttribute() completed", "id", nodeattr.ID, "name", nodeattr.Name)
 	return err

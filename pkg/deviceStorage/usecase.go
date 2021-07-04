@@ -16,8 +16,7 @@ import (
 	"strings"
 )
 
-// RestoreNetworkFromDB()
-// Reconstitute the Site NETWORK Object
+// RestoreNetworkFromDB Reconstitute the Site NETWORK Object
 func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 	nw  := dc.NewNetwork("Restored", networkName)
 
@@ -37,7 +36,7 @@ func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 	return nw
 }
 
-// StoreSchedule(schedule Schedule)
+// StoreSchedule (schedule Schedule)
 func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 	level.Debug(r.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
 	if d.ElementType != dc.CoreTypeSchedule {
