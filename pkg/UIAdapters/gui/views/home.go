@@ -18,7 +18,7 @@ import (
 // this is to be used as the main page
 func (vp *viewProvider) HomeTab() fyne.CanvasObject {
 
-	cards := container.NewGridWrap(fyne.NewSize(300, 400))
+	cards := container.NewGridWrap(fyne.NewSize( CardWidth, CardHeight))
 
 	for _, bc := range (*vp.dSvc).AllBroadcasts() {
 		rec := widget.NewLabel(bc.Received.String())

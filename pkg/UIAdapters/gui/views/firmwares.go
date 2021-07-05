@@ -12,10 +12,10 @@ import (
 // FirmwaresTab ui page which includes firmwares
 // the is to be used on main page
 func (vp *viewProvider) FirmwaresTab() fyne.CanvasObject{
-	form := components.MakeFormSide()
+	form := components.SknSideForm()
 	side := container.New(layout.NewPaddedLayout(), form)
 
-	cards := container.NewGridWrap(fyne.NewSize(300, 400))
+	cards := container.NewGridWrap(fyne.NewSize( CardWidth, CardHeight))
 
 	for _, fw := range (*vp.dSvc).AllFirmwares() {
 		rec := widget.NewLabel(fw.Created.String())

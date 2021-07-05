@@ -14,7 +14,9 @@ const (
 	NetworksTab = "Networks"
 	FirmwareTab = "Firmwares"
 	ScheduleTab = "Schedules"
-	SitesTab = "Sites"
+	SitesTab    = "Sites"
+	CardWidth   = 384
+	CardHeight  = 448
 )
 
 type (

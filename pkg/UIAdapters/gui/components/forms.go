@@ -7,7 +7,7 @@ import (
 	"fyne.io/fyne/v2/widget"
 )
 
-func MakeFormSide() fyne.CanvasObject {
+func SknSideForm() fyne.CanvasObject {
 	name := widget.NewEntry()
 	name.SetPlaceHolder("John Smith")
 

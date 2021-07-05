@@ -39,19 +39,20 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	statusLine := container.NewHBox(nBar, bar, selector, statusText)
 	page := container.NewBorder(nil, statusLine,nil, nil, tabs)
 
+	vp.pageTabs = tabs
+	tabs.OnChanged = vp.OnMainTabsChangedCb
+	vp.statLine = statusText
+	vp.statusActions = bar
+	vp.netSelect = selector
+	vp.netSelectedStr = (*vp.networks)[0]   // maybe from a saved preference
+	vp.tabStatus[SitesTab] = "GOLang is Wonderful!!!"
+
 	selector.SetSelected(vp.netSelectedStr)
 	selector.Refresh()
 	selector.Hide()  // initial state
 	bar.Hide() // Initial State
 	nBar.Show() // on all pages
 
-	vp.pageTabs = tabs
-	vp.statLine = statusText
-	vp.statusActions = bar
-	vp.netSelect = selector
-	vp.netSelectedStr = (*vp.networks)[0]   // maybe from a saved preference
-	vp.tabStatus[SitesTab] = "GOLang is Wonderful!!!"
-	tabs.OnChanged = vp.OnMainTabsChangedCb
 
 	return page
 }

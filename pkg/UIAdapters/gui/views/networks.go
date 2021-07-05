@@ -12,10 +12,10 @@ import (
 // NetworksTab ui page which includes networks
 // the is to be used on main page
 func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
-	form := components.MakeFormSide()
+	form := components.SknSideForm()
 	side := container.New(layout.NewPaddedLayout(), form)
 
-	cards := container.NewGridWrap(fyne.NewSize(300, 400))
+	cards := container.NewGridWrap(fyne.NewSize( CardWidth, CardHeight))
 
 	nMaps, err := (*vp.dSvc).NetworkDevices(vp.netSelectedStr) // "sknSensors")
 	if err != nil {

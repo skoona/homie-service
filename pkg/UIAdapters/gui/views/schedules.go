@@ -12,7 +12,7 @@ import (
 // SchedulesTab ui page which includes schedules
 // the is to be used on main page
 func (vp *viewProvider) SchedulesTab() fyne.CanvasObject {
-	form := components.MakeFormSide()
+	form := components.SknSideForm()
 	side := container.New(layout.NewPaddedLayout(), form)
 
 	card := widget.NewCard("HomeOffice", "80%", widget.NewLabel("motion"))
@@ -20,7 +20,7 @@ func (vp *viewProvider) SchedulesTab() fyne.CanvasObject {
 	card1 := widget.NewCard("MediaRoom", "60%", widget.NewLabel("motion"))
 		card1.SetImage(cc.SknSelectThemedImage("wallClock"))
 
-	cards := container.NewGridWrap(fyne.NewSize(300, 400), card, card1)
+	cards := container.NewGridWrap(fyne.NewSize( CardWidth, CardHeight), card, card1)
 
 	scroller := container.NewVScroll(cards)
 
