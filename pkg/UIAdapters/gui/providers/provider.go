@@ -50,7 +50,7 @@ func (g *guiProvider) HomieTheme() fyne.Theme {
 	return g.theme
 }
 func (g *guiProvider) MainPage() fyne.CanvasObject {
-	time.Sleep(10 * time.Second) // Allow MQTT messages to update Broadcasts
+	time.Sleep(15 * time.Second) // Allow MQTT messages to update Broadcasts
 	return g.vp.MainPage()
 }
 

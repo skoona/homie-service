@@ -23,7 +23,8 @@ func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
 	side := container.New(layout.NewPaddedLayout(), rect, clk)
 	vp.networkSide = side // retain for later update
 
-	cards := container.NewGridWithColumns(3)
+	//cards := container.NewGridWithColumns(3)
+	cards := container.NewGridWrap(fyne.NewSize(300, 500))
 	vp.networkCards = cards  // retain for later update
 
 	nMaps, err := (*vp.dSvc).NetworkDevices(vp.netSelectedStr) // "sknSensors")
@@ -33,7 +34,7 @@ func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
 	} else {
 		vp.logger.Log("selected network", vp.netSelectedStr)
 		for _, device := range nMaps {
-			card := components.SknNewBadge(device, vp.logger)
+			card := components.SknNewDeviceBadge(&device, vp.logger)
 			cards.Add(card)
 			vp.logger.Log("completed device loading", device.Name)
 		}
