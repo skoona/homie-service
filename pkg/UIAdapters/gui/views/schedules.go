@@ -12,7 +12,7 @@ import (
 // SchedulesTab ui page which includes schedules
 // the is to be used on main page
 func (vp *viewProvider) SchedulesTab() fyne.CanvasObject {
-	form := components.SknSideForm()
+	form := components.SknScheduleSideForm()
 	side := container.New(layout.NewPaddedLayout(), form)
 
 	card := widget.NewCard("HomeOffice", "80%", widget.NewLabel("motion"))

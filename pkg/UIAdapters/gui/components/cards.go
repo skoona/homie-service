@@ -73,7 +73,6 @@ func deviceTable(dv *dc.Device, logger log.Logger) *widget.Table {
 	table := widget.NewTable(
 		func() (int, int) {
 			rows := mapRows
-			_ = logger.Log("callback","CountRequest", "Rows", rows, "Cols", 2, "from", dv.Name)
 			return rows, 2 // answer row and col count
 		},
 		func() fyne.CanvasObject {
@@ -83,7 +82,6 @@ func deviceTable(dv *dc.Device, logger log.Logger) *widget.Table {
 			dList := devList
 			// i.Row, i.Col
 			value := dList[fmt.Sprintf("%d:%d", i.Row, i.Col)]
-			_ = logger.Log("callback", "DataRequest", "Row",i.Row ,"Col",i.Col, "from", dv.Name, "value", value)
 			o.(*widget.Label).SetText( value ) // set value of row / col
 		})
 

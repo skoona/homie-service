@@ -36,7 +36,7 @@ func main() {
 	myApp := app.NewWithID("net.skoona.projects.homie-service")
 	myWindow := myApp.NewWindow("Homie Service, GUI by Fyne")
 	provider := providers.NewGuiController(&cfg, &myWindow, &coreSvc, &networks, &logger)
-	//myApp.Settings().SetTheme(provider.HomieTheme())
+	myApp.Settings().SetTheme(provider.HomieTheme())
 
 	myWindow.SetContent( provider.MainPage() )
 	//myWindow.Resize(fyne.NewSize(560, 400))
