@@ -36,13 +36,6 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	)
 
 	selector := widget.NewSelect(*vp.networks, vp.OnNetworkSelectionChangedCb)
-
-	vp.pageTabs = tabs
-	vp.statLine = statusText
-	vp.statusActions = bar
-	vp.netSelect = selector
-	vp.netSelectedStr = (*vp.networks)[0]   // maybe from a saved preference
-
 	statusLine := container.NewHBox(nBar, bar, selector, statusText)
 	page := container.NewBorder(nil, statusLine,nil, nil, tabs)
 
@@ -51,8 +44,13 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	selector.Hide()  // initial state
 	bar.Hide() // Initial State
 	nBar.Show() // on all pages
-	vp.tabStatus[SitesTab] = "GOLang is Wonderful!!!"
 
+	vp.pageTabs = tabs
+	vp.statLine = statusText
+	vp.statusActions = bar
+	vp.netSelect = selector
+	vp.netSelectedStr = (*vp.networks)[0]   // maybe from a saved preference
+	vp.tabStatus[SitesTab] = "GOLang is Wonderful!!!"
 	tabs.OnChanged = vp.OnMainTabsChangedCb
 
 	return page

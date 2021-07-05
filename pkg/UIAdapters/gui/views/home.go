@@ -19,7 +19,6 @@ import (
 func (vp *viewProvider) HomeTab() fyne.CanvasObject {
 
 	cards := container.NewGridWrap(fyne.NewSize(300, 400))
-	vp.homeCards = cards // retain ref for later updates
 
 	for _, bc := range (*vp.dSvc).AllBroadcasts() {
 		rec := widget.NewLabel(bc.Received.String())
@@ -30,15 +29,14 @@ func (vp *viewProvider) HomeTab() fyne.CanvasObject {
 	}
 
 	image := cc.SknSelectImage("worksWithHomie")
-	image.SetMinSize(fyne.NewSize(160, 120))
+	image.SetMinSize(fyne.NewSize(192, 128))
 	uri, _ := url.Parse("https://homieiot.github.io/")
 	specLink := widget.NewHyperlink("Homie for ESP8266/ESP32", uri)
 	specLink.Alignment = fyne.TextAlignCenter
 
 	page := container.NewVBox(image, specLink, cards)
 
-	//scroller := container.NewVScroll(cards)
-	//page := container.NewBorder(banner,nil, nil, nil, scroller)
+	vp.homeCards = cards // retain ref for later updates
 
 	return page
 }

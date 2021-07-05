@@ -31,16 +31,16 @@ func SknNewDeviceBadge(dv *dc.Device, logger log.Logger) fyne.CanvasObject {
 	wSubTitle := widget.NewLabel(dv.Parent)
 	wSubTitle.Alignment = fyne.TextAlignCenter
 
-	textGrid := MakeDeviceTextGrid(dv)
-	box := container.NewVScroll(textGrid)
+	//textGrid := MakeDeviceTextGrid(dv)
+	box := deviceTable(dv, logger)
 
 	content := container.NewVBox(sensor, wTitle, wSubTitle, box)
 
 	return content
 }
 
-func scratchTable(dv dc.Device, logger log.Logger) {
-	devList := unWrapDeviceForTables(dv)
+func deviceTable(dv *dc.Device, logger log.Logger) *widget.Table {
+	devList := unWrapDevice(dv)
 
 	table := widget.NewTable(
 		func() (int, int) {
@@ -59,38 +59,9 @@ func scratchTable(dv dc.Device, logger log.Logger) {
 		})
 	//table.Resize(fyne.NewSize(240,460))
 	table.Refresh()
+	
+	return table
 }
-
-// unWrapDeviceForTables unwrapp device into rc map
-func unWrapDeviceForTables(d dc.Device) map[string]string {
-	var dlist = map[string]string{}
-	fmt.Printf("[UnWrapping]{%s} from: %s ----------------------\n", d.Name, d.Parent)
-	var row =1
-	for _, v := range d.Attrs {
-		fmt.Printf("[DeviceAttrs]{%d} Key: %s, Value: %s\n", row, v.Name, v.Value)
-		dlist[fmt.Sprintf("%d:0", row)] = v.Name
-		dlist[fmt.Sprintf("%d:1", row)] = v.Value
-		row += 1
-	}
-	nodes := strings.Split(d.Attrs["$nodes"].Value, ",")
-	for _, node := range nodes {
-		for _, v := range d.Nodes[node].Attrs {
-			fmt.Printf("[Attrs]{%d} Key: %s, Value: %s\n", row, v.Name, v.Value)
-			dlist[fmt.Sprintf("%d:0", row)] = v.Name
-			dlist[fmt.Sprintf("%d:1", row)] = v.Value
-			row += 1
-		}
-		for _, v := range d.Nodes[node].Props {
-			fmt.Printf("[Props]{%d} Key: %s, Value: %s\n", row, v.Name, v.Value)
-			dlist[fmt.Sprintf("%d:0", row)] = v.Name
-			dlist[fmt.Sprintf("%d:1", row)] = v.Value
-			row += 1
-		}
-	}
-
-	return dlist
-}
-
 
 func MakeTableTab() fyne.CanvasObject {
 	t := widget.NewTable(
@@ -114,8 +85,8 @@ func MakeTableTab() fyne.CanvasObject {
 	return t
 }
 
-// unWrapDeviceForTextGrid unwrap device into k/v map
-func unWrapDeviceForTextGrid(d *dc.Device) map[string]string {
+// unWrapDevice unwrap device into k/v map
+func unWrapDevice(d *dc.Device) map[string]string {
 	var dlist = map[string]string{}
 	fmt.Printf("[UnWrapping]{%s} from: %s ----------------------\n", d.Name, d.Parent)
 	row := 0
@@ -212,7 +183,7 @@ func makeTextGrid() *widget.TextGrid {
 
 
 func MakeDeviceTextGrid(d *dc.Device) *widget.TextGrid {
-	dList := unWrapDeviceForTextGrid(d)
+	dList := unWrapDevice(d)
 	rowLength := len(dList)
 	buffer := strings.Builder{}
 	for row := 0; row < rowLength; row++ {
