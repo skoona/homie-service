@@ -130,7 +130,7 @@ func unWrapDevice(d *dc.Device) map[string]string {
 		} else {
 			dlist[fmt.Sprintf("%d:1", row)] = v.Value
 			row += 1
-			dlist[fmt.Sprintf("%d:0", row)] = d.Name
+			dlist[fmt.Sprintf("%d:0", row)] = v.Name
 			dlist[fmt.Sprintf("%d:1", row)] = "Device Attr Properties"
 			row += 1
 			for _, p := range v.Props {
@@ -141,7 +141,7 @@ func unWrapDevice(d *dc.Device) map[string]string {
 				} else {
 					dlist[fmt.Sprintf("%d:1", row)] = p.Value
 					row += 1
-					dlist[fmt.Sprintf("%d:0", row)] = d.Name
+					dlist[fmt.Sprintf("%d:0", row)] = p.Name
 					dlist[fmt.Sprintf("%d:1", row)] = "Device Attr Prop Properties"
 					row += 1
 					for _, pp := range p.Props {
@@ -174,7 +174,7 @@ func unWrapDevice(d *dc.Device) map[string]string {
 			} else {
 				dlist[fmt.Sprintf("%d:1", row)] = v.Value
 				row += 1
-				dlist[fmt.Sprintf("%d:0", row)] = node
+				dlist[fmt.Sprintf("%d:0", row)] = v.Name
 				dlist[fmt.Sprintf("%d:1", row)] = "Node Prop Attributes"
 				row += 1
 				for _, pa := range v.Attrs {
