@@ -7,6 +7,7 @@ import (
 	"fyne.io/fyne/v2/theme"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	cc "github.com/skoona/homie-service/pkg/utils"
+	"strings"
 	"time"
 )
 
@@ -21,7 +22,7 @@ func SknNewInventoryCards(s dc.Schedule) fyne.CanvasObject {
 func SknNewDeviceCard(d dc.Device) *fyne.Container {
 	var sensor *canvas.Image
 
-	if d.Attrs["$state"].Value == "ready" {
+	if strings.Contains(d.Attrs["$state"].Value, "ready") {
 		sensor = cc.SknSelectThemedImage("sensorOn_r")
 	} else {
 		sensor = cc.SknSelectThemedImage("sensorOff_r")
