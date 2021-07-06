@@ -30,12 +30,12 @@ func SknNewDeviceCard(d dc.Device) *fyne.Container {
 	sensor.SetMinSize(fyne.NewSize(64,64))
 
 	title := canvas.NewText(d.Name, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
-	title.SetMinSize(fyne.NewSize(theme.CaptionTextSize(),theme.CaptionTextSize()))
+	title.SetMinSize(fyne.NewSize(3 * theme.CaptionTextSize(),3 * theme.CaptionTextSize()))
 	title.TextStyle = fyne.TextStyle{Bold: true}
 	title.Alignment = fyne.TextAlignCenter
 
 	version := canvas.NewText("Signal: " + d.Attrs["$stats"].Props["signal"].Value, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
-	version.SetMinSize(fyne.NewSize(theme.CaptionTextSize(),theme.CaptionTextSize()))
+	version.SetMinSize(fyne.NewSize(2 * theme.CaptionTextSize(), 2 * theme.CaptionTextSize()))
 	version.TextStyle = fyne.TextStyle{Bold: true}
 	version.Alignment = fyne.TextAlignCenter
 
