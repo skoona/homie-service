@@ -12,10 +12,14 @@ import (
 // NetworksTab ui page which includes networks
 // the is to be used on main page
 func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
-	form := components.SknSideForm()
-	side := container.New(layout.NewPaddedLayout(), form)
+	tree := components.MakeTreeTab()
+	side := container.New(layout.NewPaddedLayout(), tree)
 
-	cards := container.NewGridWrap(fyne.NewSize( CardWidth, CardHeight))
+	cards := container.New(layout.NewGridLayout(2))
+	scroller := container.NewVScroll(cards)
+
+	page := container.NewHSplit(side, scroller)
+	page.SetOffset(0.4)
 
 	nMaps, err := (*vp.dSvc).NetworkDevices(vp.netSelectedStr) // "sknSensors")
 	if err != nil {
@@ -24,16 +28,14 @@ func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
 	} else {
 		vp.logger.Log("selected network", vp.netSelectedStr)
 		for _, device := range nMaps {
-			card := components.SknNewDeviceBadge(&device, vp.logger)
+			//card := components.SknNewDeviceBadge(&device, vp.logger)
+			card := components.SknNewDeviceCard(device)
 			cards.Add(card)
 			vp.logger.Log("completed device loading", device.Name)
 		}
 	}
-	scroller := container.NewVScroll(cards)
 
-	page := container.NewBorder(nil,nil, side, nil, scroller)
-
-	vp.networkSide = &form // retain for later update
+	vp.networkSide  = side // retain for later update
 	vp.networkCards = cards  // retain for later update
 
 	return page

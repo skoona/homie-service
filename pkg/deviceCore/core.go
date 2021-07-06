@@ -436,12 +436,16 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	 * TODO determine if this nil'ed message is looping
 	 * -- i.e we send it, and also receive it which makes us send it again...
 	 */
-	if ok && (string(dm.Value) == "" || dm.Value == nil) {
+	if ok && (string(dm.Value) == "" || dm.Value == nil) &&
+			strings.Contains(dm.Topic(), "$fw/checksum") {
 		err := em.RemoveDeviceByID(string(dv.ID), dv.Parent)
 
 		err = fmt.Errorf("device{%s} on network{%s} was deleted since value was nil", dm.DeviceID, hn.Name)
 		_ = level.Warn(em.logger).Log("action", err.Error())
 		return err
+	} else if ok && (string(dm.Value) == "" || dm.Value == nil)  {
+		// ignore this message -- device is being deleted from mqtt network
+		return fmt.Errorf("device{%s} on network{%s} is being deleted, ignoring stream of nil messages", dm.DeviceID, hn.Name)
 	}
 
 	/*

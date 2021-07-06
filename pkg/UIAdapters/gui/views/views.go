@@ -48,7 +48,7 @@ type (
 		siteMlEntry    *widget.Entry
 		homeCards      *fyne.Container
 		networkCards   *fyne.Container
-		networkSide    *fyne.CanvasObject
+		networkSide    *fyne.Container
 		scheduleCards  *fyne.Container
 		scheduleSide   *fyne.CanvasObject
 		firmwareCards  *fyne.Container

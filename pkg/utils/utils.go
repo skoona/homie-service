@@ -7,8 +7,6 @@ import (
 	"strings"
 )
 
-
-
 // fileExists checks if a file exists and is not a directory before we
 // try using it to prevent further errors.
 func fileExists(filename string) bool {

@@ -5,6 +5,7 @@ import (
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
+	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
 	"github.com/go-kit/kit/log"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
@@ -13,6 +14,43 @@ import (
 )
 
 // containers for GridLayout
+
+func SknNewDeviceCard(d dc.Device) *fyne.Container {
+	var sensor *canvas.Image
+
+	if d.Attrs["$state"].Value == "ready" {
+		sensor = cc.SknSelectThemedImage("sensorOn_r")
+	} else {
+		sensor = cc.SknSelectThemedImage("sensorOff_r")
+	}
+	sensor.SetMinSize(fyne.NewSize(64,64))
+
+	title := canvas.NewText(d.Name, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
+	title.SetMinSize(fyne.NewSize(theme.CaptionTextSize(),theme.CaptionTextSize()))
+	title.TextStyle = fyne.TextStyle{Bold: true}
+	title.Alignment = fyne.TextAlignCenter
+
+	version := canvas.NewText("Signal: " + d.Attrs["$stats"].Props["signal"].Value, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
+	version.SetMinSize(fyne.NewSize(theme.CaptionTextSize(),theme.CaptionTextSize()))
+	version.TextStyle = fyne.TextStyle{Bold: true}
+	version.Alignment = fyne.TextAlignCenter
+
+	subTitle := canvas.NewText("firmware: " + d.Attrs["$fw"].Props["name"].Value, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
+	subTitle.SetMinSize(fyne.NewSize(theme.CaptionTextSize(),theme.CaptionTextSize()))
+	subTitle.TextStyle = fyne.TextStyle{Bold: true}
+	subTitle.Alignment = fyne.TextAlignCenter
+
+	body := canvas.NewText("ip: " +d.Attrs["$localip"].Value, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
+	body.SetMinSize(fyne.NewSize(theme.TextSize(), theme.TextSize()))
+	body.TextStyle = fyne.TextStyle{Monospace: true}
+	body.Alignment = fyne.TextAlignCenter
+
+	pkg := container.NewBorder(nil, nil, sensor, nil, container.NewVBox(title, version, subTitle, body))
+	card := container.NewVBox(pkg)
+
+	return card
+}
+
 
 func SknNewDeviceBadge(dv *dc.Device, logger log.Logger) fyne.CanvasObject {
 	var sensor *canvas.Image

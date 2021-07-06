@@ -7,13 +7,16 @@
 package main
 
 import (
+	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
+	"fyne.io/fyne/v2/cmd/fyne_settings/settings"
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/log/level"
 	"github.com/skoona/homie-service/pkg/UIAdapters/gui/providers"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	"github.com/skoona/homie-service/pkg/services"
 	cc "github.com/skoona/homie-service/pkg/utils"
+	"net/url"
 	"os"
 )
 
@@ -35,8 +38,9 @@ func main() {
 
 	myApp := app.NewWithID("net.skoona.projects.homie-service")
 	myWindow := myApp.NewWindow("Homie Service, GUI by Fyne")
+	sknMenus(myApp, myWindow)
 	provider := providers.NewGuiController(&cfg, &myWindow, &coreSvc, &networks, &logger)
-	myApp.Settings().SetTheme(provider.HomieTheme())
+	//myApp.Settings().SetTheme(provider.HomieTheme())
 
 	myWindow.SetContent( provider.MainPage() )
 	//myWindow.Resize(fyne.NewSize(560, 400))
@@ -48,4 +52,59 @@ func main() {
 	Shutdown()
 
 	os.Exit(0)
+}
+
+func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
+	if focused, ok := w.Canvas().Focused().(fyne.Shortcutable); ok {
+		focused.TypedShortcut(s)
+	}
+}
+
+func sknMenus(a fyne.App, w fyne.Window) {
+	settingsItem := fyne.NewMenuItem("Settings", func() {
+		w := a.NewWindow("Fyne Settings")
+		w.SetContent(settings.NewSettings().LoadAppearanceScreen(w))
+		w.Resize(fyne.NewSize(480, 480))
+		w.Show()
+	})
+
+	cutItem := fyne.NewMenuItem("Cut", func() {
+		shortcutFocused(&fyne.ShortcutCut{
+			Clipboard: w.Clipboard(),
+		}, w)
+	})
+	copyItem := fyne.NewMenuItem("Copy", func() {
+		shortcutFocused(&fyne.ShortcutCopy{
+			Clipboard: w.Clipboard(),
+		}, w)
+	})
+	pasteItem := fyne.NewMenuItem("Paste", func() {
+		shortcutFocused(&fyne.ShortcutPaste{
+			Clipboard: w.Clipboard(),
+		}, w)
+	})
+
+	helpMenu := fyne.NewMenu("Help",
+		fyne.NewMenuItem("Documentation", func() {
+			u, _ := url.Parse("https://developer.fyne.io")
+			_ = a.OpenURL(u)
+		}),
+		fyne.NewMenuItem("Support", func() {
+			u, _ := url.Parse("https://fyne.io/support/")
+			_ = a.OpenURL(u)
+		}),
+	)
+	file := fyne.NewMenu("File")
+	if !fyne.CurrentDevice().IsMobile() {
+		file.Items = append(file.Items, fyne.NewMenuItemSeparator(), settingsItem)
+	}
+	mainMenu := fyne.NewMainMenu(
+		// a quit item will be appended to our first menu
+		file,
+		fyne.NewMenu("Edit", cutItem, copyItem, pasteItem),
+		helpMenu,
+	)
+	w.SetMainMenu(mainMenu)
+	w.SetMaster()
+
 }

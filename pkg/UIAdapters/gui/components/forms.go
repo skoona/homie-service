@@ -108,3 +108,4 @@ func SknScheduleSideForm() fyne.CanvasObject {
 	form.Append("Message", largeText)
 	return form
 }
+
