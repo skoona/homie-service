@@ -91,7 +91,7 @@ func (vp *viewProvider) ToolBarRefreshActionCb() {
 	default:
 		vp.pageTabs.CurrentTab().Content.Refresh()
 	}
-	vp.pageTabs.CurrentTab().Content.Refresh()
+	vp.pageTabs.Refresh()
 	vp.statLine.SetText(fmt.Sprintf("%s refresh completed", sText))
 	vp.logger.Log("tab", sText, "event", "refresh called")
 }
