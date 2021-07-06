@@ -15,7 +15,7 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 		container.NewTabItemWithIcon(NetworksTab, theme.ComputerIcon(), vp.NetworksTab()),
 		container.NewTabItemWithIcon(ScheduleTab, cc.SknSelectThemedResource("timeLapse_o"), vp.SchedulesTab()),
 		container.NewTabItemWithIcon(FirmwareTab, theme.StorageIcon(), vp.FirmwaresTab()),
-		container.NewTabItemWithIcon(SitesTab, theme.SettingsIcon(), vp.SitesTab()),
+		container.NewTabItemWithIcon(InventoryTab, theme.SettingsIcon(), vp.InventoryTab()),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
 	statusText := widget.NewLabel("Status")
@@ -45,7 +45,7 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	vp.statusActions = bar
 	vp.netSelect = selector
 	vp.netSelectedStr = (*vp.networks)[0]   // maybe from a saved preference
-	vp.tabStatus[SitesTab] = "GOLang is Wonderful!!!"
+	vp.tabStatus[InventoryTab] = "GOLang is Wonderful!!!"
 
 	selector.SetSelected(vp.netSelectedStr)
 	selector.Refresh()

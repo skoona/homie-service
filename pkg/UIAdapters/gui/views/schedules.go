@@ -6,7 +6,6 @@ import (
 	"fyne.io/fyne/v2/layout"
 	"fyne.io/fyne/v2/widget"
 	"github.com/skoona/homie-service/pkg/UIAdapters/gui/components"
-	cc "github.com/skoona/homie-service/pkg/utils"
 )
 
 // SchedulesTab ui page which includes schedules
@@ -15,16 +14,18 @@ func (vp *viewProvider) SchedulesTab() fyne.CanvasObject {
 	form := components.SknScheduleSideForm()
 	side := container.New(layout.NewPaddedLayout(), form)
 
-	card := widget.NewCard("HomeOffice", "80%", widget.NewLabel("motion"))
-		card.SetImage( cc.SknSelectThemedImage("wallClock"))
-	card1 := widget.NewCard("MediaRoom", "60%", widget.NewLabel("motion"))
-		card1.SetImage(cc.SknSelectThemedImage("wallClock"))
-
-	cards := container.NewGridWrap(fyne.NewSize( CardWidth, CardHeight), card, card1)
-
+	cards := container.New(layout.NewGridLayout(1))
 	scroller := container.NewVScroll(cards)
-
 	page := container.NewBorder(nil,nil, side, nil, scroller)
+
+	if len(vp.siteNetworks.Schedules) == 0 {
+		cards.Add(widget.NewLabel("no schedules available"))
+	} else {
+		for _, s := range vp.siteNetworks.Schedules {
+			card := components.SknNewScheduleCards(s)
+			cards.Add(card)
+		}
+	}
 
 	vp.scheduleSide = &form
 	vp.scheduleCards = cards

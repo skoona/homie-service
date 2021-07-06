@@ -2,14 +2,12 @@ package views
 
 import (
 	"fyne.io/fyne/v2"
-	"fyne.io/fyne/v2/canvas"
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/layout"
-	"fyne.io/fyne/v2/theme"
 	"fyne.io/fyne/v2/widget"
+	"github.com/skoona/homie-service/pkg/UIAdapters/gui/components"
 	cc "github.com/skoona/homie-service/pkg/utils"
 	"net/url"
-	"time"
 )
 
 
@@ -30,36 +28,18 @@ func (vp *viewProvider) HomeTab() fyne.CanvasObject {
 	specLink.Alignment = fyne.TextAlignCenter
 	top := container.NewVBox(image, specLink)
 
-	cards := container.New(layout.NewGridLayout(2))
+	cards := container.New(layout.NewGridLayout(1))
 	scroller := container.NewVScroll(cards)
 	page := container.NewBorder(top,nil, nil, nil, scroller)
 
-	for _, bc := range (*vp.dSvc).AllBroadcasts() {
-		title := canvas.NewText(bc.Level, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
-		title.SetMinSize(fyne.NewSize(2 * theme.CaptionTextSize(), 2 * theme.CaptionTextSize()))
-		title.TextStyle = fyne.TextStyle{Bold: true}
-		title.Alignment = fyne.TextAlignLeading
-
-		subTitle := canvas.NewText(bc.Value, theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
-		subTitle.SetMinSize(fyne.NewSize(theme.CaptionTextSize(),theme.CaptionTextSize()))
-		subTitle.TextStyle = fyne.TextStyle{Bold: true}
-		subTitle.Alignment = fyne.TextAlignLeading
-
-		body := canvas.NewText(bc.Received.Local().Format(time.RFC822), cc.Blue)
-		body.SetMinSize(fyne.NewSize(theme.TextSize(), theme.TextSize()))
-		body.TextStyle = fyne.TextStyle{Monospace: true}
-		body.Alignment = fyne.TextAlignLeading
-
-		img := cc.SknSelectThemedImage("notificationAlert_o")
-		img.SetMinSize(fyne.NewSize(64,64))
-		//pad := container.NewPadded( img )
-
-		pkg := container.NewBorder(nil, nil, img, nil, container.NewVBox(title, subTitle, body))
-		card := container.NewVBox(pkg)
-
-		cards.Add(card)
+	if len(vp.siteNetworks.Broadcasts) == 0 {
+		cards.Add(widget.NewLabel("no broadcasts available"))
+	} else {
+		for _, bc := range vp.siteNetworks.Broadcasts {
+			card := components.SknNewBroadcastCards(bc)
+			cards.Add(card)
+		}
 	}
-
 	vp.homeCards = cards // retain ref for later updates
 
 	return page

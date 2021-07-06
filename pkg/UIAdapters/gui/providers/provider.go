@@ -7,7 +7,6 @@ import (
 	"github.com/skoona/homie-service/pkg/UIAdapters/gui/views"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 	cc "github.com/skoona/homie-service/pkg/utils"
-	"time"
 )
 
 // GuiProvider
@@ -50,7 +49,7 @@ func (g *guiProvider) HomieTheme() fyne.Theme {
 	return g.theme
 }
 func (g *guiProvider) MainPage() fyne.CanvasObject {
-	time.Sleep(30 * time.Second) // Allow MQTT messages to update Broadcasts
+	//time.Sleep(12 * time.Second) // Allow MQTT messages to update Broadcasts
 	return g.vp.MainPage()
 }
 

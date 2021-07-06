@@ -10,13 +10,13 @@ import (
 )
 
 const (
-	HomeTab = "Home"
-	NetworksTab = "Networks"
-	FirmwareTab = "Firmwares"
-	ScheduleTab = "Schedules"
-	SitesTab    = "Sites"
-	CardWidth   = 384
-	CardHeight  = 448
+	HomeTab      = "Home"
+	NetworksTab  = "Networks"
+	FirmwareTab  = "Firmwares"
+	ScheduleTab  = "Schedules"
+	InventoryTab = "Inventory"
+	CardWidth    = 384
+	CardHeight   = 448
 )
 
 type (
@@ -35,24 +35,26 @@ type (
 
 	// ViewProvider struct contains GUI state information
 	viewProvider struct {
-		logger         log.Logger
-		dSvc           *dc.CoreService
-		networks       *[]string
-		pageTabs       *container.AppTabs
-		statLine       *widget.Label
-		netSelect      *widget.Select
-		statusActions  *widget.Toolbar
-		netSelectedStr string
-		lastTabStr     string
-		tabStatus      map[string]string
-		siteMlEntry    *widget.Entry
-		homeCards      *fyne.Container
-		networkCards   *fyne.Container
-		networkSide    *fyne.Container
-		scheduleCards  *fyne.Container
-		scheduleSide   *fyne.CanvasObject
-		firmwareCards  *fyne.Container
-		firmwareSide   *fyne.CanvasObject
+		logger           log.Logger
+		dSvc             *dc.CoreService
+		networks         *[]string
+		pageTabs         *container.AppTabs
+		statLine         *widget.Label
+		netSelect        *widget.Select
+		statusActions    *widget.Toolbar
+		netSelectedStr   string
+		lastTabStr       string
+		tabStatus        map[string]string
+		inventoryMLEntry *widget.Entry
+		homeCards        *fyne.Container
+		networkCards     *fyne.Container
+		networkSide      *fyne.Container
+		scheduleCards    *fyne.Container
+		scheduleSide     *fyne.CanvasObject
+		firmwareCards    *fyne.Container
+		firmwareSide     *fyne.CanvasObject
+		siteNetworks     *dc.SiteNetworks
+		devSummary       [][]string
 	}
 )
 
@@ -66,6 +68,8 @@ func NewViewProvider(ds *dc.CoreService, nets *[]string, logger *log.Logger) Vie
 		networks: nets,
 		tabStatus: map[string]string{},
 		netSelectedStr: (*nets)[0],
+		devSummary: make([][]string, 24),
+		siteNetworks: (*ds).PrivateSiteNetworks(),
 	}
 	return vp
 }
@@ -73,7 +77,22 @@ func NewViewProvider(ds *dc.CoreService, nets *[]string, logger *log.Logger) Vie
 // ToolBarRefreshActionCb callback for refresh toolbar button
 func (vp *viewProvider) ToolBarRefreshActionCb() {
 	sText := vp.pageTabs.CurrentTab().Text
-	vp.statLine.SetText(fmt.Sprintf("%s refresh Selected", sText))
+	switch sText {
+	case HomeTab:
+		vp.pageTabs.CurrentTab().Content = vp.HomeTab()
+	case NetworksTab:
+		vp.pageTabs.CurrentTab().Content = vp.NetworksTab()
+	case ScheduleTab:
+		vp.pageTabs.CurrentTab().Content = vp.SchedulesTab()
+	case FirmwareTab:
+		vp.pageTabs.CurrentTab().Content = vp.FirmwaresTab()
+	case InventoryTab:
+		vp.pageTabs.CurrentTab().Content = vp.InventoryTab()
+	default:
+		vp.pageTabs.CurrentTab().Content.Refresh()
+	}
+	vp.pageTabs.CurrentTab().Content.Refresh()
+	vp.statLine.SetText(fmt.Sprintf("%s refresh completed", sText))
 	vp.logger.Log("tab", sText, "event", "refresh called")
 }
 // ToolBarAddActionCb callback for statusline toolbar Add button

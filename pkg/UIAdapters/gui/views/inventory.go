@@ -14,23 +14,23 @@ import (
 //       (https://homieiot.github.io/img/works-with-homie.svg "works with MQTT Homie")
 //  ](https://homieiot.github.io/)
 
-// SitesTab ui page which includes all SiteNetworks
+// InventoryTab ui page which includes all SiteNetworks
 // this is to be used as the main page
-func (vp *viewProvider) SitesTab() fyne.CanvasObject {
+func (vp *viewProvider) InventoryTab() fyne.CanvasObject {
 
 	content := container.NewPadded()
 
 	multiEntry := widget.NewMultiLineEntry()
 	multiEntry.Wrapping = fyne.TextWrapWord
 	multiEntry.TextStyle = fyne.TextStyle{Monospace: true}
-	vp.siteMlEntry = multiEntry // retain ref for latter updates
+	vp.inventoryMLEntry = multiEntry // retain ref for latter updates
 
 	content.Add(multiEntry)
 
 	// Dump the SiteNetwork and all nodes as JSON
-	out, err := json.MarshalIndent((*vp.dSvc).AllNetworks(), "", "  ")
+	out, err := json.MarshalIndent(vp.siteNetworks, "", "  ")
 	if err != nil {
-		level.Warn(vp.logger).Log("tab", "Preferences", "error", err.Error())
+		level.Warn(vp.logger).Log("tab", "Inventory", "error", err.Error())
 	} else {
 		multiEntry.SetText(string(out))
 	}
