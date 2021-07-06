@@ -20,39 +20,6 @@ import (
 	"os"
 )
 
-// StartUp core services
-func StartUp() (dc.CoreService, cc.Config, []string) {
-	ca, cb, networks := services.Service()
-	return *ca, *cb, networks
-}
-
-// Shutdown coreServices
-func Shutdown() {
-	services.Shutdown()
-}
-
-func main() {
-
-	coreSvc, cfg, networks := StartUp()
-	logger := log.With(cfg.Logger, "ui", "base")
-
-	myApp := app.NewWithID("net.skoona.projects.homie-service")
-	myWindow := myApp.NewWindow("Homie Service, GUI by Fyne")
-	sknMenus(myApp, myWindow)
-	provider := providers.NewGuiController(&cfg, &myWindow, &coreSvc, &networks, &logger)
-	//myApp.Settings().SetTheme(provider.HomieTheme())
-
-	myWindow.SetContent( provider.MainPage() )
-	//myWindow.Resize(fyne.NewSize(560, 400))
-
-	myWindow.ShowAndRun()
-
-	level.Info(logger).Log("event", "shutdown requested", "cause", "Fyne GUI Shutdown") // <-errs)
-
-	Shutdown()
-
-	os.Exit(0)
-}
 
 func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
 	if focused, ok := w.Canvas().Focused().(fyne.Shortcutable); ok {
@@ -62,7 +29,7 @@ func shortcutFocused(s fyne.Shortcut, w fyne.Window) {
 
 func sknMenus(a fyne.App, w fyne.Window) {
 	settingsItem := fyne.NewMenuItem("Settings", func() {
-		w := a.NewWindow("Fyne Settings")
+		w := a.NewWindow("HomieService Settings")
 		w.SetContent(settings.NewSettings().LoadAppearanceScreen(w))
 		w.Resize(fyne.NewSize(480, 480))
 		w.Show()
@@ -106,5 +73,37 @@ func sknMenus(a fyne.App, w fyne.Window) {
 	)
 	w.SetMainMenu(mainMenu)
 	w.SetMaster()
+}
 
+// StartUp core services
+func StartUp() (dc.CoreService, cc.Config, []string) {
+	ca, cb, networks := services.Service()
+	return *ca, *cb, networks
+}
+
+// Shutdown coreServices
+func Shutdown() {
+	services.Shutdown()
+}
+
+func main() {
+
+	coreSvc, cfg, networks := StartUp()
+	logger := log.With(cfg.Logger, "ui", "base")
+
+	myApp := app.NewWithID("net.skoona.projects.homie-service")
+	myWindow := myApp.NewWindow("Homie Service, GUI by Fyne")
+	sknMenus(myApp, myWindow)
+	provider := providers.NewGuiController(&cfg, &myWindow, &coreSvc, &networks, &logger)
+	//myApp.Settings().SetTheme(provider.HomieTheme())
+
+	myWindow.SetContent( provider.MainPage() )
+
+	myWindow.ShowAndRun()
+
+	level.Info(logger).Log("event", "shutdown requested", "cause", "Fyne GUI Shutdown") // <-errs)
+
+	Shutdown()
+
+	os.Exit(0)
 }

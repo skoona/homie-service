@@ -10,13 +10,13 @@ import (
 )
 
 const (
-	HomeTab      = "Home"
-	NetworksTab  = "Networks"
-	FirmwareTab  = "Firmwares"
-	ScheduleTab  = "Schedules"
-	InventoryTab = "Inventory"
-	CardWidth    = 384
-	CardHeight   = 448
+	HomeTab     = "Home"
+	NetworksTab = "Networks"
+	FirmwareTab = "Firmwares"
+	ScheduleTab = "Schedules"
+	SitesTab    = "Sites"
+	CardWidth   = 384
+	CardHeight  = 448
 )
 
 type (
@@ -46,7 +46,7 @@ type (
 		lastTabStr       string
 		tabStatus        map[string]string
 		inventoryMLEntry *widget.Entry
-		homeCards        *fyne.Container
+		homeCards        *widget.List
 		networkCards     *fyne.Container
 		networkSide      *fyne.Container
 		scheduleCards    *fyne.Container
@@ -86,8 +86,8 @@ func (vp *viewProvider) ToolBarRefreshActionCb() {
 		vp.pageTabs.CurrentTab().Content = vp.SchedulesTab()
 	case FirmwareTab:
 		vp.pageTabs.CurrentTab().Content = vp.FirmwaresTab()
-	case InventoryTab:
-		vp.pageTabs.CurrentTab().Content = vp.InventoryTab()
+	case SitesTab:
+		vp.pageTabs.CurrentTab().Content = vp.SitesTab()
 	default:
 		vp.pageTabs.CurrentTab().Content.Refresh()
 	}
@@ -155,4 +155,9 @@ func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 		vp.netSelect.Hide()
 	}
 	vp.statLine.Refresh()
+}
+
+func (vp *viewProvider) OnBroadcastSelected(id widget.ListItemID) {
+	vp.statLine.SetText(fmt.Sprintf("%d Broadcast Selected", id))
+	vp.logger.Log("broadcast id", id, "event", "selected")
 }

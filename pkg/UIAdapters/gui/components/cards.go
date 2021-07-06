@@ -14,7 +14,7 @@ import (
 // containers for GridLayout
 
 
-func SknNewInventoryCards(s dc.Schedule) fyne.CanvasObject {
+func SknNewSiteCards() fyne.CanvasObject {
 	return nil
 }
 
@@ -133,7 +133,6 @@ func SknNewBroadcastCards(bc dc.Broadcast) fyne.CanvasObject {
 
 	img := cc.SknSelectThemedImage("notificationAlert_o")
 	img.SetMinSize(fyne.NewSize(64,64))
-	//pad := container.NewPadded( img )
 
 	pkg := container.NewBorder(nil, nil, img, nil, container.NewVBox(title, subTitle, body))
 	card := container.NewVBox(pkg)

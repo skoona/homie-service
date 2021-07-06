@@ -97,10 +97,11 @@ func runLive(cfg cc.Config, logger log.Logger)(dc.CoreService, error) {
 func runDemo(cfg cc.Config, logger log.Logger) (dc.CoreService, error) {
 	level.Debug(logger).Log("event", "RunDemo() called")
 
-	otap, dsp, networks, err := dp.Initialize(cfg)                 // message stream
+	otap, dsp, netw, err := dp.Initialize(cfg)                 // message stream
 	if err != nil {
 		return nil, err
 	}
+	networks = netw
 
 	repo, err := dds.Start(cfg)                                    // message db
 	if err != nil {
