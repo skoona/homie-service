@@ -47,7 +47,7 @@ type (
 		tabStatus        map[string]string
 		inventoryMLEntry *widget.Entry
 		homeCards        *widget.List
-		networkCards     *fyne.Container
+		networkCards     *widget.List
 		networkSide      *fyne.Container
 		scheduleCards    *fyne.Container
 		scheduleSide     *fyne.CanvasObject
@@ -160,4 +160,8 @@ func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 func (vp *viewProvider) OnBroadcastSelected(id widget.ListItemID) {
 	vp.statLine.SetText(fmt.Sprintf("%d Broadcast Selected", id))
 	vp.logger.Log("broadcast id", id, "event", "selected")
+}
+func (vp *viewProvider) OnDeviceSelected(id widget.ListItemID) {
+	vp.statLine.SetText(fmt.Sprintf("%d Device Selected", id))
+	vp.logger.Log("Device index", id, "event", "selected")
 }
