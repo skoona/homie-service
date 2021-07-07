@@ -94,9 +94,9 @@ func main() {
 	myApp := app.NewWithID("net.skoona.projects.homie-service")
 	myWindow := myApp.NewWindow("Homie Service, GUI by Fyne")
 	sknMenus(myApp, myWindow)
-	provider := providers.NewGuiController(&cfg, &myWindow, &coreSvc, &networks, &logger)
+	provider := providers.NewGuiController(&cfg, &myApp, &myWindow, &coreSvc, &networks, &logger)
 	//myApp.Settings().SetTheme(provider.HomieTheme())
-
+	
 	myWindow.SetContent( provider.MainPage() )
 
 	myWindow.ShowAndRun()

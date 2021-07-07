@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	"github.com/go-kit/kit/log"
+	"github.com/skoona/homie-service/pkg/UIAdapters/gui/components"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
 )
 
@@ -166,6 +167,8 @@ func (vp *viewProvider) OnBroadcastSelected(id widget.ListItemID) {
 	vp.logger.Log("broadcast id", id, "event", "selected","Broadcast", vp.siteNetworks.Broadcasts[id].Level)
 }
 func (vp *viewProvider) OnDeviceSelected(id widget.ListItemID) {
+	vp.networkSide.Objects[0] = components.SknDeviceTreeSide(&vp.devices[id])
+	vp.networkSide.Refresh()
 	vp.statLine.SetText(fmt.Sprintf("%s Device Selected", vp.devices[id].Name))
 	vp.logger.Log("Device index", id, "event", "selected","device", vp.devices[id].Name)
 }

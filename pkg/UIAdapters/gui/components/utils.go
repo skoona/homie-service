@@ -2,8 +2,11 @@ package components
 
 import (
 	"fmt"
+	"fyne.io/fyne/v2"
 	"github.com/skoona/homie-service/pkg/deviceCore"
 )
+
+var CurrentVariant fyne.ThemeVariant
 
 // SynTax --> v, ok := t.(SomeConcreteType)
 // switch v := item.(type) {

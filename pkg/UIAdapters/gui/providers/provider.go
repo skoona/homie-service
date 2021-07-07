@@ -19,6 +19,7 @@ type (
 // guiProvider handler for getting and updating Pages
  	guiProvider struct {
 		_ struct{}
+		app 		*fyne.App
 		root 		*fyne.Window
 		service 	*dc.CoreService
 		logger 		log.Logger
@@ -33,8 +34,10 @@ var (
 	gtrl *guiProvider
 )
 
-func NewGuiController(cfg *cc.Config, root *fyne.Window, svc *dc.CoreService, nets *[]string, logger *log.Logger) GuiProvider {
+func NewGuiController(cfg *cc.Config, app *fyne.App, root *fyne.Window, svc *dc.CoreService, nets *[]string, logger *log.Logger) GuiProvider {
+	components.CurrentVariant = (*app).Settings().ThemeVariant()
 	gtrl = &guiProvider{
+		app: app,
 		root: root,
 		cfg: cfg,
 		service: svc,

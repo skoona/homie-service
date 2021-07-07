@@ -6,17 +6,19 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
+	"strings"
 )
 
 func MakeTreeTab() fyne.CanvasObject {
 	data := map[string][]string{
 		"":  {"Device"},
 		"Device": {"Attributes", "Nodes", "UGLY-KEY"},
-		"Attributes": {"State", "Attribute Properties"},
+		"Attributes": {"State", "fw", "Attribute Properties"},
 		"State": {"ready"},
-		"Attribute Properties": {"fw", "Property Properties"},
-		"fw": {"name", "version", "modsum"},
+		"Attribute Properties": {"modsum"},
+		"fw": {"name", "version", "Attribute Properties"},
 		"name": {"firmware1.bin"},
+		"modsum": { "jibberish", "Property Properties"},
 		"version": {"2.0.1"},
 		"Property Properties": {"examples"},
 		"Examples": {"out of words"},
@@ -26,8 +28,8 @@ func MakeTreeTab() fyne.CanvasObject {
 		"Node Attributes": {"R", "U"},
 		"R": {"apqr"},
 		"U": {"astu"},
-		"Node Properties": {"node prop", "Node Property Properties"},
-		"node prop": {"samples"},
+		"Node Properties": {"node prop"},
+		"node prop": {"samples", "Node Property Properties"},
 		"Node Property Properties": {"Q", "Z"},
 		"Q": {"R"},
 		"Z": {"avwxyz"},
@@ -47,17 +49,41 @@ func MakeTreeTab() fyne.CanvasObject {
 	return tree
 }
 
+func SknDeviceTreeSide(dv *dc.Device) fyne.CanvasObject {
+	data := treeDataFromDevice(dv)  // map[string][children][kv]string
+	content := widget.NewTree(
+		func(uid widget.TreeNodeID) []string { // childUIDs
+			children := data
+			fmt.Println("CHILDUIDS", uid, children[uid][0])
+			return children[uid][0]
+		},
+		func(uid widget.TreeNodeID) bool { // isBranch
+			haveChildren := data
+			fmt.Println("ISBRANCH", uid, ( len(haveChildren[uid][0]) > 0 ) )
+			return ( len(haveChildren[uid][0]) > 0 )
+		},
+		func(_ bool) fyne.CanvasObject { // create
+			return keyValueTemplate("some kinda key", "some kinda value")
+		},
+		func(uid widget.TreeNodeID, _ bool, template fyne.CanvasObject) { // update
+			source := data
+			fmt.Println("UPDATE", uid, source[uid][1][0], source[uid][1][1])
+			template.(*fyne.Container).Objects[0].(*widget.Label).SetText(source[uid][1][0])
+			template.(*fyne.Container).Objects[1].(*widget.Label).SetText(source[uid][1][1])
+		})
+
+	return content
+}
+
 func keyValueTemplate(key, value string) fyne.CanvasObject {
 	k := widget.NewLabel(key)
 	v := widget.NewLabel(value)
+	v.Alignment = fyne.TextAlignCenter
 	return container.NewHBox(k, v)
 }
-func keyTemplate(key string) fyne.CanvasObject {
-	return widget.NewLabel(key)
-}
 
 
-// TopicsFromDevice()
+// TreeDataFromDevice()
 // decode device into topics
 // -/D/A/P/P
 // -/D/A/P
@@ -66,8 +92,7 @@ func keyTemplate(key string) fyne.CanvasObject {
 // -/D/N/P
 // -/D/N/A
 // map[string][]string
-func treeDataFromDevice(dv *dc.Device) []string {
-	bundle := []string{}
+func treeDataFromDevice(dv *dc.Device) map[string][][]string {
 	var (
 		ele string
 		dapp = map[string][]string{}
@@ -77,7 +102,6 @@ func treeDataFromDevice(dv *dc.Device) []string {
 		dna  = map[string][]string{}
 		dnp  = map[string][]string{}
 		dnpa = map[string][]string{}
-		tree = map[string][][]string{}
 	)
 
 	// unpacn device attrs
@@ -87,40 +111,31 @@ func treeDataFromDevice(dv *dc.Device) []string {
 				if len(vv.Props) > 0 {
 					for nnn, vvv := range vv.Props { // x/d/a/p/p
 						ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
-						bundle = append(bundle, ele)
 						dapp[ele] = []string{ nnn, vvv.Value}
 					}
-				} else {
-					ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
-					bundle = append(bundle, ele)
-					dap[ele] = []string{ nn, vv.Value}
 				}
+				ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
+				dap[ele] = []string{ nn, vv.Value}
 			}
-		} else {
-			ele = fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)
-			bundle = append(bundle, ele)
-			da[ele] = []string{ n, v.Value}
 		}
+		ele = fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)
+		da[ele] = []string{ n, v.Value}
 	}
 	// unpacn device nodes
 	for n, v := range dv.Nodes {  // x/d/n
-		dn[fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)] = []string{n}
+		dn[fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)] = []string{n, "Node"}
 		for nn, vv := range v.Props { // x/d/n/p
 			if len(vv.Attrs) > 0 {
 				for nnn, vvv := range vv.Attrs { // x/d/n/p/a
 					ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
-					bundle = append(bundle, ele)
 					dnpa[ele] = []string{ nnn, vvv.Value}
 				}
-			} else {
-				ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
-				bundle = append(bundle, ele)
-				dnp[ele] = []string{ nn, vv.Value}
 			}
+			ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
+			dnp[ele] = []string{ nn, vv.Value}
 		}
 		for nn, vv := range v.Attrs { // x/d/n/a
 			ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
-			bundle = append(bundle, ele)
 			dna[ele] = []string{ nn, vv.Value}
 		}
 	}
@@ -133,9 +148,67 @@ func treeDataFromDevice(dv *dc.Device) []string {
 	// device node attrs           self
 	// device node props           self, DNPA
 	// device node prop attrs      self
-	// map[string][]string         data model
+	// map[string][][]string         data model
+	// map[<long.name>][0] = []string   -- children logn/name keys
+	// map[<long.name>][1] = []         -- self  k,v
 
-	return bundle
+	tree := make(map[string][][]string, 32)
+	tree[""] = make([][]string,2)
+
+	tree[""][0] = append(tree[""][0], dv.Name)
+	tree[""][1] = []string{dv.Parent, dv.Name}
+	tree[dv.Name] = make([][]string,2)
+	tree[dv.Name][1] = []string{dv.Name, dv.Parent}
+	// root
+	for k, v := range da {
+		tree[k] = make([][]string,2)
+		tree[dv.Name][0] = append(tree[dv.Name][0], k)
+		tree[k][1] = v
+		// da's  include DA, DAP
+		for x, y := range dap {
+			if strings.HasPrefix(x,k) {
+				tree[k][0] = append(tree[k][0], x)
+				tree[x] = make([][]string,2)
+				tree[x][1] = y
+				for r, s := range dapp {
+					if strings.HasPrefix(r,x) {
+						tree[x][0] = append(tree[x][0], r)
+						tree[r] = make([][]string,2)
+						tree[r][1] = s
+					}
+				}
+			}
+		}
+	}
+	// DN's
+	for k, v := range dn {
+		tree[k] = make([][]string,2)
+		tree[dv.Name][0] = append(tree[dv.Name][0], k)
+		tree[k][1] = v
+		for x, y := range dna {
+			if strings.HasPrefix(x,k) {
+				tree[k][0] = append(tree[k][0], x)
+				tree[x] = make([][]string,2)
+				tree[x][1] = y
+			}
+		}
+		for j, l := range dnp {
+			if strings.HasPrefix(j,k) {
+				tree[k][0] = append(tree[k][0], j)
+				tree[j] = make([][]string,2)
+				tree[j][1] = l
+				for a, b := range dnpa {
+					if strings.HasPrefix(a,j) {
+						tree[j][0] = append(tree[j][0], a)
+						tree[a] = make([][]string,2)
+						tree[a][1] = b
+					}
+				}
+			}
+		}
+	}
+
+	return tree
 }
 
 
@@ -597,3 +670,35 @@ func treeDataFromDevice(dv *dc.Device) []string {
 //          }
 //        }
 // }
+//
+//map[
+//	"":[[GarageMonitor] [sknSensors GarageMonitor]]
+// GarageMonitor:[[sknSensors/GarageMonitor/$name sknSensors/GarageMonitor/$homie sknSensors/GarageMonitor/$mac sknSensors/GarageMonitor/$nodes sknSensors/GarageMonitor/$state sknSensors/GarageMonitor/$localip sknSensors/GarageMonitor/hardware sknSensors/GarageMonitor/Ambient sknSensors/GarageMonitor/Presence] []]
+// sknSensors/GarageMonitor/$fw/checksum:[[] [checksum 615fed382ab44bd43fe83508aecac682]]
+// sknSensors/GarageMonitor/$fw/name:[[] [name Monitor-SHT31-RCWL-Metrics]]
+// sknSensors/GarageMonitor/$fw/version:[[] [version 2.0.0]]
+// sknSensors/GarageMonitor/$homie:[[] [$homie 3.0.1]]
+// sknSensors/GarageMonitor/$implementation/config:[[] [config {"name":"Garage Monitor","device_id":"GarageMonitor","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}]]
+// sknSensors/GarageMonitor/$implementation/ota/enabled:[[] [enabled true]]
+// sknSensors/GarageMonitor/$implementation/version:[[] [version 3.0.0]]
+// sknSensors/GarageMonitor/$localip:[[] [$localip 10.100.1.177]]
+// sknSensors/GarageMonitor/$mac:[[] [$mac B4:E6:2D:1B:5C:4D]]
+// sknSensors/GarageMonitor/$name:[[] [$name Garage Monitor]]
+// sknSensors/GarageMonitor/$nodes:[[] [$nodes Ambient,Presence,hardware]]
+// sknSensors/GarageMonitor/$state:[[] [$state ready]]
+// sknSensors/GarageMonitor/$stats/interval:[[] [interval 905]]
+// sknSensors/GarageMonitor/$stats/signal:[[] [signal 46]]
+// sknSensors/GarageMonitor/$stats/uptime:[[] [uptime 12727347]]
+// sknSensors/GarageMonitor/Ambient:[[sknSensors/GarageMonitor/Ambient/$type sknSensors/GarageMonitor/Ambient/$name sknSensors/GarageMonitor/Ambient/humidity sknSensors/GarageMonitor/Ambient/temperature] [Ambient]]
+// sknSensors/GarageMonitor/Ambient/$name:[[] [$name Temperature and Humidity Sensor]]
+// sknSensors/GarageMonitor/Ambient/$type:[[] [$type sensor]]
+// sknSensors/GarageMonitor/Ambient/humidity:[[] [humidity 66.43]]
+// sknSensors/GarageMonitor/Ambient/temperature:[[] [temperature 81.98]]
+// sknSensors/GarageMonitor/Presence:[[sknSensors/GarageMonitor/Presence/motion] [Presence]]
+// sknSensors/GarageMonitor/Presence/motion:[[] [motion CLOSED]]
+// sknSensors/GarageMonitor/hardware:[[sknSensors/GarageMonitor/hardware/resetReason sknSensors/GarageMonitor/hardware/signal sknSensors/GarageMonitor/hardware/voltage sknSensors/GarageMonitor/hardware/mac] [hardware]]
+// sknSensors/GarageMonitor/hardware/mac:[[] [mac B4:E6:2D:1B:5C:4D]]
+// sknSensors/GarageMonitor/hardware/resetReason:[[] [resetReason External System]]
+// sknSensors/GarageMonitor/hardware/signal:[[] [signal -76]]
+// sknSensors/GarageMonitor/hardware/voltage:[[] [voltage 3.03]]
+// ]

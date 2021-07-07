@@ -651,3 +651,37 @@ Database Console log of a single device
 }
 
 ```
+### Map Data for a Device
+```
+map[
+ "":[[GarageMonitor] [GarageMonitor]]
+ GarageMonitor:[[sknSensors/GarageMonitor/$name sknSensors/GarageMonitor/$homie sknSensors/GarageMonitor/$mac sknSensors/GarageMonitor/$nodes sknSensors/GarageMonitor/$state sknSensors/GarageMonitor/$localip sknSensors/GarageMonitor/hardware sknSensors/GarageMonitor/Ambient sknSensors/GarageMonitor/Presence] []]
+ sknSensors/GarageMonitor/$fw/checksum:[[] [checksum 615fed382ab44bd43fe83508aecac682]]
+ sknSensors/GarageMonitor/$fw/name:[[] [name Monitor-SHT31-RCWL-Metrics]]
+ sknSensors/GarageMonitor/$fw/version:[[] [version 2.0.0]]
+ sknSensors/GarageMonitor/$homie:[[] [$homie 3.0.1]]
+ sknSensors/GarageMonitor/$implementation/config:[[] [config {"name":"Garage Monitor","device_id":"GarageMonitor","device_stats_interval":900,"wifi":{"ssid":"SFNSS1-24G"},"mqtt":{"host":"openhab.skoona.net","port":1883,"base_topic":"sknSensors/","auth":true},"ota":{"enabled":true},"settings":{"sensorInterval":900,"motionHoldInterval":60}}]]
+ sknSensors/GarageMonitor/$implementation/ota/enabled:[[] [enabled true]]
+ sknSensors/GarageMonitor/$implementation/version:[[] [version 3.0.0]]
+ sknSensors/GarageMonitor/$localip:[[] [$localip 10.100.1.177]]
+ sknSensors/GarageMonitor/$mac:[[] [$mac B4:E6:2D:1B:5C:4D]]
+ sknSensors/GarageMonitor/$name:[[] [$name Garage Monitor]]
+ sknSensors/GarageMonitor/$nodes:[[] [$nodes Ambient,Presence,hardware]]
+ sknSensors/GarageMonitor/$state:[[] [$state ready]]
+ sknSensors/GarageMonitor/$stats/interval:[[] [interval 905]]
+ sknSensors/GarageMonitor/$stats/signal:[[] [signal 46]]
+ sknSensors/GarageMonitor/$stats/uptime:[[] [uptime 12727347]]
+ sknSensors/GarageMonitor/Ambient:[[sknSensors/GarageMonitor/Ambient/$type sknSensors/GarageMonitor/Ambient/$name sknSensors/GarageMonitor/Ambient/humidity sknSensors/GarageMonitor/Ambient/temperature] [Ambient]]
+ sknSensors/GarageMonitor/Ambient/$name:[[] [$name Temperature and Humidity Sensor]]
+ sknSensors/GarageMonitor/Ambient/$type:[[] [$type sensor]]
+ sknSensors/GarageMonitor/Ambient/humidity:[[] [humidity 66.43]]
+ sknSensors/GarageMonitor/Ambient/temperature:[[] [temperature 81.98]]
+ sknSensors/GarageMonitor/Presence:[[sknSensors/GarageMonitor/Presence/motion] [Presence]]
+ sknSensors/GarageMonitor/Presence/motion:[[] [motion CLOSED]]
+ sknSensors/GarageMonitor/hardware:[[sknSensors/GarageMonitor/hardware/resetReason sknSensors/GarageMonitor/hardware/signal sknSensors/GarageMonitor/hardware/voltage sknSensors/GarageMonitor/hardware/mac] [hardware]]
+ sknSensors/GarageMonitor/hardware/mac:[[] [mac B4:E6:2D:1B:5C:4D]]
+ sknSensors/GarageMonitor/hardware/resetReason:[[] [resetReason External System]]
+ sknSensors/GarageMonitor/hardware/signal:[[] [signal -76]]
+ sknSensors/GarageMonitor/hardware/voltage:[[] [voltage 3.03]]
+ ]
+```
