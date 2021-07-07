@@ -9,57 +9,16 @@ import (
 	"strings"
 )
 
-func MakeTreeTab() fyne.CanvasObject {
-	data := map[string][]string{
-		"":  {"Device"},
-		"Device": {"Attributes", "Nodes", "UGLY-KEY"},
-		"Attributes": {"State", "fw", "Attribute Properties"},
-		"State": {"ready"},
-		"Attribute Properties": {"modsum"},
-		"fw": {"name", "version", "Attribute Properties"},
-		"name": {"firmware1.bin"},
-		"modsum": { "jibberish", "Property Properties"},
-		"version": {"2.0.1"},
-		"Property Properties": {"examples"},
-		"Examples": {"out of words"},
-		"UGLY-KEY": {"Wonderful Data Values"},
-		"Nodes": {"hardware"},
-		"hardware": {"Node Attributes", "Node Properties"},
-		"Node Attributes": {"R", "U"},
-		"R": {"apqr"},
-		"U": {"astu"},
-		"Node Properties": {"node prop"},
-		"node prop": {"samples", "Node Property Properties"},
-		"Node Property Properties": {"Q", "Z"},
-		"Q": {"R"},
-		"Z": {"avwxyz"},
-	}
-
-	tree := widget.NewTreeWithStrings(data)
-	tree.OnSelected = func(id string) {
-		fmt.Println("Tree node selected:", id)
-	}
-	tree.OnUnselected = func(id string) {
-		fmt.Println("Tree node unselected:", id)
-	}
-	tree.OpenBranch("Device")
-	tree.OpenBranch("Attributes")
-	tree.OpenBranch("Attributes Properties")
-	tree.OpenBranch("Property Properties")
-	return tree
-}
 
 func SknDeviceTreeSide(dv *dc.Device) fyne.CanvasObject {
 	data := treeDataFromDevice(dv)  // map[string][children][kv]string
 	content := widget.NewTree(
 		func(uid widget.TreeNodeID) []string { // childUIDs
 			children := data
-			fmt.Println("CHILDUIDS", uid, children[uid][0])
 			return children[uid][0]
 		},
 		func(uid widget.TreeNodeID) bool { // isBranch
 			haveChildren := data
-			fmt.Println("ISBRANCH", uid, ( len(haveChildren[uid][0]) > 0 ) )
 			return ( len(haveChildren[uid][0]) > 0 )
 		},
 		func(_ bool) fyne.CanvasObject { // create
@@ -67,7 +26,6 @@ func SknDeviceTreeSide(dv *dc.Device) fyne.CanvasObject {
 		},
 		func(uid widget.TreeNodeID, _ bool, template fyne.CanvasObject) { // update
 			source := data
-			fmt.Println("UPDATE", uid, source[uid][1][0], source[uid][1][1])
 			template.(*fyne.Container).Objects[0].(*widget.Label).SetText(source[uid][1][0])
 			template.(*fyne.Container).Objects[1].(*widget.Label).SetText(source[uid][1][1])
 		})
@@ -104,39 +62,33 @@ func treeDataFromDevice(dv *dc.Device) map[string][][]string {
 		dnpa = map[string][]string{}
 	)
 
-	// unpacn device attrs
+	// unpack device attrs
 	for n, v := range dv.Attrs {  // x/d/a
-		if len(v.Props) > 0 {
-			for nn, vv := range v.Props { // x/d/a/p
-				if len(vv.Props) > 0 {
-					for nnn, vvv := range vv.Props { // x/d/a/p/p
-						ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
-						dapp[ele] = []string{ nnn, vvv.Value}
-					}
-				}
-				ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
-				dap[ele] = []string{ nn, vv.Value}
-			}
-		}
-		ele = fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)
-		da[ele] = []string{ n, v.Value}
-	}
-	// unpacn device nodes
-	for n, v := range dv.Nodes {  // x/d/n
-		dn[fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)] = []string{n, "Node"}
-		for nn, vv := range v.Props { // x/d/n/p
-			if len(vv.Attrs) > 0 {
-				for nnn, vvv := range vv.Attrs { // x/d/n/p/a
-					ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
-					dnpa[ele] = []string{ nnn, vvv.Value}
-				}
+		for nn, vv := range v.Props { // x/d/a/p
+			for nnn, vvv := range vv.Props { // x/d/a/p/p
+				ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
+				dapp[ele] = []string{ string(nnn), string(vvv.Value)}
 			}
 			ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
-			dnp[ele] = []string{ nn, vv.Value}
+			dap[ele] = []string{ string(nn), string(vv.Value)}
+		}
+		ele = fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)
+		da[ele] = []string{ string(n), string(v.Value)}
+	}
+	// unpack device nodes
+	for n, v := range dv.Nodes {  // x/d/n
+		dn[fmt.Sprintf("%s/%s/%s", dv.Parent, dv.Name, n)] = []string{string(n), "Node"}
+		for nn, vv := range v.Props { // x/d/n/p
+			for nnn, vvv := range vv.Attrs { // x/d/n/p/a
+				ele = fmt.Sprintf("%s/%s/%s/%s/%s", dv.Parent, dv.Name, n, nn, nnn)
+				dnpa[ele] = []string{ string(nnn), string(vvv.Value)}
+			}
+			ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
+			dnp[ele] = []string{ string(nn), string(vv.Value)}
 		}
 		for nn, vv := range v.Attrs { // x/d/n/a
 			ele = fmt.Sprintf("%s/%s/%s/%s", dv.Parent, dv.Name, n, nn)
-			dna[ele] = []string{ nn, vv.Value}
+			dna[ele] = []string{ string(nn), string(vv.Value)}
 		}
 	}
 
@@ -166,12 +118,12 @@ func treeDataFromDevice(dv *dc.Device) map[string][][]string {
 		tree[k][1] = v
 		// da's  include DA, DAP
 		for x, y := range dap {
-			if strings.HasPrefix(x,k) {
+			if strings.HasPrefix(string(x),string(k)) {
 				tree[k][0] = append(tree[k][0], x)
 				tree[x] = make([][]string,2)
 				tree[x][1] = y
 				for r, s := range dapp {
-					if strings.HasPrefix(r,x) {
+					if strings.HasPrefix(string(r),string(x)) {
 						tree[x][0] = append(tree[x][0], r)
 						tree[r] = make([][]string,2)
 						tree[r][1] = s
@@ -182,24 +134,24 @@ func treeDataFromDevice(dv *dc.Device) map[string][][]string {
 	}
 	// DN's
 	for k, v := range dn {
-		tree[k] = make([][]string,2)
 		tree[dv.Name][0] = append(tree[dv.Name][0], k)
+		tree[k] = make([][]string,2)
 		tree[k][1] = v
 		for x, y := range dna {
-			if strings.HasPrefix(x,k) {
+			if strings.HasPrefix(string(x),string(k)) {
 				tree[k][0] = append(tree[k][0], x)
 				tree[x] = make([][]string,2)
 				tree[x][1] = y
 			}
 		}
-		for j, l := range dnp {
-			if strings.HasPrefix(j,k) {
-				tree[k][0] = append(tree[k][0], j)
-				tree[j] = make([][]string,2)
-				tree[j][1] = l
+		for x, y := range dnp {
+			if strings.HasPrefix(x,k) {
+				tree[k][0] = append(tree[k][0], x)
+				tree[x] = make([][]string,2)
+				tree[x][1] = y
 				for a, b := range dnpa {
-					if strings.HasPrefix(a,j) {
-						tree[j][0] = append(tree[j][0], a)
+					if strings.HasPrefix(string(a),string(x)) {
+						tree[x][0] = append(tree[x][0], a)
 						tree[a] = make([][]string,2)
 						tree[a][1] = b
 					}
@@ -207,7 +159,7 @@ func treeDataFromDevice(dv *dc.Device) map[string][][]string {
 			}
 		}
 	}
-
+	//fmt.Println("TREE MAP", tree)
 	return tree
 }
 
