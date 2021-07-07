@@ -77,6 +77,7 @@ func treeDataFromDevice(dv *dc.Device) []string {
 		dna  = map[string][]string{}
 		dnp  = map[string][]string{}
 		dnpa = map[string][]string{}
+		tree = map[string][][]string{}
 	)
 
 	// unpacn device attrs

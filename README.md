@@ -13,6 +13,8 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 * [Homie-ESP8266 Example of RCWL-0516 Microwave Presence Detector and DHT22 Temperature and Humidity sensors](https://github.com/skoona/EnvironmentMonitor_DHT)
 
 ## Status
+* [Fyne.io](https://fyne.io) GUI 75% complete
+* [go-kit/kit](https://github.com/go-kit/kit) Restful JSON API (with swagger docs) 95% complete  
 * Support Mutliple Homie Networks (auto discovery); /homie/#, /custom/#, ...
 * [MQTT](https://github.com/eclipse/paho.mqtt.golang) Unsecured connection.
 * Produce MQTT messages decoded to internal Device Model.
@@ -23,31 +25,31 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 * * encode firmware information into the Firmware OTA Scheduling Service
 * * implement firmware schedule
 * * implement data retention on change service
-* Create Web UI with WedSocket Driven Components
-* Enable SSL/TLS Connection to MQTT
+* Create Web UI with WedSocket Driven Components (TBD)
+* Enable SSL/TLS Connection to MQTT (TBD)
 * Enabled OTA Scheduling
 
 ### Project Tree
 ```
+<homie-service>.
 ├── LICENSE
 ├── Makefile
 ├── README.md
+├── bin
 ├── cmd
 │   ├── api
 │   │   └── main.go
 │   ├── base
 │   │   └── main.go
-│   ├── cli
-│   │   └── main
 │   └── gui
-│       └── main.go
+│       ├── main.go
+│       └── svgImages.go
 ├── config
 │   ├── demo-config.yml
 │   ├── mqtt-config.yml
 │   └── test-config.yml
 ├── dataDB
 │   ├── dataDir
-│   │   ├── devices.db
 │   │   └── storage.db
 │   ├── demoData
 │   │   └── mosquitto.log
@@ -59,24 +61,44 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 │       ├── mosquitto_test.log
 │       └── storage_test.db
 ├── demo-runtime.log
-├── docs
+├── mqtt-runtime.log
+├── devNotes
 │   └── dev-notes.md
 ├── go.mod
 ├── go.sum
-├── mqtt-runtime.log
 ├── pkg
-│   ├── api
-│   │   ├── docs
-│   │   │   └── docs.go
-│   │   └── handlers
-│   │       ├── broadcasts.go
-│   │       ├── controller.go
-│   │       ├── files.go
-│   │       ├── firmwares.go
-│   │       ├── middlewares.go
-│   │       ├── networks.go
-│   │       ├── schedules.go
-│   │       └── validation.go
+│   ├── UIAdapters
+│   │   ├── api
+│   │   │   ├── docs
+│   │   │   │   └── docs.go
+│   │   │   └── handlers
+│   │   │       ├── broadcasts.go
+│   │   │       ├── controller.go
+│   │   │       ├── files.go
+│   │   │       ├── firmwares.go
+│   │   │       ├── middlewares.go
+│   │   │       ├── networks.go
+│   │   │       ├── schedules.go
+│   │   │       └── validation.go
+│   │   └── gui
+│   │       ├── components
+│   │       │   ├── cards.go
+│   │       │   ├── forms.go
+│   │       │   ├── homieTheme.go
+│   │       │   ├── lists.go
+│   │       │   ├── tables.go
+│   │       │   ├── trees.go
+│   │       │   └── utils.go
+│   │       ├── providers
+│   │       │   └── provider.go
+│   │       └── views
+│   │           ├── firmwares.go
+│   │           ├── home.go
+│   │           ├── mainPage.go
+│   │           ├── networks.go
+│   │           ├── schedules.go
+│   │           ├── sites.go
+│   │           └── views.go
 │   ├── demoProvider
 │   │   ├── demoProvider_suite_test.go
 │   │   ├── demo_test.go
@@ -106,20 +128,6 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 │   │   ├── repository.go
 │   │   ├── storage_test.go
 │   │   └── usecase.go
-│   ├── gui
-│   │   ├── controllers
-│   │   │   └── controller.go
-│   │   ├── events
-│   │   │   ├── broadcasts.go
-│   │   │   ├── firmwares.go
-│   │   │   ├── networks.go
-│   │   │   └── schedules.go
-│   │   └── views
-│   │       ├── broadcasts.go
-│   │       ├── firmwares.go
-│   │       ├── networks.go
-│   │       ├── schedules.go
-│   │       └── views.go
 │   ├── mqttProvider
 │   │   ├── mqttProvider_suite_test.go
 │   │   ├── service.go
@@ -129,12 +137,40 @@ using [Homie-esp8266](https://github.com/homieiot/homie-esp8266); although any `
 │   ├── services
 │   │   └── service.go
 │   └── utils
+│       ├── colors.go
 │       ├── configs.go
 │       ├── configs_test.go
+│       ├── imageUtils.go
+│       ├── svgImages.go
 │       ├── utils.go
 │       ├── utils_suite_test.go
 │       └── utils_test.go
+├── svgResources
+│   ├── homie-banner.png
+│   ├── insertDriveFile-mdo-24px.svg
+│   ├── insertDriveFile-mdr-24px.svg
+│   ├── notificationAlert-mbo-24px.svg
+│   ├── notificationAlert-mbr-24px.svg
+│   ├── sensorsOff-mbo-24px.svg
+│   ├── sensorsOff-mbr-24px.svg
+│   ├── sensorsOn-mbo-24px.svg
+│   ├── sensorsOn-mbr-24px.svg
+│   ├── thumbsDown-mdo-24px.svg
+│   ├── thumbsDown-mdr-24px.svg
+│   ├── thumbsDown-mds-24px.svg
+│   ├── thumbsUp-mdo-24px.svg
+│   ├── thumbsUp-mdr-24px.svg
+│   ├── thumbsUp-mds-24px.svg
+│   ├── timeLapse-mbo-24px.svg
+│   ├── timeLapse-mbr-24px.svg
+│   ├── toggleOff-mbo-24px.svg
+│   ├── toggleOff-mbr-24px.svg
+│   ├── toggleOn-mbo-24px.svg
+│   ├── toggleOn-mbr-24px.svg
+│   ├── wall-clock-svgrepo-com.svg
+│   └── works-with-homie-svg
 └── swagger.yaml
+
 ```
 
 #### Package Description

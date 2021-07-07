@@ -49,10 +49,7 @@ func SknNewDeviceCard(d dc.Device) *fyne.Container {
 	body.TextStyle = fyne.TextStyle{Monospace: true}
 	body.Alignment = fyne.TextAlignCenter
 
-	pkg := container.NewBorder(nil, nil, sensor, nil, container.NewVBox(title, version, subTitle, body))
-	card := container.NewVBox(pkg)
-
-	return card
+	return container.NewBorder(nil, nil, sensor, nil, container.NewVBox(title, version, subTitle, body))
 }
 
 func SknNewFirmwareCards(fw dc.Firmware) fyne.CanvasObject {
@@ -74,15 +71,12 @@ func SknNewFirmwareCards(fw dc.Firmware) fyne.CanvasObject {
 	body := canvas.NewText(fw.Created.Local().Format(time.RFC822), theme.DefaultTheme().Color(theme.ColorNamePrimary, 2))
 	body.SetMinSize(fyne.NewSize(theme.TextSize(), theme.TextSize()))
 	body.TextStyle = fyne.TextStyle{Monospace: true}
-	body.Alignment = fyne.TextAlignLeading
+	body.Alignment = fyne.TextAlignCenter
 
 	img := cc.SknSelectThemedImage("insertDriveFile_r")
 	img.SetMinSize(fyne.NewSize(64,64))
 
-	pkg := container.NewBorder(nil, nil, img, nil, container.NewVBox(title, version, subTitle, body))
-	card := container.NewVBox(pkg)
-
-	return card
+	return container.NewBorder(nil, nil, img, nil, container.NewVBox(title, version, subTitle, body))
 }
 
 func SknNewScheduleCards(s dc.Schedule) fyne.CanvasObject {
@@ -109,10 +103,7 @@ func SknNewScheduleCards(s dc.Schedule) fyne.CanvasObject {
 	body.TextStyle = fyne.TextStyle{Monospace: true}
 	body.Alignment = fyne.TextAlignCenter
 
-	pkg := container.NewBorder(nil, nil, sensor, nil, container.NewVBox(title, version, subTitle, body))
-	card := container.NewVBox(pkg)
-
-	return card
+	return container.NewBorder(nil, nil, sensor, nil, container.NewVBox(title, version, subTitle, body))
 }
 
 func SknNewBroadcastCards(bc dc.Broadcast) fyne.CanvasObject {
@@ -131,11 +122,8 @@ func SknNewBroadcastCards(bc dc.Broadcast) fyne.CanvasObject {
 	body.TextStyle = fyne.TextStyle{Monospace: true}
 	body.Alignment = fyne.TextAlignLeading
 
-	img := cc.SknSelectThemedImage("notificationAlert_o")
+	img := cc.SknSelectThemedImage("notificationAlert_r")
 	img.SetMinSize(fyne.NewSize(64,64))
 
-	pkg := container.NewBorder(nil, nil, img, nil, container.NewVBox(title, subTitle, body))
-	card := container.NewVBox(pkg)
-
-	return card
+	return container.NewBorder(nil, nil, img, nil, container.NewVBox(title, subTitle, body))
 }

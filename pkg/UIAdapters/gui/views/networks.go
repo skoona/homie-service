@@ -20,20 +20,22 @@ func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
 	nMaps := vp.siteNetworks.DeviceNetworks[vp.netSelectedStr].Devices // "sknSensors")
 	if len(nMaps) == 0 {
 		level.Error(vp.logger).Log("selected network", vp.netSelectedStr, "error", "empty")
-		page := container.NewHSplit(side, widget.NewLabel("no devices available on " + vp.netSelectedStr))
-		return page
+		vp.networkCards = &widget.List{}
+		return container.NewHSplit(side, widget.NewLabel("no devices available on " + vp.netSelectedStr))
+
 	} else {
 		vp.logger.Log("selected network", vp.netSelectedStr)
-		var devices []dc.Device =  []dc.Device{}
+		devices :=  []dc.Device{}
 		for _, device := range nMaps {
 			devices = append(devices, device)
 			vp.logger.Log("completed device loading", device.Name)
 		}
+		vp.devices = devices
 		listBox := components.SknDeviceList(devices)
 		listBox.OnSelected = vp.OnDeviceSelected
+		vp.networkCards = listBox  // retain for later update
 		page := container.NewHSplit(side, listBox)
 		page.SetOffset(0.4)
-		vp.networkCards = listBox  // retain for later update
 		return page
 	}
 

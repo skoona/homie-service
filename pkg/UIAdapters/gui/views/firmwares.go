@@ -13,23 +13,17 @@ import (
 func (vp *viewProvider) FirmwaresTab() fyne.CanvasObject{
 	form := components.SknFirmwareSideForm()
 	side := container.New(layout.NewPaddedLayout(), form)
-
-	cards := container.New(layout.NewGridLayout(1))
-	scroller := container.NewVScroll(cards)
-
-
-	page := container.NewBorder(nil,nil, side, nil, scroller)
+	vp.firmwareSide = &form
 
 	if len(vp.siteNetworks.Firmwares) == 0 {
-		cards.Add(widget.NewLabel("no firmware available"))
-	} else {
-		for _, fw := range vp.siteNetworks.Firmwares {
-			card := components.SknNewFirmwareCards(fw)
-			cards.Add(card)
-		}
-	}
-	vp.firmwareSide = &form
-	vp.firmwareCards = cards
+		vp.firmwareCards = &widget.List{}
+		return container.NewBorder(nil,nil, side, nil, widget.NewLabel("no firmware available"))
 
-	return page
+	} else {
+		listBox := components.SknFirmwareList(&vp.siteNetworks.Firmwares)
+		listBox.OnSelected = vp.OnFirmwareSelected
+		vp.firmwareCards = listBox
+		return container.NewBorder(nil,nil, side, nil, listBox)
+	}
+
 }

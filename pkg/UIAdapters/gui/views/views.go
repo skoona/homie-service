@@ -49,11 +49,13 @@ type (
 		homeCards        *widget.List
 		networkCards     *widget.List
 		networkSide      *fyne.Container
-		scheduleCards    *fyne.Container
+		scheduleCards    *widget.List
 		scheduleSide     *fyne.CanvasObject
-		firmwareCards    *fyne.Container
+		firmwareCards    *widget.List
 		firmwareSide     *fyne.CanvasObject
 		siteNetworks     *dc.SiteNetworks
+		devices          []dc.Device
+		schedules        []dc.Schedule
 		devSummary       [][]string
 	}
 )
@@ -70,6 +72,8 @@ func NewViewProvider(ds *dc.CoreService, nets *[]string, logger *log.Logger) Vie
 		netSelectedStr: (*nets)[0],
 		devSummary: make([][]string, 24),
 		siteNetworks: (*ds).PrivateSiteNetworks(),
+		devices: []dc.Device{},
+		schedules: []dc.Schedule{},
 	}
 	return vp
 }
@@ -158,10 +162,20 @@ func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 }
 
 func (vp *viewProvider) OnBroadcastSelected(id widget.ListItemID) {
-	vp.statLine.SetText(fmt.Sprintf("%d Broadcast Selected", id))
-	vp.logger.Log("broadcast id", id, "event", "selected")
+	vp.statLine.SetText(fmt.Sprintf("%s Broadcast Selected", vp.siteNetworks.Broadcasts[id].Level))
+	vp.logger.Log("broadcast id", id, "event", "selected","Broadcast", vp.siteNetworks.Broadcasts[id].Level)
 }
 func (vp *viewProvider) OnDeviceSelected(id widget.ListItemID) {
-	vp.statLine.SetText(fmt.Sprintf("%d Device Selected", id))
-	vp.logger.Log("Device index", id, "event", "selected")
+	vp.statLine.SetText(fmt.Sprintf("%s Device Selected", vp.devices[id].Name))
+	vp.logger.Log("Device index", id, "event", "selected","device", vp.devices[id].Name)
 }
+func (vp *viewProvider) OnFirmwareSelected(id widget.ListItemID) {
+	vp.statLine.SetText(fmt.Sprintf("%s Firmware Selected", vp.siteNetworks.Firmwares[id].Name))
+	vp.logger.Log("Firmware index", id, "event", "selected", "firmware", vp.siteNetworks.Firmwares[id].Name)
+}
+func (vp *viewProvider) OnScheduleSelected(id widget.ListItemID) {
+	vp.statLine.SetText(fmt.Sprintf("%s Schedule Selected", vp.schedules[id].ID))
+	vp.logger.Log("Schedule index", id, "event", "selected","scheduleId", vp.schedules[id].ID)
+}
+
+
