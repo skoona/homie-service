@@ -138,19 +138,17 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, repo R
 
 	for _, netStr := range discoveredNetworks {
 		sites.DeviceNetworks[netStr] = repo.RestoreNetworkFromDB(netStr)
+		sites.Broadcasts = repo.LoadBroadcasts(netStr)
 		level.Info(em.logger).Log("event", "restore networks", "network", netStr)
 	}
-	if sscp != nil {
-		sscp.ApplySiteNetworks(sites)
-	}
-		/* start the message flow from stream providers */
-	sp.ActivateStreamProvider()
 
 	if sscp != nil {
-		sscp.BuildFirmwareCatalog()
-		sscp.BuildScheduleCatalog()
+		sscp.ApplySiteNetworks(sites)
 		sscp.ActivateStreamProvider()
 	}
+
+	/* start the message flow from stream providers */
+	sp.ActivateStreamProvider()
 
 	level.Debug(em.logger).Log("event", "Start() completed")
 	return svc, sites

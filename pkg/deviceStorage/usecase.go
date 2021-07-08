@@ -250,7 +250,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 		/*
 		 * handle special case of $broadcast
 		*/
-		if strings.HasPrefix(string(d.DeviceID), "$broad") {
+		if d.HomieType == dc.CoreTypeBroadcast {
 			b, err = b.CreateBucketIfNotExists(d.DeviceID)
 			if err != nil {
 				return fmt.Errorf("[WARN] (x/b....) cannot be created or found!: %s, error: %s", d.DeviceID, err.Error())
@@ -283,7 +283,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 			return fmt.Errorf("[WARN] Device cannot be created or found!: %s, error: %s", d.DeviceID, err.Error())
 		}
 
-		if len(d.NodeID) == 0 && len(d.PPropertyID) > 0 { // device attrs-property-property
+		if d.HomieType == dc.CoreTypeDeviceAttributePropertyProperty { // device attrs-property-property
 			b, err = b.CreateBucketIfNotExists(d.AttributeID)
 			if err != nil {
 				return fmt.Errorf("[WARN] Attribute(x/d/a/p/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
@@ -303,7 +303,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 			return err
 		}
 
-		if len(d.NodeID) == 0 && len(d.PropertyID) > 0 { // device attr-property
+		if d.HomieType == dc.CoreTypeDeviceAttributeProperty { // device attr-property
 			b, err = b.CreateBucketIfNotExists(d.AttributeID)
 			if err != nil {
 				return fmt.Errorf("[WARN] Attribute(x/d/a/p) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
@@ -318,7 +318,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 			return err
 		}
 
-		if len(d.NodeID) == 0 && len(d.AttributeID) > 0 { // device attrs
+		if d.HomieType == dc.CoreTypeDeviceAttribute { // device attrs
 			b, err = b.CreateBucketIfNotExists(d.AttributeID)
 			if err != nil {
 				return fmt.Errorf("[WARN] Attribute(x/d/a) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())
@@ -338,7 +338,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 		}
 
 		// x/d/n/p/a
-		if len(d.PropertyID) > 0 && len(d.AttributeID) > 0 { // node property attr
+		if d.HomieType == dc.CoreTypeDeviceNodePropertyAttribute { // node property attr
 			b, err = b.CreateBucketIfNotExists(d.PropertyID)
 			if err != nil {
 				return fmt.Errorf("[WARN] Property(x/d/n/p/a) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
@@ -353,7 +353,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 		}
 
 		// x/d/n/p
-		if len(d.PropertyID) > 0 && len(d.AttributeID) == 0 { // Node Property
+		if d.HomieType == dc.CoreTypeDeviceNodeProperty { // Node Property
 			b, err = b.CreateBucketIfNotExists(d.PropertyID)
 			if err != nil {
 				return fmt.Errorf("[WARN] Property(x/d/n/p) cannot be created or found!: %s, error: %s", d.PropertyID, err.Error())
@@ -363,7 +363,7 @@ func (r *dbRepo) Store(d dc.DeviceMessage) error {
 		}
 
 		// x/d/n/a
-		if len(d.PropertyID) == 0 && len(d.AttributeID) > 0 { // Node Attr
+		if d.HomieType == dc.CoreTypeDeviceNodeAttribute { // Node Attr
 			b, err = b.CreateBucketIfNotExists(d.AttributeID)
 			if err != nil {
 				return fmt.Errorf("[WARN] Attribute(x/d/n/a) cannot be created or found!: %s, error: %s", d.AttributeID, err.Error())

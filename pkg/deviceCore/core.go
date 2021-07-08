@@ -630,6 +630,7 @@ func (hn *Network) handleNodePropertyAttribute(dm DeviceMessage) error {
 		err = fmt.Errorf("property [%s] not found, will create it", string(dm.PropertyID))
 		_ = level.Debug(em.logger).Log("warning", err.Error())
 		nodeprop = NewDeviceNodeProperty(string(dm.NodeID), string(dm.PropertyID), "")
+		fmt.Println("DEBUG NODEPROPERTY--S/D/N/P/A -- CREATED", nodeprop)
 		node.Props[string(dm.PropertyID)] = nodeprop
 	}
 
@@ -674,8 +675,10 @@ func (hn *Network) handleNodeProperty(dm DeviceMessage) error {
 		_ = level.Debug(em.logger).Log("warning", err.Error())
 		nodeprop = NewDeviceNodeProperty(string(dm.NodeID), string(dm.PropertyID), string(dm.Value))
 		node.Props[string(dm.PropertyID)] = nodeprop
+		fmt.Println("DEBUG NODEPROPERTY--/S/D/N/P CREATE", nodeprop)
 	} else {
 		nodeprop.Value = string(dm.Value)
+		fmt.Println("DEBUG NODEPROPERTY--/S/D/N/P UPDATE", nodeprop)
 	}
 
 	_ = level.Debug(em.logger).Log("event", "handleNodeProperty() completed", "id", nodeprop.ID, "name", nodeprop.Name)

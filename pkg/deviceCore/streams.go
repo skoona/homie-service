@@ -269,7 +269,7 @@ func (dm *DeviceMessage) Parts() []string {
 	return strings.Split(dm.TopicS, "/")
 }
 
-// PartsLen() returns nuber of parts in Topic
+// PartsLen() returns number of parts in Topic
 func (dm *DeviceMessage) PartsLen() int {
 	level.Debug(em.logger).Log("DeviceMessage", "PartsLen()")
 	return len(dm.Parts())
