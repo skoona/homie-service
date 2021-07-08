@@ -41,7 +41,7 @@ func NewOTAStream(plog log.Logger) sch.OTAInteractor {
 }
 func (s *otaStream) EnableTriggers() chan dc.DeviceMessage {
 	if s.notifyChannel == nil {
-		s.notifyChannel = make(chan dc.DeviceMessage, 120)
+		s.notifyChannel = make(chan dc.DeviceMessage, 500)
 	}
 	return s.notifyChannel
 }
@@ -54,7 +54,7 @@ func (s *otaStream) EnableNotificationsFor(networkName, deviceName string, enabl
 }
 func (s *otaStream) OtaPublish(otaMessage dc.DeviceMessage) {
 	if s.publishChannel == nil {
-		s.publishChannel = make(chan dc.DeviceMessage, 120)
+		s.publishChannel = make(chan dc.DeviceMessage, 300)
 		publishOTAMessages(s.publishChannel, s.logger) // start receiver
 	}
 	s.publishChannel <- otaMessage

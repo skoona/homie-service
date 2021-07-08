@@ -60,7 +60,7 @@ func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceM
 func (s *deviceStream) GetPublishChannel() chan dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "GetPublishChannel()")
 	if s.publishChannel == nil {
-		s.publishChannel = make(chan dc.DeviceMessage, 32)
+		s.publishChannel = make(chan dc.DeviceMessage, 200)
 		establishPublishing(s.publishChannel, s.logger)
 	}
 	return s.publishChannel
@@ -68,7 +68,7 @@ func (s *deviceStream) GetPublishChannel() chan dc.DeviceMessage {
 func (s *deviceStream) GetNotifyChannel() chan dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "GetNotifyChannel()")
 	if s.notifyChannel == nil {
-		s.notifyChannel = make(chan dc.DeviceMessage, 200)
+		s.notifyChannel = make(chan dc.DeviceMessage, 500)
 	}
 	return s.notifyChannel
 }
