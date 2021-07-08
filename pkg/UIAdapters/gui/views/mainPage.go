@@ -18,7 +18,8 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 		container.NewTabItemWithIcon(SitesTab, theme.SettingsIcon(), vp.SitesTab()),
 	)
 	tabs.SetTabLocation(container.TabLocationTop)
-	statusText := widget.NewLabel("Status")
+	statusText := widget.NewLabel("Status ...")
+	statusText.Wrapping = fyne.TextWrapWord
 
 	// Status Line
 	bar := widget.NewToolbar(
