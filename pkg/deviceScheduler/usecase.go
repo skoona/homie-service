@@ -49,8 +49,7 @@ func (s *schedulerProvider) ApplySiteNetworks(sn *dc.SiteNetworks) {
 }
 func (s *schedulerProvider) BuildScheduleCatalog() map[string]dc.Schedule {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
-	sch.snwk.Schedules = buildScheduleCatalog(s.logger)
-	return sch.snwk.Schedules
+	return  buildScheduleCatalog(s.logger)
 }
 func (s *schedulerProvider) Schedules() []dc.Schedule {
 	level.Debug(s.logger).Log("event", "Calling Schedules()")
@@ -92,8 +91,7 @@ func (s *schedulerProvider) DeleteSchedule(scheduleID string) error {
 }
 func (s *schedulerProvider) BuildFirmwareCatalog() []dc.Firmware {
 	level.Debug(s.logger).Log("event", "BuildFirmwareCatalog() called")
-	sch.snwk.Firmwares = buildFirmwareCatalog()
-	return sch.snwk.Firmwares
+	return buildFirmwareCatalog()
 }
 func (s *schedulerProvider) Firmwares() []dc.Firmware {
 	level.Debug(s.logger).Log("event", "Calling Firmwares()")
@@ -166,7 +164,7 @@ func (s *schedulerProvider) DeleteFirmware(id dc.EID) error {
 				level.Error(s.logger).Log("error", err.Error())
 			}
 		} else {
-			err = fmt.Errorf("delete request ignored in test and demo run modes: " , s.cfg.RunMode)
+			err = fmt.Errorf("delete request ignored in test and demo run modes: %s " , s.cfg.RunMode)
 			level.Info(s.logger).Log("event", "ignored", "cause", err.Error())
 		}
 

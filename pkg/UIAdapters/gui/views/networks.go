@@ -35,7 +35,8 @@ func (vp *viewProvider) NetworksTab() fyne.CanvasObject {
 			devices = append(devices, device)
 			vp.logger.Log("completed device loading", device.Name)
 		}
-		tree := components.SknDeviceTreeSide(sideDevice)
+		tree := components.SknDeviceTreeSide(sideDevice, &vp.devTreeDetails)
+		tree.(*widget.Tree).OnSelected = vp.OnDeviceTreeSelected
 		side := container.New(layout.NewPaddedLayout(), tree)
 
 		vp.networkSide  = side // retain for later update

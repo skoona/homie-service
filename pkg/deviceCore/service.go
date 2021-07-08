@@ -133,18 +133,20 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, repo R
 	sites := NewSiteNetworks("Skoona Consulting",
 		"Homie Monitor (GOLANG)",
 		discoveredNetworks,
-		[]Firmware{},
-		map[string]Schedule{})
+		sscp.BuildFirmwareCatalog(),
+		sscp.BuildScheduleCatalog()	)
+
 	for _, netStr := range discoveredNetworks {
 		sites.DeviceNetworks[netStr] = repo.RestoreNetworkFromDB(netStr)
 		level.Info(em.logger).Log("event", "restore networks", "network", netStr)
 	}
-
-	/* start the message flow from stream providers */
+	if sscp != nil {
+		sscp.ApplySiteNetworks(sites)
+	}
+		/* start the message flow from stream providers */
 	sp.ActivateStreamProvider()
 
 	if sscp != nil {
-		sscp.ApplySiteNetworks(sites)
 		sscp.BuildFirmwareCatalog()
 		sscp.BuildScheduleCatalog()
 		sscp.ActivateStreamProvider()

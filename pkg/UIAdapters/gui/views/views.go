@@ -38,6 +38,7 @@ type (
 	viewProvider struct {
 		logger           log.Logger
 		dSvc             *dc.CoreService
+		siteNetworks     *dc.SiteNetworks
 		networks         *[]string
 		pageTabs         *container.AppTabs
 		statLine         *widget.Label
@@ -54,10 +55,9 @@ type (
 		scheduleSide     *fyne.CanvasObject
 		firmwareCards    *widget.List
 		firmwareSide     *fyne.CanvasObject
-		siteNetworks     *dc.SiteNetworks
 		devices          []dc.Device
 		schedules        []dc.Schedule
-		devSummary       [][]string
+		devTreeDetails   *map[string][][]string
 	}
 )
 
@@ -71,7 +71,7 @@ func NewViewProvider(ds *dc.CoreService, nets *[]string, logger *log.Logger) Vie
 		networks: nets,
 		tabStatus: map[string]string{},
 		netSelectedStr: (*nets)[0],
-		devSummary: make([][]string, 24),
+		//devTreeDetails: &map[string][][]string,2),
 		siteNetworks: (*ds).PrivateSiteNetworks(),
 		devices: []dc.Device{},
 		schedules: []dc.Schedule{},
@@ -98,24 +98,24 @@ func (vp *viewProvider) ToolBarRefreshActionCb() {
 	}
 	vp.pageTabs.Refresh()
 	vp.statLine.SetText(fmt.Sprintf("%s refresh completed", sText))
-	vp.logger.Log("tab", sText, "event", "refresh called")
+	_ = vp.logger.Log("tab", sText, "event", "refresh called")
 }
 // ToolBarAddActionCb callback for statusline toolbar Add button
 func (vp *viewProvider) ToolBarAddActionCb() {
 	sText := vp.pageTabs.CurrentTab().Text
 	vp.statLine.SetText(fmt.Sprintf("%s Add Selected", sText))
-	vp.logger.Log("tab", sText, "event", "add called")
+	_ = vp.logger.Log("tab", sText, "event", "add called")
 }
 // ToolBarRemoveActionCb callback for statusline toolbar Remove button
 func (vp *viewProvider) ToolBarRemoveActionCb() {
 	sText := vp.pageTabs.CurrentTab().Text
 	vp.statLine.SetText(fmt.Sprintf("%s Remove Selected", sText))
-	vp.logger.Log("tab", sText, "event", "remove called")
+	_ = vp.logger.Log("tab", sText, "event", "remove called")
 }
 // OnNetworkSelectionChangedCb callback for OnSelect Network selection
 func (vp *viewProvider) OnNetworkSelectionChangedCb(s string) {
 	vp.netSelectedStr = s
-	vp.logger.Log("tab", vp.pageTabs.CurrentTab().Text,
+	_ = vp.logger.Log("tab", vp.pageTabs.CurrentTab().Text,
 		"event", "selector called",
 		"value", s,
 		"status", vp.tabStatus[vp.pageTabs.CurrentTab().Text])
@@ -164,21 +164,25 @@ func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 
 func (vp *viewProvider) OnBroadcastSelected(id widget.ListItemID) {
 	vp.statLine.SetText(fmt.Sprintf("%s Broadcast Selected", vp.siteNetworks.Broadcasts[id].Level))
-	vp.logger.Log("broadcast id", id, "event", "selected","Broadcast", vp.siteNetworks.Broadcasts[id].Level)
+	_ = vp.logger.Log("broadcast id", id, "event", "selected","Broadcast", vp.siteNetworks.Broadcasts[id].Level)
 }
 func (vp *viewProvider) OnDeviceSelected(id widget.ListItemID) {
-	vp.networkSide.Objects[0] = components.SknDeviceTreeSide(&vp.devices[id])
+	//vp.networkSide.Objects[0] = components.SknDeviceTreeSide(&vp.devices[id], &vp.devTreeDetails)
+	*vp.devTreeDetails = components.TreeDataFromDevice(&vp.devices[id])
 	vp.networkSide.Refresh()
 	vp.statLine.SetText(fmt.Sprintf("%s Device Selected", vp.devices[id].Name))
-	vp.logger.Log("Device index", id, "event", "selected","device", vp.devices[id].Name)
+	_ = vp.logger.Log("Device index", id, "event", "selected","device", vp.devices[id].Name)
 }
 func (vp *viewProvider) OnFirmwareSelected(id widget.ListItemID) {
 	vp.statLine.SetText(fmt.Sprintf("%s Firmware Selected", vp.siteNetworks.Firmwares[id].Name))
-	vp.logger.Log("Firmware index", id, "event", "selected", "firmware", vp.siteNetworks.Firmwares[id].Name)
+	_ = vp.logger.Log("Firmware index", id, "event", "selected", "firmware", vp.siteNetworks.Firmwares[id].Name)
 }
 func (vp *viewProvider) OnScheduleSelected(id widget.ListItemID) {
 	vp.statLine.SetText(fmt.Sprintf("%s Schedule Selected", vp.schedules[id].ID))
-	vp.logger.Log("Schedule index", id, "event", "selected","scheduleId", vp.schedules[id].ID)
+	_ = vp.logger.Log("Schedule index", id, "event", "selected","scheduleId", vp.schedules[id].ID)
 }
-
+func (vp *viewProvider) OnDeviceTreeSelected(uid widget.TreeNodeID) {
+	vp.statLine.SetText(fmt.Sprintf("DeviceTree Selected %s -> %s", (*vp.devTreeDetails)[uid][1][0], (*vp.devTreeDetails)[uid][1][1] ))
+	_ = vp.logger.Log("element", uid, "event", "selected","element", (*vp.devTreeDetails)[uid][1][0], "value", (*vp.devTreeDetails)[uid][1][1] )
+}
 

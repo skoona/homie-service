@@ -10,8 +10,9 @@ import (
 )
 
 
-func SknDeviceTreeSide(dv *dc.Device) fyne.CanvasObject {
-	data := treeDataFromDevice(dv)  // map[string][children][kv]string
+func SknDeviceTreeSide(dv *dc.Device, devTreeDetails **map[string][][]string) fyne.CanvasObject {
+	data := TreeDataFromDevice(dv)  // map[string][children][kv]string
+	*devTreeDetails = &data
 	content := widget.NewTree(
 		func(uid widget.TreeNodeID) []string { // childUIDs
 			children := data
@@ -50,7 +51,7 @@ func keyValueTemplate(key, value string) fyne.CanvasObject {
 // -/D/N/P
 // -/D/N/A
 // map[string][]string
-func treeDataFromDevice(dv *dc.Device) map[string][][]string {
+func TreeDataFromDevice(dv *dc.Device) map[string][][]string {
 	var (
 		ele string
 		dapp = map[string][]string{}
@@ -160,6 +161,7 @@ func treeDataFromDevice(dv *dc.Device) map[string][][]string {
 		}
 	}
 	//fmt.Println("TREE MAP", tree)
+
 	return tree
 }
 

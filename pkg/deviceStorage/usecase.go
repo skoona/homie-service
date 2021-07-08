@@ -9,6 +9,7 @@ package deviceStorage
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/go-kit/kit/log/level"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
@@ -40,7 +41,7 @@ func (r *dbRepo) RestoreNetworkFromDB(networkName string) dc.Network {
 func (r *dbRepo) StoreSchedule(d dc.Schedule) error {
 	level.Debug(r.logger).Log("event", "Calling StoreSchedule()", "dm", d.String())
 	if d.ElementType != dc.CoreTypeSchedule {
-		return fmt.Errorf("warn", "invalid schedule type", "type", d.ElementType)
+		return fmt.Errorf("warn invalid schedule type %d", d.ElementType)
 	}
 
 	/*
@@ -100,7 +101,7 @@ func (r *dbRepo) RemoveSchedule(scheduleID string) error {
 
 // LoadSchedules()
 func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
-	level.Debug(r.logger).Log("event", "Calling LoadSchedules()")
+	_ = level.Debug(r.logger).Log("event", "Calling LoadSchedules()")
 	schedMap := map[string]dc.Schedule{}
 
 	/*
@@ -109,7 +110,7 @@ func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 		var err error
 		b := tx.Bucket([]byte("Schedules"))
 		if b == nil {
-			return fmt.Errorf("no schedules %s", "available")
+			return errors.New("no schedules available")
 		}
 
 		err = b.ForEach( func(k, v []byte) error {
@@ -125,11 +126,11 @@ func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 				err := json.Unmarshal(vv, &schedule)
 				if err == nil {
 					schedMap[schedule.ID] = schedule
-					level.Info(r.logger).Log("Schedule", schedule.String())
+					_ = level.Info(r.logger).Log("Schedule", schedule.String())
 				} else {
-					level.Error(r.logger).Log("error", err.Error())
+					_ = level.Error(r.logger).Log("error", err.Error())
 				}
-				fmt.Printf("LoadSchedules(): schedule key=%s, value=%s\n", kk, vv)
+				_ = level.Info(r.logger).Log( "method","LoadSchedules()", "schedule key", kk,"value", vv)
 			}
 			return err
 		})
@@ -137,9 +138,9 @@ func (r *dbRepo) LoadSchedules() map[string]dc.Schedule {
 	})
 
 	if err != nil {
-		level.Warn(r.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
+		_ = level.Warn(r.logger).Log("Alert", "LoadSchedules() Failed", "error", err.Error())
 	} else {
-		level.Debug(r.logger).Log("event", "LoadSchedules() complete", "retrieved", len(schedMap))
+		_ = level.Debug(r.logger).Log("event", "LoadSchedules() complete", "retrieved", len(schedMap))
 	}
 
 	return schedMap
@@ -395,6 +396,8 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 	var nodeProperty dc.DeviceNodeProperty
 	var nodeAttribute dc.DeviceNodeAttribute
 	var nodePropertyAttribute dc.DeviceNodePropertyAttribute
+
+	// todo: Certify device retrieval
 
 	err := db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName)) // (1) Network Level

@@ -232,7 +232,7 @@ func NewSiteNetworks(siteName, siteTitle string, networks []string, firmwares []
 		siteNetworks.DeviceNetworks[nName] = NewNetwork(nName, nName)
 	}
 
-	//_ = level.Debug(em.logger).Log("event", "NewSiteNetworks() completed")
+	_ = level.Debug(em.logger).Log("event", "NewSiteNetworks() completed")
 	return &siteNetworks
 }
 

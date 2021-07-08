@@ -16,7 +16,10 @@ module=Homie-Service time:=2021-07-07T18:33:29.100833Z caller=networks.go:36 ui=
 module=Homie-Service time:=2021-07-07T18:33:29.100843Z caller=networks.go:36 ui=base component=ViewProvider completeddeviceloading=MediaRoom
 TREE MAP 
 map[
-	"":[[MediaRoom] [sknSensors MediaRoom]] 
+	"":[
+		[MediaRoom] 
+		[sknSensors MediaRoom]
+	] 
 	MediaRoom:[
 	   [sknSensors/MediaRoom/$fw sknSensors/MediaRoom/$localip sknSensors/MediaRoom/$state sknSensors/MediaRoom/$mac sknSensors/MediaRoom/$name sknSensors/MediaRoom/$stats sknSensors/MediaRoom/$homie sknSensors/MediaRoom/$implementation sknSensors/MediaRoom/$nodes sknSensors/MediaRoom/hardware sknSensors/MediaRoom/Ambient sknSensors/MediaRoom/Presence] 
 	   [MediaRoom sknSensors]

@@ -138,8 +138,8 @@ func startUp() (dc.CoreService, cc.Config, error) {
 		os.Exit(1)
 	}
 	logger := log.With(cfg.Logger, "pkg", "services")
+	level.Info(logger).Log("event", "service starting")
 
-	level.Info(logger).Log("event", "service started")
 
 	// Run the App
 	if cfg.RunMode == "live" {
@@ -173,6 +173,8 @@ func Service() (*dc.CoreService, *cc.Config, []string) {
 		e := fmt.Errorf("service startup failure: %s", err.Error())
 		panic(e.Error())
 	}
+
+	level.Info(cfg.Logger).Log("event", "service completed")
 
 	return &coreSvc, &cfg, networks
 }
