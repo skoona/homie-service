@@ -685,3 +685,195 @@ map[
  sknSensors/GarageMonitor/hardware/voltage:[[] [voltage 3.03]]
  ]
 ```
+
+```go
+// buildNetworkDevice  Returns string array a device's properties (topic:value)
+func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device, error) {
+	var found bool
+	var device dc.Device
+	var deviceAttribute dc.DeviceAttribute
+	var deviceAttributeProperty dc.DeviceAttributeProperty
+	var deviceAttributePropertyProperty dc.DeviceAttributePropertyProperty
+	var node dc.DeviceNode
+	var nodeProperty dc.DeviceNodeProperty
+	var nodeAttribute dc.DeviceNodeAttribute
+	var nodePropertyAttribute dc.DeviceNodePropertyAttribute
+
+	// todo: Certify device retrieval
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(networkName)) // (1) Network Level
+		if b == nil {
+			return fmt.Errorf("network not found!: %s", networkName)
+		}
+		//fmt.Printf("(2) X/D...... %s/%s \n", networkName, deviceName)
+
+		b = b.Bucket([]byte(deviceName)) // (2) Device Level
+		if b == nil {
+			return fmt.Errorf("network not found!: %s", deviceName)
+		}
+		device = dc.NewDevice(networkName, deviceName)
+
+		/*
+		 * examine device bucket for nodes or attributes */
+		err := b.ForEach(func(k, v []byte) error {
+			//fmt.Printf("(2) X/D...... Bucket[2]=%s, enum Key=%s Value=[%s] \n", deviceName, string(k), string(v))
+
+			c := b.Bucket(k) // (3) Node/Attr Level
+			if c == nil {
+				return nil
+			}
+			/*
+			 * bucket is either a Node attrs/props or a DeviceAttribute properties
+			 * if 2=attr follow device attr path
+			 * else follow nodepath
+			*/
+			if strings.HasPrefix(string(k), "$") {  // device attr path
+				// 3 attribute
+				// 4 property
+				// 5 propertyProperty
+
+				err := c.ForEach(func(kk, vv []byte) error {
+					if string(vv) != "" {
+						deviceAttribute, found = device.Attrs[string(kk)]
+						if !found {
+							//fmt.Printf("(3) X/D/A.... %s/%s -->[%s] \n", deviceName, kk, vv)
+							deviceAttribute = dc.NewDeviceAttribute(deviceName, string(kk), string(vv))
+							device.Attrs[string(kk)] = deviceAttribute
+						}
+					}
+					d := c.Bucket(kk) // (4) Property
+					if d == nil {
+						return nil
+					}
+					err := d.ForEach(func(kkk, vvv []byte) error {
+						if string(vvv) != "" {
+							deviceAttribute, found = device.Attrs[string(k)]
+							if !found {
+								deviceAttribute = dc.NewDeviceAttribute(deviceName, string(k), string(vv))
+								device.Attrs[string(k)] = deviceAttribute
+							}
+							deviceAttributeProperty, found = deviceAttribute.Props[string(kkk)]
+							if !found {
+								//fmt.Printf("(4) X/D/A/P.. %s/%s/%s -->[%s]\n", deviceName, k, kkk, vvv)
+								deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kkk), string(vvv))
+								deviceAttribute.Props[string(kkk)] = deviceAttributeProperty
+							}
+						}
+						e := d.Bucket(kkk) // (5) PProperty
+						if e == nil {
+							return nil
+						}
+						err := e.ForEach(func(kkkk, vvvv []byte) error {
+							deviceAttribute, found = device.Attrs[string(k)]
+							if !found {
+								deviceAttribute = dc.NewDeviceAttribute(deviceName, string(k), string(vv))
+								device.Attrs[string(k)] = deviceAttribute
+							}
+							deviceAttributeProperty, found = deviceAttribute.Props[string(kk)]
+							if !found {
+								deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kk), string(vvv))
+								deviceAttribute.Props[string(kk)] = deviceAttributeProperty
+							}
+							deviceAttributePropertyProperty, found = deviceAttributeProperty.Props[string(kkkk)]
+							if !found {
+								//fmt.Printf("(5) X/D/A/P/P %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
+								deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(kk), string(kkkk), string(vvvv))
+								deviceAttributeProperty.Props[string(kkkk)] = deviceAttributePropertyProperty
+							}
+							return nil
+						})
+						return err
+					})
+					return err
+				})
+				return err
+
+			} else { // node path
+				// 3 node
+				// 4 property, attribute
+				// 5 propertyAttribute
+
+				err := c.ForEach(func(kk, vv []byte) error {
+					if string(vv) != "" {
+						node, found = device.Nodes[string(k)]
+						if !found {
+							//fmt.Printf("(3) X/D/N.... %s/%s -->[%s] \n", deviceName, kk, vv)
+							node = dc.NewDeviceNode(deviceName, string(kk))
+							device.Nodes[string(kk)] = node
+						}
+					}
+
+					d := c.Bucket(kk) // (4) Attribute | Property
+					if d == nil {
+						return nil
+					}
+					err := d.ForEach(func(kkk, vvv []byte) error {
+						if string(vvv) != "" {
+
+							if strings.HasPrefix(string(kkk), "$") {
+								node, found = device.Nodes[string(k)]
+								if !found {
+									node = dc.NewDeviceNode(deviceName, string(k))
+									device.Nodes[string(k)] = node
+								}
+								nodeAttribute, found = node.Attrs[string(kkk)]
+								if !found {
+									//fmt.Printf("(4) X/D/N/A.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
+									nodeAttribute = dc.NewDeviceNodeAttribute(string(k), string(kkk), string(vvv))
+									node.Attrs[string(kkk)] = nodeAttribute
+								}
+
+							} else {
+								node, found = device.Nodes[string(k)]
+								if !found {
+									node = dc.NewDeviceNode(deviceName, string(k))
+									device.Nodes[string(k)] = node
+								}
+								nodeProperty, found = node.Props[string(kkk)]
+								if !found {
+									//fmt.Printf("(4) X/D/N/P.. %s/%s/%s -->[%s] \n", deviceName, k, kkk, vvv)
+									nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kkk), string(vvv))
+									node.Props[string(kkk)] = nodeProperty
+								}
+
+							}
+						}
+
+						e := d.Bucket(kkk) // (5) PPropertyAttribute
+						if e == nil {
+							return nil
+						}
+						err := e.ForEach(func(kkkk, vvvv []byte) error {
+							node, found = device.Nodes[string(k)]
+							if !found {
+								node = dc.NewDeviceNode(deviceName, string(k))
+								device.Nodes[string(k)] = node
+							}
+							nodeProperty, found = node.Props[string(kk)]
+							if !found {
+								nodeProperty = dc.NewDeviceNodeProperty(string(k), string(kk), string(vvv))
+								node.Props[string(kk)] = nodeProperty
+							}
+							nodePropertyAttribute, found = nodeProperty.Attrs[string(kkkk)]
+							if !found {
+								//fmt.Printf("(5) X/D/N/P/A %s/%s/%s/%s -->[%s] \n", deviceName, k, kk, kkkk, vvvv)
+								nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(string(kk), string(kkkk), string(vvvv))
+								nodeProperty.Attrs[string(kkkk)] = nodePropertyAttribute
+							}
+							return nil
+						})
+						return err
+					})
+					return err
+				})
+				return err
+			} // end if path
+		})
+		return err
+	})
+
+	return device, err
+}
+
+```

@@ -97,11 +97,11 @@ func deviceDetails(db *bolt.DB, networkName, deviceName string) (map[string]stri
 	db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(networkName)) // Network Level
 		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", networkName)
+			return fmt.Errorf("network not found!: %s", networkName)
 		}
 		b = b.Bucket([]byte(deviceName)) // Device Level
 		if b == nil {
-			return fmt.Errorf("Network Not Found!: %s", deviceName)
+			return fmt.Errorf("device not found!: %s", deviceName)
 		}
 
 		err := b.ForEach(func(k, v []byte) error {

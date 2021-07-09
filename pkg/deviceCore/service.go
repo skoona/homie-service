@@ -137,7 +137,7 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, repo R
 		sscp.BuildScheduleCatalog()	)
 
 	for _, netStr := range discoveredNetworks {
-		//sites.DeviceNetworks[netStr] = repo.RestoreNetworkFromDB(netStr)
+		sites.DeviceNetworks[netStr] = repo.RestoreNetworkFromDB(netStr)
 		sites.Broadcasts = repo.LoadBroadcasts(netStr)
 		level.Info(em.logger).Log("event", "restore networks", "network", netStr)
 	}
