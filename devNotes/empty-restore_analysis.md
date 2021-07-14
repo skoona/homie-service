@@ -2927,7 +2927,7 @@
 # From Reload after empty
 ```json
 {
-  "ID": "681d4ab0-1629-4501-9446-7269f8460850",
+  "ID": "b2c4ab7c-2a48-4d41-b840-13a06175a93c",
   "ElementType": 24,
   "SiteName": "Skoona Consulting",
   "Title": "Homie Monitor (GOLANG)",
@@ -2942,7 +2942,7 @@
       "Topic": "alarm",
       "Level": "item",
       "Value": "Media Room Window Broken",
-      "Received": "2021-07-09T08:25:51.970753-04:00"
+      "Received": "2021-07-09T15:38:51.2862-04:00"
     },
     {
       "ID": "8490e6cbf39eeadd991cb2a346580e51",
@@ -2951,7 +2951,7 @@
       "Topic": "alert",
       "Level": "door",
       "Value": "Door Open",
-      "Received": "2021-07-09T08:25:51.970756-04:00"
+      "Received": "2021-07-09T15:38:51.286203-04:00"
     },
     {
       "ID": "c6c659175e0f9ca804664b3c6e3fda37",
@@ -2960,7 +2960,7 @@
       "Topic": "alert",
       "Level": "item",
       "Value": "Garage Door Open",
-      "Received": "2021-07-09T08:25:51.970758-04:00"
+      "Received": "2021-07-09T15:38:51.286204-04:00"
     },
     {
       "ID": "df9b91ec197689e2c566aea2add68ad5",
@@ -2969,7 +2969,7 @@
       "Topic": "notice",
       "Level": "item",
       "Value": "openHAB3 Online",
-      "Received": "2021-07-09T08:25:51.970761-04:00"
+      "Received": "2021-07-09T15:38:51.286206-04:00"
     },
     {
       "ID": "c254b24c700dbc2ecba237869f9b493b",
@@ -2978,7 +2978,7 @@
       "Topic": "$broadcast",
       "Level": "alert",
       "Value": "openHAB3 Offline",
-      "Received": "2021-07-09T08:25:56.014997-04:00"
+      "Received": "2021-07-09T15:38:55.376377-04:00"
     },
     {
       "ID": "c254b24c700dbc2ecba237869f9b493b",
@@ -2987,16 +2987,7 @@
       "Topic": "$broadcast",
       "Level": "alert",
       "Value": "Door Open",
-      "Received": "2021-07-09T08:25:56.052386-04:00"
-    },
-    {
-      "ID": "80ea5ef8b530e884349d967e9c09c28a",
-      "ElementType": 20,
-      "Parent": "sknSensors",
-      "Topic": "$broadcast",
-      "Level": "notice",
-      "Value": "openHAB3 Online",
-      "Received": "2021-07-09T08:25:56.091997-04:00"
+      "Received": "2021-07-09T15:38:55.414332-04:00"
     }
   ],
   "Firmwares": [
@@ -3054,30 +3045,14 @@
           "Name": "D1R1MiniA",
           "Attrs": {
             "$fw": {
-              "ID": "3ae33bd2-a0d3-43f9-8858-12e38f034916",
+              "ID": "41b53f5b-4785-44b4-b7ca-e341a1900faf",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$fw",
               "Value": "",
               "Props": {
-                "checksum": {
-                  "ID": "1c169c9a-8d6d-49b0-afb7-c378db933fe8",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "checksum",
-                  "Value": "6867842dfce4674d4c724085467362c9",
-                  "Props": {}
-                },
-                "name": {
-                  "ID": "a909dca1-0b9b-405f-a62f-071ace7bdc28",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "name",
-                  "Value": "SknLiquids-128x32-oled",
-                  "Props": {}
-                },
                 "version": {
-                  "ID": "f36e1d3a-4f49-43a1-9d0c-07def5745fbd",
+                  "ID": "cecd1f54-79d0-4bc6-853c-0165378a222e",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -3087,7 +3062,7 @@
               }
             },
             "$homie": {
-              "ID": "b075babf-cce9-43ba-80cc-9d9c66463c7d",
+              "ID": "7b3f1ab4-8c1b-48e4-8bc2-4b85686db637",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$homie",
@@ -3095,38 +3070,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "624fd7ce-bd86-4ea5-a506-24469d9f64e4",
+              "ID": "61fec600-b7a3-42f8-8018-8f8d363a04c7",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
-                "config": {
-                  "ID": "3899e163-5467-4bb1-8884-977c9b352789",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "config",
-                  "Value": "{\"name\":\"Furnace\",\"device_id\":\"D1R1MiniA\",\"device_stats_interval\":900,\"wifi\":{\"ssid\":\"SFNSS1-24G\"},\"mqtt\":{\"host\":\"openhab.skoona.net\",\"port\":1883,\"base_topic\":\"sknSensors/\",\"auth\":true},\"ota\":{\"enabled\":true}}",
-                  "Props": {}
-                },
-                "ota": {
-                  "ID": "de49c7d3-84e1-41b0-8b8c-dc23d7faa9ea",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "ota",
-                  "Value": "",
-                  "Props": {
-                    "enabled": {
-                      "ID": "3e96880b-6fed-4c95-9538-8931baeda96d",
-                      "ElementType": 13,
-                      "Parent": "ota",
-                      "Name": "enabled",
-                      "Value": "true"
-                    }
-                  }
-                },
                 "version": {
-                  "ID": "321c7fa1-65f6-4ae6-9227-a94939c445ce",
+                  "ID": "cc7505ed-1580-419f-9796-e6e5875f0cac",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -3136,7 +3087,7 @@
               }
             },
             "$localip": {
-              "ID": "8dc443cc-0bf9-4eff-913b-47b6fcbb4798",
+              "ID": "5f4693b0-5a8b-4a49-810f-0f3d3f108457",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$localip",
@@ -3144,7 +3095,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "8d3c1ae6-af20-447b-9eea-8eb182e50065",
+              "ID": "e411d48c-7a9f-43f8-9aed-ac76e49e0921",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$mac",
@@ -3152,7 +3103,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "539bb43d-fedc-457f-a3ce-5c431de5301b",
+              "ID": "ebfa083a-b2a0-49e4-8fcd-d63ea6692b0a",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$name",
@@ -3160,7 +3111,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "92552340-f90a-4fa4-833c-10781f9356c8",
+              "ID": "e1a9165f-93d1-4c57-948e-4f0dcf676d3c",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$nodes",
@@ -3168,7 +3119,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "a7a8dd43-0888-4894-9873-6cc275d9f07d",
+              "ID": "a00482b3-f9b5-4b96-9ec3-6e6e367aa291",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$state",
@@ -3176,30 +3127,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "65c7be0c-2e5d-41d4-b4fa-19a561f82926",
+              "ID": "1c7dd466-2f17-4586-a6c6-46727a34590b",
               "ElementType": 11,
               "Parent": "D1R1MiniA",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
-                "interval": {
-                  "ID": "8178acbd-0008-41e2-b599-bd37c0d357ac",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "interval",
-                  "Value": "905",
-                  "Props": {}
-                },
-                "signal": {
-                  "ID": "f6813e61-45ab-461a-ac6e-4c9a5ffe8f3f",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "signal",
-                  "Value": "88",
-                  "Props": {}
-                },
                 "uptime": {
-                  "ID": "c85e0bbe-d66d-4319-8b98-55c7bea62e2e",
+                  "ID": "bb74b4f7-9687-436d-a585-c4bddddec14f",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
@@ -3210,141 +3145,409 @@
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "097413a9-1f9c-4435-b47a-3853b254351f",
+            "Liquids": {
+              "ID": "ef85a83e-81ea-4d4d-97bd-ac6425b563ad",
               "ElementType": 14,
               "Parent": "D1R1MiniA",
-              "Name": "$name",
-              "Attrs": {
-                "Liquids": {
-                  "ID": "73ef6ddc-6f90-4a22-bb7e-175f74f46ffa",
-                  "ElementType": 15,
-                  "Parent": "Liquids",
-                  "Name": "Liquids",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "2a39e970-869c-4f04-b8f3-3f05fa498f07",
-              "ElementType": 14,
-              "Parent": "D1R1MiniA",
-              "Name": "$properties",
-              "Attrs": {
-                "Liquids": {
-                  "ID": "7a85e19b-7cf3-44fd-9337-bbf9f8c78863",
-                  "ElementType": 15,
-                  "Parent": "Liquids",
-                  "Name": "Liquids",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "f6d0daf4-abc0-4f7e-a11d-bfac6e5400c3",
-              "ElementType": 14,
-              "Parent": "D1R1MiniA",
-              "Name": "$type",
-              "Attrs": {
-                "Liquids": {
-                  "ID": "00b1ae9b-3a2a-4b12-a1cb-0ad3ce3f7a2a",
-                  "ElementType": 15,
-                  "Parent": "Liquids",
-                  "Name": "Liquids",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "level": {
-              "ID": "0e3d7e8d-8b39-47c9-8a9c-35476b7c8bf0",
-              "ElementType": 14,
-              "Parent": "D1R1MiniA",
-              "Name": "level",
+              "Name": "Liquids",
               "Attrs": {},
               "Props": {
-                "level": {
-                  "ID": "9e7cd4d3-4022-4ea4-8868-9c396c71346b",
+                "Liquids": {
+                  "ID": "4dfd68ad-751a-4b80-b5dd-e63e7ab8fb8b",
                   "ElementType": 16,
                   "Parent": "Liquids",
-                  "Name": "level",
+                  "Name": "Liquids",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "92b4767f-ca69-4925-a70b-a907a2d500c0",
+                      "ID": "51f645e8-9fa8-4ca6-9085-9f37d5e80eca",
                       "ElementType": 17,
                       "Parent": "level",
                       "Name": "$datatype",
-                      "Value": "integer"
+                      "Value": ""
                     },
                     "$format": {
-                      "ID": "7ef8d39e-559f-42fb-ba48-eb3c5b899a29",
+                      "ID": "8a7a271c-e8df-4ca9-a9d7-4cd8205feadc",
                       "ElementType": 17,
                       "Parent": "level",
                       "Name": "$format",
-                      "Value": "0:1000"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "435cc2c7-0b8f-4d4b-98c6-5d54d7d88739",
+                      "ID": "5555de47-917e-496c-ae20-c8a62ccc03f6",
                       "ElementType": 17,
-                      "Parent": "level",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Level"
+                      "Value": "Water Sensor"
+                    },
+                    "$properties": {
+                      "ID": "ab135074-4a59-4332-947b-292417796b15",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "level,volts"
+                    },
+                    "$type": {
+                      "ID": "d15418b9-01b5-48ad-b97a-b5a5213c5d9e",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
                     },
                     "$unit": {
-                      "ID": "9a167699-00f2-45e4-b8f2-1e2ca6511dbe",
+                      "ID": "18f570f7-99c6-4023-86d7-e7408d1f4419",
                       "ElementType": 17,
                       "Parent": "level",
                       "Name": "$unit",
-                      "Value": "#"
+                      "Value": ""
+                    },
+                    "level": {
+                      "ID": "44211f9b-98c5-4099-b8be-ce4e15f1aa6c",
+                      "ElementType": 17,
+                      "Parent": "level",
+                      "Name": "level",
+                      "Value": "7"
+                    },
+                    "volts": {
+                      "ID": "419d6009-0b2c-42ff-b5a8-4347ebd1b6e6",
+                      "ElementType": 17,
+                      "Parent": "volts",
+                      "Name": "volts",
+                      "Value": "0.0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "DSMonitor": {
+          "ID": "280cff5165f95cca0fc6f9bcbe2bbc79",
+          "Title": "",
+          "ElementType": 10,
+          "OTAEnabled": true,
+          "Parent": "sknSensors",
+          "Name": "DSMonitor",
+          "Attrs": {
+            "$fw": {
+              "ID": "5025af0b-ff5a-40e1-af9f-fe92f6e47c86",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$fw",
+              "Value": "",
+              "Props": {
+                "version": {
+                  "ID": "fd2c66a9-f65c-4a29-9b27-bb0749db2621",
+                  "ElementType": 12,
+                  "Parent": "$fw",
+                  "Name": "version",
+                  "Value": "1.0.2",
+                  "Props": {}
+                }
+              }
+            },
+            "$homie": {
+              "ID": "4d8d874e-a4e3-455a-b772-4977e18779de",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$homie",
+              "Value": "3.0.1",
+              "Props": {}
+            },
+            "$implementation": {
+              "ID": "57486d0f-c5e5-4886-9211-7426e9a020a2",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$implementation",
+              "Value": "",
+              "Props": {
+                "version": {
+                  "ID": "16782b11-ef15-4bba-b637-97b675572db5",
+                  "ElementType": 12,
+                  "Parent": "$implementation",
+                  "Name": "version",
+                  "Value": "3.0.0",
+                  "Props": {}
+                }
+              }
+            },
+            "$localip": {
+              "ID": "bcccaa6f-0664-4aba-b991-0aa005b83211",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$localip",
+              "Value": "10.100.1.164",
+              "Props": {}
+            },
+            "$mac": {
+              "ID": "545604c1-4faa-4d0b-947c-56427015ad52",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$mac",
+              "Value": "DC:4F:22:3B:33:4F",
+              "Props": {}
+            },
+            "$name": {
+              "ID": "59b03543-e737-4182-8ccb-0ab2c4578a92",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$name",
+              "Value": "Environment-DS18B20",
+              "Props": {}
+            },
+            "$nodes": {
+              "ID": "4bea5500-1389-489c-b1ae-15222b59b6f1",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$nodes",
+              "Value": "Ambient[]",
+              "Props": {}
+            },
+            "$state": {
+              "ID": "74cd8a2d-e4aa-4e21-9f74-70dd11593dda",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$state",
+              "Value": "ready",
+              "Props": {}
+            },
+            "$stats": {
+              "ID": "a52d39f6-ea1a-467d-8d20-4ab67e5c5b73",
+              "ElementType": 11,
+              "Parent": "DSMonitor",
+              "Name": "$stats",
+              "Value": "",
+              "Props": {
+                "uptime": {
+                  "ID": "304f43e0-3eea-46b7-911c-d5721f29084a",
+                  "ElementType": 12,
+                  "Parent": "$stats",
+                  "Name": "uptime",
+                  "Value": "5",
+                  "Props": {}
+                }
+              }
+            }
+          },
+          "Nodes": {
+            "Ambient": {
+              "ID": "93c4a239-15e3-4b2e-b9e1-dc041dfe475c",
+              "ElementType": 14,
+              "Parent": "DSMonitor",
+              "Name": "Ambient",
+              "Attrs": {},
+              "Props": {
+                "Ambient": {
+                  "ID": "3668f01e-602c-4bb7-8230-aa75df9c6bea",
+                  "ElementType": 16,
+                  "Parent": "Ambient",
+                  "Name": "Ambient",
+                  "Value": "",
+                  "Attrs": {
+                    "$array": {
+                      "ID": "fcdd66a9-72f7-4ddf-b7bc-115ee8e61193",
+                      "ElementType": 17,
+                      "Parent": "$array",
+                      "Name": "$array",
+                      "Value": "0-3"
+                    },
+                    "$datatype": {
+                      "ID": "febb8b1a-47e5-4dcf-a644-d1ea80ce6245",
+                      "ElementType": 17,
+                      "Parent": "state",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$format": {
+                      "ID": "29fbb972-033b-4e61-85ea-9efe6989f384",
+                      "ElementType": 17,
+                      "Parent": "state",
+                      "Name": "$format",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "0218c765-e56f-4dda-8ca6-fd8342a51b03",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Environment Monitor"
+                    },
+                    "$properties": {
+                      "ID": "95d64d1d-8dff-402b-8e2d-b92b8df00562",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "state,temperature"
+                    },
+                    "$type": {
+                      "ID": "0ca1838c-1f0a-4ecd-97c7-d1444cc743d0",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "3ace686a-1f5a-4c30-bfdf-a42966342245",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "$unit",
+                      "Value": ""
                     }
                   }
                 }
               }
             },
-            "volts": {
-              "ID": "befbedfe-175e-481b-aad7-4092a09b205b",
+            "Ambient_0": {
+              "ID": "4a6c9e24-9832-4f49-beb5-55a13b55a07b",
               "ElementType": 14,
-              "Parent": "D1R1MiniA",
-              "Name": "volts",
+              "Parent": "DSMonitor",
+              "Name": "Ambient_0",
               "Attrs": {},
               "Props": {
-                "volts": {
-                  "ID": "b7dbc6cd-fa69-4fba-a519-41561f2795f4",
+                "Ambient_0": {
+                  "ID": "a9f79661-824c-4ca8-adda-ca876bcb0a53",
                   "ElementType": 16,
-                  "Parent": "Liquids",
-                  "Name": "volts",
+                  "Parent": "Ambient_0",
+                  "Name": "Ambient_0",
                   "Value": "",
                   "Attrs": {
-                    "$datatype": {
-                      "ID": "ca135876-b0e2-492f-834d-f952c4c88a94",
-                      "ElementType": 17,
-                      "Parent": "volts",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$format": {
-                      "ID": "30828c7a-94d0-489b-bab8-d75bc435ef8c",
-                      "ElementType": 17,
-                      "Parent": "volts",
-                      "Name": "$format",
-                      "Value": "0:4"
-                    },
                     "$name": {
-                      "ID": "d543c342-c1d6-4542-93cc-1efc51c5b5a3",
+                      "ID": "d2d020e8-ea10-44ae-a96d-71eee7ea444e",
                       "ElementType": 17,
-                      "Parent": "volts",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Volts"
+                      "Value": "Ambient_0"
                     },
-                    "$unit": {
-                      "ID": "3a4f2a7e-bb35-4a9b-a2be-81471da9e867",
+                    "state": {
+                      "ID": "3c06b5ef-0b17-4e98-9b20-32673e0e5b12",
                       "ElementType": 17,
-                      "Parent": "volts",
-                      "Name": "$unit",
-                      "Value": "V"
+                      "Parent": "state",
+                      "Name": "state",
+                      "Value": "OK"
+                    },
+                    "temperature": {
+                      "ID": "734ec6a7-ada5-4714-8fb5-27294a23c366",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "73.06"
+                    }
+                  }
+                }
+              }
+            },
+            "Ambient_1": {
+              "ID": "948e1626-fe9f-44ec-97e2-4addc0e9c819",
+              "ElementType": 14,
+              "Parent": "DSMonitor",
+              "Name": "Ambient_1",
+              "Attrs": {},
+              "Props": {
+                "Ambient_1": {
+                  "ID": "7801c431-309d-4008-9067-43acb54af03d",
+                  "ElementType": 16,
+                  "Parent": "Ambient_1",
+                  "Name": "Ambient_1",
+                  "Value": "",
+                  "Attrs": {
+                    "$name": {
+                      "ID": "59ccf14c-16d1-4589-b227-3db00950d8b5",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Ambient_1"
+                    },
+                    "state": {
+                      "ID": "61005c3a-840d-4675-98b5-2bcfae2c8d41",
+                      "ElementType": 17,
+                      "Parent": "state",
+                      "Name": "state",
+                      "Value": "OK"
+                    },
+                    "temperature": {
+                      "ID": "9b2ee6b4-4f24-463d-bea4-59ecd1bd8ce9",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "73.96"
+                    }
+                  }
+                }
+              }
+            },
+            "Ambient_2": {
+              "ID": "774bbb09-e7c3-402e-b125-ed48f7cf50cb",
+              "ElementType": 14,
+              "Parent": "DSMonitor",
+              "Name": "Ambient_2",
+              "Attrs": {},
+              "Props": {
+                "Ambient_2": {
+                  "ID": "f5b8a30c-67d0-4d20-82e7-ae3aee482af7",
+                  "ElementType": 16,
+                  "Parent": "Ambient_2",
+                  "Name": "Ambient_2",
+                  "Value": "",
+                  "Attrs": {
+                    "$name": {
+                      "ID": "71a2ce48-1526-43b0-963e-25a755849b84",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Ambient_2"
+                    },
+                    "state": {
+                      "ID": "fe85a281-caf2-4c66-b857-5b38768fc075",
+                      "ElementType": 17,
+                      "Parent": "state",
+                      "Name": "state",
+                      "Value": "OK"
+                    },
+                    "temperature": {
+                      "ID": "9b7bc336-747d-468c-9d0c-eb45e11d1249",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "73.63"
+                    }
+                  }
+                }
+              }
+            },
+            "Ambient_3": {
+              "ID": "6e761852-3dfc-4864-b929-11c8948c4c40",
+              "ElementType": 14,
+              "Parent": "DSMonitor",
+              "Name": "Ambient_3",
+              "Attrs": {},
+              "Props": {
+                "Ambient_3": {
+                  "ID": "a49e5eaa-929b-43dd-a652-d353392ab073",
+                  "ElementType": 16,
+                  "Parent": "Ambient_3",
+                  "Name": "Ambient_3",
+                  "Value": "",
+                  "Attrs": {
+                    "$name": {
+                      "ID": "5e5325a2-9bd9-40d5-9d49-90c761f9a6a5",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Ambient_3"
+                    },
+                    "state": {
+                      "ID": "a6a29a7b-1d0e-4cbf-9ab0-5aae79b165ab",
+                      "ElementType": 17,
+                      "Parent": "state",
+                      "Name": "state",
+                      "Value": "OK"
+                    },
+                    "temperature": {
+                      "ID": "b19a1b8a-0e00-4767-bd8b-67544a0b8983",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "72.39"
                     }
                   }
                 }
@@ -3361,30 +3564,14 @@
           "Name": "FamilyRoom",
           "Attrs": {
             "$fw": {
-              "ID": "26c2f40c-3956-4588-af7b-2900b09bf3a5",
+              "ID": "21570c29-ee1a-40e5-964b-e5cb45cee9a7",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$fw",
               "Value": "",
               "Props": {
-                "checksum": {
-                  "ID": "87b71864-d7e3-44a4-8de9-488779d47b68",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "checksum",
-                  "Value": "3ef8fbb48c5b23788a22a998c14a1a6d",
-                  "Props": {}
-                },
-                "name": {
-                  "ID": "c52b0710-ba50-46ae-99b0-1a99a580795c",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "name",
-                  "Value": "Monitor-DHT-RCWL-Metrics",
-                  "Props": {}
-                },
                 "version": {
-                  "ID": "d7c558b5-191d-43ce-bb46-a02a700fbb31",
+                  "ID": "4003ce2e-40fb-4da9-a09e-68c08953444a",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -3394,7 +3581,7 @@
               }
             },
             "$homie": {
-              "ID": "03d132c9-91a0-4ab8-bf88-e82993c8c027",
+              "ID": "18f7cb79-ff92-4132-a6eb-0eabbd3f044c",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$homie",
@@ -3402,38 +3589,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "41be8d2b-ea98-44be-8722-0cf379d18ce5",
+              "ID": "6e4c48f4-0d82-4a2d-a65f-78985b5a8304",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
-                "config": {
-                  "ID": "6a7b7517-fecd-4c7a-927f-c001c55add5b",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "config",
-                  "Value": "{\"name\":\"FamilyRoom\",\"device_id\":\"FamilyRoom\",\"device_stats_interval\":180,\"wifi\":{\"ssid\":\"SFNSS1-24G\"},\"mqtt\":{\"host\":\"openhab.skoona.net\",\"port\":1883,\"base_topic\":\"sknSensors/\",\"auth\":true},\"ota\":{\"enabled\":true},\"settings\":{\"sensorInterval\":900,\"motionHoldInterval\":60}}",
-                  "Props": {}
-                },
-                "ota": {
-                  "ID": "6df1add2-6c53-4f91-9f99-69ae628d9d53",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "ota",
-                  "Value": "",
-                  "Props": {
-                    "enabled": {
-                      "ID": "3dbd0dbc-2f00-4a83-9928-1f2c92f75fa9",
-                      "ElementType": 13,
-                      "Parent": "ota",
-                      "Name": "enabled",
-                      "Value": "true"
-                    }
-                  }
-                },
                 "version": {
-                  "ID": "d6ec3b7a-9f04-41ec-b0df-34c23694d895",
+                  "ID": "c8ef63f2-2999-4309-9820-bb07caba6fb0",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -3443,7 +3606,7 @@
               }
             },
             "$localip": {
-              "ID": "c65d38cc-9bcc-4ba8-ada0-674cd070eb79",
+              "ID": "02406709-936f-44d6-ba5c-4b1685d4c66d",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$localip",
@@ -3451,7 +3614,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "dc09bb61-20c3-4ac8-a8a0-fad6b109f767",
+              "ID": "09f47c14-c8af-4079-9f1b-7784a2b410ed",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$mac",
@@ -3459,7 +3622,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "ea8e35d3-5569-4295-b23b-c59f1e5d5481",
+              "ID": "ba9f7588-bc22-4e13-90d9-44757c5e51d0",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$name",
@@ -3467,7 +3630,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "e23c22cc-ed95-4979-875e-4e06452652f4",
+              "ID": "9dcda820-465e-49c8-b572-429dec560cec",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$nodes",
@@ -3475,7 +3638,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "e068e90c-e371-4463-87a4-d2553d1c41f1",
+              "ID": "83f9cb20-6c05-46dd-8b31-c1008d6f69b3",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$state",
@@ -3483,384 +3646,227 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "d1f0e469-2a1b-4a3a-86f5-39e4147f7d52",
+              "ID": "183f985f-7c4a-4d4d-8450-9b4fc71b0238",
               "ElementType": 11,
               "Parent": "FamilyRoom",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
-                "interval": {
-                  "ID": "2f6d5aba-4e6e-4392-934e-d38a302f97b9",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "interval",
-                  "Value": "185",
-                  "Props": {}
-                },
-                "signal": {
-                  "ID": "31d2c7a7-ae15-47d7-9d8c-7f620080e913",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "signal",
-                  "Value": "78",
-                  "Props": {}
-                },
                 "uptime": {
-                  "ID": "7105351f-30c4-4c43-8d03-b5896a941d16",
+                  "ID": "22d5fcdd-add8-4cf6-a9b3-ce08aaee9ef1",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
-                  "Value": "423639",
+                  "Value": "423819",
                   "Props": {}
                 }
               }
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "48893f5d-20d8-4dd5-a461-abf19636c338",
+            "Ambient": {
+              "ID": "293d8b06-1983-4b22-a4fa-c39a661842ee",
               "ElementType": 14,
               "Parent": "FamilyRoom",
-              "Name": "$name",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "429b2e99-6746-4a8f-9086-06f61fa42b51",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "529b9902-2eaf-42b2-90fc-71819e4cdfc3",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "cc00ff2c-c6ed-46e0-a59d-b8428bf90568",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "38b8ee7a-d71e-49c7-955c-3acabb2823f5",
-              "ElementType": 14,
-              "Parent": "FamilyRoom",
-              "Name": "$properties",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "273e9718-8635-42f9-8d3a-6a95b8acf2a1",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "a471278c-db67-4686-858b-e4a73ba6ca2a",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "73843bdd-c1e0-4b15-b668-fcaf62ae8a55",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "69907992-f015-40fa-b1df-184bf3d3d35c",
-              "ElementType": 14,
-              "Parent": "FamilyRoom",
-              "Name": "$type",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "88423ee2-82c8-42d9-a212-c66308cedef1",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "d995789e-6990-44d9-9458-4a027a269066",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "7f1f6aae-91ed-4b0d-9b74-5aa486ead59b",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "humidity": {
-              "ID": "27776b95-7526-43d4-ae63-7d0baee8d442",
-              "ElementType": 14,
-              "Parent": "FamilyRoom",
-              "Name": "humidity",
+              "Name": "Ambient",
               "Attrs": {},
               "Props": {
-                "humidity": {
-                  "ID": "73324cf2-05f3-4342-8536-6e605321f7a5",
+                "Ambient": {
+                  "ID": "81590b63-362e-4395-8052-ce9dfcb23f6f",
                   "ElementType": 16,
                   "Parent": "Ambient",
-                  "Name": "humidity",
+                  "Name": "Ambient",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "323f1872-d744-4a6e-8478-bc83b3cd10e1",
+                      "ID": "6764204d-e359-4423-82f3-19ad115b650d",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$datatype",
-                      "Value": "float"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "8021a33d-ca33-4225-a3b3-7de33ebf67b7",
+                      "ID": "e3df68f7-3d4d-4a8b-862f-2ad9ecc16ce9",
                       "ElementType": 17,
-                      "Parent": "humidity",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Humidity"
+                      "Value": "Temperature and Humidity Sensor"
+                    },
+                    "$properties": {
+                      "ID": "c031c19d-16a1-4c64-9638-33ab6b8674ac",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "humidity,temperature"
+                    },
+                    "$type": {
+                      "ID": "9fe909d8-4bea-45a8-9eb9-b6fab7574b4d",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
                     },
                     "$unit": {
-                      "ID": "5aab74b6-45e3-485b-a119-e013b5acf017",
+                      "ID": "d0eb684f-f3a3-4fb8-a0ca-ef1579347dc9",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$unit",
-                      "Value": "%rH"
-                    }
-                  }
-                }
-              }
-            },
-            "mac": {
-              "ID": "1af1fb69-7ebe-4b54-9f90-4b1302bd9b60",
-              "ElementType": 14,
-              "Parent": "FamilyRoom",
-              "Name": "mac",
-              "Attrs": {},
-              "Props": {
-                "mac": {
-                  "ID": "fad6d6a0-6a7c-4e47-89ae-5531f566451e",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "mac",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "7aed40c4-e762-4717-aa8d-daa2fa50ff46",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$datatype",
-                      "Value": "sring"
+                      "Value": ""
                     },
-                    "$name": {
-                      "ID": "e621c0af-c767-4f03-8127-c4f9239fc361",
+                    "humidity": {
+                      "ID": "6668595b-0dc6-414e-bcea-4cf1d70029e8",
                       "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$name",
-                      "Value": "mac"
+                      "Parent": "humidity",
+                      "Name": "humidity",
+                      "Value": "20.50"
+                    },
+                    "temperature": {
+                      "ID": "87675d10-3303-4705-97b4-4fe73512f5bb",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "67.64"
                     }
                   }
                 }
               }
             },
-            "motion": {
-              "ID": "dd9ff59a-cb64-4d63-b644-021bf6c36309",
+            "Presence": {
+              "ID": "510442dc-7a97-4524-9d75-bf0b1c71559c",
               "ElementType": 14,
               "Parent": "FamilyRoom",
-              "Name": "motion",
+              "Name": "Presence",
               "Attrs": {},
               "Props": {
-                "motion": {
-                  "ID": "f12f7ea8-9fe5-4e3c-bdd0-67e16373dff9",
+                "Presence": {
+                  "ID": "6a68b494-1072-4f33-abb5-eed6e661d967",
                   "ElementType": 16,
                   "Parent": "Presence",
-                  "Name": "motion",
+                  "Name": "Presence",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "fba6ab9f-0939-4b61-bd49-0573ce108abe",
+                      "ID": "d78f5e05-f995-4904-8775-40ff5c733e60",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$datatype",
-                      "Value": "enum"
+                      "Value": ""
                     },
                     "$format": {
-                      "ID": "1852ad9f-8f0c-43cd-9324-527df3e89f7a",
+                      "ID": "37c27c2e-526f-485c-85dd-d70aa83a854d",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$format",
-                      "Value": "OPEN,CLOSED"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "23bf30a5-20af-49c1-8105-51defa49524a",
+                      "ID": "1b9671de-aa13-4195-832e-cc07ac05a99f",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Motion Sensor"
+                    },
+                    "$properties": {
+                      "ID": "90f2b947-3f08-4664-8759-ccdbad4bc177",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "motion"
+                    },
+                    "$type": {
+                      "ID": "db0e6cc7-6e0e-41cb-b077-839d3367ce69",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "motion": {
+                      "ID": "2e7a2a4f-4d81-48ed-9f72-bd7273011a7c",
                       "ElementType": 17,
                       "Parent": "motion",
-                      "Name": "$name",
-                      "Value": "Motion"
+                      "Name": "motion",
+                      "Value": "OPEN"
                     }
                   }
                 }
               }
             },
-            "resetReason": {
-              "ID": "c5ca06a7-3548-416c-a2b9-ba1118051044",
+            "hardware": {
+              "ID": "942291a3-ad58-4928-8174-2c5ec77a2bcb",
               "ElementType": 14,
               "Parent": "FamilyRoom",
-              "Name": "resetReason",
+              "Name": "hardware",
               "Attrs": {},
               "Props": {
-                "resetReason": {
-                  "ID": "63b4084b-25c0-4fc7-8c88-057720e9c3b1",
+                "hardware": {
+                  "ID": "f4e8d958-2bd8-4b03-a5e7-0ae3c561e8a8",
                   "ElementType": 16,
                   "Parent": "hardware",
-                  "Name": "resetReason",
+                  "Name": "hardware",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "6af6af4e-4c16-4ba8-9263-247555fc7332",
+                      "ID": "e5ff1c48-4499-43a6-8c18-8d6633830208",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "4056b1ff-a198-4f12-ac02-716a266dcbc4",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Device Info"
+                    },
+                    "$properties": {
+                      "ID": "e177e5c2-6c6b-483e-80bf-55b5ccce328c",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "signal,mac,resetReason,voltage"
+                    },
+                    "$type": {
+                      "ID": "7749b40f-aa8d-4a1f-94fe-ebb0cd2e89a5",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "f69f3133-0daa-482e-b016-212f1de09c24",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "mac": {
+                      "ID": "f02236e6-0de7-4399-ba3e-87a9bf1c695c",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "mac",
+                      "Value": "BC:DD:C2:E5:C4:24"
+                    },
+                    "resetReason": {
+                      "ID": "9c28ea02-21a9-4496-9765-4f70c16cb99e",
                       "ElementType": 17,
                       "Parent": "resetReason",
-                      "Name": "$datatype",
-                      "Value": "string"
+                      "Name": "resetReason",
+                      "Value": "External System"
                     },
-                    "$name": {
-                      "ID": "ef7b54c9-ce8b-4a14-b482-9106713ad698",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$name",
-                      "Value": "Last Reset Reason"
-                    }
-                  }
-                }
-              }
-            },
-            "signal": {
-              "ID": "b030c5bb-124b-45e4-ba79-411a1f1b5c60",
-              "ElementType": 14,
-              "Parent": "FamilyRoom",
-              "Name": "signal",
-              "Attrs": {},
-              "Props": {
-                "signal": {
-                  "ID": "8c84ccd2-1cfb-427d-9192-ec2356dbf950",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "signal",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "44b56c7f-8b77-413a-a7f0-411eb634f96b",
+                    "signal": {
+                      "ID": "8a47e06d-e654-4c66-92e6-d49b912ec838",
                       "ElementType": 17,
                       "Parent": "signal",
-                      "Name": "$datatype",
-                      "Value": "integer"
+                      "Name": "signal",
+                      "Value": "-62"
                     },
-                    "$name": {
-                      "ID": "0fc02240-e1e5-4f8d-a5a5-7d41ea9a20ad",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$name",
-                      "Value": "RSSI"
-                    },
-                    "$unit": {
-                      "ID": "499d19c8-0137-4c94-b6dc-a77a84a9fbed",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$unit",
-                      "Value": "dBm"
-                    }
-                  }
-                }
-              }
-            },
-            "temperature": {
-              "ID": "9995ca00-5e94-4672-94b8-89e0046f999b",
-              "ElementType": 14,
-              "Parent": "FamilyRoom",
-              "Name": "temperature",
-              "Attrs": {},
-              "Props": {
-                "temperature": {
-                  "ID": "a52664d3-6b77-470a-8fae-c06d2efbb9ef",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "temperature",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "827168a6-cef9-48c7-8219-02efa8be25bb",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "0210c06a-a6a7-4785-aa86-3fc98c6f2796",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$name",
-                      "Value": "Temperature"
-                    },
-                    "$unit": {
-                      "ID": "5ddb14df-26f0-46ab-b669-3f03c2c09868",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$unit",
-                      "Value": "°F"
-                    }
-                  }
-                }
-              }
-            },
-            "voltage": {
-              "ID": "b03d84ec-15b9-4e8e-a016-adc6882a5517",
-              "ElementType": 14,
-              "Parent": "FamilyRoom",
-              "Name": "voltage",
-              "Attrs": {},
-              "Props": {
-                "voltage": {
-                  "ID": "bb638a7f-7ed5-4834-9c35-656abfcf29c8",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "voltage",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "de9fad23-2b19-498d-955a-2af14c017fab",
+                    "voltage": {
+                      "ID": "53effe0b-b216-4b09-91b8-4a5b03833da5",
                       "ElementType": 17,
                       "Parent": "voltage",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "848bab7e-ab1e-4f4b-ae0f-5d00eaa9ead6",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$name",
-                      "Value": "3.3V Supply"
-                    },
-                    "$unit": {
-                      "ID": "be34869e-31dc-48e4-a058-071562204cad",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$unit",
-                      "Value": "V"
+                      "Name": "voltage",
+                      "Value": "3.03"
                     }
                   }
                 }
@@ -3877,14 +3883,14 @@
           "Name": "GarageMonitor",
           "Attrs": {
             "$fw": {
-              "ID": "c1f61acf-9756-4e53-9cd5-4065cbe55e54",
+              "ID": "b473142f-a670-4ec9-83c6-ef8b763c88fd",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$fw",
               "Value": "",
               "Props": {
                 "checksum": {
-                  "ID": "6e8aaec4-8623-4d38-9d8a-744e8c3f6088",
+                  "ID": "f18d471a-3c2f-4491-b51d-4c441bf0be0f",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "checksum",
@@ -3892,7 +3898,7 @@
                   "Props": {}
                 },
                 "name": {
-                  "ID": "ba31a77d-dac1-41da-8a60-e982bb9f7c71",
+                  "ID": "6c0acf80-ecaf-428f-bb99-8e1168d3ef48",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "name",
@@ -3900,7 +3906,7 @@
                   "Props": {}
                 },
                 "version": {
-                  "ID": "5362c8c1-899d-4497-bed2-ca5d6fc4f241",
+                  "ID": "2003d05e-1a4e-4505-9637-7c385e4ae8a7",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -3910,7 +3916,7 @@
               }
             },
             "$homie": {
-              "ID": "ee929f0a-d9b8-4f97-bdf8-781f2d7f5c32",
+              "ID": "7fe80c37-3b5d-49ad-b319-ea8dffdaa80d",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$homie",
@@ -3918,14 +3924,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "eb96855e-89e9-4a74-9af0-66927feb41b5",
+              "ID": "2b3b649e-f470-41ad-83dc-344a89889ff2",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
                 "config": {
-                  "ID": "807798f6-410c-469c-b2b9-b4cfe518a151",
+                  "ID": "88243d96-c3af-4b73-9248-53033d06203b",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "config",
@@ -3933,14 +3939,14 @@
                   "Props": {}
                 },
                 "ota": {
-                  "ID": "d85b49bb-8c7c-4ffa-8afe-4e6498498f64",
+                  "ID": "984fef25-e581-45ad-967f-f11223c0f545",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "ota",
                   "Value": "",
                   "Props": {
-                    "enabled": {
-                      "ID": "18d4fb46-fd27-46d7-9415-622059b9bf82",
+                    "ota": {
+                      "ID": "5043ddfa-62e8-4e54-bec1-b93f22f296f6",
                       "ElementType": 13,
                       "Parent": "ota",
                       "Name": "enabled",
@@ -3949,7 +3955,7 @@
                   }
                 },
                 "version": {
-                  "ID": "627a4bc8-1800-4650-b514-596db01fcc36",
+                  "ID": "07f20bf0-c888-468a-9e9c-f97a39348680",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -3959,7 +3965,7 @@
               }
             },
             "$localip": {
-              "ID": "0090a9b8-76db-47f3-ad5c-51173618bca6",
+              "ID": "c051de1e-080a-4d7e-b7f7-8d9d72d7cff6",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$localip",
@@ -3967,7 +3973,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "0bc9c042-3898-4183-9396-2a05298bdf2d",
+              "ID": "1690f46b-af64-4a0b-b7de-99c203121b23",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$mac",
@@ -3975,7 +3981,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "5ef74b6f-ce3c-4cee-91b7-ea9189c47c95",
+              "ID": "6c1debfa-7c26-4d8d-8bf0-0ccb1ec9f172",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$name",
@@ -3983,7 +3989,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "e0fdd7e5-43a8-4263-8aee-2066aa3bda15",
+              "ID": "09b51723-c1b0-4154-94d2-a0a2d9efcb56",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$nodes",
@@ -3991,7 +3997,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "ba9bf506-2fbf-438d-a6bb-ff588212be4a",
+              "ID": "5e932417-831b-4e28-bc64-673c736fac90",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$state",
@@ -3999,14 +4005,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "b22bf3df-ec5a-4f2f-938d-39e55252e866",
+              "ID": "d0c21e08-22cb-4d3a-b696-83875b949899",
               "ElementType": 11,
               "Parent": "GarageMonitor",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
                 "interval": {
-                  "ID": "afc53958-4999-4774-beb5-8536f7a9c414",
+                  "ID": "e83926d5-7c83-4e30-ac21-b9ae80cbc55a",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "interval",
@@ -4014,7 +4020,7 @@
                   "Props": {}
                 },
                 "signal": {
-                  "ID": "7e8997bf-2966-4e03-a323-5e1e15709f7e",
+                  "ID": "75fbfc66-3d30-4cc7-bb7d-cb7e497908f0",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "signal",
@@ -4022,7 +4028,7 @@
                   "Props": {}
                 },
                 "uptime": {
-                  "ID": "2d762788-7799-48a8-abc7-d7c6f29e8b7f",
+                  "ID": "cdd37489-6bb6-410d-af04-c97cfa848acd",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
@@ -4033,118 +4039,28 @@
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "a3f05453-1d04-426f-ad77-7258a56ea753",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "$name",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "2614dbdb-4a05-4249-a870-fd2c3704ac0d",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "3b7ce033-3ac7-471b-9a52-63049291e268",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "0fe35746-5778-4517-8668-a1ea21374a10",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "f609b867-5e90-4a38-9b4b-237a260b8d8f",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "$properties",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "570e907b-ef22-4257-b8ff-6f2c65991aec",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "c734451a-b457-40c9-b88f-548aae274f5b",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "44edffa6-04eb-4e93-bae9-4f512924d571",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "6fa0f9ba-ac5c-4c39-bfbb-b3e308c4d4e3",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "$type",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "b4fe336f-528e-4779-a711-a9ff811881fc",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "5dbea210-2dc9-4c34-b1b5-c6b9e8c599a6",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "4ba21cc4-41f8-4f04-8b4d-83ca30cfa6dd",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
             "Ambient": {
-              "ID": "d5c41768-b41f-460b-9b9a-a1267870aa6c",
+              "ID": "b81bdbea-12a7-4404-bb17-4b0c883386ae",
               "ElementType": 14,
               "Parent": "GarageMonitor",
               "Name": "Ambient",
               "Attrs": {
                 "$name": {
-                  "ID": "16e22355-380c-4c20-a6ae-14c51724997f",
+                  "ID": "38410dfc-27cc-45cb-8603-4f60c8e49c4b",
                   "ElementType": 15,
                   "Parent": "Ambient",
                   "Name": "$name",
                   "Value": "Temperature and Humidity Sensor"
                 },
                 "$properties": {
-                  "ID": "fce1458f-6bb1-4cbb-9a40-d38acb596bd4",
+                  "ID": "c1256e03-1410-4ffc-97dc-33c755c61ba6",
                   "ElementType": 15,
                   "Parent": "Ambient",
                   "Name": "$properties",
                   "Value": "humidity,temperature"
                 },
                 "$type": {
-                  "ID": "216d1ffb-7afe-4d3a-b543-0cb77921243f",
+                  "ID": "880d5d1c-4083-4d2b-bc61-6bd4c2236cec",
                   "ElementType": 15,
                   "Parent": "Ambient",
                   "Name": "$type",
@@ -4152,29 +4068,87 @@
                 }
               },
               "Props": {
+                "Ambient": {
+                  "ID": "6ca46cd3-e688-4c9c-818e-1bd67df94f21",
+                  "ElementType": 16,
+                  "Parent": "Ambient",
+                  "Name": "Ambient",
+                  "Value": "",
+                  "Attrs": {
+                    "$datatype": {
+                      "ID": "81ca14bc-fd5d-4d83-812b-3276de7d4ea2",
+                      "ElementType": 17,
+                      "Parent": "humidity",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "07c37f40-0dd9-447d-940d-ed4ca663f169",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Temperature and Humidity Sensor"
+                    },
+                    "$properties": {
+                      "ID": "8bd91c34-3ebc-4b50-a161-8a95c7be9703",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "humidity,temperature"
+                    },
+                    "$type": {
+                      "ID": "24dea291-205c-4029-877d-edf1cde2cb30",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "7f245edd-f161-4143-9df6-5dc55bb98008",
+                      "ElementType": 17,
+                      "Parent": "humidity",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "humidity": {
+                      "ID": "da362aaf-b486-47b8-91fb-e1cf658dc157",
+                      "ElementType": 17,
+                      "Parent": "humidity",
+                      "Name": "humidity",
+                      "Value": "57.18"
+                    },
+                    "temperature": {
+                      "ID": "cd0b201f-a509-4d2f-a172-3fe3b6a8b6c9",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "26.18"
+                    }
+                  }
+                },
                 "humidity": {
-                  "ID": "86ac2d40-5a23-427b-b024-07edf3c0ef7b",
+                  "ID": "e65dd3e1-d3ec-4958-9b48-6c7243725535",
                   "ElementType": 16,
                   "Parent": "Ambient",
                   "Name": "humidity",
                   "Value": "57.18",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "92e25342-f6cf-46f9-bf42-206fca2d42f9",
+                      "ID": "6337c58e-960b-4852-9c62-221fd7f1aee3",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$datatype",
                       "Value": "float"
                     },
                     "$name": {
-                      "ID": "99baa084-3727-44bb-8621-e120c98bdc13",
+                      "ID": "297c103c-e5e5-4780-923e-410d6ed9cbb2",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$name",
                       "Value": "Humidity"
                     },
                     "$unit": {
-                      "ID": "f3954df9-3463-4bdc-a1ae-f5c965ac1a54",
+                      "ID": "8bc8ed17-62ec-4bf9-bb67-5fc76c2b78b4",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$unit",
@@ -4183,28 +4157,28 @@
                   }
                 },
                 "temperature": {
-                  "ID": "e6f85d0b-60a4-450c-b910-dc554a8c6fa8",
+                  "ID": "64ef1fdf-1d95-46d2-8431-11f319f3b10c",
                   "ElementType": 16,
                   "Parent": "Ambient",
                   "Name": "temperature",
                   "Value": "26.18",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "5776b80b-155b-4cb7-9d2c-3d85b57b8bc9",
+                      "ID": "5c4f3c92-a846-46e8-9091-93fc9f987fd4",
                       "ElementType": 17,
                       "Parent": "temperature",
                       "Name": "$datatype",
                       "Value": "float"
                     },
                     "$name": {
-                      "ID": "9fb16609-3aa1-41f1-9b5e-43eb3bf95e14",
+                      "ID": "bcff30bd-5fc6-41b4-b295-5f0bdf0921cf",
                       "ElementType": 17,
                       "Parent": "temperature",
                       "Name": "$name",
                       "Value": "Temperature"
                     },
                     "$unit": {
-                      "ID": "538f88bf-f010-45f8-8125-50c3e70cf2e0",
+                      "ID": "5dee2c4e-421b-4dbe-abd3-b56cdd7f73dd",
                       "ElementType": 17,
                       "Parent": "temperature",
                       "Name": "$unit",
@@ -4215,27 +4189,27 @@
               }
             },
             "Presence": {
-              "ID": "ff58947d-7b62-4846-a51e-fde3731097da",
+              "ID": "759bc87f-2cae-4933-b110-8cc3a45b784b",
               "ElementType": 14,
               "Parent": "GarageMonitor",
               "Name": "Presence",
               "Attrs": {
                 "$name": {
-                  "ID": "8aae11d8-1d75-4e46-bfbb-e21a045a755e",
+                  "ID": "4fda92df-a620-48a7-9f1f-ad5337fccb75",
                   "ElementType": 15,
                   "Parent": "Presence",
                   "Name": "$name",
                   "Value": "Motion Sensor"
                 },
                 "$properties": {
-                  "ID": "0e01d233-a588-440b-9b68-382d333b369b",
+                  "ID": "b801ce5e-9568-4815-a8b2-ce7d3ebe8b65",
                   "ElementType": 15,
                   "Parent": "Presence",
                   "Name": "$properties",
                   "Value": "motion"
                 },
                 "$type": {
-                  "ID": "18cec021-95c6-4b4c-af1c-0308f22142f8",
+                  "ID": "29388d18-a81c-4963-9883-8fb5019ee26f",
                   "ElementType": 15,
                   "Parent": "Presence",
                   "Name": "$type",
@@ -4243,29 +4217,80 @@
                 }
               },
               "Props": {
+                "Presence": {
+                  "ID": "f3211ce3-7ead-4df9-b768-753b5cb3821c",
+                  "ElementType": 16,
+                  "Parent": "Presence",
+                  "Name": "Presence",
+                  "Value": "",
+                  "Attrs": {
+                    "$datatype": {
+                      "ID": "9fbb77c6-c9ba-4562-af89-9134a639c9ca",
+                      "ElementType": 17,
+                      "Parent": "motion",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$format": {
+                      "ID": "e819cf0a-df1b-4dbe-be7e-ff873a4bdab1",
+                      "ElementType": 17,
+                      "Parent": "motion",
+                      "Name": "$format",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "0cb19324-2782-4e47-892e-661da40e02c2",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Motion Sensor"
+                    },
+                    "$properties": {
+                      "ID": "17f13245-c196-4b7a-89e9-d8adfc8e29db",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "motion"
+                    },
+                    "$type": {
+                      "ID": "b72bb3f5-4868-42e9-acef-3845f50acc76",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "motion": {
+                      "ID": "eeda3b4b-f8c2-4fb6-b0ef-d367a100fa1e",
+                      "ElementType": 17,
+                      "Parent": "motion",
+                      "Name": "motion",
+                      "Value": "OPEN"
+                    }
+                  }
+                },
                 "motion": {
-                  "ID": "f937ad95-3b25-4d10-8042-a8c78b133a5c",
+                  "ID": "cf8b775d-9a39-422a-a026-b98f891ca8f1",
                   "ElementType": 16,
                   "Parent": "Presence",
                   "Name": "motion",
                   "Value": "OPEN",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "ee8b7c05-8110-46db-a62f-697018cd5422",
+                      "ID": "bd2fa666-b1b7-43a1-9371-31a094d6662f",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$datatype",
                       "Value": "enum"
                     },
                     "$format": {
-                      "ID": "2d84bbbf-ea1b-4667-8760-07c8a9519771",
+                      "ID": "ac624677-396e-4bb0-ab31-f2ebdb0a4503",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$format",
                       "Value": "OPEN,CLOSED"
                     },
                     "$name": {
-                      "ID": "f1231a3e-e014-4458-9db6-86e368a8d9cc",
+                      "ID": "0fad471d-3333-41fe-8519-19eccaf9ac06",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$name",
@@ -4276,27 +4301,27 @@
               }
             },
             "hardware": {
-              "ID": "f8f7914d-c1dd-4533-a6f6-79801e712c35",
+              "ID": "682ab211-890e-4fc9-bca0-e624f356dce1",
               "ElementType": 14,
               "Parent": "GarageMonitor",
               "Name": "hardware",
               "Attrs": {
                 "$name": {
-                  "ID": "bb88e738-3b4b-4f15-80b8-b8597ae9e399",
+                  "ID": "a5330788-4c9c-41df-9313-bf33c5a12076",
                   "ElementType": 15,
                   "Parent": "hardware",
                   "Name": "$name",
                   "Value": "Device Info"
                 },
                 "$properties": {
-                  "ID": "c61b9cf0-83ae-4e88-8b04-30cdc8ed9b5b",
+                  "ID": "783de74f-7c0f-4f5b-9477-b545419743ae",
                   "ElementType": 15,
                   "Parent": "hardware",
                   "Name": "$properties",
                   "Value": "signal,mac,resetReason,voltage"
                 },
                 "$type": {
-                  "ID": "e19e7ef0-8a22-4860-87ef-a584dbc93cf5",
+                  "ID": "ed505c57-e575-402f-922b-bbaaf9e0d1db",
                   "ElementType": 15,
                   "Parent": "hardware",
                   "Name": "$type",
@@ -4304,22 +4329,94 @@
                 }
               },
               "Props": {
+                "hardware": {
+                  "ID": "6e718d43-da7c-4edd-990b-fc910f8f2be0",
+                  "ElementType": 16,
+                  "Parent": "hardware",
+                  "Name": "hardware",
+                  "Value": "",
+                  "Attrs": {
+                    "$datatype": {
+                      "ID": "377f315e-54f0-41cb-ae73-f7714cc64278",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "631800af-7538-4241-8364-68bf93ca4e11",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Device Info"
+                    },
+                    "$properties": {
+                      "ID": "ba785cb5-8dfe-42d8-8f11-79b9794dc584",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "signal,mac,resetReason,voltage"
+                    },
+                    "$type": {
+                      "ID": "e1665044-0b86-478c-8d6b-3d32112b453b",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "be025a49-02c3-4e22-a20a-ac4266eb22d3",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "mac": {
+                      "ID": "21949b52-02dd-4598-821c-06d81f64d5b6",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "mac",
+                      "Value": "B4:E6:2D:1B:5C:4D"
+                    },
+                    "resetReason": {
+                      "ID": "72f54efe-a67b-47be-91d5-49f29335fe6d",
+                      "ElementType": 17,
+                      "Parent": "resetReason",
+                      "Name": "resetReason",
+                      "Value": "External System"
+                    },
+                    "signal": {
+                      "ID": "87243b0f-08ca-4399-8022-b06dcad14626",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "signal",
+                      "Value": "-73"
+                    },
+                    "voltage": {
+                      "ID": "c001b1fb-b96c-4e84-a7cf-ba00fb8348b2",
+                      "ElementType": 17,
+                      "Parent": "voltage",
+                      "Name": "voltage",
+                      "Value": "3.05"
+                    }
+                  }
+                },
                 "mac": {
-                  "ID": "2ec863c7-9f38-4d18-93e1-9391df739811",
+                  "ID": "6e441555-f71a-4ca1-bec5-791f14f50288",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "mac",
                   "Value": "B4:E6:2D:1B:5C:4D",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "b6fe9064-30c0-408b-bbde-8e4fca6d486c",
+                      "ID": "7e6c7a9e-2e72-4b8b-b934-05fbb2ebd92b",
                       "ElementType": 17,
                       "Parent": "mac",
                       "Name": "$datatype",
                       "Value": "sring"
                     },
                     "$name": {
-                      "ID": "2c01a6ec-72ff-4ba7-aee2-18884231cb62",
+                      "ID": "0cd6b4f8-9776-4047-b0ab-3575f436b2a8",
                       "ElementType": 17,
                       "Parent": "mac",
                       "Name": "$name",
@@ -4328,21 +4425,21 @@
                   }
                 },
                 "resetReason": {
-                  "ID": "a5d947fe-dff5-4483-8bc6-e2f2a72777b0",
+                  "ID": "cb02134e-d5ad-412f-a4c6-2771c01b4f32",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "resetReason",
                   "Value": "External System",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "681e95e0-4108-4ef0-b7a2-4baca354e345",
+                      "ID": "cc60a603-1343-4f94-ab40-7940418a9b90",
                       "ElementType": 17,
                       "Parent": "resetReason",
                       "Name": "$datatype",
                       "Value": "string"
                     },
                     "$name": {
-                      "ID": "a2f0bf60-df8d-4cf8-90dc-154ec95bc4e9",
+                      "ID": "c0c40038-3361-4ec4-8cde-406ef7517b44",
                       "ElementType": 17,
                       "Parent": "resetReason",
                       "Name": "$name",
@@ -4351,28 +4448,28 @@
                   }
                 },
                 "signal": {
-                  "ID": "a5bb7720-6816-4b7b-b068-1f338dcd542f",
+                  "ID": "a6719be7-9943-4f43-8685-bde986b2367f",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "signal",
                   "Value": "-73",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "a5206d99-4d74-405d-85e9-4d74125bb9b3",
+                      "ID": "8609876a-21d8-4d83-ad06-c608876f1496",
                       "ElementType": 17,
                       "Parent": "signal",
                       "Name": "$datatype",
                       "Value": "integer"
                     },
                     "$name": {
-                      "ID": "b7b8ebd6-fcb0-4f34-9be8-f15fbaa47b9f",
+                      "ID": "778c13ff-b8bc-42c3-ba44-a9dbd32be2c9",
                       "ElementType": 17,
                       "Parent": "signal",
                       "Name": "$name",
                       "Value": "RSSI"
                     },
                     "$unit": {
-                      "ID": "0e5a5b36-a269-424f-b242-21a08884a41e",
+                      "ID": "ead30875-ec13-4ea2-bdaa-7511cbea73eb",
                       "ElementType": 17,
                       "Parent": "signal",
                       "Name": "$unit",
@@ -4381,287 +4478,28 @@
                   }
                 },
                 "voltage": {
-                  "ID": "a67938b7-bb14-4711-bad4-b902fb7c8b9e",
+                  "ID": "f98a546e-20b3-408f-9e42-858dd17ca7ff",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "voltage",
                   "Value": "3.05",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "15f962f8-e1f8-44d1-b342-ba11a7ede2a9",
+                      "ID": "58370d27-43c3-4c6d-867b-3c0ed9ce7216",
                       "ElementType": 17,
                       "Parent": "voltage",
                       "Name": "$datatype",
                       "Value": "float"
                     },
                     "$name": {
-                      "ID": "be539d10-e77a-4b4a-b209-429828d3998e",
+                      "ID": "f0080209-20e9-4c2e-b03f-0017645673b0",
                       "ElementType": 17,
                       "Parent": "voltage",
                       "Name": "$name",
                       "Value": "3.3V Supply"
                     },
                     "$unit": {
-                      "ID": "7a571beb-2eb0-458c-acb6-ecd040c50416",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$unit",
-                      "Value": "V"
-                    }
-                  }
-                }
-              }
-            },
-            "humidity": {
-              "ID": "f6e4f6f0-eb96-4e3c-930c-cfda41fb15f2",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "humidity",
-              "Attrs": {},
-              "Props": {
-                "humidity": {
-                  "ID": "15d696fb-d138-4ae8-b9f4-a9e9698bf0d2",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "humidity",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "b9ec34f5-e2c1-47d1-a2f7-9039b412dbe7",
-                      "ElementType": 17,
-                      "Parent": "humidity",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "1eced269-f83b-4325-a7b4-a3e35934cff6",
-                      "ElementType": 17,
-                      "Parent": "humidity",
-                      "Name": "$name",
-                      "Value": "Humidity"
-                    },
-                    "$unit": {
-                      "ID": "be0c4d69-87fa-47db-b687-7d2d4c8ad923",
-                      "ElementType": 17,
-                      "Parent": "humidity",
-                      "Name": "$unit",
-                      "Value": "%rH"
-                    }
-                  }
-                }
-              }
-            },
-            "mac": {
-              "ID": "77169d75-d21a-4922-882e-bb05d3dc7295",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "mac",
-              "Attrs": {},
-              "Props": {
-                "mac": {
-                  "ID": "33634ddb-4d55-4b1f-bfee-7af0345eae2d",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "mac",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "12a06ccc-3989-4c93-ac8a-da5011829bdb",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$datatype",
-                      "Value": "sring"
-                    },
-                    "$name": {
-                      "ID": "42ac9836-b46a-4fcf-a981-648100e6803b",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$name",
-                      "Value": "mac"
-                    }
-                  }
-                }
-              }
-            },
-            "motion": {
-              "ID": "f5cb2b8a-3761-4bb5-9f97-6c191a8d9941",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "motion",
-              "Attrs": {},
-              "Props": {
-                "motion": {
-                  "ID": "0ced5bd6-3643-41fd-a533-f77b21ad6019",
-                  "ElementType": 16,
-                  "Parent": "Presence",
-                  "Name": "motion",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "36314c50-f972-4798-b219-1a07d6c7d982",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "a8baed50-8715-446d-9e06-09c25e953cf3",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "2083f50a-6948-4a05-bd19-33d3d6b05dd8",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$name",
-                      "Value": "Motion"
-                    }
-                  }
-                }
-              }
-            },
-            "resetReason": {
-              "ID": "dae0aea2-d4c9-4e38-957c-c22e0dc4f1d5",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "resetReason",
-              "Attrs": {},
-              "Props": {
-                "resetReason": {
-                  "ID": "ff925e99-3827-4c1a-b15a-c9ccf6c2cfd1",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "resetReason",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "f9ad586d-6919-413c-b9fd-4d8af2135b31",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$datatype",
-                      "Value": "string"
-                    },
-                    "$name": {
-                      "ID": "975b3a85-b435-4edb-b40e-fad10950e1b2",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$name",
-                      "Value": "Last Reset Reason"
-                    }
-                  }
-                }
-              }
-            },
-            "signal": {
-              "ID": "e798ca85-ab99-4902-93d3-f371574bf879",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "signal",
-              "Attrs": {},
-              "Props": {
-                "signal": {
-                  "ID": "3473324a-69ba-4b13-9fb9-ca197c96ee43",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "signal",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "6ba64498-380b-4f3f-8d3c-79bb941a6d62",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$datatype",
-                      "Value": "integer"
-                    },
-                    "$name": {
-                      "ID": "2b30e144-2fff-4aee-a52d-ddc106cd0491",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$name",
-                      "Value": "RSSI"
-                    },
-                    "$unit": {
-                      "ID": "fe8a05b8-0e3a-49e0-ab38-bf3c9ef7d769",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$unit",
-                      "Value": "dBm"
-                    }
-                  }
-                }
-              }
-            },
-            "temperature": {
-              "ID": "59a17ff1-acb2-48d0-8045-1f115a02a9c2",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "temperature",
-              "Attrs": {},
-              "Props": {
-                "temperature": {
-                  "ID": "9717ec63-d9af-4626-9735-b132c394e7ca",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "temperature",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "9f6cecc3-dd5f-4a1c-939b-de1cc4cb04ef",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "03a99179-3f0e-4dec-b0a4-b6dac5891bec",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$name",
-                      "Value": "Temperature"
-                    },
-                    "$unit": {
-                      "ID": "de6bd467-56b9-418f-b710-8990044fe3a7",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$unit",
-                      "Value": "°F"
-                    }
-                  }
-                }
-              }
-            },
-            "voltage": {
-              "ID": "42974d37-9f80-4e57-8b46-8098e4bebe84",
-              "ElementType": 14,
-              "Parent": "GarageMonitor",
-              "Name": "voltage",
-              "Attrs": {},
-              "Props": {
-                "voltage": {
-                  "ID": "6ecc44ba-e059-4c93-acef-cdfd51682569",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "voltage",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "023e4995-6771-497c-8ea0-f7737ebb2248",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "71caa279-ed03-4835-8091-f648bd96570b",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$name",
-                      "Value": "3.3V Supply"
-                    },
-                    "$unit": {
-                      "ID": "9a0ad92d-59eb-46b8-bd8c-35c34bf1ae75",
+                      "ID": "fbd660dd-d204-4226-96bf-043a80db9e61",
                       "ElementType": 17,
                       "Parent": "voltage",
                       "Name": "$unit",
@@ -4682,30 +4520,14 @@
           "Name": "GarageProvider",
           "Attrs": {
             "$fw": {
-              "ID": "81645ec3-3c0d-4c42-b5c5-901ffbf04b92",
+              "ID": "0c4593d7-e8c1-47e1-9f51-d00d5c36b4c4",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$fw",
               "Value": "",
               "Props": {
-                "checksum": {
-                  "ID": "f5e6fae0-f4d8-4d84-8058-92cb4e3ee475",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "checksum",
-                  "Value": "39286ba639a9ef1d5395e1c0e45d13fa",
-                  "Props": {}
-                },
-                "name": {
-                  "ID": "8b25bd85-83b1-4aaf-ac15-f5fd21ff78ee",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "name",
-                  "Value": "GarageProvider",
-                  "Props": {}
-                },
                 "version": {
-                  "ID": "416f956e-4399-40fb-9d48-9f8abbd0f397",
+                  "ID": "2d5d150e-c8c8-4c18-9dbe-0df9073056bc",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -4715,7 +4537,7 @@
               }
             },
             "$homie": {
-              "ID": "0f9f6855-20a7-482c-ba89-5716b80e9c4f",
+              "ID": "299399f6-906e-44ae-9b7d-2d6dc7f12d10",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$homie",
@@ -4723,38 +4545,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "c68c3008-a41b-4835-bfd9-91cfcf2d7f41",
+              "ID": "3d00e93c-dc5d-4cc8-9792-66e9b84149bf",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$implementation",
-              "Value": "esp32",
+              "Value": "",
               "Props": {
-                "config": {
-                  "ID": "456aa56a-0951-43d4-98a3-4757fd84a1af",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "config",
-                  "Value": "{\"name\":\"Garage Provider\",\"device_id\":\"GarageProvider\",\"device_stats_interval\":900,\"wifi\":{\"ssid\":\"SFNSS1-24G\"},\"mqtt\":{\"host\":\"openhab.skoona.net\",\"port\":1883,\"base_topic\":\"sknSensors/\",\"auth\":true},\"ota\":{\"enabled\":true},\"settings\":{\"sensorsInterval\":900}}",
-                  "Props": {}
-                },
-                "ota": {
-                  "ID": "a537c68a-5cbd-4376-8e99-e33322f60788",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "ota",
-                  "Value": "",
-                  "Props": {
-                    "enabled": {
-                      "ID": "8e816f73-0b8d-40e3-a258-333e93f63e6c",
-                      "ElementType": 13,
-                      "Parent": "ota",
-                      "Name": "enabled",
-                      "Value": "true"
-                    }
-                  }
-                },
                 "version": {
-                  "ID": "d227c038-9ac5-498d-b5a6-b8b56c1171f4",
+                  "ID": "2d00a4aa-599d-462a-bfa7-d732b1242829",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -4764,7 +4562,7 @@
               }
             },
             "$localip": {
-              "ID": "44e8b7c9-ef9d-4728-9f5f-2dea60428cb6",
+              "ID": "71877dc8-746f-4e3b-84f4-87d328ca6d21",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$localip",
@@ -4772,7 +4570,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "6cc42f28-9ea9-4ab7-9d0c-40c98b9f965a",
+              "ID": "659743a5-c67a-492d-87b3-17127b82b2ce",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$mac",
@@ -4780,7 +4578,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "c7ea31dd-ccb8-4c30-89da-5c61d905c267",
+              "ID": "d42d2c8a-f2f5-47c7-9702-a9a054259065",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$name",
@@ -4788,7 +4586,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "491973c8-41fc-474d-a8cc-656e0fea40fc",
+              "ID": "fe470115-79d4-4fa4-b154-b8b9e9f2f1ed",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$nodes",
@@ -4796,7 +4594,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "72db9212-fa1c-4b5f-8221-1f440e4e5cde",
+              "ID": "43d10c2a-c966-4e88-9bc8-4b692812e906",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$state",
@@ -4804,30 +4602,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "b1a302e1-3f84-48ea-8ddf-515216be4dcf",
+              "ID": "1f89e345-bde9-4b11-a8ed-acbf2e1f3f28",
               "ElementType": 11,
               "Parent": "GarageProvider",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
-                "interval": {
-                  "ID": "6b9595d1-0ec8-483b-b19a-4848c02a95ac",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "interval",
-                  "Value": "905",
-                  "Props": {}
-                },
-                "signal": {
-                  "ID": "80416dc0-e13b-44df-995d-a06ddb0f0cb4",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "signal",
-                  "Value": "72",
-                  "Props": {}
-                },
                 "uptime": {
-                  "ID": "01abfbf9-807f-4990-93e9-ae410376402b",
+                  "ID": "90cd8012-1599-44c6-a51f-fe64704263d5",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
@@ -4838,332 +4620,163 @@
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "9745e9fc-78a8-49ce-b85b-4a436898b42d",
+            "environmentMonitor": {
+              "ID": "c6357013-ff4a-4624-9116-c08864542133",
               "ElementType": 14,
               "Parent": "GarageProvider",
-              "Name": "$name",
-              "Attrs": {
-                "environmentMonitor": {
-                  "ID": "8ca9501e-0447-451c-845e-ff937bf6619d",
-                  "ElementType": 15,
-                  "Parent": "environmentMonitor",
-                  "Name": "environmentMonitor",
-                  "Value": ""
-                },
-                "garageDoor": {
-                  "ID": "6329ce21-9aef-491f-bb38-47337985659a",
-                  "ElementType": 15,
-                  "Parent": "garageDoor",
-                  "Name": "garageDoor",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "086d6bd8-5cca-453c-8473-dcb500423b7b",
-              "ElementType": 14,
-              "Parent": "GarageProvider",
-              "Name": "$properties",
-              "Attrs": {
-                "environmentMonitor": {
-                  "ID": "7984ee73-0994-4a4a-9129-dc6a9bafc8c1",
-                  "ElementType": 15,
-                  "Parent": "environmentMonitor",
-                  "Name": "environmentMonitor",
-                  "Value": ""
-                },
-                "garageDoor": {
-                  "ID": "08731525-3d32-41c7-aa5b-a0f39a343730",
-                  "ElementType": 15,
-                  "Parent": "garageDoor",
-                  "Name": "garageDoor",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "61b853bd-2040-4a39-9f07-f48fea5cb1f3",
-              "ElementType": 14,
-              "Parent": "GarageProvider",
-              "Name": "$type",
-              "Attrs": {
-                "environmentMonitor": {
-                  "ID": "89cfd95d-e232-4be5-9ccd-f834e2bd9db2",
-                  "ElementType": 15,
-                  "Parent": "environmentMonitor",
-                  "Name": "environmentMonitor",
-                  "Value": ""
-                },
-                "garageDoor": {
-                  "ID": "d37edcbd-bdb6-4b22-ba2d-808e84e14def",
-                  "ElementType": 15,
-                  "Parent": "garageDoor",
-                  "Name": "garageDoor",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "direction": {
-              "ID": "6492f6b1-dfb1-451e-9c63-465fcaec698a",
-              "ElementType": 14,
-              "Parent": "GarageProvider",
-              "Name": "direction",
+              "Name": "environmentMonitor",
               "Attrs": {},
               "Props": {
-                "direction": {
-                  "ID": "7e311323-ce32-4e58-b4c6-09de27ba1d4d",
+                "environmentMonitor": {
+                  "ID": "2720a991-ee79-41b1-afda-cd68038bf4bc",
                   "ElementType": 16,
-                  "Parent": "garageDoor",
-                  "Name": "direction",
+                  "Parent": "environmentMonitor",
+                  "Name": "environmentMonitor",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "31093d78-6afb-44a5-aeba-d5bce5c7c3d5",
-                      "ElementType": 17,
-                      "Parent": "direction",
-                      "Name": "$datatype",
-                      "Value": "string"
-                    },
-                    "$format": {
-                      "ID": "25de39ae-bfa9-44ca-ba3b-c4b38d1f6f83",
-                      "ElementType": 17,
-                      "Parent": "direction",
-                      "Name": "$format",
-                      "Value": "%s"
-                    },
-                    "$name": {
-                      "ID": "d3876407-8998-400b-afd0-0fbd9c20c6a3",
-                      "ElementType": 17,
-                      "Parent": "direction",
-                      "Name": "$name",
-                      "Value": "Travel Direction"
-                    }
-                  }
-                }
-              }
-            },
-            "humdity": {
-              "ID": "07dd76f5-51b2-4237-9cc2-22bff5feceb3",
-              "ElementType": 14,
-              "Parent": "GarageProvider",
-              "Name": "humdity",
-              "Attrs": {},
-              "Props": {
-                "humdity": {
-                  "ID": "7b6b70e3-4788-4252-9644-d771aed5a816",
-                  "ElementType": 16,
-                  "Parent": "environmentMonitor",
-                  "Name": "humdity",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "7129e559-4854-4f95-b374-77e4528e6695",
+                      "ID": "e3928058-341a-4813-9ee7-962ff5cdf1ec",
                       "ElementType": 17,
                       "Parent": "humdity",
                       "Name": "$datatype",
-                      "Value": "float"
+                      "Value": ""
                     },
                     "$format": {
-                      "ID": "5e8eac3c-d446-4c00-ab27-3d9fba3843f9",
+                      "ID": "8de58bbe-120f-4f3f-8bbc-58f0f217d308",
                       "ElementType": 17,
                       "Parent": "humdity",
                       "Name": "$format",
-                      "Value": "%.1f"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "88714a12-1f99-4dc9-8cce-14b305ebbfa5",
+                      "ID": "364d7012-fff6-4300-9869-f46256047684",
                       "ElementType": 17,
-                      "Parent": "humdity",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Humidity"
+                      "Value": "Garage"
+                    },
+                    "$properties": {
+                      "ID": "9abbd011-5d2f-4d47-8912-ef31cf750076",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "motion,temperature,humdity"
+                    },
+                    "$type": {
+                      "ID": "80551f29-bea0-44fa-86a8-168da03751b5",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "SknSensors"
                     },
                     "$unit": {
-                      "ID": "c4536a05-5014-40fc-8748-a113da88dc63",
+                      "ID": "edf04e6d-a015-4a86-9537-503820b4aa14",
                       "ElementType": 17,
                       "Parent": "humdity",
                       "Name": "$unit",
-                      "Value": "%"
+                      "Value": ""
+                    },
+                    "humdity": {
+                      "ID": "94b5958d-7d06-4df6-a12d-ebf44962a70d",
+                      "ElementType": 17,
+                      "Parent": "humdity",
+                      "Name": "humdity",
+                      "Value": "27.0"
+                    },
+                    "motion": {
+                      "ID": "d202466c-c642-4ed4-b683-39fa82924e56",
+                      "ElementType": 17,
+                      "Parent": "motion",
+                      "Name": "motion",
+                      "Value": "ON"
+                    },
+                    "temperature": {
+                      "ID": "9e1fd678-0d96-48b3-9470-1ebb75cb89c4",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "73.6"
                     }
                   }
                 }
               }
             },
-            "motion": {
-              "ID": "b54921b1-338c-49f6-9fa5-789cdb511c92",
+            "garageDoor": {
+              "ID": "7196c3f0-e051-47ac-91fc-05d44f030e27",
               "ElementType": 14,
               "Parent": "GarageProvider",
-              "Name": "motion",
+              "Name": "garageDoor",
               "Attrs": {},
               "Props": {
-                "motion": {
-                  "ID": "d5e09993-0472-47ca-97df-985f006ee6d6",
-                  "ElementType": 16,
-                  "Parent": "environmentMonitor",
-                  "Name": "motion",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "4c1745a9-dbe5-4349-a65b-8d65b462c433",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$datatype",
-                      "Value": "string"
-                    },
-                    "$format": {
-                      "ID": "18463cc2-60e8-44c6-add2-eac36987c3da",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$format",
-                      "Value": "%s"
-                    },
-                    "$name": {
-                      "ID": "d571f0ef-05c5-4ca2-932f-521981f4c484",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$name",
-                      "Value": "Motion"
-                    }
-                  }
-                }
-              }
-            },
-            "operator": {
-              "ID": "009a49f5-eb51-4adc-899c-8e1bae6b76ab",
-              "ElementType": 14,
-              "Parent": "GarageProvider",
-              "Name": "operator",
-              "Attrs": {},
-              "Props": {
-                "operator": {
-                  "ID": "27f8ab98-1cc8-4e53-a35c-14441c39b32e",
+                "garageDoor": {
+                  "ID": "14d25a5c-17c8-40ed-b7dd-8a6926f4c03f",
                   "ElementType": 16,
                   "Parent": "garageDoor",
-                  "Name": "operator",
+                  "Name": "garageDoor",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "1e523081-7fe6-4066-ae8d-2c0c38299835",
+                      "ID": "b4639610-849a-4fc6-9f1f-65ec4e8c9581",
                       "ElementType": 17,
-                      "Parent": "operator",
+                      "Parent": "direction",
                       "Name": "$datatype",
-                      "Value": "boolean"
+                      "Value": ""
                     },
                     "$format": {
-                      "ID": "beb6ed74-5f90-4e64-83ad-52665105f3e8",
+                      "ID": "027ef38c-cb98-4387-8ba1-872c773cff99",
                       "ElementType": 17,
-                      "Parent": "operator",
+                      "Parent": "direction",
                       "Name": "$format",
-                      "Value": "%s"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "cfcfacb1-83f5-47d5-823b-c03d328d4941",
+                      "ID": "25291caa-0d33-4d1f-9107-f961a49e43d9",
                       "ElementType": 17,
-                      "Parent": "operator",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Operator"
+                      "Value": "Operations"
+                    },
+                    "$properties": {
+                      "ID": "d39309cf-d142-4aa4-a2a1-1697555a3c88",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "operator,positon,direction"
                     },
                     "$settable": {
-                      "ID": "7ae1ab4b-7fa0-4ab8-99a4-4a08874f39cb",
+                      "ID": "d7d5df65-7aee-415d-af02-1f04b99e02ac",
                       "ElementType": 17,
                       "Parent": "operator",
                       "Name": "$settable",
-                      "Value": "true"
-                    }
-                  }
-                }
-              }
-            },
-            "positon": {
-              "ID": "7562e25f-1fdc-4d4d-833e-6a135b657fa0",
-              "ElementType": 14,
-              "Parent": "GarageProvider",
-              "Name": "positon",
-              "Attrs": {},
-              "Props": {
-                "positon": {
-                  "ID": "9722ff3e-fa89-4abf-8ffe-e0a0a538906f",
-                  "ElementType": 16,
-                  "Parent": "garageDoor",
-                  "Name": "positon",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "6f7b8139-0cf0-4203-92a9-b7896b2ff37b",
-                      "ElementType": 17,
-                      "Parent": "positon",
-                      "Name": "$datatype",
-                      "Value": "integer"
+                      "Value": ""
                     },
-                    "$format": {
-                      "ID": "251eb25f-bfd2-42d4-afd6-d9c844271c18",
+                    "$type": {
+                      "ID": "11104911-2051-458a-9288-2f6c504fe2bf",
                       "ElementType": 17,
-                      "Parent": "positon",
-                      "Name": "$format",
-                      "Value": "%d"
-                    },
-                    "$name": {
-                      "ID": "eba44e44-78e7-4a53-b665-896c3e584d96",
-                      "ElementType": 17,
-                      "Parent": "positon",
-                      "Name": "$name",
-                      "Value": "Position MM"
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "SknSensors"
                     },
                     "$unit": {
-                      "ID": "84f68637-9bfe-4fba-a5d1-88e5c939e5d7",
+                      "ID": "31221cea-03b8-4a4d-9363-896c39ff464b",
                       "ElementType": 17,
                       "Parent": "positon",
                       "Name": "$unit",
-                      "Value": "mm"
-                    }
-                  }
-                }
-              }
-            },
-            "temperature": {
-              "ID": "047ab8e6-d75a-40db-b77b-17543ce3d6c6",
-              "ElementType": 14,
-              "Parent": "GarageProvider",
-              "Name": "temperature",
-              "Attrs": {},
-              "Props": {
-                "temperature": {
-                  "ID": "41d7eeaa-7539-4746-a1d0-4302bbd31144",
-                  "ElementType": 16,
-                  "Parent": "environmentMonitor",
-                  "Name": "temperature",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "343c7672-5867-4e52-bd05-578fb3a26ac7",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$datatype",
-                      "Value": "float"
+                      "Value": ""
                     },
-                    "$format": {
-                      "ID": "e125dad5-9f86-417f-97e3-0352c9cbf4bf",
+                    "direction": {
+                      "ID": "a4b6d357-7e00-426e-a0c8-d9305c4bde8a",
                       "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$format",
-                      "Value": "%.1f"
+                      "Parent": "direction",
+                      "Name": "direction",
+                      "Value": "OPENING"
                     },
-                    "$name": {
-                      "ID": "5353265d-6885-450c-8b81-fd980d875c0a",
+                    "positon": {
+                      "ID": "c1544b64-b088-4ba1-97b2-46ac5e2bcc7f",
                       "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$name",
-                      "Value": "Temperature"
-                    },
-                    "$unit": {
-                      "ID": "fba15074-dc49-4719-b78a-be51324a4de7",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$unit",
-                      "Value": "ºF"
+                      "Parent": "positon",
+                      "Name": "positon",
+                      "Value": "19"
                     }
                   }
                 }
@@ -5180,14 +4793,14 @@
           "Name": "GuestRoom",
           "Attrs": {
             "$fw": {
-              "ID": "48919bf3-22fe-48fb-a832-2a8a018bb93a",
+              "ID": "151b446e-4b9f-4800-9017-bb1946e971a3",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$fw",
               "Value": "",
               "Props": {
                 "checksum": {
-                  "ID": "64b2d8c3-1b59-4cfa-bfbf-5ef0568c68f9",
+                  "ID": "df5241bc-7060-4325-aea4-301e07485d45",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "checksum",
@@ -5195,7 +4808,7 @@
                   "Props": {}
                 },
                 "name": {
-                  "ID": "653d763d-23c7-47c9-806c-2451e6684953",
+                  "ID": "885b64e9-15f6-48cc-a9ee-bfa52e9376ed",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "name",
@@ -5203,7 +4816,7 @@
                   "Props": {}
                 },
                 "version": {
-                  "ID": "bf0a5c35-78ff-4444-8a05-cb000d624f7c",
+                  "ID": "8d27e30b-5753-4460-8c41-e68546d65d14",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -5213,7 +4826,7 @@
               }
             },
             "$homie": {
-              "ID": "833368f7-e778-4783-86b2-9458e767d7ab",
+              "ID": "fb079a86-1bd2-48c7-9d47-e1ea867ec5ad",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$homie",
@@ -5221,14 +4834,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "50e401f7-6409-41cf-9cc6-9b8090505ab5",
+              "ID": "3287790c-03c9-4c59-a486-dd47f68cb8a8",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
                 "config": {
-                  "ID": "9d346890-13ec-4a57-a34c-825884ce4306",
+                  "ID": "94730467-3d72-4508-b014-b076af114382",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "config",
@@ -5236,14 +4849,14 @@
                   "Props": {}
                 },
                 "ota": {
-                  "ID": "7e1ea46f-8e5d-4fd7-a5db-130c3f35c015",
+                  "ID": "f3cd85cf-4d61-405d-b315-a6636f36bf88",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "ota",
                   "Value": "",
                   "Props": {
-                    "enabled": {
-                      "ID": "4ce2963d-d2cb-457e-b680-34feefcc8dd9",
+                    "ota": {
+                      "ID": "c8350db2-6aa1-406b-8765-f90fdcad4b32",
                       "ElementType": 13,
                       "Parent": "ota",
                       "Name": "enabled",
@@ -5252,7 +4865,7 @@
                   }
                 },
                 "version": {
-                  "ID": "2268479e-c303-437c-9774-48b0d0e1d20f",
+                  "ID": "36f4ea64-eb6c-4f81-baa5-89f8f84804f1",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -5262,7 +4875,7 @@
               }
             },
             "$localip": {
-              "ID": "e455ce89-5568-4b14-b885-2dd8a1346c77",
+              "ID": "67ed302d-46de-43b4-a03a-13e200c903ff",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$localip",
@@ -5270,7 +4883,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "54b38117-5b7d-437e-aef0-1777939124c8",
+              "ID": "cf365935-56eb-46b4-91e4-cb93ad0d12f2",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$mac",
@@ -5278,7 +4891,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "73173608-c9a4-4276-9012-22f235f4364f",
+              "ID": "ff262283-3c23-42cf-bf04-0831c6005fc6",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$name",
@@ -5286,7 +4899,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "71e92a26-a15d-4f4f-87c9-98169a20a2ba",
+              "ID": "89c900db-5ab8-48c7-9b6e-a1a1f2d6b6aa",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$nodes",
@@ -5294,7 +4907,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "ed01a7ff-a421-458c-a957-0590532e7506",
+              "ID": "9d1b79d3-139c-4aaf-a38a-315737893a21",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$state",
@@ -5302,14 +4915,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "7c97ad5e-498a-486e-a269-c9cde7e8df7b",
+              "ID": "14ae6303-b41d-48a1-b32c-bf84be7ac847",
               "ElementType": 11,
               "Parent": "GuestRoom",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
                 "interval": {
-                  "ID": "b4efef9d-08c3-4431-9a91-6fee30e70466",
+                  "ID": "48a76a13-92bc-4235-8c76-049bb832d8b7",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "interval",
@@ -5317,7 +4930,7 @@
                   "Props": {}
                 },
                 "signal": {
-                  "ID": "1fb9107c-c826-48c9-944f-12e968446fa4",
+                  "ID": "ca6a2879-a151-4071-995f-bdc372c4cc9f",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "signal",
@@ -5325,129 +4938,39 @@
                   "Props": {}
                 },
                 "uptime": {
-                  "ID": "8f97844c-f787-4602-a734-064cb02dc9bc",
+                  "ID": "0fc742d1-7d4a-4bee-91f0-010d1174001a",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
-                  "Value": "362178",
+                  "Value": "362358",
                   "Props": {}
                 }
               }
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "61da6e48-a4e8-4740-a0d4-feac61fb7e16",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "$name",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "c9631c39-d7d8-4bbe-9e72-4f2469e6cef7",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "86c41c7f-94cd-412c-abe2-4fd69095a7ae",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "36776cc3-38af-4f3a-81be-4d3346965eef",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "140cb0d4-69a9-4c21-bc6a-98911607a784",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "$properties",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "0d12408f-ce82-4046-852e-21384bb661f2",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "d57734d7-4514-4a42-b952-b44d10306c53",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "a053a191-5eaf-40ec-87d8-1147a6872f33",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "0f67a58d-cfab-4565-a6ed-24f58c6356ff",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "$type",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "bfcc4931-e381-458f-9a08-675ded319b31",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "96b69005-60cd-4038-8beb-faa7b7b0fc51",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "d5181d5d-c3db-4f84-a80c-bc0e7ce20272",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
             "Ambient": {
-              "ID": "ac4c3ff7-e290-42de-914f-2888c6a02f3f",
+              "ID": "5b9e5ff5-1a10-4b2e-bff3-c901dcc80b36",
               "ElementType": 14,
               "Parent": "GuestRoom",
               "Name": "Ambient",
               "Attrs": {
                 "$name": {
-                  "ID": "1dc6cb5b-0525-4bda-bd0f-a2e6e4458f9d",
+                  "ID": "41441fa3-91ca-4c03-b493-a5628c4e4171",
                   "ElementType": 15,
                   "Parent": "Ambient",
                   "Name": "$name",
                   "Value": "Temperature and Humidity Sensor"
                 },
                 "$properties": {
-                  "ID": "25eb42dd-e6c9-4d96-bc48-0a8d8c52406a",
+                  "ID": "676852a6-e97b-464b-ac59-fd3280663899",
                   "ElementType": 15,
                   "Parent": "Ambient",
                   "Name": "$properties",
                   "Value": "humidity,temperature"
                 },
                 "$type": {
-                  "ID": "436c2aad-6d33-4d3f-aa08-09b75789b91a",
+                  "ID": "cc37ce18-94a3-4a75-b6b7-ffc00cd5587c",
                   "ElementType": 15,
                   "Parent": "Ambient",
                   "Name": "$type",
@@ -5455,29 +4978,87 @@
                 }
               },
               "Props": {
+                "Ambient": {
+                  "ID": "2511c103-5d5f-4217-81fd-87bbe77d1613",
+                  "ElementType": 16,
+                  "Parent": "Ambient",
+                  "Name": "Ambient",
+                  "Value": "",
+                  "Attrs": {
+                    "$datatype": {
+                      "ID": "26f206f2-89ab-4b81-a1ab-0587141ea388",
+                      "ElementType": 17,
+                      "Parent": "humidity",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "8ca29bb5-b846-493f-9339-6375e2873a25",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Temperature and Humidity Sensor"
+                    },
+                    "$properties": {
+                      "ID": "f7abf256-e36e-4be8-9113-30ffe865f9e0",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "humidity,temperature"
+                    },
+                    "$type": {
+                      "ID": "ab2ca502-a922-4ee7-94f1-ade68c9a9381",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "95f990ae-f96b-4f27-9457-bcfc3a8e8892",
+                      "ElementType": 17,
+                      "Parent": "humidity",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "humidity": {
+                      "ID": "1c089e64-5426-4317-8e96-2995667634c4",
+                      "ElementType": 17,
+                      "Parent": "humidity",
+                      "Name": "humidity",
+                      "Value": "11.10"
+                    },
+                    "temperature": {
+                      "ID": "6daf5380-7b05-4d94-8da2-1f4880ceb110",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "73.76"
+                    }
+                  }
+                },
                 "humidity": {
-                  "ID": "273f69d5-2f38-4151-91db-c34582daca8d",
+                  "ID": "c930e933-d76c-4229-a3e9-5ac3a335933a",
                   "ElementType": 16,
                   "Parent": "Ambient",
                   "Name": "humidity",
                   "Value": "11.10",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "30caf034-0473-4a15-98bd-affcc9bbe8fa",
+                      "ID": "2cdc110f-412b-4efd-9271-24013812ff21",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$datatype",
                       "Value": "float"
                     },
                     "$name": {
-                      "ID": "1ddad8ef-6777-41db-8f13-938d3cf4b51e",
+                      "ID": "0cfb2340-1b07-4082-9ed9-51e5e17a3521",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$name",
                       "Value": "Humidity"
                     },
                     "$unit": {
-                      "ID": "a0977806-4347-43f2-a497-34af310f47f9",
+                      "ID": "233d1497-3c32-45b0-8109-c5fad7c5ff3d",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$unit",
@@ -5486,28 +5067,28 @@
                   }
                 },
                 "temperature": {
-                  "ID": "2d2914de-a911-4c56-b2e8-bfb6e66573df",
+                  "ID": "d71302ab-1b9c-466b-a866-00c45cdd01a8",
                   "ElementType": 16,
                   "Parent": "Ambient",
                   "Name": "temperature",
                   "Value": "73.76",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "cb444bc0-d0e0-43f5-8e93-71b4859ac812",
+                      "ID": "88c88759-07c8-4038-8f48-d9ab739894d0",
                       "ElementType": 17,
                       "Parent": "temperature",
                       "Name": "$datatype",
                       "Value": "float"
                     },
                     "$name": {
-                      "ID": "be01cd48-4817-4cb1-8d7b-69da0cb00af9",
+                      "ID": "675a01f6-cb22-4b48-af29-233639a73c80",
                       "ElementType": 17,
                       "Parent": "temperature",
                       "Name": "$name",
                       "Value": "Temperature"
                     },
                     "$unit": {
-                      "ID": "639d3135-2e79-4e36-b711-109b6610533f",
+                      "ID": "7e7d5f4d-0faa-44c9-ae48-45c000201a0a",
                       "ElementType": 17,
                       "Parent": "temperature",
                       "Name": "$unit",
@@ -5518,27 +5099,27 @@
               }
             },
             "Presence": {
-              "ID": "783e1af9-c8f3-4f7b-bcd5-fcbb1842958d",
+              "ID": "8ce1308f-7b65-462f-a9eb-8b18c7785fde",
               "ElementType": 14,
               "Parent": "GuestRoom",
               "Name": "Presence",
               "Attrs": {
                 "$name": {
-                  "ID": "e96795b2-c663-49b3-ba96-78ae424da9c4",
+                  "ID": "5da87e62-3ae5-4871-8b6d-e346c285cba8",
                   "ElementType": 15,
                   "Parent": "Presence",
                   "Name": "$name",
                   "Value": "Motion Sensor"
                 },
                 "$properties": {
-                  "ID": "2b4f8cc5-2055-4b13-a8b0-f9d4642b27d5",
+                  "ID": "4751ed78-ae6f-4da8-81bd-834b302e10c7",
                   "ElementType": 15,
                   "Parent": "Presence",
                   "Name": "$properties",
                   "Value": "motion"
                 },
                 "$type": {
-                  "ID": "50aebd1b-2423-4236-8519-7202721b2a8f",
+                  "ID": "92d4ed53-6540-4247-9476-d57dc0673914",
                   "ElementType": 15,
                   "Parent": "Presence",
                   "Name": "$type",
@@ -5546,29 +5127,80 @@
                 }
               },
               "Props": {
+                "Presence": {
+                  "ID": "e0c48e9d-f8c9-4196-a3ba-f2f5ab5d83f6",
+                  "ElementType": 16,
+                  "Parent": "Presence",
+                  "Name": "Presence",
+                  "Value": "",
+                  "Attrs": {
+                    "$datatype": {
+                      "ID": "eafdfb08-ba67-4348-9c7a-ee6547c1cf07",
+                      "ElementType": 17,
+                      "Parent": "motion",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$format": {
+                      "ID": "55a20332-6f27-4704-8463-c5879582703c",
+                      "ElementType": 17,
+                      "Parent": "motion",
+                      "Name": "$format",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "188c22a3-765a-486a-8be0-f9e6e47a4ad3",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Motion Sensor"
+                    },
+                    "$properties": {
+                      "ID": "9072123d-af60-47c0-9e55-d131a9be2938",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "motion"
+                    },
+                    "$type": {
+                      "ID": "bc7b650c-925b-4442-b30b-53f3fc288526",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "motion": {
+                      "ID": "9e5c9cc8-92fb-4538-97aa-b43c15d8a777",
+                      "ElementType": 17,
+                      "Parent": "motion",
+                      "Name": "motion",
+                      "Value": "CLOSED"
+                    }
+                  }
+                },
                 "motion": {
-                  "ID": "c63c827f-087b-48b9-ac13-543d09f5a18e",
+                  "ID": "cccbbc90-3f8f-4c18-94d2-140078d55cc6",
                   "ElementType": 16,
                   "Parent": "Presence",
                   "Name": "motion",
                   "Value": "CLOSED",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "154cbbda-7fb0-4845-9fab-23b2fd111827",
+                      "ID": "2a842301-0fee-48d1-9bc1-60729f43a2be",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$datatype",
                       "Value": "enum"
                     },
                     "$format": {
-                      "ID": "12460c7d-6bf1-4e81-b8a2-8ec65ca1bbc0",
+                      "ID": "27fdeb8e-2eb5-4fa2-817a-f2ec9b5e0496",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$format",
                       "Value": "OPEN,CLOSED"
                     },
                     "$name": {
-                      "ID": "d1f1ea66-56d6-45db-8a68-00d040fca2c9",
+                      "ID": "c81e4f12-b872-4605-805e-fcae021f0646",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$name",
@@ -5579,27 +5211,27 @@
               }
             },
             "hardware": {
-              "ID": "21950a51-6329-4d6a-a3a2-d0230fd4fca1",
+              "ID": "70d20307-488b-448c-9620-bb632837dc0f",
               "ElementType": 14,
               "Parent": "GuestRoom",
               "Name": "hardware",
               "Attrs": {
                 "$name": {
-                  "ID": "ea302196-4066-4888-99c6-3d765a1a5fec",
+                  "ID": "a0349bd8-e8a4-4969-92a9-9c6822d3b007",
                   "ElementType": 15,
                   "Parent": "hardware",
                   "Name": "$name",
                   "Value": "Device Info"
                 },
                 "$properties": {
-                  "ID": "d11b37cf-99a9-4835-87cc-7d16e15aafa6",
+                  "ID": "ce6e71ff-de3f-4f9f-b4a5-cc12b97e7658",
                   "ElementType": 15,
                   "Parent": "hardware",
                   "Name": "$properties",
                   "Value": "signal,mac,resetReason,voltage"
                 },
                 "$type": {
-                  "ID": "712e5b1c-be6c-4442-840c-4012540ab3c0",
+                  "ID": "cd6442f4-f826-4a07-bb13-95f120c86fd6",
                   "ElementType": 15,
                   "Parent": "hardware",
                   "Name": "$type",
@@ -5607,22 +5239,94 @@
                 }
               },
               "Props": {
+                "hardware": {
+                  "ID": "4728e110-8cc6-4e8b-ad01-e21dd43bc131",
+                  "ElementType": 16,
+                  "Parent": "hardware",
+                  "Name": "hardware",
+                  "Value": "",
+                  "Attrs": {
+                    "$datatype": {
+                      "ID": "693fbca6-4ff6-4a10-9a93-48ebcc536649",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "5a49de53-2056-4158-8b41-9cb4248e0734",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Device Info"
+                    },
+                    "$properties": {
+                      "ID": "35cac20f-7da1-46e7-99ab-75010534c38d",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "signal,mac,resetReason,voltage"
+                    },
+                    "$type": {
+                      "ID": "6550ef76-27f0-4e51-bc0a-71e08f35685e",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "debdd479-3d1d-49d8-a059-c229fd6e9c27",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "mac": {
+                      "ID": "7cfb7197-89fb-4968-b15d-0944f92440db",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "mac",
+                      "Value": "BC:DD:C2:81:04:72"
+                    },
+                    "resetReason": {
+                      "ID": "6b4b908a-56db-4e2e-82ba-e41b56a77ffe",
+                      "ElementType": 17,
+                      "Parent": "resetReason",
+                      "Name": "resetReason",
+                      "Value": "External System"
+                    },
+                    "signal": {
+                      "ID": "f277b14e-e794-4197-ba80-fa256f2dac65",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "signal",
+                      "Value": "-64"
+                    },
+                    "voltage": {
+                      "ID": "b9dad451-c472-44c7-982e-848220240040",
+                      "ElementType": 17,
+                      "Parent": "voltage",
+                      "Name": "voltage",
+                      "Value": "2.98"
+                    }
+                  }
+                },
                 "mac": {
-                  "ID": "c9403a75-362e-4c37-b1b0-3d9591627ab1",
+                  "ID": "229cfb03-e7f3-4ab1-b5aa-ebe38292d1b1",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "mac",
                   "Value": "BC:DD:C2:81:04:72",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "cc0a5f96-f2bf-45fe-8d8d-69e43d9c65ee",
+                      "ID": "2dae1f64-a4f7-487a-95d3-e953698cb354",
                       "ElementType": 17,
                       "Parent": "mac",
                       "Name": "$datatype",
                       "Value": "sring"
                     },
                     "$name": {
-                      "ID": "41996315-370c-4e6e-9e54-5b77fc241879",
+                      "ID": "6289fc9d-c7d4-4cfa-a190-cc1dbd3f772a",
                       "ElementType": 17,
                       "Parent": "mac",
                       "Name": "$name",
@@ -5631,21 +5335,21 @@
                   }
                 },
                 "resetReason": {
-                  "ID": "95d99c8b-229e-424e-b32f-26bc8837df1a",
+                  "ID": "87caf14c-27fb-4633-981d-a55c292569b1",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "resetReason",
                   "Value": "External System",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "0049bd55-71a7-4a2b-96dc-e3d52870d342",
+                      "ID": "2bb976b9-1fc8-4d9c-89e6-8af9c793e63c",
                       "ElementType": 17,
                       "Parent": "resetReason",
                       "Name": "$datatype",
                       "Value": "string"
                     },
                     "$name": {
-                      "ID": "2c33e9fe-99e0-4849-bbb2-ef2b03a64d5a",
+                      "ID": "ef6533f7-dcfb-44eb-956d-ff3b9c96b47b",
                       "ElementType": 17,
                       "Parent": "resetReason",
                       "Name": "$name",
@@ -5654,28 +5358,28 @@
                   }
                 },
                 "signal": {
-                  "ID": "9d24a8ff-0f6a-4c07-9fa2-87f5fb22fa3a",
+                  "ID": "2e14a453-1d06-4e84-aaa6-f2e2bd93158b",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "signal",
                   "Value": "-64",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "932e135a-0923-4532-88c8-a9c31b83d431",
+                      "ID": "c90e9cc3-c0eb-41fd-9abf-2cd8c69c7434",
                       "ElementType": 17,
                       "Parent": "signal",
                       "Name": "$datatype",
                       "Value": "integer"
                     },
                     "$name": {
-                      "ID": "4f7711f0-c95c-4caf-8bf0-a82b41897e8a",
+                      "ID": "cb952cdd-38d6-4cb9-ba5f-f54aaceeb387",
                       "ElementType": 17,
                       "Parent": "signal",
                       "Name": "$name",
                       "Value": "RSSI"
                     },
                     "$unit": {
-                      "ID": "bb18ec4e-21f0-49c4-894b-3395f38d8613",
+                      "ID": "36344740-d56d-4401-8d18-83ce32635d50",
                       "ElementType": 17,
                       "Parent": "signal",
                       "Name": "$unit",
@@ -5684,287 +5388,28 @@
                   }
                 },
                 "voltage": {
-                  "ID": "0a1e8a3e-11e5-4c5e-b9fd-15621e515d1c",
+                  "ID": "7f92fd24-a46c-497f-96c8-7edc6dee1d7b",
                   "ElementType": 16,
                   "Parent": "hardware",
                   "Name": "voltage",
                   "Value": "2.98",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "133cc3ac-993d-4e0a-9a4d-d57d074cb0bb",
+                      "ID": "2e98f35b-c154-4149-9c5f-01002793aae6",
                       "ElementType": 17,
                       "Parent": "voltage",
                       "Name": "$datatype",
                       "Value": "float"
                     },
                     "$name": {
-                      "ID": "288078e4-e22f-42cd-a6f6-ccfb6ca2a00a",
+                      "ID": "3f4e4823-3165-4310-ac3d-032d9f992326",
                       "ElementType": 17,
                       "Parent": "voltage",
                       "Name": "$name",
                       "Value": "3.3V Supply"
                     },
                     "$unit": {
-                      "ID": "8b1f3967-8a66-4647-82f5-f1f53eb3a4a3",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$unit",
-                      "Value": "V"
-                    }
-                  }
-                }
-              }
-            },
-            "humidity": {
-              "ID": "edaf17e1-ba04-4d1a-a112-83653a1efe42",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "humidity",
-              "Attrs": {},
-              "Props": {
-                "humidity": {
-                  "ID": "df5a38aa-5fad-4eda-ae40-100f6875164d",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "humidity",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "7d0a2f9a-c9a2-4fad-bc7f-0091043c7def",
-                      "ElementType": 17,
-                      "Parent": "humidity",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "ccb0161b-38ae-4ffe-b565-96740b526875",
-                      "ElementType": 17,
-                      "Parent": "humidity",
-                      "Name": "$name",
-                      "Value": "Humidity"
-                    },
-                    "$unit": {
-                      "ID": "487d4756-c5fe-41d4-913e-75c5294b6ddc",
-                      "ElementType": 17,
-                      "Parent": "humidity",
-                      "Name": "$unit",
-                      "Value": "%rH"
-                    }
-                  }
-                }
-              }
-            },
-            "mac": {
-              "ID": "bd52a83a-e8a9-4593-b580-f81e2637106a",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "mac",
-              "Attrs": {},
-              "Props": {
-                "mac": {
-                  "ID": "326cea65-076a-416a-a32e-1639fec92c8c",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "mac",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "6e1f354c-e3d1-48fe-a6ee-c39059dd570a",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$datatype",
-                      "Value": "sring"
-                    },
-                    "$name": {
-                      "ID": "f98b4e75-ab14-43ad-bde0-5d6d2ccabcee",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$name",
-                      "Value": "mac"
-                    }
-                  }
-                }
-              }
-            },
-            "motion": {
-              "ID": "02cbe174-bc2b-465e-b2a9-2562377148cd",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "motion",
-              "Attrs": {},
-              "Props": {
-                "motion": {
-                  "ID": "dfaa19ba-18fe-4865-a997-19b0ac0c9be4",
-                  "ElementType": 16,
-                  "Parent": "Presence",
-                  "Name": "motion",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "e11a27dd-bc1f-4590-ac1d-393fcd9b7598",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "6091a743-445d-4fd9-be02-fd3d76355472",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "ffbb7bd8-6a88-4b21-935d-0dbeaafc341e",
-                      "ElementType": 17,
-                      "Parent": "motion",
-                      "Name": "$name",
-                      "Value": "Motion"
-                    }
-                  }
-                }
-              }
-            },
-            "resetReason": {
-              "ID": "af748739-314a-4ae7-9b74-ff9555386285",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "resetReason",
-              "Attrs": {},
-              "Props": {
-                "resetReason": {
-                  "ID": "8a5dcdee-3b26-4541-9c4c-2a6dbf2acf7b",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "resetReason",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "7288646f-09e5-467b-ad0b-38f4ce13fae7",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$datatype",
-                      "Value": "string"
-                    },
-                    "$name": {
-                      "ID": "6a572b1b-4aa1-4229-8462-ad0cf0682453",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$name",
-                      "Value": "Last Reset Reason"
-                    }
-                  }
-                }
-              }
-            },
-            "signal": {
-              "ID": "0c19749b-cbd0-42f5-9cbc-5f3a6e7fa827",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "signal",
-              "Attrs": {},
-              "Props": {
-                "signal": {
-                  "ID": "44ba3169-090b-4a17-9ba7-929ea8452690",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "signal",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "3867e441-06e5-4116-8eb1-7bb485a6d9e2",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$datatype",
-                      "Value": "integer"
-                    },
-                    "$name": {
-                      "ID": "4182da3f-0f2d-4ea8-8698-4e0dcab02b7c",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$name",
-                      "Value": "RSSI"
-                    },
-                    "$unit": {
-                      "ID": "67b62e75-3ada-40fd-9b6b-aa6616b81b12",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$unit",
-                      "Value": "dBm"
-                    }
-                  }
-                }
-              }
-            },
-            "temperature": {
-              "ID": "e06b3833-c63e-4dcd-b717-69c57d88c1af",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "temperature",
-              "Attrs": {},
-              "Props": {
-                "temperature": {
-                  "ID": "55333543-e1cb-4f12-882b-f5025c19c5ac",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "temperature",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "278c9998-5cb4-455e-8891-deda75043358",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "f66735d5-a1dc-45b5-91a2-3aad63623719",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$name",
-                      "Value": "Temperature"
-                    },
-                    "$unit": {
-                      "ID": "810b56c3-c7cb-4a32-8fce-7b8a0f2c1ff8",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$unit",
-                      "Value": "°F"
-                    }
-                  }
-                }
-              }
-            },
-            "voltage": {
-              "ID": "bb4bd407-79a6-4386-b20a-18fe75daaf33",
-              "ElementType": 14,
-              "Parent": "GuestRoom",
-              "Name": "voltage",
-              "Attrs": {},
-              "Props": {
-                "voltage": {
-                  "ID": "f02f03d5-5918-4267-b615-3fae498457d9",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "voltage",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "235b7d7d-67d1-4bff-b862-25e7c0cbc00a",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "08aa6862-f30d-43ab-a31b-5a7eeeec873b",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$name",
-                      "Value": "3.3V Supply"
-                    },
-                    "$unit": {
-                      "ID": "89819807-cd2b-4401-8e9f-31cc00e8d44c",
+                      "ID": "d65c9534-4b5d-41e3-9a37-18b453a37c45",
                       "ElementType": 17,
                       "Parent": "voltage",
                       "Name": "$unit",
@@ -5985,30 +5430,14 @@
           "Name": "HomeOffice",
           "Attrs": {
             "$fw": {
-              "ID": "cb244e9e-3c31-4120-86f7-ee6f8711835d",
+              "ID": "87d66026-5738-4064-8638-e2b6fac369bf",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$fw",
               "Value": "",
               "Props": {
-                "checksum": {
-                  "ID": "885522cf-f1cd-4fb0-b860-4f1406be28ee",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "checksum",
-                  "Value": "3ef8fbb48c5b23788a22a998c14a1a6d",
-                  "Props": {}
-                },
-                "name": {
-                  "ID": "631c5eb7-feaa-422b-a009-51d9639a57b9",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "name",
-                  "Value": "Monitor-DHT-RCWL-Metrics",
-                  "Props": {}
-                },
                 "version": {
-                  "ID": "7127aadb-735f-4bf4-9330-c2c59c300202",
+                  "ID": "af03d444-a8d6-4188-b333-68e6e92e7fe3",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -6018,7 +5447,7 @@
               }
             },
             "$homie": {
-              "ID": "616c504e-761d-4e00-a7f3-4e5bbf0d0760",
+              "ID": "bb7630c4-dc40-462c-930b-0f5537fac292",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$homie",
@@ -6026,38 +5455,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "4b5ede3e-3b52-44a7-b989-cc69744ba87d",
+              "ID": "a6854983-27a1-4a80-98e4-a870b7c82ee9",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
-                "config": {
-                  "ID": "d3342d7f-f9d1-4f06-be61-0f17833d9587",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "config",
-                  "Value": "{\"name\":\"Home Office\",\"device_id\":\"HomeOffice\",\"device_stats_interval\":180,\"wifi\":{\"ssid\":\"SFNSS1-24G\"},\"mqtt\":{\"host\":\"openhab.skoona.net\",\"port\":1883,\"base_topic\":\"sknSensors/\",\"auth\":true},\"ota\":{\"enabled\":true},\"settings\":{\"sensorInterval\":900,\"motionHoldInterval\":60}}",
-                  "Props": {}
-                },
-                "ota": {
-                  "ID": "991ddd3a-f942-4f94-9a34-53be3e95c0a5",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "ota",
-                  "Value": "",
-                  "Props": {
-                    "enabled": {
-                      "ID": "6a204181-6e69-425b-a358-edc06a18f8e2",
-                      "ElementType": 13,
-                      "Parent": "ota",
-                      "Name": "enabled",
-                      "Value": "true"
-                    }
-                  }
-                },
                 "version": {
-                  "ID": "6f9bf083-933e-49e9-a7c3-01ed2914d128",
+                  "ID": "4470c895-f0f5-4ceb-b46f-491e13154d1d",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -6067,7 +5472,7 @@
               }
             },
             "$localip": {
-              "ID": "0570c936-0244-47cb-910f-ec973b5bf668",
+              "ID": "8d435843-1b04-4942-b7b5-f452d3914e25",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$localip",
@@ -6075,7 +5480,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "c445e11c-a85a-4ad8-9188-a4ccf45f84d4",
+              "ID": "7d9bf16d-04bf-4624-a441-0211cc6075ab",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$mac",
@@ -6083,7 +5488,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "37413265-8667-45f5-b698-8c22ffb445da",
+              "ID": "b7fde697-5dad-4db9-864a-555d4dc74029",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$name",
@@ -6091,7 +5496,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "0d83f5a8-9dd5-44c7-ab8f-c7ae2c84a2b2",
+              "ID": "f540b01c-492b-4513-a617-4191340bd8b3",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$nodes",
@@ -6099,7 +5504,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "684280a0-df42-4dd0-94d1-538f77960fbf",
+              "ID": "7a2249cc-857b-4f72-a42f-9736076c3084",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$state",
@@ -6107,30 +5512,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "3f48ed9b-be6d-4fb7-b7d7-a6bdafb9fc22",
+              "ID": "af0b9a3a-ed2f-44e2-af27-a2d319b701b6",
               "ElementType": 11,
               "Parent": "HomeOffice",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
-                "interval": {
-                  "ID": "688a322c-38b7-45f7-811e-a9498b6090ea",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "interval",
-                  "Value": "185",
-                  "Props": {}
-                },
-                "signal": {
-                  "ID": "fdf01b6d-8b01-4276-8335-5f1ca69df4b7",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "signal",
-                  "Value": "70",
-                  "Props": {}
-                },
                 "uptime": {
-                  "ID": "0e0d6b10-f98e-44f5-a3df-68c6d6268773",
+                  "ID": "78091a73-45a6-46d4-9760-d1b72bf0cae8",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
@@ -6141,350 +5530,209 @@
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "e5298ad3-6622-44c3-ac43-53ac13f682f0",
+            "Ambient": {
+              "ID": "e37fd9b5-9f64-45fc-8d86-960cc279ea6c",
               "ElementType": 14,
               "Parent": "HomeOffice",
-              "Name": "$name",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "e0f4b6c9-d17c-4b15-9a94-c1c969fd3a65",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "3692b785-63c1-4ffa-b30e-9f7ff0c1a768",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "5c228097-881f-419e-959b-364871a21acc",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "075dbb7c-5d9b-48ed-98a3-9442f36d787a",
-              "ElementType": 14,
-              "Parent": "HomeOffice",
-              "Name": "$properties",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "9e1054a0-a263-4cdd-9e7e-b28df1faa8b5",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "125fd5cd-0b81-4f8a-a0c3-5742f5fbfe13",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "68df104d-f094-421a-a7db-02483896ae9a",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "03e037d6-e4e1-4f5c-9af3-787d3384dc28",
-              "ElementType": 14,
-              "Parent": "HomeOffice",
-              "Name": "$type",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "dd0f9740-84e4-433f-8e61-528c5e8f1fba",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "a5029a7e-2d3d-4bbd-bfd4-00e95c5cfcfc",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "8146ea77-5396-4024-8ce0-4e6a1ff60d3b",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "humidity": {
-              "ID": "f85a6376-a715-4bc9-8eb7-974e8f1c0047",
-              "ElementType": 14,
-              "Parent": "HomeOffice",
-              "Name": "humidity",
+              "Name": "Ambient",
               "Attrs": {},
               "Props": {
-                "humidity": {
-                  "ID": "d655969c-2468-4ffe-b63d-470ea78cc7e6",
+                "Ambient": {
+                  "ID": "292730de-a8d7-44ee-beea-c9be83661a63",
                   "ElementType": 16,
                   "Parent": "Ambient",
-                  "Name": "humidity",
+                  "Name": "Ambient",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "2d09f170-02ec-4d05-8595-018b05ed95eb",
+                      "ID": "b5c50643-4700-4daa-9ab5-7782702efa76",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$datatype",
-                      "Value": "float"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "4ae88e4a-8483-468e-b4c1-869b99dcab1c",
+                      "ID": "7b5cc725-beda-46cb-a67c-973a9f144aa4",
                       "ElementType": 17,
-                      "Parent": "humidity",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Humidity"
+                      "Value": "Temperature and Humidity Sensor"
+                    },
+                    "$properties": {
+                      "ID": "b10e69f3-e2f1-40a3-8d85-efbdae736777",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "humidity,temperature"
+                    },
+                    "$type": {
+                      "ID": "32b0f90a-5d64-431f-a5fd-4824df3a5bbe",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
                     },
                     "$unit": {
-                      "ID": "a214d587-36ff-43d1-834b-fe0311595257",
+                      "ID": "2fd721dc-2bd6-4d58-8980-3249ca8f0783",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$unit",
-                      "Value": "%rH"
-                    }
-                  }
-                }
-              }
-            },
-            "mac": {
-              "ID": "0141b949-c58a-4a78-a188-2e42e5e71e9f",
-              "ElementType": 14,
-              "Parent": "HomeOffice",
-              "Name": "mac",
-              "Attrs": {},
-              "Props": {
-                "mac": {
-                  "ID": "3eb1f5dc-34ad-41f2-a8e0-8a94c575dac2",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "mac",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "e01805bf-1f16-4d03-b912-11fadcb0ba8c",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$datatype",
-                      "Value": "sring"
+                      "Value": ""
                     },
-                    "$name": {
-                      "ID": "a6530d43-6d0e-466f-adfe-ceb354caf8eb",
+                    "humidity": {
+                      "ID": "d7e3fbbd-a266-4d2f-8844-d34a46924b0e",
                       "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$name",
-                      "Value": "mac"
+                      "Parent": "humidity",
+                      "Name": "humidity",
+                      "Value": "10.20"
+                    },
+                    "temperature": {
+                      "ID": "b2254eaf-69e9-4a22-983a-410bedc4357e",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "75.20"
                     }
                   }
                 }
               }
             },
-            "motion": {
-              "ID": "e0bcef9d-a7d1-4208-95cf-73c807c2b97c",
+            "Presence": {
+              "ID": "03d9b898-9566-4489-8335-e55504113a9a",
               "ElementType": 14,
               "Parent": "HomeOffice",
-              "Name": "motion",
+              "Name": "Presence",
               "Attrs": {},
               "Props": {
-                "motion": {
-                  "ID": "99ace8b9-5939-4ef6-9b90-5eaf3b239488",
+                "Presence": {
+                  "ID": "c13613c2-f73e-4f36-8de8-0e51578acde8",
                   "ElementType": 16,
                   "Parent": "Presence",
-                  "Name": "motion",
+                  "Name": "Presence",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "bb538230-25da-4796-9c66-df13b1311f52",
+                      "ID": "a4f13f0d-573d-487d-8b41-ed6394405990",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$datatype",
-                      "Value": "enum"
+                      "Value": ""
                     },
                     "$format": {
-                      "ID": "76fecab2-8c06-4514-beec-ae9fc2f4bd21",
+                      "ID": "a1daf91c-81b6-4b18-a625-006d6680cea3",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$format",
-                      "Value": "OPEN,CLOSED"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "b641e720-8fbc-416c-a997-358883bf874e",
+                      "ID": "ee78175c-2577-4820-97af-290a726b7592",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Motion Sensor"
+                    },
+                    "$properties": {
+                      "ID": "6ab60bb6-ca57-4281-9edd-c94ac287e40f",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "motion"
+                    },
+                    "$type": {
+                      "ID": "cdab0e11-74c7-4b66-a885-1f41f95a24ed",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "motion": {
+                      "ID": "00810f02-8d71-4c8c-8f16-c4e7bbe0e81e",
                       "ElementType": 17,
                       "Parent": "motion",
-                      "Name": "$name",
-                      "Value": "Motion"
+                      "Name": "motion",
+                      "Value": "OPEN"
                     }
                   }
                 }
               }
             },
-            "resetReason": {
-              "ID": "ba81f742-ba27-4396-af43-2e78d7fcf232",
+            "hardware": {
+              "ID": "69563621-84f8-4b15-8db6-7cb19ed13884",
               "ElementType": 14,
               "Parent": "HomeOffice",
-              "Name": "resetReason",
+              "Name": "hardware",
               "Attrs": {},
               "Props": {
-                "resetReason": {
-                  "ID": "60aaae45-a933-4a20-bfe6-e154f2ab694c",
+                "hardware": {
+                  "ID": "40b96962-2550-4eb5-b038-118cd7d625cf",
                   "ElementType": 16,
                   "Parent": "hardware",
-                  "Name": "resetReason",
+                  "Name": "hardware",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "f762d982-6950-4471-a032-e8f42bd3e1ec",
+                      "ID": "42846b30-61a3-490e-b451-89ec7e759430",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "157af51a-d344-4b16-a2d3-e071f17edd38",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Device Info"
+                    },
+                    "$properties": {
+                      "ID": "a4842abb-e5bb-487b-b004-a49e9547e0be",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "signal,mac,resetReason,voltage"
+                    },
+                    "$type": {
+                      "ID": "ae7bbe3e-07b9-4f50-9a3f-7e2a7267e07e",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "e86b77ca-f49f-49bf-bfe9-17c1a1a7593b",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "mac": {
+                      "ID": "a7569d0d-9ef2-4754-bd73-739912810903",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "mac",
+                      "Value": "84:F3:EB:B7:55:D5"
+                    },
+                    "resetReason": {
+                      "ID": "f80660b5-a49a-45a2-869e-4a9c6585a870",
                       "ElementType": 17,
                       "Parent": "resetReason",
-                      "Name": "$datatype",
-                      "Value": "string"
+                      "Name": "resetReason",
+                      "Value": "External System"
                     },
-                    "$name": {
-                      "ID": "fc23b213-b415-4907-98d3-b3f2f2122587",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$name",
-                      "Value": "Last Reset Reason"
-                    }
-                  }
-                }
-              }
-            },
-            "signal": {
-              "ID": "b8125d69-667b-40b6-a06b-a541b26cbb89",
-              "ElementType": 14,
-              "Parent": "HomeOffice",
-              "Name": "signal",
-              "Attrs": {},
-              "Props": {
-                "signal": {
-                  "ID": "403d14cd-dd07-48bd-9856-d4fe3cc2223b",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "signal",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "3c88eb77-e3aa-422a-8858-d6dceba082e1",
+                    "signal": {
+                      "ID": "feabec65-36c3-4b87-82f4-41c19799b353",
                       "ElementType": 17,
                       "Parent": "signal",
-                      "Name": "$datatype",
-                      "Value": "integer"
+                      "Name": "signal",
+                      "Value": "-65"
                     },
-                    "$name": {
-                      "ID": "227fa05e-f5fd-4e74-b92f-dbe839d31d60",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$name",
-                      "Value": "RSSI"
-                    },
-                    "$unit": {
-                      "ID": "77ace5e8-88ad-46ea-be41-540676d84a42",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$unit",
-                      "Value": "dBm"
-                    }
-                  }
-                }
-              }
-            },
-            "temperature": {
-              "ID": "af965cad-1fff-47b4-ad0b-5f5bacd880da",
-              "ElementType": 14,
-              "Parent": "HomeOffice",
-              "Name": "temperature",
-              "Attrs": {},
-              "Props": {
-                "temperature": {
-                  "ID": "3fe14983-e1e3-47d3-851c-f5f03da5597f",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "temperature",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "dbe58d11-a20c-4f66-90f9-97bb88f60fb4",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "7d5871c9-adf6-4f88-8508-bc798d6f0aa0",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$name",
-                      "Value": "Temperature"
-                    },
-                    "$unit": {
-                      "ID": "963dc43a-2d03-4d49-8d18-d0648baa72bf",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$unit",
-                      "Value": "°F"
-                    }
-                  }
-                }
-              }
-            },
-            "voltage": {
-              "ID": "251ec16e-2e26-4ddc-81ce-49edbab59b27",
-              "ElementType": 14,
-              "Parent": "HomeOffice",
-              "Name": "voltage",
-              "Attrs": {},
-              "Props": {
-                "voltage": {
-                  "ID": "bffa08d4-779e-4d11-a718-5d3faad0d03c",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "voltage",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "80602e13-8011-46ee-9b33-3511c26e396d",
+                    "voltage": {
+                      "ID": "1ee5fcc7-cc26-43e8-b84c-89b0f22da1bd",
                       "ElementType": 17,
                       "Parent": "voltage",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "cc6b7daa-0839-4db3-a53a-eb7d9b3e0a6d",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$name",
-                      "Value": "3.3V Supply"
-                    },
-                    "$unit": {
-                      "ID": "42e37b0e-030e-4fd2-b75e-6dbf6e4daea0",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$unit",
-                      "Value": "V"
+                      "Name": "voltage",
+                      "Value": "2.98"
                     }
                   }
                 }
@@ -6501,30 +5749,14 @@
           "Name": "MCPProvider",
           "Attrs": {
             "$fw": {
-              "ID": "1581b325-a9f8-4385-8c64-76de646dcd24",
+              "ID": "84bd7c7d-533b-450c-b0d6-51be1264a934",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$fw",
               "Value": "",
               "Props": {
-                "checksum": {
-                  "ID": "c316d663-d153-4cc8-9fc1-4411db356bed",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "checksum",
-                  "Value": "b92b40fead22529097629c0597186c05",
-                  "Props": {}
-                },
-                "name": {
-                  "ID": "91723bab-b455-4234-b5df-6e229d6f7ae8",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "name",
-                  "Value": "WiredProvider",
-                  "Props": {}
-                },
                 "version": {
-                  "ID": "aa8dee92-8111-4e5f-8002-bda1bfde2da1",
+                  "ID": "402c9682-2104-467c-8399-2717584ebc1e",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -6534,7 +5766,7 @@
               }
             },
             "$homie": {
-              "ID": "9655e98b-5fdb-4236-a817-e1ce86e20e11",
+              "ID": "562cfa21-1816-49de-a9d0-0a59e637a363",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$homie",
@@ -6542,38 +5774,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "a2034d20-7390-450d-92ae-a3fc31f8df32",
+              "ID": "56db2005-dd1e-4cab-924b-6f44c4030bcd",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
-                "config": {
-                  "ID": "05203d90-e5b7-47e6-abfd-cd83ae45f940",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "config",
-                  "Value": "{\"name\":\"Hard Wired Alarm Sensors\",\"device_id\":\"MCPProvider\",\"device_stats_interval\":300,\"wifi\":{\"ssid\":\"SFNSS1-24G\"},\"mqtt\":{\"host\":\"openhab.skoona.net\",\"port\":1883,\"base_topic\":\"sknSensors/\",\"auth\":true},\"ota\":{\"enabled\":true},\"settings\":{\"ipolA\":255,\"ipolB\":255}}",
-                  "Props": {}
-                },
-                "ota": {
-                  "ID": "9f19fd6d-3b8f-47b2-9103-404f1a6ee65e",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "ota",
-                  "Value": "",
-                  "Props": {
-                    "enabled": {
-                      "ID": "b192e0b6-3072-4c8d-88b2-808c5fa41272",
-                      "ElementType": 13,
-                      "Parent": "ota",
-                      "Name": "enabled",
-                      "Value": "true"
-                    }
-                  }
-                },
                 "version": {
-                  "ID": "9ac597ae-1d2f-4439-8638-ddb746e3e77c",
+                  "ID": "d77a5f8a-a310-45a4-b00f-b4e6119e9c63",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -6583,7 +5791,7 @@
               }
             },
             "$localip": {
-              "ID": "a9bff277-3a03-4947-bcfd-436b2e25ee94",
+              "ID": "d957d643-37f2-46a5-b0de-32fb8cfa2a18",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$localip",
@@ -6591,7 +5799,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "cbe4e48e-abd9-447d-9e16-30eea49a6c9e",
+              "ID": "071417a7-dd83-4f6d-b04c-a89e20afbf05",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$mac",
@@ -6599,7 +5807,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "103b45f5-8973-4278-aef0-452ad8d9e13f",
+              "ID": "93c21dc8-8ee0-429d-9ce2-f33f7d4554ee",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$name",
@@ -6607,7 +5815,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "903ca5aa-b961-46ef-9789-572db6f3262d",
+              "ID": "1db99ff4-a09b-41c4-be91-b573e3afa48c",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$nodes",
@@ -6615,7 +5823,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "a7b76a64-d28c-4184-a8de-4bb8bd6e7e89",
+              "ID": "5c02fb24-2c4f-43dc-97fd-91aac128fba5",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$state",
@@ -6623,30 +5831,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "9b32942a-28b2-48c4-91e6-a7cc5c346a77",
+              "ID": "55e35e4d-a02b-4f49-9f71-d69c94571fca",
               "ElementType": 11,
               "Parent": "MCPProvider",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
-                "interval": {
-                  "ID": "2bdd9c20-3d0f-47da-9f88-2b007521fe96",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "interval",
-                  "Value": "305",
-                  "Props": {}
-                },
-                "signal": {
-                  "ID": "bd52a460-3492-4b8d-aba4-f79d42a6ad54",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "signal",
-                  "Value": "58",
-                  "Props": {}
-                },
                 "uptime": {
-                  "ID": "27e40c50-a924-4975-9184-47c9e8b42c44",
+                  "ID": "3237b1f5-68b7-4605-b4e7-05d51adce5ce",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
@@ -6657,836 +5849,247 @@
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "6b18e190-f7f5-414e-9609-ce827f671377",
+            "hardware": {
+              "ID": "5a292eb5-96e4-4754-9c3e-830cb8b0c310",
               "ElementType": 14,
               "Parent": "MCPProvider",
-              "Name": "$name",
-              "Attrs": {
-                "hardware": {
-                  "ID": "e48d185b-74a4-4444-8093-d095f85aaa24",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                },
-                "wiredMonitor": {
-                  "ID": "d76912a4-4179-4770-b11d-7d917c72aa77",
-                  "ElementType": 15,
-                  "Parent": "wiredMonitor",
-                  "Name": "wiredMonitor",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "cf74eb4f-f5eb-43a4-bf69-11f7279530b3",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "$properties",
-              "Attrs": {
-                "hardware": {
-                  "ID": "ef252100-0e29-4af4-8c36-d352f81ceac0",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                },
-                "wiredMonitor": {
-                  "ID": "972cda5e-23a0-4d7c-87a8-dee18607dd4b",
-                  "ElementType": 15,
-                  "Parent": "wiredMonitor",
-                  "Name": "wiredMonitor",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "23f0ac81-6dc2-4148-80b3-be2a01ffeb72",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "$type",
-              "Attrs": {
-                "hardware": {
-                  "ID": "ec2321d1-1ca5-4fe6-ab68-93beaf059edb",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                },
-                "wiredMonitor": {
-                  "ID": "4155f1c1-1041-4ef0-8931-23373678fc93",
-                  "ElementType": 15,
-                  "Parent": "wiredMonitor",
-                  "Name": "wiredMonitor",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "mac": {
-              "ID": "fd9f971b-48ba-4594-b1f7-90526d974259",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "mac",
+              "Name": "hardware",
               "Attrs": {},
               "Props": {
-                "mac": {
-                  "ID": "e0715751-a467-4029-a035-32162e390f04",
+                "hardware": {
+                  "ID": "76f440d7-b10b-4f82-9d4b-e5374ed8df07",
                   "ElementType": 16,
                   "Parent": "hardware",
-                  "Name": "mac",
+                  "Name": "hardware",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "97d32e38-72b0-454f-8ba4-d88a6a3f00e1",
+                      "ID": "90f1112c-b630-4e91-a518-7f616fc75af4",
                       "ElementType": 17,
                       "Parent": "mac",
                       "Name": "$datatype",
-                      "Value": "sring"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "3f878a60-11d8-473e-bf83-13af0eb8b334",
+                      "ID": "31f6e63d-73de-4ab8-9e45-9052ae168e79",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Device Info"
+                    },
+                    "$properties": {
+                      "ID": "d7696264-ef84-437e-8fe2-3f39e5e19f96",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "signal,mac,resetReason,voltage"
+                    },
+                    "$type": {
+                      "ID": "acb407db-ae10-44a0-993e-7e069155274e",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "37435f58-348b-4830-a5a4-b78f3afbc40a",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "mac": {
+                      "ID": "e3e75c4e-a177-4939-8bae-8df38bd53d8f",
                       "ElementType": 17,
                       "Parent": "mac",
-                      "Name": "$name",
-                      "Value": "mac"
-                    }
-                  }
-                }
-              }
-            },
-            "pin0": {
-              "ID": "7dc1d177-1c44-4b68-9cfa-1772c6cc78ba",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin0",
-              "Attrs": {},
-              "Props": {
-                "pin0": {
-                  "ID": "8f599fce-f8e3-4be5-ad51-d95e84cef928",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin0",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "91f1ba97-31de-4a7f-bffd-a379a4f9bc30",
-                      "ElementType": 17,
-                      "Parent": "pin0",
-                      "Name": "$datatype",
-                      "Value": "enum"
+                      "Name": "mac",
+                      "Value": "BC:DD:C2:24:B7:3C"
                     },
-                    "$format": {
-                      "ID": "3f2a44e7-75a3-42f7-8fa3-3cd7af5fb7e9",
-                      "ElementType": 17,
-                      "Parent": "pin0",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "24e87691-40cc-402e-8d06-4fa59b29cb3d",
-                      "ElementType": 17,
-                      "Parent": "pin0",
-                      "Name": "$name",
-                      "Value": "Pin 0"
-                    }
-                  }
-                }
-              }
-            },
-            "pin1": {
-              "ID": "147860a2-726e-4c06-ae3b-35eb2177c475",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin1",
-              "Attrs": {},
-              "Props": {
-                "pin1": {
-                  "ID": "ba57d2dd-c0ed-4779-8181-6cc9a694e40f",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin1",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "d79a4c0b-1465-4e07-bbf0-f9945ba1e25b",
-                      "ElementType": 17,
-                      "Parent": "pin1",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "bdbeb0df-52e6-48bc-a43d-08fb13a0e6c1",
-                      "ElementType": 17,
-                      "Parent": "pin1",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "cd570b16-3f4e-406f-bb8e-db1e13f5f51f",
-                      "ElementType": 17,
-                      "Parent": "pin1",
-                      "Name": "$name",
-                      "Value": "Pin 1"
-                    }
-                  }
-                }
-              }
-            },
-            "pin10": {
-              "ID": "ca1d0103-b94b-4b4e-868a-ea2c2b8ac403",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin10",
-              "Attrs": {},
-              "Props": {
-                "pin10": {
-                  "ID": "65e5f581-7b01-4353-8993-51e7def1fc8c",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin10",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "2025be84-4a7d-40a8-a6f1-56bcf5620a4e",
-                      "ElementType": 17,
-                      "Parent": "pin10",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "33a0ccb1-5645-4f6d-8708-4005fba98386",
-                      "ElementType": 17,
-                      "Parent": "pin10",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "832ab2ac-2989-4056-a43b-649a91b51f8e",
-                      "ElementType": 17,
-                      "Parent": "pin10",
-                      "Name": "$name",
-                      "Value": "Pin 10"
-                    }
-                  }
-                }
-              }
-            },
-            "pin11": {
-              "ID": "c807e824-5605-458f-9bca-09ddf57282a8",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin11",
-              "Attrs": {},
-              "Props": {
-                "pin11": {
-                  "ID": "02af1a66-dc8d-4746-818e-57658d4ad317",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin11",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "2201ea62-a9fe-4ad5-89bb-825db53f99e9",
-                      "ElementType": 17,
-                      "Parent": "pin11",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "b43527ac-564c-4118-b8c2-458f26fc7489",
-                      "ElementType": 17,
-                      "Parent": "pin11",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "f2a84b88-800a-41ae-ae8e-61caf34ab93a",
-                      "ElementType": 17,
-                      "Parent": "pin11",
-                      "Name": "$name",
-                      "Value": "Pin 11"
-                    }
-                  }
-                }
-              }
-            },
-            "pin12": {
-              "ID": "f1e2ecf5-7e01-4e5a-81e3-0a054d46c2a5",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin12",
-              "Attrs": {},
-              "Props": {
-                "pin12": {
-                  "ID": "41fb6f84-5b7e-44e3-99f7-b496678da4a5",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin12",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "c5dafe34-09d3-49cf-91a4-27d198c98079",
-                      "ElementType": 17,
-                      "Parent": "pin12",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "8429b1d7-4bac-4f0f-83d1-b44cb561144f",
-                      "ElementType": 17,
-                      "Parent": "pin12",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "b8ca5c59-e9ef-4dac-9835-f163e43a2aa7",
-                      "ElementType": 17,
-                      "Parent": "pin12",
-                      "Name": "$name",
-                      "Value": "Pin 12"
-                    }
-                  }
-                }
-              }
-            },
-            "pin13": {
-              "ID": "d80a9ad2-b446-4bc8-b35b-e5d4cf254d64",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin13",
-              "Attrs": {},
-              "Props": {
-                "pin13": {
-                  "ID": "e4e517b3-f52f-4dc2-b06d-e96f44203fa7",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin13",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "a07cf9cc-5173-4d83-91ce-0e1aee4cdb1c",
-                      "ElementType": 17,
-                      "Parent": "pin13",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "0cbce8c6-9da5-448a-9e36-a542670a0a76",
-                      "ElementType": 17,
-                      "Parent": "pin13",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "ba7c55e3-75ca-4869-85ab-9e2cb84da6dc",
-                      "ElementType": 17,
-                      "Parent": "pin13",
-                      "Name": "$name",
-                      "Value": "Pin 13"
-                    }
-                  }
-                }
-              }
-            },
-            "pin14": {
-              "ID": "669ec139-4a88-4f73-b12c-ccde611902cc",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin14",
-              "Attrs": {},
-              "Props": {
-                "pin14": {
-                  "ID": "f4acd27e-6da0-452a-8a6f-ed5544ba1c41",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin14",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "ecff7c4b-9d5f-4448-a5ff-2d6b0a367b10",
-                      "ElementType": 17,
-                      "Parent": "pin14",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "f0cb2372-d4e3-46a4-838e-1be509cd7826",
-                      "ElementType": 17,
-                      "Parent": "pin14",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "00050b6d-6a8c-4c7a-bd49-82bbba5a5e19",
-                      "ElementType": 17,
-                      "Parent": "pin14",
-                      "Name": "$name",
-                      "Value": "Pin 14"
-                    }
-                  }
-                }
-              }
-            },
-            "pin15": {
-              "ID": "c58e8fac-0445-44da-87c0-e31a65f01d2c",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin15",
-              "Attrs": {},
-              "Props": {
-                "pin15": {
-                  "ID": "e1680a8d-e368-4ff9-a8b5-457c7f04a1ac",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin15",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "549a5db0-ebf5-4351-bbb1-113502d5babc",
-                      "ElementType": 17,
-                      "Parent": "pin15",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "53452a99-9c18-4d29-892d-7ff392066961",
-                      "ElementType": 17,
-                      "Parent": "pin15",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "29273def-158e-4da7-a6ed-e03bec6275ed",
-                      "ElementType": 17,
-                      "Parent": "pin15",
-                      "Name": "$name",
-                      "Value": "Pin 15"
-                    }
-                  }
-                }
-              }
-            },
-            "pin2": {
-              "ID": "b2c19a71-a042-4fb5-b480-4a0978546607",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin2",
-              "Attrs": {},
-              "Props": {
-                "pin2": {
-                  "ID": "6777207f-8620-4b4a-a648-a79b0f381482",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin2",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "b723726e-6245-455e-9465-fac917c53f93",
-                      "ElementType": 17,
-                      "Parent": "pin2",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "eb1ed3fb-e156-4a00-a8d2-5683910551ff",
-                      "ElementType": 17,
-                      "Parent": "pin2",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "0caa87e9-5a8a-491b-b1cc-f37ba1a04c66",
-                      "ElementType": 17,
-                      "Parent": "pin2",
-                      "Name": "$name",
-                      "Value": "Pin 2"
-                    }
-                  }
-                }
-              }
-            },
-            "pin3": {
-              "ID": "065a134f-b228-400d-843d-610f844b13a0",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin3",
-              "Attrs": {},
-              "Props": {
-                "pin3": {
-                  "ID": "4843aca8-1d26-49ad-beab-f11ee39ee877",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin3",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "f071e10e-26b8-4e01-8201-4273378458b6",
-                      "ElementType": 17,
-                      "Parent": "pin3",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "c3106ef3-b859-402a-94c0-e8ab9909ad86",
-                      "ElementType": 17,
-                      "Parent": "pin3",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "aab3a26b-fb5a-414b-9c22-5bf953ab4585",
-                      "ElementType": 17,
-                      "Parent": "pin3",
-                      "Name": "$name",
-                      "Value": "Pin 3"
-                    }
-                  }
-                }
-              }
-            },
-            "pin4": {
-              "ID": "c7a0f235-ab94-41e2-a355-ab1000cf959b",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin4",
-              "Attrs": {},
-              "Props": {
-                "pin4": {
-                  "ID": "5ddab75f-3bc4-43a2-8649-98ee1288e365",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin4",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "185b84ff-6f83-4713-822f-d5ad7d4f5c0b",
-                      "ElementType": 17,
-                      "Parent": "pin4",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "8cf471c7-fc90-472a-bbfb-1a7ce4ccb38e",
-                      "ElementType": 17,
-                      "Parent": "pin4",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "9ffe5d0e-64c4-48ff-ba1a-8f8f704cb2d7",
-                      "ElementType": 17,
-                      "Parent": "pin4",
-                      "Name": "$name",
-                      "Value": "Pin 4"
-                    }
-                  }
-                }
-              }
-            },
-            "pin5": {
-              "ID": "adb387ee-880d-4900-965a-d35e2e8f41d1",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin5",
-              "Attrs": {},
-              "Props": {
-                "pin5": {
-                  "ID": "13466437-0428-4f8d-963e-65c97bc525cf",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin5",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "17f08805-cde4-4208-a950-86dac9161ba6",
-                      "ElementType": 17,
-                      "Parent": "pin5",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "ade37ff0-71a4-4624-b936-d438563fe1b1",
-                      "ElementType": 17,
-                      "Parent": "pin5",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "98e4d446-376e-443f-95c6-884d1b87f25e",
-                      "ElementType": 17,
-                      "Parent": "pin5",
-                      "Name": "$name",
-                      "Value": "Pin 5"
-                    }
-                  }
-                }
-              }
-            },
-            "pin6": {
-              "ID": "9ab07179-4e41-4dd2-9efb-ed890953577e",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin6",
-              "Attrs": {},
-              "Props": {
-                "pin6": {
-                  "ID": "f5db577e-9a79-48fb-8514-df4823ab238e",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin6",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "954e9612-7f3e-49cb-9b10-2df96e10baa5",
-                      "ElementType": 17,
-                      "Parent": "pin6",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "3c14f046-5ab6-48e4-b734-a4ad211d19bb",
-                      "ElementType": 17,
-                      "Parent": "pin6",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "fe9d664b-1f35-46a6-a8f1-a1a4620b484b",
-                      "ElementType": 17,
-                      "Parent": "pin6",
-                      "Name": "$name",
-                      "Value": "Pin 6"
-                    }
-                  }
-                }
-              }
-            },
-            "pin7": {
-              "ID": "0d2717d8-628f-43c6-9d14-c62da1ef184b",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin7",
-              "Attrs": {},
-              "Props": {
-                "pin7": {
-                  "ID": "cc1b31e0-3e5d-4b93-a368-66eaaf544109",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin7",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "5992fe71-572f-4732-9be1-dc71ed7f0e3c",
-                      "ElementType": 17,
-                      "Parent": "pin7",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "496284c0-0ce1-454c-b9f1-5a16d5895819",
-                      "ElementType": 17,
-                      "Parent": "pin7",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "2ce50731-75ea-4ed6-863d-519cfd0cb724",
-                      "ElementType": 17,
-                      "Parent": "pin7",
-                      "Name": "$name",
-                      "Value": "Pin 7"
-                    }
-                  }
-                }
-              }
-            },
-            "pin8": {
-              "ID": "7aab5380-459f-42bf-ab06-e3c794b25e2f",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin8",
-              "Attrs": {},
-              "Props": {
-                "pin8": {
-                  "ID": "3a2b08d2-5b81-4079-bd7d-3a556cbf8404",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin8",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "a999d73b-a998-4b84-8f61-8dca86ee9b8e",
-                      "ElementType": 17,
-                      "Parent": "pin8",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "85dc3501-4b0f-4c70-af1c-ec043900cdc7",
-                      "ElementType": 17,
-                      "Parent": "pin8",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "fddacc32-8eb6-4a34-8b9d-8024f26ac0e2",
-                      "ElementType": 17,
-                      "Parent": "pin8",
-                      "Name": "$name",
-                      "Value": "Pin 8"
-                    }
-                  }
-                }
-              }
-            },
-            "pin9": {
-              "ID": "d5217d34-af1b-4fb6-bdd5-ade521a81edf",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "pin9",
-              "Attrs": {},
-              "Props": {
-                "pin9": {
-                  "ID": "b2e9eec8-bf69-4ed9-a4c7-b06af6100b37",
-                  "ElementType": 16,
-                  "Parent": "wiredMonitor",
-                  "Name": "pin9",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "9bce39be-1829-4322-a46c-d3b4d0d43efb",
-                      "ElementType": 17,
-                      "Parent": "pin9",
-                      "Name": "$datatype",
-                      "Value": "enum"
-                    },
-                    "$format": {
-                      "ID": "53ce690c-294e-4977-bd2f-7260a1350aeb",
-                      "ElementType": 17,
-                      "Parent": "pin9",
-                      "Name": "$format",
-                      "Value": "OPEN,CLOSED"
-                    },
-                    "$name": {
-                      "ID": "3c87cd53-f36a-4c5d-9dd5-9c85476e902f",
-                      "ElementType": 17,
-                      "Parent": "pin9",
-                      "Name": "$name",
-                      "Value": "Pin 9"
-                    }
-                  }
-                }
-              }
-            },
-            "resetReason": {
-              "ID": "4c195389-66ee-4e57-b924-d6b0574828b7",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "resetReason",
-              "Attrs": {},
-              "Props": {
-                "resetReason": {
-                  "ID": "06845d97-5bcd-4606-92f0-ecf3c86f4319",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "resetReason",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "418bb39e-d5b2-4133-a41b-0613028cbf4e",
+                    "resetReason": {
+                      "ID": "dc398684-f0f9-420e-8a66-f82c5f685e91",
                       "ElementType": 17,
                       "Parent": "resetReason",
-                      "Name": "$datatype",
-                      "Value": "string"
+                      "Name": "resetReason",
+                      "Value": "External System"
                     },
-                    "$name": {
-                      "ID": "f9b9b743-ade8-46eb-b4e4-e37de1d1bb3c",
+                    "signal": {
+                      "ID": "1658a2d8-4a4f-41fd-90d1-f1c66f8279ed",
                       "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$name",
-                      "Value": "Last Reset Reason"
+                      "Parent": "signal",
+                      "Name": "signal",
+                      "Value": "-70"
+                    },
+                    "voltage": {
+                      "ID": "e8cd69a1-de91-46ff-ad63-7a262d273eee",
+                      "ElementType": 17,
+                      "Parent": "voltage",
+                      "Name": "voltage",
+                      "Value": "2.99"
                     }
                   }
                 }
               }
             },
-            "signal": {
-              "ID": "152ce614-e0ff-4c93-a00e-86e9db8d3cdb",
+            "wiredMonitor": {
+              "ID": "94ef7a5c-ae0d-47d9-ab4f-d347859d31a7",
               "ElementType": 14,
               "Parent": "MCPProvider",
-              "Name": "signal",
+              "Name": "wiredMonitor",
               "Attrs": {},
               "Props": {
-                "signal": {
-                  "ID": "bbb29133-b93c-4321-b949-5e16094b6cd6",
+                "wiredMonitor": {
+                  "ID": "c3664187-822c-409f-8d1c-602d0278b248",
                   "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "signal",
+                  "Parent": "wiredMonitor",
+                  "Name": "wiredMonitor",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "3535ce64-31c0-4167-ab25-f2c998ded393",
+                      "ID": "9422ded4-8a74-4709-aae1-ecc4ba6ead26",
                       "ElementType": 17,
-                      "Parent": "signal",
+                      "Parent": "pin0",
                       "Name": "$datatype",
-                      "Value": "integer"
+                      "Value": ""
+                    },
+                    "$format": {
+                      "ID": "078cf352-c203-4a5b-b96c-32e416b906c7",
+                      "ElementType": 17,
+                      "Parent": "pin0",
+                      "Name": "$format",
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "d812fff9-0620-4024-9328-a5b588f6312e",
+                      "ID": "410a4c78-c922-405b-9786-deeaf210aeb8",
                       "ElementType": 17,
-                      "Parent": "signal",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "RSSI"
+                      "Value": "Wired Sensors"
                     },
-                    "$unit": {
-                      "ID": "f0ffa7c0-107f-45f3-8226-5dd4745c38a3",
+                    "$properties": {
+                      "ID": "172a0518-82e1-40a5-9044-c7a75fd3223d",
                       "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$unit",
-                      "Value": "dBm"
-                    }
-                  }
-                }
-              }
-            },
-            "voltage": {
-              "ID": "bdca6ed9-f35d-4198-801c-093459965381",
-              "ElementType": 14,
-              "Parent": "MCPProvider",
-              "Name": "voltage",
-              "Attrs": {},
-              "Props": {
-                "voltage": {
-                  "ID": "5a08cc9d-9bbf-4cf3-8eff-b63d326f7d5c",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "voltage",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "1b5e98c8-1509-4e21-b04d-74f03240e322",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$datatype",
-                      "Value": "float"
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "pin0,pin1,pin2,pin3,pin4,pin5,pin6,pin7,pin8,pin9,pin10,pin11,pin12,pin13,pin14,pin15"
                     },
-                    "$name": {
-                      "ID": "bf1fe812-ed44-4c59-a194-26bdf224689c",
+                    "$type": {
+                      "ID": "a1468740-29f2-424d-9d4f-eef14a697f67",
                       "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$name",
-                      "Value": "3.3V Supply"
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
                     },
-                    "$unit": {
-                      "ID": "10dac851-4fcb-43e3-8851-57d65189496a",
+                    "pin0": {
+                      "ID": "ecc19900-3aa6-4973-8058-a36c105c2a29",
                       "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$unit",
-                      "Value": "V"
+                      "Parent": "pin0",
+                      "Name": "pin0",
+                      "Value": "OPEN"
+                    },
+                    "pin1": {
+                      "ID": "7849b842-1f63-45d0-91d6-007b9f0ae031",
+                      "ElementType": 17,
+                      "Parent": "pin1",
+                      "Name": "pin1",
+                      "Value": "OPEN"
+                    },
+                    "pin10": {
+                      "ID": "0f3efe99-315b-4716-9b70-de0b9373fbab",
+                      "ElementType": 17,
+                      "Parent": "pin10",
+                      "Name": "pin10",
+                      "Value": "OPEN"
+                    },
+                    "pin11": {
+                      "ID": "165ed15e-1cbf-4859-9938-8dfcc3f27dfd",
+                      "ElementType": 17,
+                      "Parent": "pin11",
+                      "Name": "pin11",
+                      "Value": "OPEN"
+                    },
+                    "pin12": {
+                      "ID": "e9027853-8e09-48e3-99ca-a5f4183be935",
+                      "ElementType": 17,
+                      "Parent": "pin12",
+                      "Name": "pin12",
+                      "Value": "OPEN"
+                    },
+                    "pin13": {
+                      "ID": "d43025ec-af83-4a0d-9bdd-9f9fb7c78a39",
+                      "ElementType": 17,
+                      "Parent": "pin13",
+                      "Name": "pin13",
+                      "Value": "CLOSED"
+                    },
+                    "pin14": {
+                      "ID": "4650e42b-fc5b-4111-9f22-8f5510dde83c",
+                      "ElementType": 17,
+                      "Parent": "pin14",
+                      "Name": "pin14",
+                      "Value": "OPEN"
+                    },
+                    "pin15": {
+                      "ID": "2c6b0b41-3c0a-4dbd-8615-2e7015e4d134",
+                      "ElementType": 17,
+                      "Parent": "pin15",
+                      "Name": "pin15",
+                      "Value": "OPEN"
+                    },
+                    "pin2": {
+                      "ID": "eb9aa069-ae19-422d-a8c1-38ba52bdfc58",
+                      "ElementType": 17,
+                      "Parent": "pin2",
+                      "Name": "pin2",
+                      "Value": "OPEN"
+                    },
+                    "pin3": {
+                      "ID": "1b0e9b9c-f11b-434f-9868-add59a805ffe",
+                      "ElementType": 17,
+                      "Parent": "pin3",
+                      "Name": "pin3",
+                      "Value": "OPEN"
+                    },
+                    "pin4": {
+                      "ID": "0b6449d0-cecf-42c1-9b99-5ac00ca5af22",
+                      "ElementType": 17,
+                      "Parent": "pin4",
+                      "Name": "pin4",
+                      "Value": "OPEN"
+                    },
+                    "pin5": {
+                      "ID": "11eda608-755d-4e8d-a8e5-ce9538b89d66",
+                      "ElementType": 17,
+                      "Parent": "pin5",
+                      "Name": "pin5",
+                      "Value": "OPEN"
+                    },
+                    "pin6": {
+                      "ID": "b3b00c53-7890-4004-b40f-6ce5511cc8c4",
+                      "ElementType": 17,
+                      "Parent": "pin6",
+                      "Name": "pin6",
+                      "Value": "OPEN"
+                    },
+                    "pin7": {
+                      "ID": "880fa241-b1c3-4fd8-915d-9aa8857c0bdb",
+                      "ElementType": 17,
+                      "Parent": "pin7",
+                      "Name": "pin7",
+                      "Value": "OPEN"
+                    },
+                    "pin8": {
+                      "ID": "83165b39-4316-4f9e-af7f-a978206cd15d",
+                      "ElementType": 17,
+                      "Parent": "pin8",
+                      "Name": "pin8",
+                      "Value": "OPEN"
+                    },
+                    "pin9": {
+                      "ID": "94f1f79a-8ae1-452f-a97b-a491cebd8e43",
+                      "ElementType": 17,
+                      "Parent": "pin9",
+                      "Name": "pin9",
+                      "Value": "OPEN"
                     }
                   }
                 }
@@ -7503,30 +6106,14 @@
           "Name": "MediaRoom",
           "Attrs": {
             "$fw": {
-              "ID": "30e80b28-eb81-4de8-8509-98d36e93c6ff",
+              "ID": "610d127d-e976-40c8-a866-ab46706d091b",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$fw",
               "Value": "",
               "Props": {
-                "checksum": {
-                  "ID": "69e7c8a9-c7b1-4196-95f2-c4c652a4e9a7",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "checksum",
-                  "Value": "3ef8fbb48c5b23788a22a998c14a1a6d",
-                  "Props": {}
-                },
-                "name": {
-                  "ID": "dbf3c348-ee2e-4d73-a597-a3faeb562777",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "name",
-                  "Value": "Monitor-DHT-RCWL-Metrics",
-                  "Props": {}
-                },
                 "version": {
-                  "ID": "2c2cfc77-f787-4d0a-96e3-46075f8db44b",
+                  "ID": "f4dfd6e9-0964-4b28-8c40-b0aa823099e3",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -7536,7 +6123,7 @@
               }
             },
             "$homie": {
-              "ID": "ab3ebde1-1d17-4462-a35f-066d2fe5b13a",
+              "ID": "5f325f79-f053-4ee9-84d7-fbdb1c45c9e0",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$homie",
@@ -7544,38 +6131,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "083f73e6-01cd-45ed-be51-10914a89eb70",
+              "ID": "66100088-5e85-4857-a786-cc167c1e236d",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
-                "config": {
-                  "ID": "bdba9217-6226-4e75-8a46-cdba79f3612f",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "config",
-                  "Value": "{\"name\":\"Media Room\",\"device_id\":\"MediaRoom\",\"device_stats_interval\":180,\"wifi\":{\"ssid\":\"SFNSS1-24G\"},\"mqtt\":{\"host\":\"openhab.skoona.net\",\"port\":1883,\"base_topic\":\"sknSensors/\",\"auth\":true},\"ota\":{\"enabled\":true},\"settings\":{\"sensorInterval\":900,\"motionHoldInterval\":60}}",
-                  "Props": {}
-                },
-                "ota": {
-                  "ID": "58938252-a368-484a-880b-4b682f585891",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "ota",
-                  "Value": "",
-                  "Props": {
-                    "enabled": {
-                      "ID": "2e1565de-359b-4fad-9b9c-32876049a8f0",
-                      "ElementType": 13,
-                      "Parent": "ota",
-                      "Name": "enabled",
-                      "Value": "true"
-                    }
-                  }
-                },
                 "version": {
-                  "ID": "b387ce08-f4f9-4027-8950-8fd90bd8aa9b",
+                  "ID": "009f2066-3651-42bc-93a4-0bbd5504865f",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -7585,7 +6148,7 @@
               }
             },
             "$localip": {
-              "ID": "79681b6d-f880-4a4b-bfe1-16a963b11d0e",
+              "ID": "79147309-1ff5-4c1b-8c1a-b21c43585153",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$localip",
@@ -7593,7 +6156,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "ce8b2844-fb04-4544-82a0-52efe75672a4",
+              "ID": "3b3f1e3e-bfca-4551-8d83-2b964da19b52",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$mac",
@@ -7601,7 +6164,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "80f6c603-e146-4fcc-bb89-b630049e05c1",
+              "ID": "42b7d46f-6232-4e5a-b3ca-674374430bed",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$name",
@@ -7609,7 +6172,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "e8046748-a820-4cc3-aaf5-9107f4976c94",
+              "ID": "dfe8bc80-7f92-45d6-a2b5-f9b9a52667b3",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$nodes",
@@ -7617,7 +6180,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "10e66555-55ea-40ae-a883-2eb68a7858b3",
+              "ID": "93cb06f5-be4c-4e4b-9d2f-1a5868de5201",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$state",
@@ -7625,30 +6188,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "c00f3c6c-19bc-40d5-890e-d6d4a947433c",
+              "ID": "0d84782b-6c6f-4540-a4cd-44e27b672c9f",
               "ElementType": 11,
               "Parent": "MediaRoom",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
-                "interval": {
-                  "ID": "99b9b646-6ea7-4222-a7dd-ac063fe24ab9",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "interval",
-                  "Value": "185",
-                  "Props": {}
-                },
-                "signal": {
-                  "ID": "9f0eb341-4b4b-4dd8-9a29-40dbbc93f4ff",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "signal",
-                  "Value": "66",
-                  "Props": {}
-                },
                 "uptime": {
-                  "ID": "61c358f6-1945-491f-a8d8-a4c2354932a9",
+                  "ID": "40e99799-10f6-42cf-80cd-665758a0105d",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
@@ -7659,350 +6206,209 @@
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "ab8efd15-8611-4d80-bf3a-c0ff0c2a3581",
+            "Ambient": {
+              "ID": "b5f8edcd-6ea1-4e21-97f1-70c0cb160497",
               "ElementType": 14,
               "Parent": "MediaRoom",
-              "Name": "$name",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "521d83f3-2b53-459f-a20c-40c89452e451",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "0132c159-c8d0-4382-b122-8339fd2f25a4",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "06ca7a27-d578-45ed-870e-e22db9c03d17",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "042c1bca-5afa-4259-96a5-451136c0c06c",
-              "ElementType": 14,
-              "Parent": "MediaRoom",
-              "Name": "$properties",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "6751fc09-2bdd-43ab-a2de-c3df89c95852",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "663d3c28-ad33-494c-844f-e631d7a24866",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "7b1882be-4270-4643-b2ec-3f3c10805ea1",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "9fe59f58-8678-430e-a92e-11b9830efa13",
-              "ElementType": 14,
-              "Parent": "MediaRoom",
-              "Name": "$type",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "0ad18d6f-b976-457e-a5aa-b64af6dab4db",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "689b063c-c48e-46b1-9ba8-d0e08a00f450",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "d19efca7-3732-4123-8509-9cb96a4b4e1d",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "humidity": {
-              "ID": "70a46f7b-00a8-46f7-9497-017bf5a45406",
-              "ElementType": 14,
-              "Parent": "MediaRoom",
-              "Name": "humidity",
+              "Name": "Ambient",
               "Attrs": {},
               "Props": {
-                "humidity": {
-                  "ID": "abf08d83-c242-47d9-9808-61b57361c22c",
+                "Ambient": {
+                  "ID": "a9fb4f95-4a62-470c-bfca-aecba7fa628b",
                   "ElementType": 16,
                   "Parent": "Ambient",
-                  "Name": "humidity",
+                  "Name": "Ambient",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "e24b44f9-423f-4ccf-b57f-c9940db82a40",
+                      "ID": "c60d29cd-321b-4d44-a28b-4bd4bfc25a00",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$datatype",
-                      "Value": "float"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "36542be6-67cc-49fa-8f0c-bd6ef4ac9589",
+                      "ID": "c5641fe6-3a9f-401b-9cc6-f604ff8d06cd",
                       "ElementType": 17,
-                      "Parent": "humidity",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Humidity"
+                      "Value": "Temperature and Humidity Sensor"
+                    },
+                    "$properties": {
+                      "ID": "6fb4402d-a07f-4c63-9f5f-47570a21c6c0",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "humidity,temperature"
+                    },
+                    "$type": {
+                      "ID": "24aabef1-963e-41f4-b37f-5f56a0b69cb3",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
                     },
                     "$unit": {
-                      "ID": "6db61105-eb6f-496b-9646-e36320f305cd",
+                      "ID": "5eda330e-aed6-49ea-a214-ec09a5082b2f",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$unit",
-                      "Value": "%rH"
-                    }
-                  }
-                }
-              }
-            },
-            "mac": {
-              "ID": "90684a22-be38-4bf3-b72c-68b7a7fd8db3",
-              "ElementType": 14,
-              "Parent": "MediaRoom",
-              "Name": "mac",
-              "Attrs": {},
-              "Props": {
-                "mac": {
-                  "ID": "33d706e3-34c5-4b26-a611-3b0d0135bd96",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "mac",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "c1806f8e-6edd-4ab7-a352-dccf55399163",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$datatype",
-                      "Value": "sring"
+                      "Value": ""
                     },
-                    "$name": {
-                      "ID": "36d8219d-de70-4411-8827-80632bfc639b",
+                    "humidity": {
+                      "ID": "680614bf-ea82-4677-9b18-06c602bc7caf",
                       "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$name",
-                      "Value": "mac"
+                      "Parent": "humidity",
+                      "Name": "humidity",
+                      "Value": "6.60"
+                    },
+                    "temperature": {
+                      "ID": "189512ee-3fc5-45c6-889a-090f6d41e929",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "72.86"
                     }
                   }
                 }
               }
             },
-            "motion": {
-              "ID": "0c8b2d38-b757-4829-b225-24559445b903",
+            "Presence": {
+              "ID": "f494757f-d7c4-43dd-af35-5ea7be7bfc4e",
               "ElementType": 14,
               "Parent": "MediaRoom",
-              "Name": "motion",
+              "Name": "Presence",
               "Attrs": {},
               "Props": {
-                "motion": {
-                  "ID": "e2946b55-f6e6-49e3-a5b1-9db8b72c3f45",
+                "Presence": {
+                  "ID": "1cd98e7d-dedc-49eb-9945-b677f20cd033",
                   "ElementType": 16,
                   "Parent": "Presence",
-                  "Name": "motion",
+                  "Name": "Presence",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "a7120d8d-2bcd-4373-8dac-7c1b58ed1b1c",
+                      "ID": "1689ac4f-83c9-417b-a12d-b3b3c35df0fb",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$datatype",
-                      "Value": "enum"
+                      "Value": ""
                     },
                     "$format": {
-                      "ID": "d2dbb848-cb87-4df6-be51-cbd7ba5a2c65",
+                      "ID": "45ed03fd-64c2-4746-a27b-d92349d12da7",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$format",
-                      "Value": "OPEN,CLOSED"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "1dfee8ec-0125-4ba7-9448-00b9601d42ed",
+                      "ID": "57485f69-8873-4cd8-a3cf-db2fff88135e",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Motion Sensor"
+                    },
+                    "$properties": {
+                      "ID": "5d8b9d90-fff6-40e8-9fda-7844064a73e6",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "motion"
+                    },
+                    "$type": {
+                      "ID": "cc6398c8-0c05-4cfc-9b30-d688914902ac",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "motion": {
+                      "ID": "7ae5e75d-bc6c-4b81-9bc6-3362bbd21780",
                       "ElementType": 17,
                       "Parent": "motion",
-                      "Name": "$name",
-                      "Value": "Motion"
+                      "Name": "motion",
+                      "Value": "OPEN"
                     }
                   }
                 }
               }
             },
-            "resetReason": {
-              "ID": "4d593c2e-3ee9-4515-8d34-6fa9d5814341",
+            "hardware": {
+              "ID": "e4fccae9-c565-404b-8e8d-eec954436b07",
               "ElementType": 14,
               "Parent": "MediaRoom",
-              "Name": "resetReason",
+              "Name": "hardware",
               "Attrs": {},
               "Props": {
-                "resetReason": {
-                  "ID": "fc186eb2-cec2-4c38-a5e4-12c4f954aa93",
+                "hardware": {
+                  "ID": "29e85ca6-1538-432f-bc14-301f10d0ef29",
                   "ElementType": 16,
                   "Parent": "hardware",
-                  "Name": "resetReason",
+                  "Name": "hardware",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "a3bb5287-1137-44c9-8954-035f4b9019d7",
+                      "ID": "a3f22e1d-c8e9-4c5d-9f1d-738866deb638",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "40fd4ac1-939b-4f09-be61-e3abc4e10a81",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Device Info"
+                    },
+                    "$properties": {
+                      "ID": "75b47f52-da48-4302-9f86-c1df5a8d5bfa",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "signal,mac,resetReason,voltage"
+                    },
+                    "$type": {
+                      "ID": "99d4b6e8-0dbc-4014-9dcc-f2a7504d7c63",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "5496c18d-5e2c-4742-bd17-32a05b0623f5",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "mac": {
+                      "ID": "35d4483c-a28b-451e-8ba0-3069fe45ef7f",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "mac",
+                      "Value": "B4:E6:2D:15:50:3A"
+                    },
+                    "resetReason": {
+                      "ID": "5df058fe-dc77-4045-bd38-d84858a8c6f8",
                       "ElementType": 17,
                       "Parent": "resetReason",
-                      "Name": "$datatype",
-                      "Value": "string"
+                      "Name": "resetReason",
+                      "Value": "External System"
                     },
-                    "$name": {
-                      "ID": "6f414de3-afe0-4428-97af-0af0e62c3079",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$name",
-                      "Value": "Last Reset Reason"
-                    }
-                  }
-                }
-              }
-            },
-            "signal": {
-              "ID": "3bbb8948-54d2-4768-bad5-7824927c50b6",
-              "ElementType": 14,
-              "Parent": "MediaRoom",
-              "Name": "signal",
-              "Attrs": {},
-              "Props": {
-                "signal": {
-                  "ID": "1bc86a51-dcf6-4eee-a2aa-2bff56736303",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "signal",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "28e6f647-046b-443c-8a8a-709bbe9a83a5",
+                    "signal": {
+                      "ID": "036743e6-8b23-49f2-9213-6621e45aaec8",
                       "ElementType": 17,
                       "Parent": "signal",
-                      "Name": "$datatype",
-                      "Value": "integer"
+                      "Name": "signal",
+                      "Value": "-67"
                     },
-                    "$name": {
-                      "ID": "073fd6dd-ab06-40db-a39a-ec8f0b9ab4e7",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$name",
-                      "Value": "RSSI"
-                    },
-                    "$unit": {
-                      "ID": "a8e83ff9-6c87-4749-8a82-609fe59b1ff3",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$unit",
-                      "Value": "dBm"
-                    }
-                  }
-                }
-              }
-            },
-            "temperature": {
-              "ID": "1e5f2172-4f04-46e9-88bc-fe4da0e2c587",
-              "ElementType": 14,
-              "Parent": "MediaRoom",
-              "Name": "temperature",
-              "Attrs": {},
-              "Props": {
-                "temperature": {
-                  "ID": "9864798b-d0be-495e-a3e0-1c2422857130",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "temperature",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "b837f666-e17b-4b95-ae4c-ae75054c9d8a",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "b4ad9ae6-2630-4358-be66-24544b2f5427",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$name",
-                      "Value": "Temperature"
-                    },
-                    "$unit": {
-                      "ID": "761a006e-7cbb-423e-9f3f-79395f07e894",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$unit",
-                      "Value": "°F"
-                    }
-                  }
-                }
-              }
-            },
-            "voltage": {
-              "ID": "1c33d82d-4f5c-4a2e-899d-2097221269ca",
-              "ElementType": 14,
-              "Parent": "MediaRoom",
-              "Name": "voltage",
-              "Attrs": {},
-              "Props": {
-                "voltage": {
-                  "ID": "b930ff14-0ccd-494a-80fc-ffb0b2f68ff4",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "voltage",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "d56335cc-7623-469a-85eb-3dba553fe233",
+                    "voltage": {
+                      "ID": "dfe04fd2-c543-4f68-9eb6-ed1fc4852a05",
                       "ElementType": 17,
                       "Parent": "voltage",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "e79ddb1f-a851-49c6-96b8-fabe6a635887",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$name",
-                      "Value": "3.3V Supply"
-                    },
-                    "$unit": {
-                      "ID": "29936ad8-fcb3-47d7-86e7-98e3dc66c942",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$unit",
-                      "Value": "V"
+                      "Name": "voltage",
+                      "Value": "3.12"
                     }
                   }
                 }
@@ -8019,30 +6425,14 @@
           "Name": "OutsideMonitor",
           "Attrs": {
             "$fw": {
-              "ID": "4eb892a0-2fa5-4eec-9fdf-7e8fdb628566",
+              "ID": "1c3351a0-bc55-4eea-8f3f-d23b874dd4ad",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$fw",
               "Value": "",
               "Props": {
-                "checksum": {
-                  "ID": "04a5bf57-fb0d-4b30-ad0e-f784b82d2f7f",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "checksum",
-                  "Value": "615fed382ab44bd43fe83508aecac682",
-                  "Props": {}
-                },
-                "name": {
-                  "ID": "1e2191f4-f092-4544-a8a4-e08e1f98ff99",
-                  "ElementType": 12,
-                  "Parent": "$fw",
-                  "Name": "name",
-                  "Value": "Monitor-SHT31-RCWL-Metrics",
-                  "Props": {}
-                },
                 "version": {
-                  "ID": "ca5ca678-4742-4d2b-b204-44ae5db3548d",
+                  "ID": "b15ca46e-835d-43db-9266-5687e10ff063",
                   "ElementType": 12,
                   "Parent": "$fw",
                   "Name": "version",
@@ -8052,7 +6442,7 @@
               }
             },
             "$homie": {
-              "ID": "a39a904e-b86d-4137-9f79-79e0dad17a82",
+              "ID": "f3f2a02f-9fa3-4100-a256-2cdea22a5012",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$homie",
@@ -8060,38 +6450,14 @@
               "Props": {}
             },
             "$implementation": {
-              "ID": "871ee7b5-312a-4319-96bb-645965b06f4b",
+              "ID": "c8adb82f-7dd9-4387-bf3b-323f33b34ed6",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$implementation",
-              "Value": "esp8266",
+              "Value": "",
               "Props": {
-                "config": {
-                  "ID": "aa63adce-c460-4c99-94fe-a3ebf9cbe654",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "config",
-                  "Value": "{\"name\":\"Outside Monitor\",\"device_id\":\"OutsideMonitor\",\"device_stats_interval\":900,\"wifi\":{\"ssid\":\"SFNSS1-24G\"},\"mqtt\":{\"host\":\"openhab.skoona.net\",\"port\":1883,\"base_topic\":\"sknSensors/\",\"auth\":true},\"ota\":{\"enabled\":true},\"settings\":{\"sensorsInterval\":900,\"motionHoldInterval\":60}}",
-                  "Props": {}
-                },
-                "ota": {
-                  "ID": "c00990f6-1ecb-4cd1-aa1b-849c6da89ade",
-                  "ElementType": 12,
-                  "Parent": "$implementation",
-                  "Name": "ota",
-                  "Value": "",
-                  "Props": {
-                    "enabled": {
-                      "ID": "36e0ddb5-9bb8-44db-ba5c-e28d465d2677",
-                      "ElementType": 13,
-                      "Parent": "ota",
-                      "Name": "enabled",
-                      "Value": "true"
-                    }
-                  }
-                },
                 "version": {
-                  "ID": "228cb13b-b906-4f85-8f51-d05e9e92eaf0",
+                  "ID": "949e4af3-b20b-484d-a47f-b980f6909f49",
                   "ElementType": 12,
                   "Parent": "$implementation",
                   "Name": "version",
@@ -8101,7 +6467,7 @@
               }
             },
             "$localip": {
-              "ID": "fb4e6518-5bbe-41d1-b1b6-c58d1940fc3b",
+              "ID": "bab29332-3e2f-47f4-82f7-3a2c89663b24",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$localip",
@@ -8109,7 +6475,7 @@
               "Props": {}
             },
             "$mac": {
-              "ID": "c8cd1f39-b268-4690-83b1-4dca42db6200",
+              "ID": "7877f83d-3f26-4917-aaee-e90962bd6862",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$mac",
@@ -8117,7 +6483,7 @@
               "Props": {}
             },
             "$name": {
-              "ID": "81e5986b-f5bc-4501-aa98-0bd99944105c",
+              "ID": "e3f488f2-bebd-4390-805e-1474b1a30d63",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$name",
@@ -8125,7 +6491,7 @@
               "Props": {}
             },
             "$nodes": {
-              "ID": "0b0dc076-c0bf-41e5-9754-57402f332c2b",
+              "ID": "21fd23ba-e689-47a1-b1ac-ebb62236430d",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$nodes",
@@ -8133,7 +6499,7 @@
               "Props": {}
             },
             "$state": {
-              "ID": "bdcd82bb-0866-4118-9748-198ea282d215",
+              "ID": "f9261a34-591d-4dcb-b9c2-0a9218cd09fb",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$state",
@@ -8141,30 +6507,14 @@
               "Props": {}
             },
             "$stats": {
-              "ID": "8a063bb6-b1dd-4430-b709-c6b1b019a041",
+              "ID": "a9941893-b0d9-4327-88bc-5e21de2e10a1",
               "ElementType": 11,
               "Parent": "OutsideMonitor",
               "Name": "$stats",
-              "Value": "uptime",
+              "Value": "",
               "Props": {
-                "interval": {
-                  "ID": "cc83f98f-a974-422f-b6fe-4bc8f7648b53",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "interval",
-                  "Value": "905",
-                  "Props": {}
-                },
-                "signal": {
-                  "ID": "99418977-29cf-48a5-826c-565259009451",
-                  "ElementType": 12,
-                  "Parent": "$stats",
-                  "Name": "signal",
-                  "Value": "92",
-                  "Props": {}
-                },
                 "uptime": {
-                  "ID": "7a9485b8-488d-4332-ac65-4fe65d5d6c06",
+                  "ID": "3bc620fc-9d06-44e3-9a1d-f1744405569e",
                   "ElementType": 12,
                   "Parent": "$stats",
                   "Name": "uptime",
@@ -8175,350 +6525,209 @@
             }
           },
           "Nodes": {
-            "$name": {
-              "ID": "a8ef24c2-8652-469d-b4ae-a245ca8bb80e",
+            "Ambient": {
+              "ID": "a9635d75-9336-40a1-8694-fa830027fc11",
               "ElementType": 14,
               "Parent": "OutsideMonitor",
-              "Name": "$name",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "7aa3befd-e072-41e8-b846-6141a4b0b17e",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "9089d4da-b410-4a86-81a7-b1c4f6684e40",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "0965d58a-11f1-4438-82e0-97f75e88a29e",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$properties": {
-              "ID": "09627b69-105c-46f3-bdda-90146f65e82d",
-              "ElementType": 14,
-              "Parent": "OutsideMonitor",
-              "Name": "$properties",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "a26c870e-961f-4448-9975-2894651c8065",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "957c9786-0a73-4101-b01f-01ef9b3b450b",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "83838bcf-109d-4ce0-b5f2-62c4ab9bff6b",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "$type": {
-              "ID": "d9ad823b-76d3-446e-a1db-a4f1ed33c907",
-              "ElementType": 14,
-              "Parent": "OutsideMonitor",
-              "Name": "$type",
-              "Attrs": {
-                "Ambient": {
-                  "ID": "4fce8ff4-8aa2-4b13-a5a5-c87a0a03bfb2",
-                  "ElementType": 15,
-                  "Parent": "Ambient",
-                  "Name": "Ambient",
-                  "Value": ""
-                },
-                "Presence": {
-                  "ID": "e4c5f1e1-e6d3-4ad4-925b-4c7f4b999e4d",
-                  "ElementType": 15,
-                  "Parent": "Presence",
-                  "Name": "Presence",
-                  "Value": ""
-                },
-                "hardware": {
-                  "ID": "303603eb-8848-4cc5-b29c-3abca8ebce78",
-                  "ElementType": 15,
-                  "Parent": "hardware",
-                  "Name": "hardware",
-                  "Value": ""
-                }
-              },
-              "Props": {}
-            },
-            "humidity": {
-              "ID": "bc1b88b9-7e07-4d91-a671-aa225737f4ed",
-              "ElementType": 14,
-              "Parent": "OutsideMonitor",
-              "Name": "humidity",
+              "Name": "Ambient",
               "Attrs": {},
               "Props": {
-                "humidity": {
-                  "ID": "ba05fb46-20da-4fcf-acb2-130d82fd546f",
+                "Ambient": {
+                  "ID": "4c04c5af-5df3-4699-ac85-5a5242e14df7",
                   "ElementType": 16,
                   "Parent": "Ambient",
-                  "Name": "humidity",
+                  "Name": "Ambient",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "dc8c7c8b-ba89-4716-b9b8-293b7081a4f8",
+                      "ID": "8fef1e3a-5a25-4d3d-9e62-e15b55af0d5c",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$datatype",
-                      "Value": "float"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "a44cbef8-01c4-4726-a77d-3ef38482b235",
+                      "ID": "738dd836-c119-47b4-8d9d-08f02188f49d",
                       "ElementType": 17,
-                      "Parent": "humidity",
+                      "Parent": "$name",
                       "Name": "$name",
-                      "Value": "Humidity"
+                      "Value": "Temperature and Humidity Sensor"
+                    },
+                    "$properties": {
+                      "ID": "96e00030-d2b3-4132-a313-a3dbbbfee52b",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "humidity,temperature"
+                    },
+                    "$type": {
+                      "ID": "809fa833-8a3b-48ff-8efb-1ab6a61ddd15",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
                     },
                     "$unit": {
-                      "ID": "ffb0552f-32e4-4dd1-9e86-b5cd6bb0cf70",
+                      "ID": "12a9a517-51e5-4d40-a10f-a0c319d66fb1",
                       "ElementType": 17,
                       "Parent": "humidity",
                       "Name": "$unit",
-                      "Value": "%rH"
-                    }
-                  }
-                }
-              }
-            },
-            "mac": {
-              "ID": "8e6da9bb-b2b7-4995-a52f-b815a1fd6523",
-              "ElementType": 14,
-              "Parent": "OutsideMonitor",
-              "Name": "mac",
-              "Attrs": {},
-              "Props": {
-                "mac": {
-                  "ID": "77499644-c52a-4978-bb25-0c859489dbd3",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "mac",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "9c08467e-8a00-491b-b053-2eacad792461",
-                      "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$datatype",
-                      "Value": "sring"
+                      "Value": ""
                     },
-                    "$name": {
-                      "ID": "3245e11c-7fc9-4d53-990f-71c9e717d803",
+                    "humidity": {
+                      "ID": "dcc247d9-d840-48a6-bfd3-2fdad39434d8",
                       "ElementType": 17,
-                      "Parent": "mac",
-                      "Name": "$name",
-                      "Value": "mac"
+                      "Parent": "humidity",
+                      "Name": "humidity",
+                      "Value": "66.71"
+                    },
+                    "temperature": {
+                      "ID": "d67e20d2-56de-4274-88f2-043d3f10939c",
+                      "ElementType": 17,
+                      "Parent": "temperature",
+                      "Name": "temperature",
+                      "Value": "20.00"
                     }
                   }
                 }
               }
             },
-            "motion": {
-              "ID": "17abd834-c2fa-44f5-aa56-d28fc723717e",
+            "Presence": {
+              "ID": "bcf18d6b-cf7d-464f-bb9f-4cc461653c80",
               "ElementType": 14,
               "Parent": "OutsideMonitor",
-              "Name": "motion",
+              "Name": "Presence",
               "Attrs": {},
               "Props": {
-                "motion": {
-                  "ID": "4ca8deaf-48a7-4597-9424-499618e583c6",
+                "Presence": {
+                  "ID": "d15ee33a-f422-46ab-afdb-061b7b53b648",
                   "ElementType": 16,
                   "Parent": "Presence",
-                  "Name": "motion",
+                  "Name": "Presence",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "fa9bd8a8-561d-49e2-aaf3-33cda2d3b486",
+                      "ID": "a5e80896-0d3b-49a4-ade2-9a2e4933aad6",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$datatype",
-                      "Value": "enum"
+                      "Value": ""
                     },
                     "$format": {
-                      "ID": "c8d56e63-7b64-4317-8adc-c6f244fda0a0",
+                      "ID": "4812bc04-ee6e-4050-b92f-27518f83381c",
                       "ElementType": 17,
                       "Parent": "motion",
                       "Name": "$format",
-                      "Value": "OPEN,CLOSED"
+                      "Value": ""
                     },
                     "$name": {
-                      "ID": "80620b02-4b65-4451-8c6e-d305754f002e",
+                      "ID": "409787cc-c86e-426f-a6ed-5b6987fcb138",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Motion Sensor"
+                    },
+                    "$properties": {
+                      "ID": "3deb5878-c8e9-4082-a529-23026b3033ce",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "motion"
+                    },
+                    "$type": {
+                      "ID": "c51a713a-2a09-4c65-b8d0-8d609814b0f7",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "motion": {
+                      "ID": "2ed6ba3d-8497-4595-b522-e148adebc638",
                       "ElementType": 17,
                       "Parent": "motion",
-                      "Name": "$name",
-                      "Value": "Motion"
+                      "Name": "motion",
+                      "Value": "OPEN"
                     }
                   }
                 }
               }
             },
-            "resetReason": {
-              "ID": "01927b29-c05c-4839-b5f0-42593a1fcedb",
+            "hardware": {
+              "ID": "cb765cf8-8c68-43c5-b98b-2e7b33ce3b12",
               "ElementType": 14,
               "Parent": "OutsideMonitor",
-              "Name": "resetReason",
+              "Name": "hardware",
               "Attrs": {},
               "Props": {
-                "resetReason": {
-                  "ID": "8bc7a679-8947-4e2c-9590-8c1a72d0b894",
+                "hardware": {
+                  "ID": "bb83d2bb-1003-4ce0-9d49-1904aecf4262",
                   "ElementType": 16,
                   "Parent": "hardware",
-                  "Name": "resetReason",
+                  "Name": "hardware",
                   "Value": "",
                   "Attrs": {
                     "$datatype": {
-                      "ID": "a9e6a102-1fcc-4a14-8f46-75cc5861ecd5",
+                      "ID": "576c26a1-d763-4366-9b66-d6f33b3410d7",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "$datatype",
+                      "Value": ""
+                    },
+                    "$name": {
+                      "ID": "dc343734-11fe-4742-b1f8-84ce58631635",
+                      "ElementType": 17,
+                      "Parent": "$name",
+                      "Name": "$name",
+                      "Value": "Device Info"
+                    },
+                    "$properties": {
+                      "ID": "d7366c46-2ea7-465a-ae12-8313bbfc7916",
+                      "ElementType": 17,
+                      "Parent": "$properties",
+                      "Name": "$properties",
+                      "Value": "signal,mac,resetReason,voltage"
+                    },
+                    "$type": {
+                      "ID": "2118dca0-ccb1-4365-8d82-6cf1eb4ba2b6",
+                      "ElementType": 17,
+                      "Parent": "$type",
+                      "Name": "$type",
+                      "Value": "sensor"
+                    },
+                    "$unit": {
+                      "ID": "0ee138a3-ac58-462e-a16e-fae8d23d4e82",
+                      "ElementType": 17,
+                      "Parent": "signal",
+                      "Name": "$unit",
+                      "Value": ""
+                    },
+                    "mac": {
+                      "ID": "1ee3d0fd-f81f-47c4-ba9b-7527567cab04",
+                      "ElementType": 17,
+                      "Parent": "mac",
+                      "Name": "mac",
+                      "Value": "18:FE:34:FD:8C:1B"
+                    },
+                    "resetReason": {
+                      "ID": "09d0c530-dd9e-4c74-8b49-51ce5d75d366",
                       "ElementType": 17,
                       "Parent": "resetReason",
-                      "Name": "$datatype",
-                      "Value": "string"
+                      "Name": "resetReason",
+                      "Value": "External System"
                     },
-                    "$name": {
-                      "ID": "511dc0d8-1542-49fd-86ea-6a9912ed3628",
-                      "ElementType": 17,
-                      "Parent": "resetReason",
-                      "Name": "$name",
-                      "Value": "Last Reset Reason"
-                    }
-                  }
-                }
-              }
-            },
-            "signal": {
-              "ID": "19e72bf6-adee-44c3-9cdf-2cfb437277ae",
-              "ElementType": 14,
-              "Parent": "OutsideMonitor",
-              "Name": "signal",
-              "Attrs": {},
-              "Props": {
-                "signal": {
-                  "ID": "460d1015-4b12-4803-ab27-55621ae20f51",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "signal",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "8ab7f77b-6682-45bf-8675-4a19d3f76bac",
+                    "signal": {
+                      "ID": "799b1e35-f3ff-4516-88c5-cf06004e1642",
                       "ElementType": 17,
                       "Parent": "signal",
-                      "Name": "$datatype",
-                      "Value": "integer"
+                      "Name": "signal",
+                      "Value": "-54"
                     },
-                    "$name": {
-                      "ID": "647593a5-80df-4da3-b397-675e0eacf6ff",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$name",
-                      "Value": "RSSI"
-                    },
-                    "$unit": {
-                      "ID": "5ed6f14d-a3fe-454c-8c32-ebac83d3ad62",
-                      "ElementType": 17,
-                      "Parent": "signal",
-                      "Name": "$unit",
-                      "Value": "dBm"
-                    }
-                  }
-                }
-              }
-            },
-            "temperature": {
-              "ID": "e3b5beb9-96f2-4342-937c-80cf473d51d2",
-              "ElementType": 14,
-              "Parent": "OutsideMonitor",
-              "Name": "temperature",
-              "Attrs": {},
-              "Props": {
-                "temperature": {
-                  "ID": "e9adb405-8719-47a8-a0a0-1537728b5ebc",
-                  "ElementType": 16,
-                  "Parent": "Ambient",
-                  "Name": "temperature",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "f6754c4d-8d68-4cf5-b59e-fab16095e3e3",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "7aecc986-7a2b-4adc-8def-13f392a205e7",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$name",
-                      "Value": "Temperature"
-                    },
-                    "$unit": {
-                      "ID": "666bd6ad-3d3e-4d4a-a907-d4bc7d60bb6f",
-                      "ElementType": 17,
-                      "Parent": "temperature",
-                      "Name": "$unit",
-                      "Value": "°F"
-                    }
-                  }
-                }
-              }
-            },
-            "voltage": {
-              "ID": "a46f2a7d-61dc-43e4-9419-f4e7faa24b6b",
-              "ElementType": 14,
-              "Parent": "OutsideMonitor",
-              "Name": "voltage",
-              "Attrs": {},
-              "Props": {
-                "voltage": {
-                  "ID": "b117e966-a9a5-4546-a0e7-1831fee3c5d3",
-                  "ElementType": 16,
-                  "Parent": "hardware",
-                  "Name": "voltage",
-                  "Value": "",
-                  "Attrs": {
-                    "$datatype": {
-                      "ID": "64a1d2b6-00eb-4ed1-b2ec-b71bb90293cf",
+                    "voltage": {
+                      "ID": "cd5d4b0e-0020-4cbc-88e0-63c86335e82a",
                       "ElementType": 17,
                       "Parent": "voltage",
-                      "Name": "$datatype",
-                      "Value": "float"
-                    },
-                    "$name": {
-                      "ID": "3a7554f5-2d62-4e78-8446-a113fe0c5454",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$name",
-                      "Value": "3.3V Supply"
-                    },
-                    "$unit": {
-                      "ID": "b5f9e2db-98db-4134-a638-54c9ae796779",
-                      "ElementType": 17,
-                      "Parent": "voltage",
-                      "Name": "$unit",
-                      "Value": "V"
+                      "Name": "voltage",
+                      "Value": "3.44"
                     }
                   }
                 }

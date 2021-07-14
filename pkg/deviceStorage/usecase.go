@@ -394,39 +394,40 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 	var nodeAttribute dc.DeviceNodeAttribute
 	var nodePropertyAttribute dc.DeviceNodePropertyAttribute
 
-	// todo: Certify device retrieval
-
 	err := db.View(func(tx *bolt.Tx) error {
 		var err error
 		a := tx.Bucket([]byte(networkName)) // (0) Network Level
 		if a == nil {
 			return fmt.Errorf("network not found!: %s", networkName)
 		}
-		fmt.Printf("(0)[x] X...... %s \n", networkName)
+		//fmt.Printf("(0)[x] X...... %s \n", networkName)
 
 		a = a.Bucket([]byte(deviceName)) // (1) Device Level
 		if a == nil {
 			return fmt.Errorf("network not found!: %s", deviceName)
 		}
 		device = dc.NewDevice(networkName, deviceName)
-		fmt.Printf("(1)[x] X/D...... %s:%s \n", networkName, deviceName)
+		//fmt.Printf("(1)[x] X/D...... %s:%s \n", networkName, deviceName)
 
+		// scanning the device bucket
 		err = a.ForEach(func(dan, danv []byte) error {
-			fmt.Printf("(1)[x] X/D/?A|N.... :%s:%s  Value=[%s] \n", deviceName, string(dan), string(danv))
-			b := a.Bucket([]byte(dan)) // (2) attr or node value level
+			//fmt.Printf("(1)[x] X/D/?A|N.... :%s:%s  Value=[%s] \n", deviceName, string(dan), string(danv))
+			b := a.Bucket(dan) // (2) attr or node value level
 			if b == nil {
 				return fmt.Errorf("attribute or nodes not found!: %s", deviceName)
 			}
 
-			// node=x,x or devattr=k,v
 			/*
-			 * bucket is either a Node attrs/props or a DeviceAttribute properties
+			 * bucket is either a Node bucket with (attrs/props) or an actual DeviceAttribute
 			 * if 2=attr follow device attr path
 			 * else follow nodepath
 			 */
+
+			// at the attribute or node
 			if strings.HasPrefix(string(dan), "$") {
+				// DeviceAttribute or DeviceAttributeProperty, DeviceAttributePropertyProperty
 				err := b.ForEach(func(k, v []byte) error {
-					fmt.Printf("(2)[a] X/D/A.... :%s:%s:%s  Value=[%s] \n", deviceName, string(dan), string(k), string(v))
+					//fmt.Printf("(2)[a] X/D/A.... :%s:%s:%s  Value=[%s] \n", deviceName, string(dan), string(k), string(v))
 					// (2)[a] X/D/A.... :D1R1MiniA:$implementation:$implementation  Value=[esp8266]
 					var err error
 					if nil != v {
@@ -443,10 +444,10 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 						return nil
 					}
 					err = c.ForEach(func(kk, vv []byte) error {
-						fmt.Printf("(3)[a] X/D/A/P.... :%s:%s:%s:%s  Value=[%s] \n", deviceName, string(dan), string(k), string(kk), string(vv))
+						//fmt.Printf("(3)[a] X/D/A/P.... :%s:%s:%s:%s  Value=[%s] \n", deviceName, string(dan), string(k), string(kk), string(vv))
 						// (3)[a] X/D/A/P.... :D1R1MiniA:$fw:version:version  Value=[1.0.0]
 						if nil != vv {
-							deviceAttribute, found = device.Attrs[string(k)]
+							deviceAttribute, found = device.Attrs[string(dan)]
 							if !found {
 								deviceAttribute = dc.NewDeviceAttribute(deviceName, string(dan), string(danv))
 								device.Attrs[string(dan)] = deviceAttribute
@@ -455,7 +456,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 							if found {
 								deviceAttributeProperty.Value = string(vv)
 							} else {
-								deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(dan), string(kk), string(vv))
+								deviceAttributeProperty = dc.NewDeviceAttributeProperty(string(k), string(kk), string(vv))
 								deviceAttribute.Props[string(kk)] = deviceAttributeProperty
 							}
 						}
@@ -464,7 +465,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 							return nil
 						}
 						err = d.ForEach(func(kkk, vvv []byte) error {
-							fmt.Printf("(4)[a] X/D/A/P/P.... :%s:%s:%s:%s:%s  Value=[%s] \n", deviceName, string(dan), string(k), string(kk), string(kkk), string(vvv))
+							//fmt.Printf("(4)[a] X/D/A/P/P.... :%s:%s:%s:%s:%s  Value=[%s] \n", deviceName, string(dan), string(k), string(kk), string(kkk), string(vvv))
 							// (4)[a] X/D/A/P/P.... :D1R1MiniA:$implementation:ota:enabled:enabled  Value=[true]
 							deviceAttribute, found = device.Attrs[string(dan)]
 							if !found {
@@ -477,9 +478,7 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 								deviceAttribute.Props[string(k)] = deviceAttributeProperty
 							}
 							deviceAttributePropertyProperty, found = deviceAttributeProperty.Props[string(kkk)]
-							if found {
-								deviceAttributePropertyProperty.Value = string(vvv)
-							} else {
+							if !found {
 								deviceAttributePropertyProperty = dc.NewDeviceAttributePropertyProperty(string(k), string(kkk), string(vvv))
 								deviceAttributeProperty.Props[string(kkk)] = deviceAttributePropertyProperty
 							}
@@ -492,77 +491,77 @@ func buildNetworkDevice(db *bolt.DB, networkName, deviceName string) (dc.Device,
 				return err
  		    }
 
-			if !strings.HasPrefix(string(dan), "$") {
-				node, found = device.Nodes[string(dan)]
-				if !found {
-					node = dc.NewDeviceNode(deviceName, string(dan))
-					device.Nodes[string(dan)] = node
+			// Nodes
+			node, found = device.Nodes[string(dan)]
+			if !found {
+				node = dc.NewDeviceNode(deviceName, string(dan))
+				device.Nodes[string(dan)] = node
+			}
+
+			//at node, scanning for node.attrs or node.props
+			err = b.ForEach(func(k, v []byte) error {
+				//fmt.Printf("(2)[n] X/D/N/?A/P... :%s:%s:%s  Value=[%s] \n", deviceName, node.Name, string(k), string(v))
+				c := b.Bucket(k) // (2) attr or property value level
+				if c == nil {
+					return nil
 				}
 
-				err = b.ForEach(func(k, v []byte) error {
-					fmt.Printf("(2)[n] X/D/N/?A/P... :%s:%s:%s  Value=[%s] \n", deviceName, string(node.Name), string(k), string(v))
-					// (2)[n] X/D/N/?A/P... :D1R1MiniA:Liquids:$name  Value=[]
-					if nil != v {
-						if strings.HasPrefix(string(k), "$") {
-							nodeAttribute, found = node.Attrs[string(k)]
-							if found {
-								nodeAttribute.Value = string(v)
-							} else {
-								nodeAttribute = dc.NewDeviceNodeAttribute(node.Name, string(k), string(v))
-								node.Attrs[string(k)] = nodeAttribute
+				if strings.HasPrefix(string(k), "$") {
+					err = c.ForEach(func(kk, vv []byte) error {
+						//fmt.Printf("(3)[n] X/D/N/A... :%s:%s:%s:%s  Value=[%s] \n", deviceName, node.Name, string(k), string(kk), string(vv))
+						nodeAttribute, found = node.Attrs[string(kk)]
+						if found {
+							if nil != vv {
+								nodeAttribute.Value = string(vv)
 							}
-						} else { // property
-							nodeProperty, found = node.Props[string(k)]
-							if found {
-								nodeProperty.Value = string(v)
-							} else {
-								nodeProperty = dc.NewDeviceNodeProperty(node.Name, string(k), string(v))
-								node.Props[string(k)] = nodeProperty
-							}
-							c := b.Bucket(k) // (3) Property-Attribute
-							if c == nil {
-								return nil
-							}
-							err = c.ForEach(func(kk, vv []byte) error {
-								fmt.Printf("(3)[na] X/D/N/P/A... :%s:%s:%s:%s  Value=[%s] \n", deviceName, node.Name, string(k), string(kk), string(vv))
-								// (3)[n] X/D/N/P/A... :D1R1MiniA:Liquids:$type:$type  Value=[sensor]
-								// (3)[n] X/D/N/P/A... :D1R1MiniA:Liquids:$name:$name  Value=[Water Sensor]
-								// (3)[n] X/D/N/P/A... :D1R1MiniA:Liquids:level:$datatype  Value=[]
-								nodePropertyAttribute, found = nodeProperty.Attrs[string(kk)]
-								if !found {
-									nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(deviceName, string(kk), string(vv))
-									nodeProperty.Attrs[string(kk)] = nodePropertyAttribute
-								}
-								return nil
-							})
+						} else {
+							nodeAttribute = dc.NewDeviceNodeAttribute(node.Name, string(kk), string(vv))
+							node.Attrs[string(kk)] = nodeAttribute
 						}
-					} else {
-						nodeProperty, found = node.Props[string(dan)]
-						if !found {
-							nodeProperty = dc.NewDeviceNodeProperty(node.Name, string(dan), string(danv))
-							node.Props[string(dan)] = nodeProperty
+						return nil
+					})
+					return err
+				}
+				err =c.ForEach(func(kk, vv []byte) error {
+					//fmt.Printf("(3)[n] X/D/N/P... :%s:%s:%s:%s  Value=[%s] \n", deviceName, node.Name, string(k), string(kk), string(vv))
+					// (3)[n] X/D/N/P... :OutsideMonitor:Ambient:humidity:humidity  Value=[51.30]
+					if nil != vv {
+						nodeProperty, found = node.Props[string(kk)]
+						if found {
+							nodeProperty.Value = string(vv)
+						} else {
+							nodeProperty = dc.NewDeviceNodeProperty(node.Name, string(kk), string(vv))
+							node.Props[string(kk)] = nodeProperty
 						}
-						c := b.Bucket(k) // (3) Property-Attribute
-						if c == nil {
-							return nil
-						}
-						err = c.ForEach(func(kk, vv []byte) error {
-							fmt.Printf("(3)[nz] X/D/N/P/A... :%s:%s:%s:%s  Value=[%s] \n", deviceName, node.Name, string(k), string(kk), string(vv))
-							// (3)[nz] X/D/N/P/A... :OutsideMonitor:hardware:voltage:$datatype  Value=[]
-							// (3)[nz] X/D/N/P/A... :OutsideMonitor:hardware:voltage:$name  Value=[]
-							// (3)[nz] X/D/N/P/A... :OutsideMonitor:hardware:voltage:$unit  Value=[]
-							// (3)[nz] X/D/N/P/A... :OutsideMonitor:hardware:voltage:voltage  Value=[3.44]
-							nodePropertyAttribute, found = nodeProperty.Attrs[string(kk)]
-							if !found {
-								nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(string(k), string(kk), string(vv))
-								nodeProperty.Attrs[string(kk)] = nodePropertyAttribute
-							}
-							return nil
-						})
 					}
+					d := c.Bucket(kk) // (3) Property-Attribute
+					if d == nil {
+						return nil
+					}
+					// at prop-attr
+					err = d.ForEach(func(kkk, vvv []byte) error {
+						//fmt.Printf("(4)[np] X/D/N/P/A... :%s:%s:%s:%s:%s  Value=[%s] \n", deviceName, node.Name, string(k), string(kk), string(kkk), string(vvv))
+						nodeProperty, found = node.Props[string(k)]
+						if !found {
+							nodeProperty = dc.NewDeviceNodeProperty(node.Name, string(k), string(v))
+							node.Props[string(k)] = nodeProperty
+						}
+						nodePropertyAttribute, found = nodeProperty.Attrs[string(kkk)]
+						if found {
+							if nil != vvv {
+								nodePropertyAttribute.Value = string(vvv)
+							}
+						} else {
+							nodePropertyAttribute = dc.NewDeviceNodePropertyAttribute(nodeProperty.Name, string(kkk), string(vvv))
+							nodeProperty.Attrs[string(kkk)] = nodePropertyAttribute
+						}
+
+						return nil
+					})
 					return err
 				})
-			}
+				return err
+			})
 			return err
 		})
 		return err
