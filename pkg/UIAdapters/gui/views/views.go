@@ -167,7 +167,6 @@ func (vp *viewProvider) OnBroadcastSelected(id widget.ListItemID) {
 	_ = vp.logger.Log("broadcast id", id, "event", "selected","Broadcast", vp.siteNetworks.Broadcasts[id].Level)
 }
 func (vp *viewProvider) OnDeviceSelected(id widget.ListItemID) {
-	//vp.networkSide.Objects[0] = components.SknDeviceTreeSide(&vp.devices[id], &vp.devTreeDetails)
 	*vp.devTreeDetails = components.TreeDataFromDevice(&vp.devices[id])
 	vp.networkSide.Refresh()
 	vp.statLine.SetText(fmt.Sprintf("%s Device Selected", vp.devices[id].Name))

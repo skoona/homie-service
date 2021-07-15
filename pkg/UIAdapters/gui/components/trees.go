@@ -6,6 +6,7 @@ import (
 	"fyne.io/fyne/v2/container"
 	"fyne.io/fyne/v2/widget"
 	dc "github.com/skoona/homie-service/pkg/deviceCore"
+	"sort"
 	"strings"
 )
 
@@ -16,7 +17,8 @@ func SknDeviceTreeSide(dv *dc.Device, devTreeDetails **map[string][][]string) fy
 	content := widget.NewTree(
 		func(uid widget.TreeNodeID) []string { // childUIDs
 			children := data
-			return children[uid][0]
+			sort.Strings(children[uid][0])
+			return (children[uid][0])
 		},
 		func(uid widget.TreeNodeID) bool { // isBranch
 			haveChildren := data
