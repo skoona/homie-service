@@ -314,9 +314,9 @@ $ go build cmd/gui/main.go
 $ ./main --config mqtt-config
 $ ./main --config demo-config
 ```
-* basic program
+* basic program / NO UI
 ```
-$ go build cmd/api/main.go 
+$ go build cmd/base/main.go 
 $ ./main --config mqtt-config --debug=true
 $ ./main --config demo-config --debug=true
  no UI
