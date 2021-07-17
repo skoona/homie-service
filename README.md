@@ -294,20 +294,32 @@ homiemonitor:
 * program -h
 ```
 Usage of ./program
-  -config string
+  --config string
         path to config file (default "live-config")
-
-$ ./cmd/api/main --config=demo-config        
-$ curl/x   http://localhost:9090/docs        
+  --debug true
+        turn on debug messaging 
 ```
 
-* program 
+* API program 
 ```
 $ go build cmd/api/main.go 
 $ ./program --config mqtt-config
 $ ./program --config demo-config
  ...
-$ curl/x   http://localhost:9090/docs
+$ curl http://localhost:9090/docs
+```
+* GUI program
+```
+$ go build cmd/gui/main.go 
+$ ./main --config mqtt-config
+$ ./main --config demo-config
+```
+* basic program
+```
+$ go build cmd/api/main.go 
+$ ./main --config mqtt-config --debug=true
+$ ./main --config demo-config --debug=true
+ no UI
 ```
 
 ### Contributing
