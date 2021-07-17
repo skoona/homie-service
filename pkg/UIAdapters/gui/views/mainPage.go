@@ -41,12 +41,13 @@ func (vp *viewProvider) MainPage() fyne.CanvasObject {
 	page := container.NewBorder(nil, statusLine,nil, nil, tabs)
 
 	vp.pageTabs = tabs
-	tabs.OnChanged = vp.OnMainTabsChangedCb
 	vp.statLine = statusText
 	vp.statusActions = bar
 	vp.netSelect = selector
 	vp.netSelectedStr = (*vp.networks)[0]   // maybe from a saved preference
 	vp.tabStatus[SitesTab] = "GOLang is Wonderful!!!"
+
+	tabs.OnChanged = vp.OnMainTabsChangedCb
 
 	selector.SetSelected(vp.netSelectedStr)
 	selector.Refresh()

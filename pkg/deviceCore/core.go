@@ -422,6 +422,7 @@ func removeAttributePrefix(attribute []byte, prefix string) string{
 // Apply device updates to Network
 func (hn *Network) apply(dm DeviceMessage) error {
 	var err error
+	tStart := time.Now()
 	_ = level.Debug(em.logger).Log("event", "apply() called")
 
 	// ensure this device is in our network
@@ -438,7 +439,7 @@ func (hn *Network) apply(dm DeviceMessage) error {
 	 */
 	if ok && (string(dm.Value) == "" || dm.Value == nil) &&
 			strings.Contains(dm.Topic(), "$fw/checksum") {
-		err := em.RemoveDeviceByID(string(dv.ID), dv.Parent)
+		_ = em.RemoveDeviceByID(string(dv.ID), dv.Parent)
 
 		err = fmt.Errorf("device{%s} on network{%s} was deleted since value was nil", dm.DeviceID, hn.Name)
 		_ = level.Warn(em.logger).Log("action", err.Error())
@@ -474,7 +475,8 @@ func (hn *Network) apply(dm DeviceMessage) error {
 		_ = level.Debug(em.logger).Log("event", "apply() unknown type")
 	}
 
-	_ = level.Debug(em.logger).Log("event", "apply() completed")
+	tEnd := time.Now()
+	_ = level.Info(em.logger).Log("event", "apply() completed", "messageID", dm.ID , "duration", tEnd.Sub(tStart))
 	return err
 }
 

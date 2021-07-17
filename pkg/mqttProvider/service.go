@@ -132,7 +132,7 @@ func doNetworkDiscovery() {
 	// allow for network discovery
 	subWithHandler(config.DiscoveryTopic, networkDiscovery) // Homie Discovery Topic
 	for {
-		time.Sleep(5 * time.Second) // delay long enough to collect networks
+		time.Sleep(2 * time.Second) // delay long enough to collect networks
 		if len(DiscoveredNetworks()) >= 1 {
 			token := client.Unsubscribe(config.DiscoveryTopic)
 			token.Wait()
@@ -193,7 +193,7 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	opts.SetConnectRetry(true)
 	opts.SetConnectRetryInterval(10 * time.Second)
 	opts.SetMaxReconnectInterval(30 * time.Minute)
-	opts.SetOrderMatters(true)
+	opts.SetOrderMatters(false)
 	opts.SetKeepAlive(120)
 	opts.SetPingTimeout(10)
 	if len(config.LwtTopic) > 0 && len(config.LwtMessage) > 0 {
@@ -214,6 +214,8 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 
 	// allow for network discovery
 	doNetworkDiscovery()
+	// ToDo: Temporary ByPass
+	//nNetworks.Add("sknSensors")
 
 	bInitialized = true
 

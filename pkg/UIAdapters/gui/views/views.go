@@ -160,6 +160,7 @@ func (vp *viewProvider) OnMainTabsChangedCb(tab *container.TabItem) {
 		vp.netSelect.Hide()
 	}
 	vp.statLine.Refresh()
+	tab.Content.Refresh()
 }
 
 func (vp *viewProvider) OnBroadcastSelected(id widget.ListItemID) {

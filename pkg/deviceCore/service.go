@@ -142,12 +142,11 @@ func Start(dfg cc.Config, sp DeviceEventProvider, sscp SchedulerProvider, repo R
 		level.Info(em.logger).Log("event", "restore networks", "network", netStr)
 	}
 
+	/* start the message flow from stream providers */
 	if sscp != nil {
 		sscp.ApplySiteNetworks(sites)
 		sscp.ActivateStreamProvider()
 	}
-
-	/* start the message flow from stream providers */
 	sp.ActivateStreamProvider()
 
 	level.Debug(em.logger).Log("event", "Start() completed")
