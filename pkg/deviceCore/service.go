@@ -70,7 +70,7 @@ type (
 		ActivateStreamProvider()
 		ApplyDeviceEvent(dm DeviceMessage)
 		PublishToStreamProvider(dm DeviceMessage)
-		ConsumeDeviceStream(dm DeviceMessage) error
+		//ConsumeDeviceStream(dm DeviceMessage) error
 	}
 
 	// Device Source Storage Repository

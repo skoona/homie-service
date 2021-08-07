@@ -31,6 +31,7 @@ type (
 		cfg        cc.Config
 		repository dc.Repository
 		dStream    StreamProvider
+		sStream    chan dc.DeviceMessage
 		logger     log.Logger
 	}
 )
@@ -50,6 +51,7 @@ func NewDeviceSourceService(cfg cc.Config, repo dc.Repository, stream StreamProv
 	dvService = &deviceSource{
 		repository: repo,
 		dStream:    stream,
+		sStream: 	make(chan dc.DeviceMessage, 1024),
 		cfg:        cfg,
 		logger:     log.With(plog, "service", "Service"),
 	}
@@ -79,6 +81,8 @@ func Start(dfg cc.Config, repo dc.Repository, dProvider StreamProvider) (dc.Devi
  */
 func Stop() {
 	level.Debug(logger).Log("event", "Calling Stop()")
-
+	if nil != dvService.sStream {
+		close(dvService.sStream)
+	}
 	level.Debug(logger).Log("event", "Stop() Completed")
 }

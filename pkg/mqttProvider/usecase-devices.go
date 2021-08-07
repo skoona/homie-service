@@ -42,8 +42,9 @@ func NewStreamProvider(plog log.Logger) dss.StreamProvider {
 	return dStream
 }
 func (s *deviceStream) ActivateNotifications() chan dc.DeviceMessage {
+	channel := s.GetNotifyChannel()  // start channel before subscribe
 	enableNetworkTraffic(s.logger)
-	return s.GetNotifyChannel()
+	return channel
 }
 func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idCounter uint16, retained bool, qos byte) dc.DeviceMessage {
 	level.Debug(s.logger).Log("method", "CreateDemoDeviceMessage() called")
@@ -52,7 +53,7 @@ func (s *deviceStream) CreateDemoDeviceMessage(topic string, payload []byte, idC
 }
 
 func (s *deviceStream) CreateQueueDeviceMessage(qmsg dc.QueueMessage) dc.DeviceMessage {
-	level.Debug(s.logger).Log("method", "CreateQueueDeviceMessage() called")
+	level.Debug(s.logger).Log("method", "CreateQueueDeviceMessage() called", "id", qmsg.MessageID())
 	dm, _ := dc.NewQueueMessage(qmsg, s.logger)
 	return dm
 }

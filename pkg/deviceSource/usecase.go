@@ -20,6 +20,7 @@ import (
  * ActivateStreamProvider
  */
 func (s *deviceSource) ActivateStreamProvider() {
+	StoreDeviceStream(s.sStream, s.logger)
 	ConsumeFromStreamProvider(s.dStream.ActivateNotifications(), s.logger)
 }
 
@@ -38,22 +39,4 @@ func (s *deviceSource) PublishToStreamProvider(dm dc.DeviceMessage) {
 	s.dStream.GetPublishChannel() <- dm
 
 	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
-}
-
-// ConsumeDeviceStream handle incoming device stream events
-func (s *deviceSource) ConsumeDeviceStream(dm dc.DeviceMessage) error {
-	var err error
-	plog := log.With(s.logger, "method", "ConsumeDeviceStream")
-
-	err = s.repository.Store(dm)
-	if err != nil {
-		level.Error(plog).Log("error", err)
-		return err
-	}
-
-	s.ApplyDeviceEvent(dm) // to Core
-
-	level.Debug(plog).Log("DeviceID ", dm.DeviceID)
-
-	return err
 }

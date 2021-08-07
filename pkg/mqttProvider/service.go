@@ -53,7 +53,7 @@ var networkDiscovery mqtt.MessageHandler = func(client mqtt.Client, msg mqtt.Mes
 		nNetworks.Add(parts[0])
 		level.Debug(logger).Log("Network Discovery", parts[0])
 	}
-	level.Debug(logger).Log("Network Discovery topic", msg.Topic(), "payload", msg.Payload())
+	level.Debug(logger).Log("Network Discovery topic", msg.Topic(), "payload", msg.Payload(), "id", msg.MessageID())
 }
 
 var connectHandler mqtt.OnConnectHandler = func(client mqtt.Client) {
@@ -193,7 +193,7 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 	opts.SetConnectRetry(true)
 	opts.SetConnectRetryInterval(10 * time.Second)
 	opts.SetMaxReconnectInterval(30 * time.Minute)
-	opts.SetOrderMatters(false)
+	opts.SetOrderMatters(true)
 	opts.SetKeepAlive(120)
 	opts.SetPingTimeout(10)
 	if len(config.LwtTopic) > 0 && len(config.LwtMessage) > 0 {
@@ -209,13 +209,20 @@ func Initialize(cfg cc.Config) (sch.OTAInteractor, dss.StreamProvider, []string,
 		return nil, nil, nil, token.Error()
 	}
 
-	NewOTAStream(logger)      // creates otastream
-	NewStreamProvider(logger) // creates stream provider
-
 	// allow for network discovery
 	doNetworkDiscovery()
+	client.Disconnect(250)
+
+	if token := client.Connect(); token.Wait() && token.Error() != nil {
+		level.Error(logger).Log("cause", "connect() failed", "error", token.Error())
+		return nil, nil, nil, token.Error()
+	}
+
 	// ToDo: Temporary ByPass
 	//nNetworks.Add("sknSensors")
+
+	NewOTAStream(logger)      // creates otastream
+	NewStreamProvider(logger) // creates stream provider
 
 	bInitialized = true
 
